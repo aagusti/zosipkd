@@ -1,0 +1,102 @@
+<html metal:use-macro="load: base.pt">
+    <div metal:fill-slot="content">
+        <script>
+            $(function(){
+                $('.carousel').carousel({
+                    interval: 5000
+                });
+            });
+        </script>
+        <style>
+            body {
+                background-image: url("static/img/bg.jpg");
+            }
+            .judul {
+                margin-top: 10px;
+                color: #777;
+                font-size: 40px;
+                font-weight: normal;
+            }
+            .subjudul {
+                margin-bottom: 0px;
+                margin-bottom: 20px;
+                color: #777;
+                font-size: 30px;
+                font-weight: normal;
+            }
+            .alert {
+                border-radius: 0px !important;
+            }
+            .alert-judul {
+                color: #fff;
+                background-color: #6497C9;
+                border-color: #5580AA;
+            }
+            .alert-judul h3 {
+                margin-top: 4px !important;
+                margin-bottom: 4px !important;
+            }
+        </style>
+        <div class="well">
+          <div class="judul">
+              <center>
+                  <p>Pendapatan Pajak Daerah</p>
+                  <p class="subjudul">Tahun ${request.session['tahun']}</p>
+              </center>
+          </div>
+          
+          <div id="myCarousel" class="carousel slide" data-ride="carousel">
+              <!-- Indicators -->
+              <ol class="carousel-indicators">
+                  <li tal:repeat="dat datas" data-target="#myCarousel" data-slide-to="${dat.order_id}" class="${dat.is_aktif and 'active' or ''}"></li>
+              </ol>
+              
+              <div class="carousel-inner" role="listbox">
+                <div tal:repeat="dat datas" class="item ${dat.is_aktif=='1' and 'active' or ''}">
+                    <div class="col-sm-12" style="margin-bottom:50px;">
+                        <div class="row">
+                            <center>
+                              <div class="row">
+                                  <div class="col-sm-12">
+                                      <div class="alert alert-judul">
+                                          <h3>${dat.uraian}</h3>
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="row">
+                                  <div class="col-sm-6">
+                                      <div class="alert alert-success">
+                                          <h4><u>Hari ini</u></h4>
+                                          <h2>Rp. ${dat.amt_hari}</h2>
+                                      </div>
+                                  </div>
+                                  <div class="col-sm-6">
+                                      <div class="alert alert-info">
+                                          <h4><u>Minggu ini</u></h4>
+                                          <h2>Rp. ${dat.amt_minggu}</h2>
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="alert alert-warning">
+                                            <h4><u>Bulan ini</u></h4>
+                                            <h2>Rp. ${dat.amt_bulan}</h2>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="alert alert-danger">
+                                            <h4><u>Tahun ini</u></h4>
+                                            <h2>Rp. ${dat.amt_tahun}</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </center>
+                       </div>
+                    </div>
+                </div>
+              </div>
+          </div>
+        </div>
+    </div>
+</html>

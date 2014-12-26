@@ -1,0 +1,33 @@
+home, /, Home,NULL
+app, /app, Aplikasi,NULL
+login, /login, Login,NULL
+logout, /logout, Logout,NULL
+password, /password, Change password,NULL
+user, /user, Users,egaji.models.AdminFactory
+user-act, /user/act/{act}, Users,egaji.models.AdminFactory
+user-add, /user/add, Tambah user,egaji.models.AdminFactory
+user-edit, /user/{id}/edit, Edit user,egaji.models.AdminFactory
+user-delete, /user/{id}/delete, Hapus user,egaji.models.AdminFactory
+change-act, /change/{act}, change,NULL
+group, /group, Groups,egaji.models.AdminFactory
+group-act, /group/act/{act}, NULL,egaji.models.AdminFactory
+group-add, /group/add, Tambah group,egaji.models.AdminFactory
+group-edit, /group/{id}/edit, Edit group,egaji.models.AdminFactory
+group-delete, /group/{id}/delete, Hapus group,egaji.models.AdminFactory
+urusan, /urusan, urusans,egaji.models.AdminFactory
+urusan-add, /urusan/add, Tambah urusan,egaji.models.AdminFactory
+urusan-edit, /urusan/{id}/edit, Edit urusan,egaji.models.AdminFactory
+urusan-delete, /urusan/{id}/delete, Hapus urusan,egaji.models.AdminFactory
+urusan-act, /urusan/act/{act}, Action,egaji.models.AdminFactory
+unit, /unit, units,egaji.models.AdminFactory
+unit-add, /unit/add, Tambah unit,egaji.models.AdminFactory
+unit-edit, /unit/{id}/edit, Edit unit,egaji.models.AdminFactory
+unit-delete, /unit/{id}/delete, Hapus unit,egaji.models.AdminFactory
+unit-act, /unit/act/{act}, AdminFactory,egaji.models.AdminFactory
+gaji, /gaji, Gaji, egaji.models.GajiFactory
+gaji-act, /gaji/act/{act}, Action,egaji.models.GajiFactory
+gaji-potongan, /gaji-potongan, Potongan Gaji,egaji.models.GajiFactory
+gaji-potongan-add, /gaji-potongan/add, Tambah Potongan,egaji.models.GajiFactory
+gaji-potongan-edit, /gaji-potongan/{id}/edit, Edit Potongan,egaji.models.GajiFactory
+gaji-potongan-delete, /gaji-potongan/{id}/delete, Hapus Potongan,egaji.models.GajiFactory
+gaji-potongan-act, /gaji-potongan/act/{act}, NULL,egaji.models.GajiFactory
