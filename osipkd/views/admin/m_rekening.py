@@ -211,7 +211,7 @@ class view_rekening(BaseViews):
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
         values = row.to_dict()
-        values['parent_nm']=row.parent.nama
+        values['parent_nm']= row.parent.nama if values['parent_id'] else ""
         return dict(form=form.render(appstruct=values))
         
     ##########
