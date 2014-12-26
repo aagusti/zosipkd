@@ -1,4 +1,4 @@
-<html metal:use-macro="load: ../../templates/main.pt">
+<html metal:use-macro="load: ../../templates/base.pt">
 <div metal:fill-slot="nav">
     <ul class="nav navbar-nav">
       <li tal:attributes="class request.path == '/app' and 'active'">
