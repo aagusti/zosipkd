@@ -80,8 +80,8 @@ routes = [
     ('logout', '/logout', 'Logout',''),
     ('password', '/password', 'Change password',''),
 
-    ('main', '/main', 'Gaji Main',''),
-    ('main-act', '/main/act/{act}', 'Action','osipkd.models.GajiFactory'),
+    ('main', '/main', 'Utama',''),
+    #('main-act', '/main/act/{act}', 'Action','osipkd.models.GajiFactory'),
     
     ('admin', '/admin', 'Administrator',''),
     ('user', '/user', 'Users','osipkd.models.AdminFactory'),

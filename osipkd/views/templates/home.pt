@@ -3,20 +3,27 @@
 
 <!-- Main component for a primary marketing message or call to action -->
 <div class="well">
-<h1>e-Gaji</h1>
+<h1>o-SIPKD</h1>
 <p><img src="/static/img/pyramid.png" class="img-float img-thumbnail"/>
 Selamat Datang di Aplikasi <code>${project}</code>
 
-<p>Aplikasi e-Gaji adalah aplikasi yang digunakan untuk mengelola gaji PNS 
-   dimana berfungsi untuk memasukan data potongan baik yang dilakukan oleh 
-   Bendahara Pengeluaran, Pembantu Bendahara Pengeluaran maupun pihak Bank
+<p>Aplikasi o-SIPKD adalah aplikasi yang didalamnya terdapat module-module 
+   yang dapat digunakan untuk melakukan proses otomasi pada pemerintahan daerah
    
-<p>Aplikasi ini merupakan aplikasi yang tidak terpisahkan dengan aplikasi yang
-   selama ini digunakan untuk memproses gaji bulanan dimana diantara aplikasi ini
-   saling melengkapi baik data maupun informasi yang ditampilkan.
-   
-<p>Aplikasi e-Gaji diselenggarakan oleh Dinas Pendidikan Kabupaten Tangerang   
-</div><!--well-->
+<p>Aplikasi ini dibangun dengan berbasiskan opensource yang terdiri dari.
+<p>
+   <ul>
+      <li>Database Postgresql</li>
+      <li>Bahasa Pemrograman Python</li>
+      <li>Framwork:
+       <ol>
+          <li>Pyramid</li>
+          <li>CSS Bootsrap 3</li>
+          <li>jQuery</li>
+          <li>SQL Alchemy</li>
+       </ol>
+       </li>
+    </ul></div><!--well-->
 
 </div>
 </html>
