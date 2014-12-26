@@ -10,5 +10,5 @@ from osipkd.models.base_model import App
 ########
 @view_config(route_name='admin', renderer='templates/home.pt', permission='view')
 def view_app(request):
-    return dict(project='egaji')
+    return dict(project='o-SIPKD')
         
