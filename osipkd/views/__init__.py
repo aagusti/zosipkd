@@ -29,7 +29,6 @@ from ..models.base_model import (
 ########
 @view_config(route_name='home', renderer='templates/home.pt')
 def view_home(request):
-    print "*****", App.active_url()
     url = 'main' if App.count_active()>1 else App.active_url()
     if authenticated_userid(request):
         return HTTPFound(location=request.route_url(url))
