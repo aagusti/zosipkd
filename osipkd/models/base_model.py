@@ -81,5 +81,5 @@ class App(Base, NamaModel):
         return DBSession.query(func.count(cls.id)).filter(cls.disabled==0).scalar()
     @classmethod
     def active_url(cls):
-        return DBSession.query(cls.kode).filter(cls.disabled=0).first().kode
+        return DBSession.query(cls.kode).filter(cls.disabled==0).first().kode
         
