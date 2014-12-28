@@ -9,7 +9,7 @@ import colander
 from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.eis import Slide
-    
+from sqlalchemy.sql.expression import update
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
     
@@ -126,6 +126,12 @@ class view_eis_slide(BaseViews):
         row.disabled = 'disabled' in values and values['disabled'] and 1 or 0
         DBSession.add(row)
         DBSession.flush()
+        if 'is_aktif' in values and values['is_aktif']:
+            stmt = update(Slide).where(Slide.id!=row.id).\
+                   values(is_aktif=0)
+            DBSession.execute(stmt)
+            DBSession.flush()
+         
         return row
         
     def save_request(self, values, row=None):

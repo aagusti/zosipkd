@@ -3,9 +3,12 @@
         <script>
             $(function(){
                 $('.carousel').carousel({
-                    interval: 5000
+                    interval: 2000
                 });
             });
+            var bar_chart_options = {
+                responsive:true
+            };
         </script>
         <style>
             body {
@@ -41,12 +44,12 @@
            var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
         </script>
         <div class="well">
-          <!--div class="judul">
+          <div class="judul">
               <center>
-                  <p>Pendapatan Pajak Daerah</p>
-                  <p class="subjudul">Tahun ${request.session['tahun']}</p>
+                  <h3>SUMMARY EXECUTIVE PAJAK DAERAH</h3>
+                  <h4>Tahun ${request.session['tahun']}</h4>
               </center>
-          </div-->
+          </div>
           
           <div id="myCarousel" class="carousel" data-ride="carousel">
               <!-- Indicators -->
@@ -62,7 +65,7 @@
                             <div class="row"> <!--TITLE-->
                                 <div class="col-sm-12">
                                     <div class="alert alert-judul">
-                                        <h3>${dat.nama} ${dat.nama}</h3>
+                                        <h3>${dat.nama}</h3>
                                     </div>
                                 </div>
                             </div>
@@ -118,7 +121,7 @@
                         </script>                                               
                     </div>
                     
-                    <div class="col-sm-12" style="margin-bottom:20px;" tal:condition="dat.source_type=='image'">
+                    <div class="col-sm-12" style="margin-bottom:50px;" tal:condition="dat.source_type=='image'">
                         <div class="row">
                             <center>
                               <div class="row">
@@ -146,7 +149,9 @@
                               </div>
                             </div>
                             <div class="row">
-                                 <canvas id="canvas_${dat.id}" height="450px" width="600px"></canvas>
+                                 <canvas id="canvas_${dat.id}" height="400px" width="800px"></canvas>
+                                 <p>
+                                 <div id="legend_${dat.id}"></div>
                             </div>
                               
                           </center>
@@ -181,9 +186,9 @@
                                                         
                             $(function(){
                               var ctx_${dat.id} = document.getElementById("canvas_${dat.id}").getContext("2d");
-                              window.myLine_${dat.id} = new Chart(ctx_${dat.id}).Line(lineChartData_${dat.id}, {
+                              //window.myLine_${dat.id} = new Chart(ctx_${dat.id}).Line(lineChartData_${dat.id}, {
                                 //responsive: true
-                              });
+                              //});
                               
                               $.ajax({
                                   type: "POST",
@@ -192,19 +197,26 @@
                                   success: function (html) {
                                     if (html.success == true) {
                                       for (i = 0; i < html.label.length; i++) { 
-                                        window.myLine_${dat.id}.addData([html.target[i],html.realisasi[i]],html.label[i]);
+                                        lineChartData_${dat.id}.labels.push(html.label[i]);
+                                        lineChartData_${dat.id}.datasets[0].data.push(html.target[i]);
+                                        lineChartData_${dat.id}.datasets[1].data.push(html.realisasi[i]);
+                                        
                                       }
+                                      window.myLine_${dat.id} = new Chart(ctx_${dat.id}).Line(lineChartData_${dat.id}, {});
+                                      legend(document.getElementById('legend_${dat.id}'), lineChartData_${dat.id});
+                              
                                     }
                                   },
                                   beforeSend: function () {
                                   }
                                 });
-                            });
+                                });
     
                           
                         
                         </script>
                     </div>
+                    
                     <div class="col-sm-12" style="margin-bottom:50px;" tal:condition="dat.source_type=='chart-bar'">
                         <div class="row">
                           <center>
@@ -216,7 +228,9 @@
                               </div>
                             </div>
                             <div class="row">
-                                 <canvas id="canvas_${dat.id}" height="450px" width="600px"></canvas>
+                                 <canvas id="canvas_${dat.id}" height="400px" width="800px"></canvas>
+                                 <p>
+                                 <div id="legend_${dat.id}"></div>
                             </div>
                               
                           </center>
@@ -248,12 +262,10 @@
                               ]
 
                             }
-                                                        
+                            
+                            var ctx_${dat.id} = document.getElementById("canvas_${dat.id}").getContext("2d");
+                              
                             $(function(){
-                              var ctx_${dat.id} = document.getElementById("canvas_${dat.id}").getContext("2d");
-                              window.myBar_${dat.id} = new Chart(ctx_${dat.id}).Bar(barChartData_${dat.id}, {
-                                //responsive: true
-                              });
                               //GET DATA FROM SERVER
                               $.ajax({
                                   type: "POST",
@@ -262,8 +274,14 @@
                                   success: function (html) {
                                     if (html.success == true) {
                                       for (i = 0; i < html.label.length; i++) { 
-                                        window.myBar_${dat.id}.addData([html.target[i],html.realisasi[i]],html.label[i]);
+                                        barChartData_${dat.id}.labels.push(html.label[i]);
+                                        barChartData_${dat.id}.datasets[0].data.push(html.target[i]);
+                                        barChartData_${dat.id}.datasets[1].data.push(html.realisasi[i]);
+                                        
                                       }
+                                      window.myBar_${dat.id} = new Chart(ctx_${dat.id}).Bar(barChartData_${dat.id}, {});
+                                      legend(document.getElementById('legend_${dat.id}'), barChartData_${dat.id});
+                              
                                     }
                                   },
                                   beforeSend: function () {
@@ -276,24 +294,31 @@
                         <div class="row">
                             <center>
                               <div class="row">
-                                  <div class="col-sm-12">
                                       <div class="alert alert-judul">
                                           <h3>${dat.nama}</h3>
                                       </div>
-                                  </div>
                               </div>
+                              
                               <div class="row">
-                                   <canvas id="chart-area_${dat.id}" height="450px" width="600px"></canvas>
+                                <div class="col-sm-10">
+                                     <canvas id="chart-area_${dat.id}" height="450px" width="600px"></canvas>
+                                </div>
+                                <div class="col-sm-2">
+                                  <h5>Keterangan</h5>
+                                  <div id="legend_${dat.id}"></div>                   
+ 
+                                </div>
                               </div>
-                            
                             </center>
                         </div>
                         <script>
                           var pieData_${dat.id} = [];
+                          
                           $(function(){
                             /*GET DATA PIE*/
                             var ctx_${dat.id} = document.getElementById("chart-area_${dat.id}").getContext("2d");
-                            window.myPie_${dat.id} = new Chart(ctx_${dat.id}).Pie(pieData_${dat.id});
+                            //window.myPie_${dat.id} = new Chart(ctx_${dat.id}).Pie(pieData_${dat.id});
+                            var npie = 0 ;
                             //GET DATA FROM SERVER
                               $.ajax({
                                   type: "POST",
@@ -302,19 +327,23 @@
                                   success: function (html) {
                                     if (html.success == true) {
                                       jQuery.each(html.rows, function(i, val) {
-                                          myPie_${dat.id}.addData(
-                                          {
-                                            value: val.value,
-                                            color: "#"+val.color,
-                                            highlight: "#"+val.highlight,
-                                            label: val.nama
-                                          });
+                                              x = { 
+                                                    "value": val.value,
+                                                    "color": "#"+val.color,
+                                                    //highlight: "#"+val.highlight,
+                                                    "label": val.nama}
+                                              npie = pieData_${dat.id}.push(x);
+                                              //alert(pieData_${dat.id}[npie].value());
                                       });
+                                      console.log(pieData_${dat.id});
+                                      window.myPie_${dat.id} = new Chart(ctx_${dat.id}).Pie(pieData_${dat.id});
+                                      legend(document.getElementById('legend_${dat.id}'), pieData_${dat.id});
                                     }
                                   },
                                   beforeSend: function () {
                                   }
                                 });
+                              
                           });
                          
                         </script>
