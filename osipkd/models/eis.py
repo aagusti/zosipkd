@@ -7,13 +7,15 @@ from sqlalchemy import (
     Text,
     DateTime,
     String,
-    UniqueConstraint
+    UniqueConstraint,
+    ForeignKey
     )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm import (
     scoped_session,
     sessionmaker,
+    relationship, backref
     )
 from zope.sqlalchemy import ZopeTransactionExtension
 import transaction
@@ -58,6 +60,40 @@ class Eis(DefaultModel, Base):
             return  q
         return 
 
+class Slide(NamaModel, Base):
+    __tablename__ = 'slides'
+    __table_args__ = {'extend_existing':True, 
+                      'schema' : 'eis',}
+    source_type = Column(String(16)) #grid, image, chart-line, chart-pie, chart-bar
+    source_id   = Column(String(128))
+    order_id   = Column(Integer, default=0)
+    is_aktif   = Column(SmallInteger, default=0)
+
+class Chart(NamaModel, Base):
+    __tablename__ = 'charts'
+    __table_args__ = (UniqueConstraint('kode'),
+                      {'extend_existing':True, 
+                      'schema' : 'eis',})
+    label  = Column(String(128)) #digunakan jika chart membutuhkan label                  
+                      
+class ChartItem(NamaModel, Base):
+    __tablename__ = 'chart_items'
+    __table_args__ = (UniqueConstraint('kode'),
+                      {'extend_existing':True, 
+                      'schema' : 'eis',})
+    value_1 = Column(BigInteger, default=0)
+    value_2 = Column(BigInteger, default=0)
+    value_3 = Column(BigInteger, default=0)
+    value_4 = Column(BigInteger, default=0)
+    value_5 = Column(BigInteger, default=0)
+    value_6 = Column(BigInteger, default=0)
+    chart_id = Column(Integer, ForeignKey('eis.charts.id'))
+    source_type = Column(String(32), default='realisasi')
+    rekening_kd = Column(String(128))
+    color = Column(String(4))
+    highlight = Column(String(4))
+    #chart   = relationship("Chart", backref("chart_items"))
+    
 trigger_text = """
     CREATE function func_ar_payment_detail_aiu
     

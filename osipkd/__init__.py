@@ -143,10 +143,33 @@ routes = [
     ('gaji-potongan-csv', '/gaji-potongan/csv', 'CSV','osipkd.models.GajiFactory'),
     
     ('eis', '/eis', 'Eksekutif Summary',''),
-    ('carousel',        '/carousel',             'Daftar Carousel',  'osipkd.models.AdminFactory'),
-    ('carousel-add',    '/carousel/add',         'Tambah Carousel',  'osipkd.models.AdminFactory'),
-    ('carousel-edit',   '/carousel/{id}/edit',   'Edit Carousel',    'osipkd.models.AdminFactory'),
-    ('carousel-delete', '/carousel/{id}/delete', 'Hapus  Carousel',  'osipkd.models.AdminFactory'),
+    ('eis-act', '/eis/act/{act}', 'Data For Grid',''),
+
+    ('eis-slide',        '/eis-slide',             'Daftar Slide',  'osipkd.models.AdminFactory'),
+    ('eis-slide-add',    '/eis-slide/add',         'Tambah Slide',  'osipkd.models.AdminFactory'),
+    ('eis-slide-edit',   '/eis-slide/{id}/edit',   'Edit Slide',    'osipkd.models.AdminFactory'),
+    ('eis-slide-delete', '/eis-slide/{id}/delete', 'Hapus  Slide',  'osipkd.models.AdminFactory'),
+    ('eis-slide-act',    '/eis-slide/act/{act}',   'Action',           'osipkd.models.AdminFactory'),
+    ('eis-slide-csv',    '/eis-slide/csv',         'CSV',              'osipkd.models.AdminFactory'),
+
+    ('eis-chart',        '/eis-chart',             'Daftar Chart',  'osipkd.models.AdminFactory'),
+    ('eis-chart-add',    '/eis-chart/add',         'Tambah Chart',  'osipkd.models.AdminFactory'),
+    ('eis-chart-edit',   '/eis-chart/{id}/edit',   'Edit Chart',    'osipkd.models.AdminFactory'),
+    ('eis-chart-delete', '/eis-chart/{id}/delete', 'Hapus  Chart',  'osipkd.models.AdminFactory'),
+    ('eis-chart-act',    '/eis-chart/act/{act}',   'Action',           'osipkd.models.AdminFactory'),
+    ('eis-chart-csv',    '/eis-chart/csv',         'CSV',              'osipkd.models.AdminFactory'),
+
+    ('eis-chart-item',        '/eis-chart-item/{chart_id}',             'Daftar Chart Detail',  'osipkd.models.AdminFactory'),
+    ('eis-chart-item-add',    '/eis-chart-item/{chart_id}/add',         'Tambah Chart Detail',  'osipkd.models.AdminFactory'),
+    ('eis-chart-item-edit',   '/eis-chart-item/{chart_id}/{id}/edit',   'Edit Chart Detail',    'osipkd.models.AdminFactory'),
+    ('eis-chart-item-delete', '/eis-chart-item/{chart_id}/{id}/delete', 'Hapus  Chart Detail',  'osipkd.models.AdminFactory'),
+    ('eis-chart-item-act',    '/eis-chart-item/{chart_id}/act/{act}',   'Action',           'osipkd.models.AdminFactory'),
+    ('eis-chart-item-csv',    '/eis-chart-item/{chart_id}/csv',         'CSV',              'osipkd.models.AdminFactory'),
+    
+    ('carousel',        '/carousel',             'Daftar Tabular',  'osipkd.models.AdminFactory'),
+    ('carousel-add',    '/carousel/add',         'Tambah Tabular',  'osipkd.models.AdminFactory'),
+    ('carousel-edit',   '/carousel/{id}/edit',   'Edit Tabular',    'osipkd.models.AdminFactory'),
+    ('carousel-delete', '/carousel/{id}/delete', 'Hapus  Tabular',  'osipkd.models.AdminFactory'),
     ('carousel-act',    '/carousel/act/{act}',   'Action',           'osipkd.models.AdminFactory'),
     ('carousel-csv',    '/carousel/csv',         'CSV',              'osipkd.models.AdminFactory'),
     ]

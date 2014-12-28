@@ -6,7 +6,9 @@
       <li class="dropdown" tal:attributes="class request.matched_route.name in ['user', 'user-add', 'user-edit', 'user-delete'] and 'active'">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">EIS <b class="caret"></b></a>
         <ul class="dropdown-menu">
-          <li><a href="/carousel">Carousel</a></li>
+          <li><a href="/carousel">Tabular</a></li>
+          <li><a href="/eis-chart">Chart</a></li>
+          <li><a href="/eis-slide">Slide</a></li>
         </ul>
       </li>  
       <li tal:attributes="class request.path == '/potongan' and 'active'">

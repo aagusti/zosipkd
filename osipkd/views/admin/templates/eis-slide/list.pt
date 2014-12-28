@@ -6,15 +6,14 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Tahun</th>
                 <th>Kode</th>
                 <th>Uraian</th>
-                <th>Amt. Tahun</th>
-                <th>Amt. Bulan</th>
-                <th>Amt. Minggu</th>
-                <th>Amt. Hari</th>
+                <th>Type</th>
+                <th>URL/ID</th>
                 <th>Order</th>
                 <th>Aktif</th>
+                <th>Disabled</th>
+                
             </tr>
         </thead>
         <tbody>
@@ -28,7 +27,7 @@
       var mThn;
       var oTable;
       var iPos;
-      var oTableUrl = "/carousel/act/grid";
+      var oTableUrl = "/eis-slide/act/grid";
       Number.prototype.formatMoney = function(decPlaces, thouSeparator, decSeparator) {
         var n = this,
             decPlaces = isNaN(decPlaces = Math.abs(decPlaces)) ? 2 : decPlaces,
@@ -61,24 +60,23 @@
           ],
           "aoColumnDefs": [{
                         "bSearchable": false,
+                        "bVisible": false,
                         "aTargets": [0]
                     }],
           "aoColumns": [
               null,
-              {"width": "50px"},
               {"width": "75px"},
               null,
-              {"width": "100px", "sClass":"right"},
-              {"width": "100px", "sClass":"right"},
-              {"width": "100px", "sClass":"right"},
-              {"width": "100px", "sClass":"right"},
+              {"width": "100px"},
+              null,
               {"width": "50px", "sClass":"center"},
+              {"width": "60px", "sClass":"center"},
               {"width": "60px", "sClass":"center"},
           ]
         });
           
         var tb_array = [
-          '<div class="btn-carousel pull-left">',
+          '<div class="btn-eis-slide pull-left">',
           '	<button id="btn_add" class="btn btn btn-primary" type="button">Tambah</button>',
           '	<button id="btn_edit" class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',
@@ -109,16 +107,16 @@
         });
         
         $('#btn_add').click(function () {
-            window.location = '/carousel/add';
+            window.location = '/eis-slide/add';
         });
 
         $('#btn_edit').click(function () {
-            if (mID) window.location = '/carousel/'+mID+'/edit';
+            if (mID) window.location = '/eis-slide/'+mID+'/edit';
             else alert('Pilih Baris yang akan di edit');
         });
 
         $('#btn_delete').click(function () {
-            if (mID) window.location = '/carousel/'+mID+'/delete';
+            if (mID) window.location = '/eis-slide/'+mID+'/delete';
             else alert('Pilih Baris yang akan di hapus');
         });
         })

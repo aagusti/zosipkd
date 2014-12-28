@@ -21,10 +21,10 @@ from ..models import Base, DefaultModel, DBSession
 
 class KodeModel(DefaultModel):
     kode = Column(String(32))
-    disabled = Column(SmallInteger, nullable=False)
-    created  = Column(DateTime, nullable=False)
+    disabled = Column(SmallInteger, nullable=False, default=0)
+    created  = Column(DateTime, nullable=False, default=datetime.now)
     updated  = Column(DateTime)
-    create_uid  = Column(Integer, nullable=False)
+    create_uid  = Column(Integer, nullable=False, default=1)
     update_uid  = Column(Integer)
     
     @classmethod
