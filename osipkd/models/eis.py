@@ -75,7 +75,8 @@ class Chart(NamaModel, Base):
     __table_args__ = (UniqueConstraint('kode'),
                       {'extend_existing':True, 
                       'schema' : 'eis',})
-    label  = Column(String(128)) #digunakan jika chart membutuhkan label                  
+    chart_type = Column(String(16))                  
+    label      = Column(String(128)) #digunakan jika chart membutuhkan label                  
                       
 class ChartItem(NamaModel, Base):
     __tablename__ = 'chart_items'
@@ -93,20 +94,8 @@ class ChartItem(NamaModel, Base):
     rekening_kd = Column(String(128))
     color = Column(String(6))
     highlight = Column(String(6))
-    #chart   = relationship("Chart", backref("chart_items"))
-    
-trigger_text = """
-    CREATE function func_ar_payment_detail_aiu
-    
-    CREATE TRIGGER trg_insert_update AFTER INSERT,UPDATE ON ar_payment_item
-    FOR EACH ROW BEGIN
-      IF NEW.rank = 0 THEN
-         SET NEW.rank = (SELECT IFNULL(MAX(a.rank),0) + 1
-                          FROM authors AS a
-                           WHERE a.id = NEW.pub_id);
-      END IF;
-    END
-    """
+    is_sum   = Column(SmallInteger, default=0)
+    chart   = relationship("Chart")
     
 class LastUpdate(DefaultModel, Base):
     __tablename__ = 'last_update'

@@ -38,18 +38,33 @@
                ${error}</p>
         </div>
       </div>
-      
-      <div class="form-group" tal:define="field form['source_type']" id="item-${field.oid}">
-        <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
-                ${field.title}</label>
-        <div class="col-md-10">
-           ${structure:field.serialize()}
-            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-               tal:repeat="error field.error.messages()">
-               ${error}</p>
+      <div class="form-group">
+        <div class="col-md-6">
+          <div class="form-group" tal:define="field form['source_type']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-6">
+               ${structure:field.serialize()}
+                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                   tal:repeat="error field.error.messages()">
+                   ${error}</p>
+            </div>
+          </div>
         </div>
+        <div class="col-md-6">
+          <div class="form-group" tal:define="field form['is_sum']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-6" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-6">
+               ${structure:field.serialize()}
+                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                   tal:repeat="error field.error.messages()">
+                   ${error}</p>
+            </div>
+          </div>
+        </div>
+        
       </div>
-      
       <div class="form-group" tal:define="field form['rekening_kd']" id="item-${field.oid}">
         <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                 ${field.title}</label>

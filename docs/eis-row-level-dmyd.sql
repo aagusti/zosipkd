@@ -18,11 +18,13 @@ END
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
+--ALTER FUNCTION eis.f_ar_payment_detail_aiu()
+--  OWNER TO aagusti;
 
 /*
 update eis.ar_payment_detail 
    set bulan = extract(month from tanggal),
        tahun = extract(year from tanggal),
        hari = extract(day from tanggal),
-       minggu = extract(dow from tanggal)
+       minggu = extract(week from tanggal)
        */

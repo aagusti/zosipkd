@@ -8,6 +8,7 @@
                 <th>ID</th>
                 <th>Kode</th>
                 <th>Uraian</th>
+                <th>Type</th>
             </tr>
         </thead>
         <tbody>
@@ -61,6 +62,8 @@
               null,
               {"width": "75px"},
               null,
+              {"width": "75px"},
+              
           ]
         });
           
