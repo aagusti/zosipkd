@@ -44,15 +44,14 @@ class eis_calc(BaseViews):
         eis_month = eis_date.month
         eis_day   = eis_date.day
 
-        eis_year  = eis_date.year
-        eis_month = 2
-        eis_day   = 8
+        eis_month = 8
+        eis_day   = 3
 
         eis_date  = date(eis_year,eis_month,eis_day) 
         eis_week   = eis_date.isocalendar()[1]
         
+        #UPDATE DATA wells
         rows = DBSession.query(Eis).filter(Eis.tahun==tahun).all()
-        
         for row in rows:
             row_data = DBSession.query(func.sum(AR.amount).label('s')).\
                           filter(AR.tahun==tahun, AR.bulan < eis_month,
@@ -81,6 +80,78 @@ class eis_calc(BaseViews):
             if row_data:
                 row.amt_minggu = row_data - row.amt_hari
         DBSession.flush()
+        #UPDATE DATA Chart Item Untuk Realisasi
+        rows = DBSession.query(ChartItem).filter(ChartItem.source_type=='realisasi').all()
+        for row in rows:
+            #JIKA PIE hanya 1 kolom yang di update
+            row_dict = row2dict(row)
+            tupKode = row.rekening_kd.split(',') # split dulu kode rekening yang digunakan
+            if row.chart.chart_type=='pie': 
+                row_sum = 0
+                for tup in tupKode:
+                    row_data = DBSession.query(func.sum(AR.amount).label('s')).\
+                          filter(AR.tahun==tahun,
+                                 AR.kode.ilike("%s%%" % tup.strip())).scalar()
+                    if row_data:
+                        row_sum += row_data
+                row.value_1 = row_sum
+            elif row.is_sum:
+                if row.chart.label[:3]=='JAN':
+                    row_sum = 0
+                    for i in range(1,7):
+                        tupKode = row.rekening_kd.split(',')
+                        for tup in tupKode:
+                            row_data = DBSession.query(func.sum(AR.amount).label('s')).\
+                                  filter(AR.tahun==tahun,
+                                         AR.bulan == i,
+                                         AR.kode.ilike("%s%%" % tup.strip())).scalar()
+                            if row_data:
+                                row_sum = row_sum+row_data
+                        row_dict['value_%s' %i] = row_sum
+                    print row_dict
+                    row.from_dict(row_dict)
+                    
+                elif row.chart.label[:3]=='JUL':
+                    row_sum = 0
+                    for i in range(7,13):
+                        tupKode = row.rekening_kd.split(',')
+                        for tup in tupKode:
+                            row_data = DBSession.query(func.sum(AR.amount).label('s')).\
+                                  filter(AR.tahun==tahun,
+                                         AR.bulan == i,
+                                         AR.kode.ilike("%s%%" % tup.strip())).scalar()
+                            if row_data:
+                                row_sum += row_data
+                        row_dict['value_%s' % i-6] = row_sum
+                    row.from_dict(row_dict)
+       
+            else:
+                if row.chart.label[:3]=='JAN':
+                    for i in range(1,7):
+                        tupKode = row.rekening_kd.split(',')
+                        row_sum = 0
+                        for tup in tupKode:
+                            row_data = DBSession.query(func.sum(AR.amount).label('s')).\
+                                  filter(AR.tahun==tahun,
+                                         AR.bulan == i,
+                                         AR.kode.ilike("%s%%" % tup.strip())).scalar()
+                            if row_data:
+                                row_sum += row_data
+                        row_dict['value_%s' %i] = row_sum
+                    row.from_dict(row_dict)
+                elif row.chart.label[:3]=='JUL':
+                    for i in range(7,13):
+                        tupKode = row.rekening_kd.split(',')
+                        row_sum = 0
+                        for tup in tupKode:
+                            row_data = DBSession.query(func.sum(AR.amount).label('s')).\
+                                  filter(AR.tahun==tahun,
+                                         AR.bulan == i,
+                                         AR.kode.ilike("%s%%" % tup.strip())).scalar()
+                            if row_data:
+                                row_sum += row_data
+                        row_dict['value_%s' % i-6] = row_sum
+                    row.from_dict(row_dict)
+        DBSession.flush()
         return {"minggu":eis_week}
-                
         

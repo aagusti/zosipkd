@@ -29,6 +29,15 @@ from osipkd.views.base_view import BaseViews
 SESS_ADD_FAILED = 'Tambah eis-chart gagal'
 SESS_EDIT_FAILED = 'Edit eis-chart gagal'
 
+@colander.deferred
+def deferred_chart_type(node, kw):
+    values = kw.get('chart_types', [])
+    return widget.SelectWidget(values=values)
+    
+CHART_TYPES = (('line','Line'),
+           ('bar','Bar'),
+           ('pie', 'Pie'))
+           
 class AddSchema(colander.Schema):
     kode  = colander.SchemaNode(
                     colander.String(),
@@ -42,6 +51,12 @@ class AddSchema(colander.Schema):
     label = colander.SchemaNode(
                     colander.String(),
                     validator=colander.Length(max=128)) 
+                    
+    chart_type = colander.SchemaNode(
+                    colander.String(),
+                    widget=deferred_chart_type
+                    )
+                    
 class EditSchema(AddSchema):
     id = colander.SchemaNode(colander.String(),
             missing=colander.drop,
@@ -72,6 +87,8 @@ class view_eis_chart(BaseViews):
             columns.append(ColumnDT('id'))
             columns.append(ColumnDT('kode'))
             columns.append(ColumnDT('nama'))
+            columns.append(ColumnDT('chart_type'))
+            
             query = DBSession.query(Chart)
             rowTable = DataTables(req, Chart, query, columns)
             return rowTable.output_result()
@@ -89,7 +106,7 @@ class view_eis_chart(BaseViews):
                 
     def get_form(self, class_form, row=None):
         schema = class_form(validator=self.form_validator)
-        schema = schema.bind()
+        schema = schema.bind(chart_types=CHART_TYPES)
         schema.request = self.request
         if row:
           schema.deserialize(row)

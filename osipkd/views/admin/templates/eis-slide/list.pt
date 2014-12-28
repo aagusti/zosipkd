@@ -81,7 +81,7 @@
           '	<button id="btn_edit" class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',
           '	<!--button id="btn_pdf" class="btn btn btn-warning" type="button">PDF</button-->',
-          '	<button id="btn_csv" class="btn btn btn-default" type="button">CSV</button>',
+          '	<button id="btn_calc" class="btn btn btn-default" type="button">Hitung</button>',
           '	&nbsp;',
           '</div>',
         ];
@@ -104,6 +104,10 @@
                         $(this).addClass('row_selected');
                         /*oTable2.fnReloadAjax("egaji/grid2?id=" + mID);*/                
             }
+        });
+
+        $('#btn_calc').click(function () {
+            window.location = '/eis/calc-all';
         });
         
         $('#btn_add').click(function () {

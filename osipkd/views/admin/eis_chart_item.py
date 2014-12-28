@@ -71,11 +71,16 @@ class AddSchema(colander.Schema):
                     colander.String(),
                     validator=colander.Length(max=32),
                     widget=widget.SelectWidget(values=SOURCE_TYPE)) # deferred_source_type)
+    is_sum = colander.SchemaNode(
+                    colander.Boolean(),
+                    title = 'Jumlah Kumulatif'
+                    ) # deferred_source_type)
                     
     rekening_kd = colander.SchemaNode(
                     colander.String(),
                     validator=colander.Length(max=128),
                     missing=colander.drop)
+                    
     color       = colander.SchemaNode(
                     colander.String(),
                     validator=colander.Length(max=6),
@@ -167,8 +172,7 @@ class view_eis_chart_item(BaseViews):
         row.from_dict(values)
         row.updated = datetime.now()
         row.update_uid = user.id
-        row.is_aktif = 'is_aktif' in values and values['is_aktif'] and 1 or 0
-        row.disabled = 'disabled' in values and values['disabled'] and 1 or 0
+        row.is_sum   = 'is_sum' in values and values['is_sum'] and 1 or 0
         DBSession.add(row)
         DBSession.flush()
         return row

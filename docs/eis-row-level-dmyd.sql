@@ -18,8 +18,8 @@ END
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION eis.f_ar_payment_detail_aiu()
-  OWNER TO aagusti;
+--ALTER FUNCTION eis.f_ar_payment_detail_aiu()
+--  OWNER TO aagusti;
 
 /*
 update eis.ar_payment_detail 
