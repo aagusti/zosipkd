@@ -149,9 +149,14 @@
                               </div>
                             </div>
                             <div class="row">
-                                 <canvas id="canvas_${dat.id}" height="400px" width="800px"></canvas>
-                                 <p>
-                                 <div id="legend_${dat.id}"></div>
+                              <div class="col-sm-10">
+                                   <canvas id="canvas_${dat.id}" height="400px" width="800px"></canvas>
+                              </div>
+                              <div class="col-sm-2">
+                                <h5>Keterangan</h5>
+                                <div id="legend_${dat.id}"></div>                   
+
+                              </div>
                             </div>
                               
                           </center>
@@ -228,10 +233,16 @@
                               </div>
                             </div>
                             <div class="row">
-                                 <canvas id="canvas_${dat.id}" height="400px" width="800px"></canvas>
-                                 <p>
-                                 <div id="legend_${dat.id}"></div>
+                              <div class="col-sm-10">
+                                   <canvas id="canvas_${dat.id}" height="400px" width="800px"></canvas>
+                              </div>
+                              <div class="col-sm-2">
+                                <h5>Keterangan</h5>
+                                <div id="legend_${dat.id}"></div>                   
+
+                              </div>
                             </div>
+
                               
                           </center>
                         </div>
@@ -301,7 +312,7 @@
                               
                               <div class="row">
                                 <div class="col-sm-10">
-                                     <canvas id="chart-area_${dat.id}" height="450px" width="600px"></canvas>
+                                     <canvas id="chart-area_${dat.id}" height="400px" width="600px"></canvas>
                                 </div>
                                 <div class="col-sm-2">
                                   <h5>Keterangan</h5>
