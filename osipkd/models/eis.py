@@ -90,8 +90,8 @@ class ChartItem(NamaModel, Base):
     chart_id = Column(Integer, ForeignKey('eis.charts.id'))
     source_type = Column(String(32), default='realisasi')
     rekening_kd = Column(String(128))
-    color = Column(String(4))
-    highlight = Column(String(4))
+    color = Column(String(6))
+    highlight = Column(String(6))
     #chart   = relationship("Chart", backref("chart_items"))
     
 trigger_text = """

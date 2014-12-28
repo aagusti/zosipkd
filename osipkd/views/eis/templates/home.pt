@@ -3,7 +3,7 @@
         <script>
             $(function(){
                 $('.carousel').carousel({
-                    interval: 3000
+                    interval: 5000
                 });
             });
         </script>
@@ -302,7 +302,6 @@
                                   success: function (html) {
                                     if (html.success == true) {
                                       jQuery.each(html.rows, function(i, val) {
-                                          alert(val.nama);
                                           myPie_${dat.id}.addData(
                                           {
                                             value: val.value,
