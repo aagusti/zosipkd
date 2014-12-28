@@ -166,6 +166,9 @@ routes = [
     ('eis-chart-item-act',    '/eis-chart-item/{chart_id}/act/{act}',   'Action',           'osipkd.models.AdminFactory'),
     ('eis-chart-item-csv',    '/eis-chart-item/{chart_id}/csv',         'CSV',              'osipkd.models.AdminFactory'),
     
+    ('eis-calc-all',    '/eis/calc-all',         'Hitung Data EIS',              ''),
+    
+    
     ('carousel',        '/carousel',             'Daftar Tabular',  'osipkd.models.AdminFactory'),
     ('carousel-add',    '/carousel/add',         'Tambah Tabular',  'osipkd.models.AdminFactory'),
     ('carousel-edit',   '/carousel/{id}/edit',   'Edit Tabular',    'osipkd.models.AdminFactory'),

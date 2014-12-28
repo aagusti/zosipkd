@@ -38,6 +38,7 @@ class Eis(DefaultModel, Base):
     order_id   = Column(Integer)
     is_aktif   = Column(SmallInteger)
     disabled    = Column(SmallInteger, default=0)
+
     @classmethod
     def sum_data(cls, kode, tahun):
         q = DBSession.query(cls).filter_by(
@@ -131,7 +132,10 @@ class ARPaymentDetail(NamaModel, Base):
     is_kota      = Column(SmallInteger)
     sumber_data  = Column(String(32)) #Manual, PBB, BPHTB, PAD
     sumber_id    = Column(SmallInteger)#1, 2, 3, 4
-    
+    bulan = Column(Integer)
+    minggu = Column(Integer)
+    hari = Column(Integer)
+        
 class ARInvoiceDetail(NamaModel, Base):
     __tablename__ = 'ar_invoice_detail'
     __table_args__ = {'extend_existing':True, 
@@ -148,6 +152,9 @@ class ARInvoiceDetail(NamaModel, Base):
     is_kota      = Column(SmallInteger)
     sumber_data  = Column(String(32)) #Manual, PBB, BPHTB, PAD
     sumber_id    = Column(SmallInteger)#1, 2, 3, 4
-    
+    bulan = Column(Integer)
+    minggu = Column(Integer)
+    hari = Column(Integer)
+        
     
     
