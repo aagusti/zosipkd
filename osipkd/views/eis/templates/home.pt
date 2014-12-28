@@ -3,7 +3,7 @@
         <script>
             $(function(){
                 $('.carousel').carousel({
-                    interval: 2000
+                    interval: 5000
                 });
             });
             var bar_chart_options = {
