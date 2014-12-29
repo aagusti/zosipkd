@@ -104,7 +104,7 @@ class eis_calc(BaseViews):
                                          AR.kode.ilike("%s%%" % tup.strip())).scalar()
                             if row_data:
                                 row_sum = row_sum+row_data
-                        row_dict['value_%s' %i] = str(float(row_sum))
+                        row_dict['value_%s' %i] = row_sum
                     print row_dict
                     row.from_dict(row_dict)
                     
@@ -119,7 +119,7 @@ class eis_calc(BaseViews):
                                          AR.kode.ilike("%s%%" % tup.strip())).scalar()
                             if row_data:
                                 row_sum += row_data
-                        row_dict['value_%s' % str(i-6)] = str(float(row_sum))
+                        row_dict['value_%s' % str(i-6)] = row_sum
                     row.from_dict(row_dict)
        
             else:
@@ -134,7 +134,7 @@ class eis_calc(BaseViews):
                                          AR.kode.ilike("%s%%" % tup.strip())).scalar()
                             if row_data:
                                 row_sum += row_data
-                        row_dict['value_%s' %i] = str(float(row_sum))
+                        row_dict['value_%s' %i] = row_sum
                     row.from_dict(row_dict)
                 elif row.chart.label[:3]=='JUL':
                     for i in range(7,13):
@@ -147,7 +147,7 @@ class eis_calc(BaseViews):
                                          AR.kode.ilike("%s%%" % tup.strip())).scalar()
                             if row_data:
                                 row_sum += row_data
-                        row_dict['value_%s' % str(i-6)] = str(float(row_sum))
+                        row_dict['value_%s' % str(i-6)] = row_sum
                     row.from_dict(row_dict)
         DBSession.flush()
         return {"minggu":eis_week}
