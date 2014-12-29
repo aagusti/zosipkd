@@ -41,6 +41,7 @@ class RemoveSlashNotFoundViewFactory(object):
             # backwards compat for an append_notslash_view registered via
             # config.set_notfound_view instead of as a proper exception view
             context = getattr(request, 'exception', None) or context
+        
         path = request.path
         registry = request.registry
         mapper = registry.queryUtility(IRoutesMapper)
@@ -52,8 +53,8 @@ class RemoveSlashNotFoundViewFactory(object):
                     if qs:
                         noslash_path += '?' + qs
                     return HTTPFound(location=noslash_path)
-        #routes = request.registry.settings.getRoutes() 
-        #print list(routes)
+        routes = request.url
+        print '************',routes
         #return HTTPNotFound()
         request.session.flash('Halaman yang anda cari tidak ditemukan','error')
         
@@ -166,6 +167,13 @@ routes = [
     ('eis-chart-item-act',    '/eis-chart-item/{chart_id}/act/{act}',   'Action',           'osipkd.models.AdminFactory'),
     ('eis-chart-item-csv',    '/eis-chart-item/{chart_id}/csv',         'CSV',              'osipkd.models.AdminFactory'),
     
+    ('eis-item',        '/eis-item',             'Daftar Penerimaan',  'osipkd.models.AdminFactory'),
+    ('eis-item-add',    '/eis-item/add',         'Tambah Penerimaan',  'osipkd.models.AdminFactory'),
+    ('eis-item-edit',   '/eis-item/{id}/edit',   'Edit Penerimaan',    'osipkd.models.AdminFactory'),
+    ('eis-item-delete', '/eis-item/{id}/delete', 'Hapus  Penerimaan',  'osipkd.models.AdminFactory'),
+    ('eis-item-act',    '/eis-item/act/{act}',   'Action',           'osipkd.models.AdminFactory'),
+    ('eis-item-csv',    '/eis-item/csv',         'CSV',              'osipkd.models.AdminFactory'),
+
     ('eis-calc-all',    '/eis/calc-all',         'Hitung Data EIS',              ''),
     
     

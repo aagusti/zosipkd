@@ -30,6 +30,9 @@
     <script type="text/javascript" src="/deform_static/scripts/deform.js"></script>    
     <script type="text/javascript" src="/deform_static/scripts/jquery.maskMoney-1.4.1.js"></script>    
     <script type="text/javascript" src="/deform_static/scripts/typeahead.min.js"></script>    
+    <script type="text/javascript" src="/deform_static/scripts/jquery-ui.js"></script>
+    <script type="text/javascript" src="/deform_static/scripts/pickadate.js"></script>  
+    
   </head>
 
   <body>

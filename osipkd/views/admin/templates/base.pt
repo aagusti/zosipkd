@@ -9,6 +9,7 @@
           <li><a href="/carousel">Tabular</a></li>
           <li><a href="/eis-chart">Chart</a></li>
           <li><a href="/eis-slide">Slide</a></li>
+          <li><a href="/eis-item">Penerimaan</a></li>
         </ul>
       </li>  
       <li tal:attributes="class request.path == '/potongan' and 'active'">
