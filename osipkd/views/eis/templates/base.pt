@@ -2,7 +2,7 @@
 <div metal:fill-slot="nav">
     <ul class="nav navbar-nav">
       <li tal:attributes="class request.path == '/app' and 'active'">
-          <a href="/eis"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+          <a href="/" class="navbar-brand"><strong>DINAS PENDAPATAN DAERAH KOTA BOGOR</strong></a></li>
     </ul>
 </div>
 

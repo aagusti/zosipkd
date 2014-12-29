@@ -93,18 +93,18 @@
                             <th>NIP</th>
                             <th>Nama</th>
                             <th>Bersih</th>
-                            <th>Pot-01</th>
-                            <th>Pot-02</th>
-                            <th>Pot-03</th>
-                            <th>Pot-04</th>
-                            <th>Pot-05</th>
-                            <th>Pot-06</th>
-                            <th>Pot-07</th>
-                            <th>Pot-08</th>
-                            <th>Pot-09</th>
-                            <th>Pot-10</th>
-                            <th>Pot-11</th>
-                            <th>Pot-12</th>
+                            <th>Bank</th>
+                            <th>KPPK</th>
+                            <th>PMI</th>
+                            <th>KPRI</th>
+                            <th>KSP</th>
+                            <th>BPR</th>
+                            <th>UPT 1</th>
+                            <th>UPT 2</th>
+                            <th>PGRI</th>
+                            <th>K3S</th>
+                            <th>Koran</th>
+                            <th>Umroh</th>
                         </tr>
                     </thead>
                     <tbody>

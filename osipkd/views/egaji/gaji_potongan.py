@@ -35,9 +35,9 @@ class BankSchema(colander.Schema):
     amount_01 = colander.SchemaNode(
                     colander.Integer(),
                     widget = mwidget,
-                    title = "Potongan-01",
                     default = 0, 
-                    missing=colander.drop,                    
+                    missing=colander.drop, 
+                    title='Bank',
                 )                                
                 
 class BendaharaSchema(colander.Schema):
@@ -46,36 +46,36 @@ class BendaharaSchema(colander.Schema):
                     colander.Integer(),
                     widget = mwidget,
                     default = 0, 
-                    title = "Potongan-02",
-                    missing=0,                    
+                    missing=0, 
+                    title='KPPK',                    
                 )                                
     amount_03 = colander.SchemaNode(
                     colander.Integer(),
                     widget = mwidget,
-                    title = "Potongan-03",
                     default = 0, 
-                    missing=0,                    
+                    missing=0, 
+                    title='PMI',                    
                 )                                
     amount_04 = colander.SchemaNode(
                     colander.Integer(),
                     default = 0, 
                     widget = mwidget,
-                    title = "Potongan-04",
-                    missing=0,                    
+                    missing=0, 
+                    title='KPRI',                    
                 )                                
     amount_05 = colander.SchemaNode(
                     colander.Integer(),
                     widget = mwidget,
-                    default = 0, 
-                    title = "Potongan-05",
-                    missing=0,                    
+                    default = 0,
+                    missing=0, 
+                    title='KSP',                    
                 )                                
     amount_06 = colander.SchemaNode(
                     colander.Integer(),
                     widget = mwidget,
-                    default = 0, 
-                    title = "Potongan-06",
-                    missing=0,                    
+                    default = 0,
+                    missing=0, 
+                    title='BPR',                    
                 )                                
 
 class BPSchema(colander.Schema):
@@ -83,44 +83,44 @@ class BPSchema(colander.Schema):
     amount_07 = colander.SchemaNode(
                     colander.Integer(),
                     widget = mwidget,
-                    default = 0, 
-                    title = "Potongan-07",
-                    missing=0,                    
+                    default = 0,
+                    missing=0, 
+                    title='UPT 1',                    
                 )                                
     amount_08 = colander.SchemaNode(
                     colander.Integer(),
                     widget = mwidget,
-                    default = 0, 
-                    title = "Potongan-08",
-                    missing=0,                    
+                    default = 0,
+                    missing=0, 
+                    title='UPT 2',                    
                 )                                
     amount_09 = colander.SchemaNode(
                     colander.Integer(),
                     widget = mwidget,
                     default = 0, 
-                    title = "Potongan-09",
-                    missing=0,                    
+                    title = "PGRI",
+                    missing=0,                     
                 )                                
     amount_10 = colander.SchemaNode(
                     colander.Integer(),
                     widget = mwidget,
-                    title = "Potongan-10",
+                    title = "K3S",
                     default = 0, 
-                    missing=0,                    
+                    missing=0,                     
                 )                                
     amount_11 = colander.SchemaNode(
                     colander.Integer(),
                     widget = mwidget,
                     default = 0, 
-                    title = "Potongan-11",
-                    missing=0,                    
+                    title = "Koran",
+                    missing=0,                     
                 )                                
     amount_12 = colander.SchemaNode(
                     colander.Integer(),
                     widget = mwidget,
                     default = 0, 
-                    title = "Potongan-12",
-                    missing=0,                    
+                    missing=0, 
+                    title='Umroh',                    
                 )                                
 
                 

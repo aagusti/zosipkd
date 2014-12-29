@@ -145,5 +145,21 @@ class ARInvoiceDetail(NamaModel, Base):
     minggu = Column(Integer)
     hari = Column(Integer)
         
-    
+class ARTargetDetail(NamaModel, Base):
+    __tablename__ = 'ar_target_detail'
+    __table_args__ = {'extend_existing':True, 
+                      'schema' : 'eis',}
+    tahun = Column(Integer)
+    amount_01 = Column(BigInteger)
+    amount_02 = Column(BigInteger)
+    amount_03 = Column(BigInteger)
+    amount_04 = Column(BigInteger)
+    amount_05 = Column(BigInteger)
+    amount_06 = Column(BigInteger)
+    amount_07 = Column(BigInteger)
+    amount_08 = Column(BigInteger)
+    amount_09 = Column(BigInteger)
+    amount_10 = Column(BigInteger)
+    amount_11 = Column(BigInteger)
+    amount_12 = Column(BigInteger)
     
