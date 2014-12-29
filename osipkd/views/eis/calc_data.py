@@ -119,7 +119,7 @@ class eis_calc(BaseViews):
                                          AR.kode.ilike("%s%%" % tup.strip())).scalar()
                             if row_data:
                                 row_sum += row_data
-                        row_dict['value_%s' % i-6] = str(float(row_sum))
+                        row_dict['value_%d' % i-6] = str(float(row_sum))
                     row.from_dict(row_dict)
        
             else:
@@ -147,7 +147,7 @@ class eis_calc(BaseViews):
                                          AR.kode.ilike("%s%%" % tup.strip())).scalar()
                             if row_data:
                                 row_sum += row_data
-                        row_dict['value_%s' % i-6] = str(float(row_sum))
+                        row_dict['value_%d' % i-6] = str(float(row_sum))
                     row.from_dict(row_dict)
         DBSession.flush()
         return {"minggu":eis_week}
