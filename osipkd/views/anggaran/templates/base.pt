@@ -1,0 +1,28 @@
+<html metal:use-macro="load: ../../templates/main.pt">
+<div metal:fill-slot="nav">
+    <ul class="nav navbar-nav">
+      <li tal:attributes="class request.path == '/app' and 'active'">
+          <a href="/ak-skpd"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+         
+      <li tal:attributes="class request.path == '/gaji' and 'active'">
+          <a href="/tu-skpd-penetapan">Penetapan</a></li>
+      <li tal:attributes="class request.path == '/potongan' and 'active'">
+          <a href="/tu-skpd-realisasi">Realisasi</a></li>
+          
+      <li tal:attributes="class request.path == '/potongan' and 'active'">
+          <a href="/ak-skpd-jurnal">Jurnal</a></li>
+          
+      <li tal:attributes="class request.path == '/potongan' and 'active'">
+          <a href="/ak-skpd-lap">Laporan</a></li>
+          
+    </ul>
+</div>
+
+<div metal:fill-slot="content">
+    <div metal:define-slot="content"></div> 
+</div>
+<div metal:fill-slot="scripts">
+    <div metal:define-slot="scripts"></div> 
+</div>
+</html>
+

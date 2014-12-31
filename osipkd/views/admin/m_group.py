@@ -162,7 +162,7 @@ class view_group(BaseViews):
         request.session.flash(msg, 'error')
         return route_list()
 
-    @view_config(route_name='group-edit', renderer='templates/group/edit.pt',
+    @view_config(route_name='group-edit', renderer='templates/group/add.pt',
                  permission='edit')
     def view_group_edit(self):
         request = self.request

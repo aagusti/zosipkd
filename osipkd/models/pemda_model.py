@@ -114,7 +114,7 @@ class Rekening(NamaModel, Base):
     level_id  = Column(SmallInteger)
     parent_id  = Column(BigInteger, ForeignKey('admin.rekenings.id'))
     disabled = Column(SmallInteger)
-    cildren   = relationship("Rekening", backref=backref('parent', remote_side='Rekening.id'))
+    children   = relationship("Rekening", backref=backref('parent', remote_side='Rekening.id'))
     
     @classmethod
     def get_next_level(cls,id):

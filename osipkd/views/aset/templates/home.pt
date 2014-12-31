@@ -1,0 +1,8 @@
+<html metal:use-macro="load: aset.pt">
+    <div metal:fill-slot="admin" class="panel panel-default">
+        <div class="panel-heading">ASSET</div>
+        <div class="panel-body">
+            ASSET
+        </div>
+    </div>
+</html>

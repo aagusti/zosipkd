@@ -68,7 +68,9 @@ class eis(BaseViews):
                       order_by(ChartItem.id)
             for row in rows:
                 json_data[row.source_type] = [row.value_1,row.value_2,row.value_3,
-                                       row.value_4,row.value_5,row.value_6]
+                                              row.value_4,row.value_5,row.value_6, 
+                                              row.value_7,row.value_8,row.value_9,
+                                              row.value10,row.value11,row.value12,]
             
             
             json_data['success']= True

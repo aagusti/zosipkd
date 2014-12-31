@@ -5,13 +5,17 @@ from sqlalchemy import (
     Integer,
     Text,
     DateTime,
-    func
+    func,
+    String,
+    ForeignKey
     )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm import (
     scoped_session,
     sessionmaker,
+    relationship,
+    backref
     )
 from zope.sqlalchemy import ZopeTransactionExtension
 import transaction
@@ -192,10 +196,27 @@ class User(UserMixin, BaseModel, CommonModel, Base):
             return cls.get_by_email(identity)
         return cls.get_by_name(identity)        
             
-
+class GroupRoutePermission(Base, CommonModel):
+    __tablename__  = 'groups_routes_permissions'
+    __table_args__ = {'extend_existing':True,}    
+    route_id = Column(Integer, ForeignKey("routes.id"),nullable=False, primary_key=True)
+    group_id = Column(Integer, ForeignKey("groups.id"),nullable=False, primary_key=True)
+    routes = relationship("Route", backref=backref('routepermission'))
+    groups = relationship("Group",backref= backref('grouppermission'))
+    
+    
+    
 class ExternalIdentity(ExternalIdentityMixin, Base):
     pass
-    
+
+class AkarFactory(object):
+    def __init__(self, request):
+        self.__acl__ = [(Allow, 'Admin', ALL_PERMISSIONS), 
+                        (Allow, Authenticated, 'view'),]
+        
+        for x, y in group_app_permissions:
+            self.__acl__.append((Allow, x, y))
+            
 class RootFactory(object):
     def __init__(self, request):
         self.__acl__ = [(Allow, 'Admin', ALL_PERMISSIONS), 
@@ -225,7 +246,7 @@ class AdminFactory(RootFactory):
         self.__acl__.append((Allow, 'g:admin', 'add'))
         self.__acl__.append((Allow, 'g:admin', 'edit'))
         self.__acl__.append((Allow, 'g:admin', 'delete'))
-        print request.url
+
         
 class ResourceFactory(RootFactory):
     def __init__(self, request):
@@ -241,7 +262,8 @@ class ResourceFactory(RootFactory):
             self.__acl__ = self.resource.__acl__
             for perm_user, perm_name in self.resource.perms_for_user(request.user):
                 self.__acl__.append((Allow, perm_user, perm_name,))
-            
+
+                
 def init_model():
     ziggurat_model_init(User, Group, UserGroup, GroupPermission, UserPermission,
                    UserResourcePermission, GroupResourcePermission, Resource,

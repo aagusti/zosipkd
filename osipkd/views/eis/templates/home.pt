@@ -215,7 +215,9 @@
                                         lineChartData_${dat.id}.datasets[1].data.push(html.realisasi[i]);
                                         
                                       }
-                                      window.myLine_${dat.id} = new Chart(ctx_${dat.id}).Line(lineChartData_${dat.id}, {});
+                                      window.myLine_${dat.id} = new Chart(ctx_${dat.id}).Line(lineChartData_${dat.id}, {
+                                        //responsive: true;
+                                      });
                                       legend(document.getElementById('legend_${dat.id}'), lineChartData_${dat.id});
                               
                                     }
@@ -298,7 +300,10 @@
                                         barChartData_${dat.id}.datasets[1].data.push(html.realisasi[i]);
                                         
                                       }
-                                      window.myBar_${dat.id} = new Chart(ctx_${dat.id}).Bar(barChartData_${dat.id}, {});
+                                      window.myBar_${dat.id} = new Chart(ctx_${dat.id}).Bar(barChartData_${dat.id}, 
+                                      {
+                                      //responsive: true;
+                                      });
                                       legend(document.getElementById('legend_${dat.id}'), barChartData_${dat.id});
                               
                                     }
@@ -355,7 +360,9 @@
                                               //alert(pieData_${dat.id}[npie].value());
                                       });
                                       console.log(pieData_${dat.id});
-                                      window.myPie_${dat.id} = new Chart(ctx_${dat.id}).Pie(pieData_${dat.id});
+                                      window.myPie_${dat.id} = new Chart(ctx_${dat.id}).Pie(pieData_${dat.id},{
+                                      //responsive: true;
+                                      });
                                       legend(document.getElementById('legend_${dat.id}'), pieData_${dat.id});
                                     }
                                   },

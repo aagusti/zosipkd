@@ -41,9 +41,6 @@ class Blok1(colander.Schema):
                     colander.Integer(),
                     default = 0,
                     missing = 0)
-
-class Blok2(colander.Schema):
-                
     value_4   = colander.SchemaNode(
                     colander.Integer(),
                     default = 0,
@@ -56,6 +53,35 @@ class Blok2(colander.Schema):
                     colander.Integer(),
                     default = 0,
                     missing = 0)
+                    
+class Blok2(colander.Schema):
+    value_7 = colander.SchemaNode(
+                    colander.Integer(),
+                    default = 0,
+                    missing = 0)
+                    
+    value_8 = colander.SchemaNode(
+                    colander.Integer(),
+                    default = 0,
+                    missing = 0)
+                
+    value_9 = colander.SchemaNode(
+                    colander.Integer(),
+                    default = 0,
+                    missing = 0)
+    value10   = colander.SchemaNode(
+                    colander.Integer(),
+                    default = 0,
+                    missing = 0)
+    value11   = colander.SchemaNode(
+                    colander.Integer(),
+                    default = 0,
+                    missing = 0)
+    value12   = colander.SchemaNode(
+                    colander.Integer(),
+                    default = 0,
+                    missing = 0)            
+
                     
 class AddSchema(colander.Schema):
     kode  = colander.SchemaNode(
@@ -250,11 +276,16 @@ class view_eis_chart_item(BaseViews):
         rowd['values_1']['value_1']  = row.value_1
         rowd['values_1']['value_2']  = row.value_2
         rowd['values_1']['value_3']  = row.value_3
+        rowd['values_1']['value_4']  = row.value_4
+        rowd['values_1']['value_5']  = row.value_5
+        rowd['values_1']['value_6']  = row.value_6
         rowd['values_2']             = {}
-        rowd['values_2']['value_4']  = row.value_4
-        rowd['values_2']['value_5']  = row.value_5
-        rowd['values_2']['value_6']  = row.value_6
-        
+        rowd['values_2']['value_7']  = row.value_7
+        rowd['values_2']['value_8']  = row.value_8
+        rowd['values_2']['value_9']  = row.value_9
+        rowd['values_2']['value10']  = row.value10
+        rowd['values_2']['value11']  = row.value11
+        rowd['values_2']['value12']  = row.value12        
         form = self.get_form(EditSchema)
         form.set_appstruct(rowd)
         if request.POST:

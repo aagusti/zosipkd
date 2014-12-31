@@ -14,6 +14,8 @@ from ..models import (
     DBSession,
     Base,
     )
+
+from ..models.apbd import *
 from ..models.gaji import *
 from ..models.pemda_model import *    
 from ..models.eis import *    

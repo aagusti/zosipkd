@@ -63,11 +63,12 @@ class NamaModel(KodeModel):
     def get_nama(nama):
         return cls.query().filter_by(nama=nama)
 
-class RouteModel(Base, NamaModel):
+class Route(Base, NamaModel):
     __tablename__  = 'routes'
     __table_args__ = {'extend_existing':True}
-    path     = Column(String(256), nullable=False)
-    factory  = Column(String(256))
+    path      = Column(String(256), nullable=False)
+    factory   = Column(String(256))
+    perm_name = Column(String(16))
     
     
 class App(Base, NamaModel):

@@ -91,13 +91,28 @@ class view_rekening(BaseViews):
         elif url_dict['act']=='headof':
             term = 'term' in params and params['term'] or '' 
             rows = DBSession.query(Rekening.id, Rekening.kode, Rekening.nama
-                      ).filter(
+                      ).filter(Rekening.children == None,
                       Rekening.nama.ilike('%%%s%%' % term) ).all()
             r = []
             for k in rows:
                 d={}
                 d['id']          = k[0]
                 d['value']       = k[2]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
+            return r
+            
+        elif url_dict['act']=='headofkode':
+            term = 'term' in params and params['term'] or '' 
+            rows = DBSession.query(Rekening.id, Rekening.kode, Rekening.nama
+                      ).filter(Rekening.children == None,
+                      Rekening.kode.ilike('%%%s%%' % term) ).all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[1]
                 d['kode']        = k[1]
                 d['nama']        = k[2]
                 r.append(d)

@@ -24,8 +24,10 @@ from osipkd.models import (
 from osipkd.models.pemda_model import UnitModel, UrusanModel, UserUnitModel
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
+
 SESS_ADD_FAILED = 'Tambah unit gagal'
 SESS_EDIT_FAILED = 'Edit unit gagal'
+
 class AddSchema(colander.Schema):
     choices = DBSession.query(UrusanModel.id,
                   UrusanModel.nama).order_by(UrusanModel.nama).all()

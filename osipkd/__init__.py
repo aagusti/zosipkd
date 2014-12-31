@@ -24,7 +24,7 @@ from .models import (
     init_model,
     )
 from .models.base_model import (
-    RouteModel)
+    Route)
     
 from .tools import DefaultTimeZone, get_months
 
@@ -54,7 +54,6 @@ class RemoveSlashNotFoundViewFactory(object):
                         noslash_path += '?' + qs
                     return HTTPFound(location=noslash_path)
         routes = request.url
-        print '************',routes
         #return HTTPNotFound()
         request.session.flash('Halaman yang anda cari tidak ditemukan','error')
         
@@ -63,7 +62,6 @@ class RemoveSlashNotFoundViewFactory(object):
     
 # https://groups.google.com/forum/#!topic/pylons-discuss/QIj4G82j04c
 def url_has_permission(request, permission):
-    print 'P******',permission, request.context, request
     sys.exit()
     return has_permission(permission, request.context, request)
 
@@ -73,117 +71,7 @@ def add_global(event):
 
 def get_title(request):
     route_name = request.matched_route.name
-    return titles[route_name]
-
-routes = [    
-    ('home', '/', 'Home',''), #resource_id
-    ('login', '/login', 'Login',''),
-    ('logout', '/logout', 'Logout',''),
-    ('password', '/password', 'Change password',''),
-
-    ('main', '/main', 'Utama',''),
-    #('main-act', '/main/act/{act}', 'Action','osipkd.models.GajiFactory'),
-    
-    ('admin', '/admin', 'Administrator',''),
-    ('user', '/user', 'Users','osipkd.models.AdminFactory'),
-    ('user-act', '/user/act/{act}', 'Users','osipkd.models.AdminFactory'),
-    ('user-add', '/user/add', 'Tambah user','osipkd.models.AdminFactory'),
-    ('user-edit', '/user/{id}/edit', 'Edit user','osipkd.models.AdminFactory'),
-    ('user-delete', '/user/{id}/delete', 'Hapus user','osipkd.models.AdminFactory'),
-
-    ('change-act', '/change/{act}', 'change',''),
-    
-    ('group', '/group', 'Groups','osipkd.models.AdminFactory'),
-    ('group-act', '/group/act/{act}', '','osipkd.models.AdminFactory'),
-    ('group-add', '/group/add', 'Tambah group','osipkd.models.AdminFactory'),
-    ('group-edit', '/group/{id}/edit', 'Edit group','osipkd.models.AdminFactory'),
-    ('group-delete', '/group/{id}/delete', 'Hapus group','osipkd.models.AdminFactory'),
-
-    ('urusan', '/urusan', 'urusans','osipkd.models.AdminFactory'),
-    ('urusan-add', '/urusan/add', 'Tambah urusan','osipkd.models.AdminFactory'),
-    ('urusan-edit', '/urusan/{id}/edit', 'Edit urusan','osipkd.models.AdminFactory'),
-    ('urusan-delete', '/urusan/{id}/delete', 'Hapus urusan','osipkd.models.AdminFactory'),
-    ('urusan-act', '/urusan/act/{act}', 'Action','osipkd.models.AdminFactory'),
-
-    ('unit', '/unit', 'units','osipkd.models.AdminFactory'),
-    ('unit-add', '/unit/add', 'Tambah unit','osipkd.models.AdminFactory'),
-    ('unit-edit', '/unit/{id}/edit', 'Edit unit','osipkd.models.AdminFactory'),
-    ('unit-delete', '/unit/{id}/delete', 'Hapus unit','osipkd.models.AdminFactory'),
-    ('unit-act', '/unit/act/{act}', 'AdminFactory','osipkd.models.AdminFactory'),
-
-    ('user-unit', '/user/unit', 'User Unit','osipkd.models.AdminFactory'),
-    ('user-unit-act', '/user/unit/act/{act}', 'Action','osipkd.models.AdminFactory'),
-    ('user-unit-add', '/user/unit/add', 'Tambah user unit','osipkd.models.AdminFactory'),
-    ('user-unit-edit', '/user/unit/{id}/edit', 'Edit user unit','osipkd.models.AdminFactory'),
-    ('user-unit-delete', '/user/unit/{id}/delete', 'Hapus user unit','osipkd.models.AdminFactory'),
-
-    ('user-group', '/user/group', 'User group','osipkd.models.AdminFactory'),
-    ('user-group-act', '/user/group/act/{act}', 'Action','osipkd.models.AdminFactory'),
-    ('user-group-add', '/user/group/add', 'Tambah user group','osipkd.models.AdminFactory'),
-    ('user-group-edit', '/user/group/{id}/edit', 'Edit user group','osipkd.models.AdminFactory'),
-    ('user-group-delete', '/user/group/{id}/delete', 'Hapus user group','osipkd.models.AdminFactory'),
-
-    ('rekening', '/rekening', 'Rekening','osipkd.models.AdminFactory'),
-    ('rekening-act', '/rekening/act/{act}', 'Action','osipkd.models.AdminFactory'),
-    ('rekening-add', '/rekening/add', 'Tambah Rekening','osipkd.models.AdminFactory'),
-    ('rekening-edit', '/rekening/{id}/edit', 'Edit Rekening','osipkd.models.AdminFactory'),
-    ('rekening-delete', '/rekening/{id}/delete', 'Hapus Rekening','osipkd.models.AdminFactory'),
-    
-    ('gaji', '/gaji', 'Gaji Main',''),
-    ('gaji-act', '/gaji/act/{act}', 'Action','osipkd.models.GajiFactory'),
-
-    ('gaji-peg', '/gaji-peg', 'Gaji', 'osipkd.models.GajiFactory',),
-    ('gaji-peg-act', '/gaji-peg/act/{act}', 'Action','osipkd.models.GajiFactory'),
-    ('gaji-peg-csv', '/gaji-peg/csv', 'CSV','osipkd.models.GajiFactory'),
-    
-    ('gaji-potongan', '/gaji-potongan', 'Potongan Gaji','osipkd.models.GajiFactory'),
-    ('gaji-potongan-add', '/gaji-potongan/add', 'Tambah Potongan','osipkd.models.GajiFactory'),
-    ('gaji-potongan-edit', '/gaji-potongan/{id}/edit', 'Edit Potongan','osipkd.models.GajiFactory'),
-    ('gaji-potongan-delete', '/gaji-potongan/{id}/delete', 'Hapus Potongan','osipkd.models.GajiFactory'),
-    ('gaji-potongan-act', '/gaji-potongan/act/{act}', '','osipkd.models.GajiFactory'),
-    ('gaji-potongan-csv', '/gaji-potongan/csv', 'CSV','osipkd.models.GajiFactory'),
-    
-    ('eis', '/eis', 'Eksekutif Summary',''),
-    ('eis-act', '/eis/act/{act}', 'Data For Grid',''),
-
-    ('eis-slide',        '/eis-slide',             'Daftar Slide',  'osipkd.models.AdminFactory'),
-    ('eis-slide-add',    '/eis-slide/add',         'Tambah Slide',  'osipkd.models.AdminFactory'),
-    ('eis-slide-edit',   '/eis-slide/{id}/edit',   'Edit Slide',    'osipkd.models.AdminFactory'),
-    ('eis-slide-delete', '/eis-slide/{id}/delete', 'Hapus  Slide',  'osipkd.models.AdminFactory'),
-    ('eis-slide-act',    '/eis-slide/act/{act}',   'Action',           'osipkd.models.AdminFactory'),
-    ('eis-slide-csv',    '/eis-slide/csv',         'CSV',              'osipkd.models.AdminFactory'),
-
-    ('eis-chart',        '/eis-chart',             'Daftar Chart',  'osipkd.models.AdminFactory'),
-    ('eis-chart-add',    '/eis-chart/add',         'Tambah Chart',  'osipkd.models.AdminFactory'),
-    ('eis-chart-edit',   '/eis-chart/{id}/edit',   'Edit Chart',    'osipkd.models.AdminFactory'),
-    ('eis-chart-delete', '/eis-chart/{id}/delete', 'Hapus  Chart',  'osipkd.models.AdminFactory'),
-    ('eis-chart-act',    '/eis-chart/act/{act}',   'Action',           'osipkd.models.AdminFactory'),
-    ('eis-chart-csv',    '/eis-chart/csv',         'CSV',              'osipkd.models.AdminFactory'),
-
-    ('eis-chart-item',        '/eis-chart-item/{chart_id}',             'Daftar Chart Detail',  'osipkd.models.AdminFactory'),
-    ('eis-chart-item-add',    '/eis-chart-item/{chart_id}/add',         'Tambah Chart Detail',  'osipkd.models.AdminFactory'),
-    ('eis-chart-item-edit',   '/eis-chart-item/{chart_id}/{id}/edit',   'Edit Chart Detail',    'osipkd.models.AdminFactory'),
-    ('eis-chart-item-delete', '/eis-chart-item/{chart_id}/{id}/delete', 'Hapus  Chart Detail',  'osipkd.models.AdminFactory'),
-    ('eis-chart-item-act',    '/eis-chart-item/{chart_id}/act/{act}',   'Action',           'osipkd.models.AdminFactory'),
-    ('eis-chart-item-csv',    '/eis-chart-item/{chart_id}/csv',         'CSV',              'osipkd.models.AdminFactory'),
-    
-    ('eis-item',        '/eis-item',             'Daftar Penerimaan',  'osipkd.models.AdminFactory'),
-    ('eis-item-add',    '/eis-item/add',         'Tambah Penerimaan',  'osipkd.models.AdminFactory'),
-    ('eis-item-edit',   '/eis-item/{id}/edit',   'Edit Penerimaan',    'osipkd.models.AdminFactory'),
-    ('eis-item-delete', '/eis-item/{id}/delete', 'Hapus  Penerimaan',  'osipkd.models.AdminFactory'),
-    ('eis-item-act',    '/eis-item/act/{act}',   'Action',           'osipkd.models.AdminFactory'),
-    ('eis-item-csv',    '/eis-item/csv',         'CSV',              'osipkd.models.AdminFactory'),
-
-    ('eis-calc-all',    '/eis/calc-all',         'Hitung Data EIS',              ''),
-    
-    
-    ('carousel',        '/carousel',             'Daftar Tabular',  'osipkd.models.AdminFactory'),
-    ('carousel-add',    '/carousel/add',         'Tambah Tabular',  'osipkd.models.AdminFactory'),
-    ('carousel-edit',   '/carousel/{id}/edit',   'Edit Tabular',    'osipkd.models.AdminFactory'),
-    ('carousel-delete', '/carousel/{id}/delete', 'Hapus  Tabular',  'osipkd.models.AdminFactory'),
-    ('carousel-act',    '/carousel/act/{act}',   'Action',           'osipkd.models.AdminFactory'),
-    ('carousel-csv',    '/carousel/csv',         'CSV',              'osipkd.models.AdminFactory'),
-    ]
+    return titles and titles[route_name] or ""
 
 main_title = 'osipkd'
 titles = {}
@@ -229,13 +117,15 @@ def main(global_config, **settings):
     
     config.add_renderer('csv', '.tools.CSVRenderer')
     
-    #routes = DBSession.query(RouteModel.kode, RouteModel.path, RouteModel.nama, RouteModel.factory).all()
-    """
+    routes = DBSession.query(Route.kode, Route.path, Route.nama, Route.factory).all()
     for route in routes:
-        if route.factory: 
-            config.add_route(route.kode, route.path, factory=(route.factory).encode("utf8"))
+        if route.factory and route.factory != 'None': 
+            config.add_route(route.kode, route.path, factory= route.factory) #(route.factory).encode("utf8"))
         else:
             config.add_route(route.kode, route.path)
+            
+        if route.nama:
+            titles[route.kode] = route.nama
     """    
     #    if route.nama:
     #        titles[route.kode] = route.nama #' - '.join([main_title, title])
@@ -247,5 +137,7 @@ def main(global_config, **settings):
             config.add_route(name, path)
         if name:
             titles[name] = title
+    """
+            
     config.scan()
     return config.make_wsgi_app()

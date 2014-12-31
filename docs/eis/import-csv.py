@@ -107,7 +107,6 @@ def update(source):
                         sumber_id      = source['sumber_id'],
                     )
                 
-
 filenm = 'import-eis'
 pid_file = '/var/run/%s.pid' % filenm
 pid = demon.make_pid(pid_file)
