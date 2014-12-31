@@ -205,7 +205,7 @@ for row in rows:
     elif row.is_sum:
         if row.chart.label[:3]=='JAN':
             row_sum = 0
-            for i in range(1,7):
+            for i in range(1,13):
                 tupKode = row.rekening_kd.split(',')
                 for tup in tupKode:
                     row_data = DBSession.query(func.sum(AR.amount).label('s')).\
@@ -234,7 +234,7 @@ for row in rows:
 
     else:
         if row.chart.label[:3]=='JAN':
-            for i in range(1,7):
+            for i in range(1,13):
                 tupKode = row.rekening_kd.split(',')
                 row_sum = 0
                 for tup in tupKode:
