@@ -68,7 +68,7 @@ if c>1:
 #print path
 #print db_url_dst
 eng_dst = create_engine(db_url_dst)
-#eng_dst.echo=True
+eng_dst.echo=True
 
 DBSession = scoped_session(sessionmaker())
 Base = declarative_base()
@@ -214,8 +214,10 @@ for row in rows:
                                  AR.kode.ilike("%s%%" % tup.strip())).scalar()
                     if row_data:
                         row_sum = row_sum+row_data
-                row_dict['value_%s' %i] = row_sum
-            #print row_dict
+                if i<10:
+                    row_dict['value_%s' %i] = row_sum
+                else:
+                    row_dict['value%s' %i] = row_sum
             row.from_dict(row_dict)
             
         elif row.chart.label[:3]=='JUL':
@@ -229,7 +231,10 @@ for row in rows:
                                  AR.kode.ilike("%s%%" % tup.strip())).scalar()
                     if row_data:
                         row_sum += row_data
-                row_dict['value_%s' % str(i-6)] = row_sum
+                if i<10:
+                    row_dict['value_%s' %i-6] = row_sum
+                else:
+                    row_dict['value%s' %i-6] = row_sum
             row.from_dict(row_dict)
 
     else:
@@ -244,8 +249,12 @@ for row in rows:
                                  AR.kode.ilike("%s%%" % tup.strip())).scalar()
                     if row_data:
                         row_sum += row_data
-                row_dict['value_%s' %i] = row_sum
+                if i<10:
+                    row_dict['value_%s' %i] = row_sum
+                else:
+                    row_dict['value%s' %i] = row_sum
             row.from_dict(row_dict)
+            
         elif row.chart.label[:3]=='JUL':
             for i in range(7,13):
                 tupKode = row.rekening_kd.split(',')
@@ -257,8 +266,12 @@ for row in rows:
                                  AR.kode.ilike("%s%%" % tup.strip())).scalar()
                     if row_data:
                         row_sum += row_data
-                row_dict['value_%s' % str(i-6)] = row_sum
+                if i<10:
+                    row_dict['value_%s' %i-6] = row_sum
+                else: 
+                    row_dict['value%s' %i-6] = row_sum
             row.from_dict(row_dict)
 DBSession.flush()
+DBSession.commit()
 info('Selesai')          
 os.remove(pid_file)
