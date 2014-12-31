@@ -7,9 +7,9 @@
 </div>
 
 <div metal:fill-slot="content">
+    <link href="/static/js/chart/legend/legend.css" rel="stylesheet"-->    
     <script type="text/javascript"  src="/static/js/chart/Chart.min.js"> </script>
     <script type="text/javascript"  src="/static/js/chart/legend/legend.js"> </script>
-    <link href="/static/js/chart/legend/legend.css" rel="stylesheet">    
     
     <div metal:define-slot="content"></div> 
 </div>

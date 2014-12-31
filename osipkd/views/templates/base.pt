@@ -30,8 +30,15 @@
     <script type="text/javascript" src="/deform_static/scripts/deform.js"></script>    
     <script type="text/javascript" src="/deform_static/scripts/jquery.maskMoney-1.4.1.js"></script>    
     <script type="text/javascript" src="/deform_static/scripts/typeahead.min.js"></script>    
-    <script type="text/javascript" src="/deform_static/scripts/jquery-ui.js"></script>
-    <script type="text/javascript" src="/deform_static/scripts/pickadate.js"></script>  
+    <!--script type="text/javascript" src="/deform_static/scripts/jquery-ui.js"></script-->
+    <!--script type="text/javascript" src="/deform_static/scripts/pickadate.js"></script-->  
+
+    <script src="/static/datatables/media/js/jquery.dataTables.min.js"></script>
+    <script src="/static/datatables/media/js/dataTables.bootstrap.js"></script>
+    <script src="/static/datatables/media/js/jquery.dataTables.ext.js"></script>
+    <!--script src="/static/datatables/media/js/jquery.jeditable.js'"></script>
+    <script src="/static/datatables/extensions/TableTools/media/js/ZeroClipboard.js"></script-->
+
     
   </head>
 
@@ -51,7 +58,7 @@
         </div>
         
         <div class="navbar-collapse collapse">
-          <div metal:define-slot="nav"></div> 
+          <div metaldefine-slot="nav"></div> 
           <!--ul class="nav navbar-nav">
             <li tal:attributes="class request.path == '/app' and 'active'">
                 <a href="/app"><span class="glyphicon glyphicon-home"></span> Home</a></li>
@@ -79,13 +86,9 @@
     </div> <!-- /container -->
 
 
-    <script src="/static/datatables/media/js/jquery.dataTables.min.js"></script>
-    <!--script src="/static/datatables/media/js/jquery.jeditable.js'"></script-->
-    <script src="/static/datatables/media/js/jquery.dataTables.ext.js"></script>
-    <script src="/static/datatables/extensions/TableTools/media/js/ZeroClipboard.js"></script>
-    <script src="/static/datatables/media/js/dataTables.bootstrap.js"></script>
+
         
-    <div metal:define-slot="scripts"></div>       
+    <div metaldefine-slot="scripts"></div>       
   </body>
 </html>
 

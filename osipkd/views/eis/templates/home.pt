@@ -1,11 +1,12 @@
 <html metal:use-macro="load: base.pt">
     <div metal:fill-slot="content">
-        <script>
+         <script>
             $(function(){
                 $('.carousel').carousel({
                     interval: 5000
                 });
             });
+            
             var bar_chart_options = {
                 responsive:true
             };
@@ -40,10 +41,8 @@
                 margin-bottom: 4px !important;
             }
         </style>
-        <script>
-           var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
-        </script>
-        <div class="well" style="background-color:rgb(255,255,255); padding-top:5px;">
+
+        <!-- div class="well" style="background-color:rgb(255,255,255); padding-top:5px;">
           <div class="judul">
               <center>
               <div class="row">
@@ -56,15 +55,33 @@
                   </div>
               </div>
               </center>
-          </div>
+          </div-->
           
           <div id="myCarousel" class="carousel" data-ride="carousel">
               <!-- Indicators -->
               <ol class="carousel-indicators">
-                  <li tal:repeat="dat datas" data-target="#myCarousel" data-slide-to="${dat.order_id}" 
-                      class="${dat.is_aktif and 'active' or ''}" style="background-color:rgb(0,0,0)"></li>
+                  <li tal:repeat="dat datas" id="${dat.source_type}" data-target="#myCarousel" data-slide-to="${repeat.dat.index}"
+                       class="${dat.is_aktif and 'active' or ''}" style="background-color:rgb(0,0,0)"></li>
               </ol>
-              
+              <script>
+              $(function(){
+                  $('#myCarousel').on('slide.bs.carousel', 
+                    function () {
+                      var slideFrom = $(this).find('.active').index();
+                      var slideTo   = $(this).find('.active').attr('id');
+
+                    //var slideTo = $(e.relatedTarget).index();
+                    //var toID = $(e.relatedTarget).attr('id');
+                    //x = $('#myCarousel .active').index('#myCarousel .item')
+                    //ctx_{dat.id}
+                    console.log(slideFrom + '=>' + slideTo)
+                  });
+
+                  
+                  });
+               
+               
+              </script>
               <div class="carousel-inner" role="listbox">
                 <div tal:repeat="dat datas" class="item ${dat.is_aktif and 'active' or ''}">
                     <div class="col-md-12" style="margin-bottom:50px;" tal:condition="dat.source_type=='grid'">
@@ -144,7 +161,6 @@
                               </div>
                             </center>
                         </div>
-                    
                     </div>
                     <div class="col-md-12" style="margin-bottom:50px;" tal:condition="dat.source_type=='chart-line'">
                         <div class="row">
@@ -215,6 +231,7 @@
                                         lineChartData_${dat.id}.datasets[1].data.push(html.realisasi[i]);
                                         
                                       }
+                                      
                                       window.myLine_${dat.id} = new Chart(ctx_${dat.id}).Line(lineChartData_${dat.id}, {
                                         //responsive: true;
                                       });
@@ -284,7 +301,7 @@
 
                             }
                             
-                            var ctx_${dat.id} = document.getElementById("canvas_${dat.id}").getContext("2d");
+                            var ctx_${dat.id} = $("#canvas_${dat.id}").get(0).getContext("2d");
                               
                             $(function(){
                               //GET DATA FROM SERVER
@@ -300,10 +317,11 @@
                                         barChartData_${dat.id}.datasets[1].data.push(html.realisasi[i]);
                                         
                                       }
+                                      
                                       window.myBar_${dat.id} = new Chart(ctx_${dat.id}).Bar(barChartData_${dat.id}, 
-                                      {
-                                      //responsive: true;
-                                      });
+                                                                  {
+                                                                    //responsive: true;
+                                                                  });
                                       legend(document.getElementById('legend_${dat.id}'), barChartData_${dat.id});
                               
                                     }
@@ -359,7 +377,6 @@
                                               npie = pieData_${dat.id}.push(x);
                                               //alert(pieData_${dat.id}[npie].value());
                                       });
-                                      console.log(pieData_${dat.id});
                                       window.myPie_${dat.id} = new Chart(ctx_${dat.id}).Pie(pieData_${dat.id},{
                                       //responsive: true;
                                       });
@@ -378,6 +395,6 @@
                 </div>
               </div>
           </div>
-        </div>
+        <!--/div-->       
     </div>
 </html>
