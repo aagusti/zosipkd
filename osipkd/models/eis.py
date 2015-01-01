@@ -8,7 +8,8 @@ from sqlalchemy import (
     DateTime,
     String,
     UniqueConstraint,
-    ForeignKey
+    ForeignKey,
+    Index
     )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.exc import NoResultFound
@@ -37,7 +38,8 @@ class Eis(DefaultModel, Base):
     amt_hari   = Column(BigInteger)
     order_id   = Column(Integer)
     is_aktif   = Column(SmallInteger)
-    disabled    = Column(SmallInteger, default=0)
+    disabled   = Column(SmallInteger, default=0)
+    
 
     @classmethod
     def sum_data(cls, kode, tahun):
@@ -77,6 +79,7 @@ class Chart(NamaModel, Base):
                       'schema' : 'eis',})
     chart_type = Column(String(16))                  
     label      = Column(String(128)) #digunakan jika chart membutuhkan label                  
+    devider    = Column(BigInteger, default=1)
                       
 class ChartItem(NamaModel, Base):
     __tablename__ = 'chart_items'
@@ -135,9 +138,9 @@ class ARInvoiceDetail(NamaModel, Base):
     __tablename__ = 'ar_invoice_detail'
     __table_args__ = {'extend_existing':True, 
                       'schema' : 'eis',}
-    tahun = Column(Integer)
+    tahun = Column(Integer, index=True)
     amount = Column(BigInteger)
-    ref_kode = Column(String(32))
+    ref_kode = Column(String(32), index=True)
     ref_nama = Column(String(64))
     tanggal = Column(DateTime(timezone=True), nullable=True)
     kecamatan_kd = Column(String(32))
@@ -147,9 +150,9 @@ class ARInvoiceDetail(NamaModel, Base):
     is_kota      = Column(SmallInteger)
     sumber_data  = Column(String(32)) #Manual, PBB, BPHTB, PAD
     sumber_id    = Column(SmallInteger)#1, 2, 3, 4
-    bulan = Column(Integer)
-    minggu = Column(Integer)
-    hari = Column(Integer)
+    bulan = Column(Integer, index=True)
+    minggu = Column(Integer, index=True)
+    hari = Column(Integer, index=True)
         
 class ARTargetDetail(NamaModel, Base):
     __tablename__ = 'ar_target_detail'

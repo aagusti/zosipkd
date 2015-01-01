@@ -67,10 +67,10 @@ class eis(BaseViews):
             rows = DBSession.query(ChartItem).filter(ChartItem.chart_id==id).\
                       order_by(ChartItem.id)
             for row in rows:
-                json_data[row.source_type] = [row.value_1,row.value_2,row.value_3,
-                                              row.value_4,row.value_5,row.value_6, 
-                                              row.value_7,row.value_8,row.value_9,
-                                              row.value10,row.value11,row.value12,]
+                json_data[row.source_type] = [row.value_1/row.chart.devider,row.value_2/row.chart.devider,row.value_3/row.chart.devider,
+                                              row.value_4/row.chart.devider,row.value_5/row.chart.devider,row.value_6/row.chart.devider, 
+                                              row.value_7/row.chart.devider,row.value_8/row.chart.devider,row.value_9/row.chart.devider,
+                                              row.value10/row.chart.devider,row.value11/row.chart.devider,row.value12/row.chart.devider,]
             
             
             json_data['success']= True
@@ -93,11 +93,10 @@ class eis(BaseViews):
                 anama['nama']       = row.nama
                 anama['color']      = row.color
                 anama ['highlight'] = row.highlight
-                anama ['value']     = row.value_1
+                anama ['value']     = row.value_1/row.chart.devider
                 json_data['rows'][row.nama] =anama 
                 
             json_data['success']= True
-            print '***************',json.dumps(json_data)
             return json_data
 
         

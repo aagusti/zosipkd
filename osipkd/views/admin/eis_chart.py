@@ -56,6 +56,11 @@ class AddSchema(colander.Schema):
                     colander.String(),
                     widget=deferred_chart_type
                     )
+    devider    = colander.SchemaNode(
+                    colander.Integer(),
+                    default = 1000,
+                    validator=colander.Range(min=1, max=1000000))
+                    
                     
 class EditSchema(AddSchema):
     id = colander.SchemaNode(colander.String(),
@@ -88,6 +93,7 @@ class view_eis_chart(BaseViews):
             columns.append(ColumnDT('kode'))
             columns.append(ColumnDT('nama'))
             columns.append(ColumnDT('chart_type'))
+            columns.append(ColumnDT('devider', filter=self._number_format))
             
             query = DBSession.query(Chart)
             rowTable = DataTables(req, Chart, query, columns)
@@ -130,7 +136,7 @@ class view_eis_chart(BaseViews):
             values['id'] = self.request.matchdict['id']
         row = self.save(values, self.request.user, row)
         self.request.session.flash('Chart sudah disimpan.')
-            
+
     def route_list(self):
         return HTTPFound(location=self.request.route_url('eis-chart'))
         
