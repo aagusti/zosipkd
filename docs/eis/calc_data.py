@@ -65,8 +65,6 @@ path = "%s/%s" % (os.path.dirname(os.path.abspath(__file__)),'anggaran')
 if c>1:
     path = sys.argv[1]
 
-#print path
-#print db_url_dst
 eng_dst = create_engine(db_url_dst)
 #eng_dst.echo=True
 
@@ -186,7 +184,10 @@ for row in rows:
                          AR.kode.ilike("%s%%" % row.kode)).scalar()
     if row_data:
         row.amt_minggu = row_data - row.amt_hari
+    DBSession.add(row)
+        
 DBSession.flush()
+
 #UPDATE DATA Chart Item Untuk Realisasi
 rows = DBSession.query(ChartItem).filter(ChartItem.source_type=='realisasi').all()
 for row in rows:
@@ -202,6 +203,7 @@ for row in rows:
             if row_data:
                 row_sum += row_data
         row.value_1 = row_sum
+        
     elif row.is_sum:
         if row.chart.label[:3]=='JAN':
             row_sum = 0
@@ -233,6 +235,7 @@ for row in rows:
                         row_sum += row_data
                 row_dict['value_%s' %str(i-6)] = row_sum
             row.from_dict(row_dict)
+
 
     else:
         if row.chart.label[:3]=='JAN':
@@ -266,6 +269,8 @@ for row in rows:
                 row_dict['value_%s' %str(i-6)] = row_sum
                 
             row.from_dict(row_dict)
+    DBSession.add(row)
+    
 DBSession.flush()
 DBSession.commit()
 info('Selesai')          

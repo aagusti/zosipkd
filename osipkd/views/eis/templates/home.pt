@@ -42,7 +42,7 @@
             }
         </style>
 
-        <!-- div class="well" style="background-color:rgb(255,255,255); padding-top:5px;">
+        <div class="well" style="background-color:rgb(255,255,255); padding-top:5px;">
           <div class="judul">
               <center>
               <div class="row">
@@ -55,7 +55,7 @@
                   </div>
               </div>
               </center>
-          </div-->
+          </div>
           
           <div id="myCarousel" class="carousel" data-ride="carousel">
               <!-- Indicators -->
@@ -64,23 +64,19 @@
                        class="${dat.is_aktif and 'active' or ''}" style="background-color:rgb(0,0,0)"></li>
               </ol>
               <script>
-              $(function(){
-                  $('#myCarousel').on('slide.bs.carousel', 
-                    function () {
-                      var slideFrom = $(this).find('.active').index();
-                      var slideTo   = $(this).find('.active').attr('id');
+                $(function(){
+                    /*$('#myCarousel').on('slide.bs.carousel', 
+                      function () {
+                        var slideFrom = $(this).find('.active').index();
+                        var slideTo   = $(this).find('.active').attr('id');
 
-                    //var slideTo = $(e.relatedTarget).index();
-                    //var toID = $(e.relatedTarget).attr('id');
-                    //x = $('#myCarousel .active').index('#myCarousel .item')
-                    //ctx_{dat.id}
-                    console.log(slideFrom + '=>' + slideTo)
-                  });
-
-                  
-                  });
-               
-               
+                      //var slideTo = $(e.relatedTarget).index();
+                      //var toID = $(e.relatedTarget).attr('id');
+                      //x = $('#myCarousel .active').index('#myCarousel .item')
+                      //ctx_{dat.id}
+                      console.log(slideFrom + '=>' + slideTo)
+                    });*/
+                });
               </script>
               <div class="carousel-inner" role="listbox">
                 <div tal:repeat="dat datas" class="item ${dat.is_aktif and 'active' or ''}">
@@ -395,6 +391,6 @@
                 </div>
               </div>
           </div>
-        <!--/div-->       
+        </div>       
     </div>
 </html>
