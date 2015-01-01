@@ -19,7 +19,7 @@ from osipkd.models import (
     DBSession,
     Group
     )
-from osipkd.models.pemda_model import UrusanModel
+from osipkd.models.pemda_model import Urusan
 
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -71,12 +71,12 @@ class view_urusan(BaseViews):
             columns.append(ColumnDT('nama'))
             columns.append(ColumnDT('disabled'))
             
-            query = DBSession.query(UrusanModel)
-            rowTable = DataTables(req, UrusanModel, query, columns)
+            query = DBSession.query(Urusan)
+            rowTable = DataTables(req, Urusan, query, columns)
             return rowTable.output_result()
             
         elif url_dict['act']=='changeid':
-            row = UrusanModel.get_by_id('urusan_id' in params and params['urusan_id'] or 0)
+            row = Urusan.get_by_id('urusan_id' in params and params['urusan_id'] or 0)
             if row:
                 ses['urusan_id']=row.id
                 ses['urusan_kd']=row.kode
@@ -91,7 +91,7 @@ class view_urusan(BaseViews):
     def form_validator(self, form, value):
         if 'id' in form.request.matchdict:
             uid = form.request.matchdict['id']
-            q = DBSession.query(UrusanModel).filter_by(id=uid)
+            q = DBSession.query(Urusan).filter_by(id=uid)
             urusan = q.first()
         else:
             urusan = None
@@ -106,7 +106,7 @@ class view_urusan(BaseViews):
         
     def save(self, values, user, row=None):
         if not row:
-            row = UrusanModel()
+            row = Urusan()
             row.created = datetime.now()
             row.create_uid = user.id
         row.from_dict(values)
@@ -156,7 +156,7 @@ class view_urusan(BaseViews):
     # Edit #
     ########
     def query_id(self):
-        return DBSession.query(UrusanModel).filter_by(id=self.request.matchdict['id'])
+        return DBSession.query(Urusan).filter_by(id=self.request.matchdict['id'])
         
     def id_not_found(self):    
         msg = 'urusan ID %s Tidak Ditemukan.' % self.request.matchdict['id']

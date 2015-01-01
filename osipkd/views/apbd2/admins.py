@@ -140,9 +140,9 @@ class ViewAPBDAdmin(BaseViews):
         if self.logged:
             if not self.datas['id'] and self.is_akses_mod('add')\
                 or self.datas['id'] and self.is_akses_mod('edit'):
-                row = UrusanModel.get_by_id(self.datas['id'])
+                row = Urusan.get_by_id(self.datas['id'])
                 if row:
-                    rows = UrusanModel.row2dict(row)
+                    rows = Urusan.row2dict(row)
                     return dict(datas=self.datas, rows=rows)
                 else:
                     if self.datas['id']>0:
@@ -171,8 +171,8 @@ class ViewAPBDAdmin(BaseViews):
                 columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('disabled'))
 
-                query = DBSession.query(UrusanModel)
-                rowTable = DataTables(req, UrusanModel, query, columns)
+                query = DBSession.query(Urusan)
+                rowTable = DataTables(req, Urusan, query, columns)
                 # returns what is needed by DataTable
                 return rowTable.output_result()
 
@@ -185,12 +185,12 @@ class ViewAPBDAdmin(BaseViews):
 
                 if pk_id and self.is_akses_mod('edit'): #update
                     p['update_uid'] = self.session['user_id']
-                    rows = UrusanModel.update(p)
+                    rows = Urusan.update(p)
                 elif self.is_akses_mod('insert'): #insert
                     p['created'] = datetime.now
                     p['create_uid'] = self.session['user_id']
                     p['update_uid'] = self.session['user_id']
-                    rows = UrusanModel.tambah(p)
+                    rows = Urusan.tambah(p)
                 else:
                     rows={}
                 
@@ -205,7 +205,7 @@ class ViewAPBDAdmin(BaseViews):
             elif url_dict['act']=='delete' and self.is_akses_mod('delete'):
                 d={}
                 d['id'] = pk_id
-                rows = UrusanModel.hapus(d)
+                rows = Urusan.hapus(d)
                 if rows:
                     self.d['msg']='Sukses Hapus Data'
                     self.d['success']=True
@@ -222,7 +222,7 @@ class ViewAPBDAdmin(BaseViews):
     def admin_unit(self):
         params = self.request.params
         if self.logged:
-            urusans = UrusanModel.get_enabled()
+            urusans = Urusan.get_enabled()
             return dict(datas=self.datas, urusans=urusans)
         else:
             headers=forget(self.request)
@@ -233,14 +233,14 @@ class ViewAPBDAdmin(BaseViews):
         req = self.request
         params = req.params
         url_dict = req.matchdict
-        urusans = UrusanModel.get_enabled()
+        urusans = Urusan.get_enabled()
         self.datas['id'] = 'id' in url_dict and int(url_dict['id']) or 0
         if self.logged:
             if not self.datas['id'] and self.is_akses_mod('add')\
                 or self.datas['id'] and self.is_akses_mod('edit'):
-                row = UnitModel.get_by_id(self.datas['id'])
+                row = Unit.get_by_id(self.datas['id'])
                 if row:
-                    rows = UnitModel.row2dict(row)
+                    rows = Unit.row2dict(row)
                     return dict(datas=self.datas, rows=rows, urusans=urusans)
                 else:
                     if self.datas['id']>0:
@@ -272,10 +272,10 @@ class ViewAPBDAdmin(BaseViews):
                 columns.append(ColumnDT('urusans.nama'))
                 columns.append(ColumnDT('disabled'))
 
-                query = DBSession.query(UnitModel).\
-                        join(UrusanModel).\
-                        filter(UnitModel.urusan_id==UrusanModel.id)
-                rowTable = DataTables(req, UnitModel, query, columns)
+                query = DBSession.query(Unit).\
+                        join(Urusan).\
+                        filter(Unit.urusan_id==Urusan.id)
+                rowTable = DataTables(req, Unit, query, columns)
                 # returns what is needed by DataTable
                 return rowTable.output_result()
 
@@ -288,12 +288,12 @@ class ViewAPBDAdmin(BaseViews):
 
                 if pk_id and self.is_akses_mod('edit'): #update
                     p['update_uid'] = self.session['user_id']
-                    rows = UnitModel.update(p)
+                    rows = Unit.update(p)
                 elif self.is_akses_mod('insert'): #insert
                     p['created'] = datetime.now
                     p['create_uid'] = self.session['user_id']
                     p['update_uid'] = self.session['user_id']
-                    rows = UnitModel.tambah(p)
+                    rows = Unit.tambah(p)
                 else:
                     rows={}
                 
@@ -308,7 +308,7 @@ class ViewAPBDAdmin(BaseViews):
             elif url_dict['act']=='delete' and self.is_akses_mod('delete'):
                 d={}
                 d['id'] = pk_id
-                rows = UnitModel.hapus(d)
+                rows = Unit.hapus(d)
                 if rows:
                     self.d['msg']='Sukses Hapus Data'
                     self.d['success']=True
@@ -324,7 +324,7 @@ class ViewAPBDAdmin(BaseViews):
     def admin_program(self):
         params = self.request.params
         if self.logged:
-            urusans = UrusanModel.get_enabled()
+            urusans = Urusan.get_enabled()
             return dict(datas=self.datas, urusans=urusans)
         else:
             headers=forget(self.request)
@@ -335,7 +335,7 @@ class ViewAPBDAdmin(BaseViews):
         req = self.request
         params = req.params
         url_dict = req.matchdict
-        urusans = UrusanModel.get_enabled()
+        urusans = Urusan.get_enabled()
         self.datas['id'] = 'id' in url_dict and int(url_dict['id']) or 0
         
         if self.logged:
@@ -378,8 +378,8 @@ class ViewAPBDAdmin(BaseViews):
                 columns.append(ColumnDT('disabled'))
 
                 query = DBSession.query(ProgramModel).\
-                        join(UrusanModel).\
-                        filter(ProgramModel.urusan_id==UrusanModel.id)
+                        join(Urusan).\
+                        filter(ProgramModel.urusan_id==Urusan.id)
                 rowTable = DataTables(req, ProgramModel, query, columns)
                 # returns what is needed by DataTable
                 return rowTable.output_result()
@@ -429,7 +429,7 @@ class ViewAPBDAdmin(BaseViews):
     def admin_pejabat(self):
         params = self.request.params
         if self.logged:
-            units = UnitModel.get_enabled()
+            units = Unit.get_enabled()
             pegawais = PegawaiModel.get_enabled()
             jabatans = JabatanModel.get_enabled()
             return dict(datas=self.datas, units=units, jabatans=jabatans, pegawais=pegawais)
@@ -1175,7 +1175,7 @@ class ViewAPBDAdmin(BaseViews):
                 columns.append(ColumnDT('programs.nama'))
 
                 query = DBSession.query(KegiatanModel).join(ProgramModel
-                          ).join(UrusanModel
+                          ).join(Urusan
                           ).filter(KegiatanModel.disabled==0,
                                    ProgramModel.kode!='00')
                 rowTable = DataTables(req, KegiatanModel, query, columns)

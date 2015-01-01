@@ -17,8 +17,8 @@ from osipkd.models import (
     User,
     )
 from osipkd.models.pemda_model import (
-    UnitModel,
-    UserUnitModel,
+    Unit,
+    UserUnit,
     )
     
 from datatables import ColumnDT, DataTables
@@ -59,7 +59,7 @@ def usr_unit_act(request):
         
         query = DBSession.query(User.id, User.user_name, User.email, User.status,
                                 User.last_login_date, User.registered_date,
-                                UnitModel.nama).outerjoin(UserUnitModel).outerjoin(UnitModel)
+                                Unit.nama).outerjoin(UserUnit).outerjoin(Unit)
         
         rowTable = DataTables(req, User, query, columns)
         return rowTable.output_result()
@@ -174,9 +174,9 @@ def save(values, user, row=None):
     DBSession.flush()
     if values['unit_id']:
         if row.units:
-            row_unit = UserUnitModel.query_user_id(row.id).first()
+            row_unit = UserUnit.query_user_id(row.id).first()
         else:
-            row_unit = UserUnitModel()
+            row_unit = UserUnit()
             row_unit.user_id = row.id
         row_unit.from_dict(values)
         row_unit.sub_unit = 'sub_unit' in values and values['sub_unit'] and 1 or 0
@@ -249,7 +249,7 @@ def view_edit(request):
         return session_failed(request, SESS_EDIT_FAILED)
     values = row.to_dict()
     if row.units:
-        row_unit = UserUnitModel.query_user_id(row.id).first()
+        row_unit = UserUnit.query_user_id(row.id).first()
         values['sub_unit'] = row_unit.sub_unit
         values['unit_id'] = row_unit.unit_id
         values['unit_nm'] = row_unit.units.nama

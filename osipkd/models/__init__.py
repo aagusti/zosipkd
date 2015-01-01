@@ -51,7 +51,7 @@ class CommonModel(object):
         
     def from_dict(self, values):
         for column in self.__table__.columns:
-            if column.name in values:
+            if column.name in values and values[column.name]:
                 setattr(self, column.name, values[column.name])
 
     def as_timezone(self, fieldname):
@@ -160,7 +160,7 @@ class User(UserMixin, BaseModel, CommonModel, Base):
     registered_date = Column(DateTime(timezone=True),
                              nullable=False,
                              default=datetime.utcnow)
-    #units = relationship("UnitModel"
+    #units = relationship("Unit"
     
     def _get_password(self):
         return self._password

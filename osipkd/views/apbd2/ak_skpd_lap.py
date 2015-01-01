@@ -14,8 +14,8 @@ from sqlalchemy.exc import DBAPIError
 from osipkd.views.views import *
 from osipkd.models.model_base import *
 from osipkd.models.apbd_rka_models import *
-from osipkd.models.apbd_admin_models import (TahunModel, UserApbdModel,UnitModel,
-     UrusanModel, RekeningModel, ProgramModel, KegiatanModel)
+from osipkd.models.apbd_admin_models import (TahunModel, UserApbdModel,Unit,
+     Urusan, RekeningModel, ProgramModel, KegiatanModel)
 from osipkd.models.apbd_tu_models import *
 from osipkd.models.apbd_ak_models import (JurnalModel, JurnalItemModel)
 from datetime import datetime
@@ -216,7 +216,7 @@ class ViewAkSKPDLap(BaseViews):
             if self.is_akses_mod('read'):
                 query = DBSession.query(JurnalItemModel
                       ).filter(JurnalModel.id==JurnalItemModel.jurnal_id,
-                      JurnalModel.unit_id==UnitModel.id,
+                      JurnalModel.unit_id==Unit.id,
                       JurnalModel.unit_id==self.unit_id,
                       JurnalModel.tahun_id==self.tahun
                       ).order_by(JurnalModel.tanggal
@@ -247,7 +247,7 @@ class ViewAkSKPDLap(BaseViews):
             if self.is_akses_mod('read'):
                 query = DBSession.query(JurnalItemModel
                       ).filter(JurnalModel.id==JurnalItemModel.jurnal_id,
-                      JurnalModel.unit_id==UnitModel.id,
+                      JurnalModel.unit_id==Unit.id,
                       JurnalModel.unit_id==self.unit_id,
                       JurnalModel.tahun_id==self.tahun
                       ).order_by(JurnalModel.tanggal
@@ -278,7 +278,7 @@ class ViewAkSKPDLap(BaseViews):
             if self.is_akses_mod('read'):
                 query = DBSession.query(JurnalItemModel
                       ).filter(JurnalModel.id==JurnalItemModel.jurnal_id,
-                      JurnalModel.unit_id==UnitModel.id,
+                      JurnalModel.unit_id==Unit.id,
                       JurnalModel.unit_id==self.unit_id,
                       JurnalModel.tahun_id==self.tahun
                       ).order_by(JurnalModel.tanggal
@@ -309,7 +309,7 @@ class ViewAkSKPDLap(BaseViews):
             if self.is_akses_mod('read'):
                 query = DBSession.query(JurnalItemModel
                       ).filter(JurnalModel.id==JurnalItemModel.jurnal_id,
-                      JurnalModel.unit_id==UnitModel.id,
+                      JurnalModel.unit_id==Unit.id,
                       JurnalModel.unit_id==self.unit_id,
                       JurnalModel.tahun_id==self.tahun
                       ).order_by(JurnalModel.tanggal
@@ -340,7 +340,7 @@ class ViewAkSKPDLap(BaseViews):
             if self.is_akses_mod('read'):
                 query = DBSession.query(JurnalItemModel
                       ).filter(JurnalModel.id==JurnalItemModel.jurnal_id,
-                      JurnalModel.unit_id==UnitModel.id,
+                      JurnalModel.unit_id==Unit.id,
                       JurnalModel.unit_id==self.unit_id,
                       JurnalModel.tahun_id==self.tahun
                       ).order_by(JurnalModel.tanggal

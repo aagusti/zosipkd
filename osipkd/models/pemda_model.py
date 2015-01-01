@@ -29,12 +29,37 @@ def unitfinder(userid, request):
         return units
     return []
     
-class UrusanModel(Base, NamaModel):
+STATUS_APBD = ((0,"Pilih"),
+               (1, "RKA"),
+               (2, "DPA"),
+               (3, "RPKA"),
+               (4, "DPPA"))
+
+JENIS_BELANJA = {"0":"Pilih",
+                 "1":"UP",
+                 "2":"TU",
+                 "3":"GU",
+                 "4":"LS",                 
+                }            
+JENIS_INDIKATOR = {"0":"Pilih",
+                 "1":"Capaian Program",
+                 "2":"Masukan",
+                 "3":"Keluaran",
+                 "4":"Hasil",                 
+                }            
+TRIWULAN        = {"0":"Pilih",
+                 "1":"Triwulan I",
+                 "2":"Triwulan II",
+                 "3":"Triwulan III",
+                 "4":"Triwulan IV",                 
+                }  
+                
+class Urusan(Base, NamaModel):
     __tablename__  = 'urusans'
     __table_args__ = {'extend_existing':True, 
                       'schema' : 'admin',}
 
-class UnitModel(Base, NamaModel):
+class Unit(Base, NamaModel):
     __tablename__  = 'units'
     __table_args__ = {'extend_existing':True, 
                       'schema' : 'admin',}
@@ -45,9 +70,9 @@ class UnitModel(Base, NamaModel):
     level_id  = Column(SmallInteger)
     header_id = Column(SmallInteger)
     urusan_id = Column(Integer, ForeignKey('admin.urusans.id'))
-    units     = relationship("UrusanModel", backref="units")
+    units     = relationship("Urusan", backref="units")
 
-class UserUnitModel(Base, CommonModel):
+class UserUnit(Base, CommonModel):
     __tablename__  = 'user_units'
     __table_args__ = {'extend_existing':True, 
                       'schema' : 'admin',}
@@ -55,7 +80,7 @@ class UserUnitModel(Base, CommonModel):
     user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
     unit_id = Column(Integer, ForeignKey('admin.units.id'), primary_key=True)
     sub_unit = Column(SmallInteger, nullable=False)
-    units     = relationship("UnitModel", backref="users")
+    units     = relationship("Unit", backref="users")
     users     = relationship("User", backref="units")
     
     @classmethod
@@ -65,14 +90,14 @@ class UserUnitModel(Base, CommonModel):
     @classmethod
     def ids(cls, user_id):
         r = ()
-        units = DBSession.query(cls.unit_id,cls.sub_unit, UnitModel.kode
-                     ).join(UnitModel).filter(cls.unit_id==UnitModel.id,
+        units = DBSession.query(cls.unit_id,cls.sub_unit, Unit.kode
+                     ).join(Unit).filter(cls.unit_id==Unit.id,
                             cls.user_id==user_id).all() 
         for unit in units:
             if unit.sub_unit:
-                rows = DBSession.query(UnitModel.id).filter(UnitModel.kode.ilike('%s%%' % unit.kode)).all()
+                rows = DBSession.query(Unit.id).filter(Unit.kode.ilike('%s%%' % unit.kode)).all()
             else:
-                rows = DBSession.query(UnitModel.id).filter(UnitModel.kode==unit.kode).all()
+                rows = DBSession.query(Unit.id).filter(Unit.kode==unit.kode).all()
             for i in range(len(rows)):
                 print '***', rows[i]
                 r = r + (rows[i])
@@ -82,15 +107,14 @@ class UserUnitModel(Base, CommonModel):
     def unit_granted(cls, user_id, unit_id):
         
         print 'A*******',  user_id, unit_id
-        units = DBSession.query(cls.unit_id,cls.sub_unit, UnitModel.kode
-                     ).join(UnitModel).filter(cls.unit_id==UnitModel.id,
+        units = DBSession.query(cls.unit_id,cls.sub_unit, Unit.kode
+                     ).join(Unit).filter(cls.unit_id==Unit.id,
                             cls.user_id==user_id).all() 
         for unit in units:
-            print 'B*******',  unit_id, unit
             if unit.sub_unit:
-                rows = DBSession.query(UnitModel.id).filter(UnitModel.kode.ilike('%s%%' % unit.kode)).all()
+                rows = DBSession.query(Unit.id).filter(Unit.kode.ilike('%s%%' % unit.kode)).all()
             else:
-                rows = DBSession.query(UnitModel.id).filter(UnitModel.kode==unit.kode).all()
+                rows = DBSession.query(Unit.id).filter(Unit.kode==unit.kode).all()
             for i in range(len(rows)):
                 if int(rows[i][0])  == int(unit_id):
                     return True
@@ -99,9 +123,9 @@ class UserUnitModel(Base, CommonModel):
     @classmethod
     def get_filtered(cls, request):
         filter = "'%s' LIKE admin.units.kode||'%%'" % request.session['unit_kd']
-        q1 = DBSession.query(UnitModel.kode, UserUnitModel.sub_unit).join(UserUnitModel).\
-                       filter(UserUnitModel.user_id==request.user.id,
-                              UserUnitModel.unit_id==UnitModel.id,
+        q1 = DBSession.query(Unit.kode, UserUnit.sub_unit).join(UserUnit).\
+                       filter(UserUnit.user_id==request.user.id,
+                              UserUnit.unit_id==Unit.id,
                               text(filter))
         return q1.first()
         
@@ -120,4 +144,10 @@ class Rekening(NamaModel, Base):
     def get_next_level(cls,id):
         return cls.query_id(id).first().level_id+1
         
+class DasarHukum(NamaModel, Base):
+    __tablename__  = 'dasar_hukums'
+    __table_args__ = {'extend_existing':True,'schema' : 'admin'}
+    rekenings   = relationship("Rekening", backref="dasar_hukums")
+    no_urut     = Column(Integer)
+    rekening_id = Column(Integer, ForeignKey("admin.rekenings.id"))        
     

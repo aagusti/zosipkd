@@ -114,6 +114,7 @@ def main(global_config, **settings):
                           
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_static_view('deform_static', 'deform:static')
+    config.add_static_view('js', 'js')
     
     config.add_renderer('csv', '.tools.CSVRenderer')
     
@@ -126,18 +127,7 @@ def main(global_config, **settings):
             
         if route.nama:
             titles[route.kode] = route.nama
-    """    
-    #    if route.nama:
-    #        titles[route.kode] = route.nama #' - '.join([main_title, title])
-    
-    for name, path, title, factory in routes:
-        if factory: 
-            config.add_route(name, path, factory=factory)
-        else:
-            config.add_route(name, path)
-        if name:
-            titles[name] = title
-    """
+
             
     config.scan()
     return config.make_wsgi_app()

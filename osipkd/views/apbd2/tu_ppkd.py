@@ -15,7 +15,7 @@ from sqlalchemy.exc import DBAPIError
 from osipkd.models.model_base import *
 from osipkd.models.apbd_rka_models import (KegiatanSubModel, KegiatanItemModel
      )
-from osipkd.models.apbd_admin_models import (TahunModel, UnitModel,
+from osipkd.models.apbd_admin_models import (TahunModel, Unit,
      )
 from osipkd.models.apbd_tu_models import (SpdModel, SpdItemModel, Sp2dModel,SpmModel, SppModel, GiroModel, GiroItemModel
      )
@@ -101,15 +101,15 @@ class B203003View(TuBaseViews):
                 columns.append(ColumnDT('nominal'))
                 query = DBSession.query(SpdModel.id, SpdModel.kode,
                           SpdModel.nama, SpdModel.triwulan_id, SpdModel.units,
-                          UnitModel.nama.label('unit_nm'),
+                          Unit.nama.label('unit_nm'),
                          func.sum(SpdItemModel.nominal).label('nominal')
-                        ).join(UnitModel
+                        ).join(Unit
                         ).outerjoin(SpdItemModel
                         ).filter(SpdModel.tahun_id==self.tahun,
                                  SpdModel.unit_id==self.unit_id,
                         ).group_by(SpdModel.id, SpdModel.kode,
                           SpdModel.nama, SpdModel.triwulan_id,
-                          UnitModel.id, UnitModel.nama)
+                          Unit.id, Unit.nama)
                 rowTable = DataTables(req, SpdModel, query, columns)
                 return rowTable.output_result()
 

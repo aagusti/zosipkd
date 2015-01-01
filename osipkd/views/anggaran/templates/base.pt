@@ -1,20 +1,30 @@
 <html metal:use-macro="load: ../../templates/main.pt">
 <div metal:fill-slot="nav">
     <ul class="nav navbar-nav">
-      <li tal:attributes="class request.path == '/app' and 'active'">
-          <a href="/ak-skpd"><span class="glyphicon glyphicon-home"></span> Home</a></li>
-         
-      <li tal:attributes="class request.path == '/gaji' and 'active'">
-          <a href="/tu-skpd-penetapan">Penetapan</a></li>
-      <li tal:attributes="class request.path == '/potongan' and 'active'">
-          <a href="/tu-skpd-realisasi">Realisasi</a></li>
-          
-      <li tal:attributes="class request.path == '/potongan' and 'active'">
-          <a href="/ak-skpd-jurnal">Jurnal</a></li>
-          
-      <li tal:attributes="class request.path == '/potongan' and 'active'">
-          <a href="/ak-skpd-lap">Laporan</a></li>
-          
+      <li tal:attributes="class request.path == '/anggaran' and 'active'">
+          <a href="/anggaran"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+      <li tal:attributes="class request.path == '/ag-pendapatan' and 'active'">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Entri<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="/ag-pendapatan">Pendapatan</a></li>
+            <li><a href="/ag-btl">Belanja Tidak Langsung</a></li>
+            <li><a href="/ag-bl">Belanja Langsung</a></li>
+            <li><a href="/ag-penerimaan">Penerimaan</a></li>
+            <li><a href="/ag-pengeluaran">Pengeluaran</a></li>
+          </ul>
+      </li>    
+      <li tal:attributes="class request.path == '/laporan' and 'active'">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Laporan<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="/ag-laporan/rka">RKA</a></li>
+            <li><a href="/ag-laporan/dpa">DPA</a></li>
+            <li><a href="/ag-laporan/rpka">RPKA</a></li>
+            <li><a href="/ag-laporan/dppa">PPA</a></li>
+            <li><a href="/ag-laporan/apbd">APBD</a></li>
+            <li><a href="/ag-laporan/papbd">Perubahan APBD</a></li>
+          </ul>
+      </li>    
+      
     </ul>
 </div>
 

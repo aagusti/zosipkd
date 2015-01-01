@@ -25,7 +25,7 @@ from osipkd.models import (
     )
     
 from osipkd.models.gaji import GajiPegawai
-from osipkd.models.pemda_model import UserUnitModel, UnitModel
+from osipkd.models.pemda_model import UserUnit, Unit
 from osipkd.models.base_model import EngineMssql
 
 from datatables import ColumnDT, DataTables
@@ -124,7 +124,7 @@ class view_gajipegawai(BaseViews):
                       GajiPegawai.tahun == ses['tahun'],
                       GajiPegawai.bulan == ses['bulan']
                     )
-            rows = UserUnitModel.get_filtered(self.request)
+            rows = UserUnit.get_filtered(self.request)
             if rows and rows.sub_unit:
                 query = query.filter(GajiPegawai.unitkd.like( '%s%%' % ses['unit_kd']))
             else:
@@ -182,7 +182,7 @@ class view_gajipegawai(BaseViews):
       q = DBSession.query(GajiPegawai.tahun,GajiPegawai.bulan, 
                     GajiPegawai.nip, GajiPegawai.nama, GajiPegawai.gaji_kotor,
                     GajiPegawai.potongan, GajiPegawai.gaji_bersih)
-      rows = UserUnitModel.get_filtered(self.request)
+      rows = UserUnit.get_filtered(self.request)
       if rows and rows.sub_unit:
           q = q.filter(GajiPegawai.unitkd.like( '%s%%' % self.request.session['unit_kd']))
       else:

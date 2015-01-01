@@ -132,7 +132,7 @@ class AsetKibModel(DefaultModel, Base):
     f_luas_bangunan = Column(BigInteger)
 
     UniqueConstraint('unit_id' , 'kategori_id' , 'no_register', name='kibs_unit_id_kategori_id_no_register_key')
-    units = relationship("UnitModel", backref="kibunit")
+    units = relationship("Unit", backref="kibunit")
     kats = relationship("AsetKategoriModel", backref="kibkat")
     pemiliks = relationship("AsetPemilikModel", backref="kibpemilik")
     

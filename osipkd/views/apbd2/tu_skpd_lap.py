@@ -14,8 +14,8 @@ from sqlalchemy.exc import DBAPIError
 from osipkd.views.views import *
 from osipkd.models.model_base import *
 from osipkd.models.apbd_rka_models import *
-from osipkd.models.apbd_admin_models import (TahunModel, UserApbdModel,UnitModel,
-     UrusanModel, RekeningModel, ProgramModel, KegiatanModel)
+from osipkd.models.apbd_admin_models import (TahunModel, UserApbdModel,Unit,
+     Urusan, RekeningModel, ProgramModel, KegiatanModel)
 from osipkd.models.apbd_tu_models import *
 from datetime import datetime
 import os
@@ -631,7 +631,7 @@ class ViewTUSKPDLap(BaseViews):
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             if self.is_akses_mod('read'):
                 query = DBSession.query(KetetapanModel
-                      ).filter(KetetapanModel.unit_id==UnitModel.id,
+                      ).filter(KetetapanModel.unit_id==Unit.id,
                       KetetapanModel.unit_id==self.unit_id,
                       KetetapanModel.tahun_id==self.tahun
                       ).order_by(KetetapanModel.tgl_ketetapan
@@ -660,15 +660,15 @@ class ViewTUSKPDLap(BaseViews):
         if self.logged :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             if self.is_akses_mod('read'):
-                query = DBSession.query(ARInvoiceModel.tahun_id.label('tahun'), UnitModel.nama.label('unit_nm'),
+                query = DBSession.query(ARInvoiceModel.tahun_id.label('tahun'), Unit.nama.label('unit_nm'),
                       ARInvoiceModel.id.label('arinvoice_id'), ARInvoiceModel.kode, ARInvoiceModel.nama.label('arinvoice_nm'), 
                       ARInvoiceModel.tgl_terima, ARInvoiceModel.tgl_validasi, ARInvoiceModel.bendahara_nm, 
                       ARInvoiceModel.penyetor, ARInvoiceModel.alamat, KegiatanSubModel.nama.label('kegiatan_nm'),
                       func.sum(ARInvoiceItemModel.nilai).label('nilai')
-                      ).filter(ARInvoiceModel.unit_id==UnitModel.id, ARInvoiceModel.kegiatan_sub_id==KegiatanSubModel.id,
+                      ).filter(ARInvoiceModel.unit_id==Unit.id, ARInvoiceModel.kegiatan_sub_id==KegiatanSubModel.id,
                       ARInvoiceItemModel.arinvoice_id==ARInvoiceModel.id, ARInvoiceModel.unit_id==self.unit_id,
                       ARInvoiceModel.tahun_id==self.tahun, ARInvoiceModel.id==pk_id
-                      ).group_by(ARInvoiceModel.tahun_id, UnitModel.nama,
+                      ).group_by(ARInvoiceModel.tahun_id, Unit.nama,
                       ARInvoiceModel.id, ARInvoiceModel.kode, ARInvoiceModel.nama, 
                       ARInvoiceModel.tgl_terima, ARInvoiceModel.tgl_validasi, ARInvoiceModel.bendahara_nm, 
                       ARInvoiceModel.penyetor, ARInvoiceModel.alamat, KegiatanSubModel.nama
@@ -698,7 +698,7 @@ class ViewTUSKPDLap(BaseViews):
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             if self.is_akses_mod('read'):
                 query = DBSession.query(StsModel
-                      ).filter(StsModel.unit_id==UnitModel.id, 
+                      ).filter(StsModel.unit_id==Unit.id, 
                       StsModel.unit_id==self.unit_id,
                       StsModel.tahun_id==self.tahun, StsModel.id==pk_id
                       )
@@ -725,17 +725,17 @@ class ViewTUSKPDLap(BaseViews):
         if self.logged :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             if url_dict['act']=='001' and self.is_akses_mod('read'):
-                query = DBSession.query(APInvoiceModel.tahun_id.label('tahun'), UnitModel.nama.label('unit_nm'),
+                query = DBSession.query(APInvoiceModel.tahun_id.label('tahun'), Unit.nama.label('unit_nm'),
                       case([(APInvoiceModel.jenis==1,"UP"),(APInvoiceModel.jenis==2,"TU"),(APInvoiceModel.jenis==3,"GU"),
                       (APInvoiceModel.jenis==4,"LS")], else_="").label('jenis'),
                       APInvoiceModel.id.label('invoice_id'), APInvoiceModel.nama.label('invoice_nm'), 
                       APInvoiceModel.ap_tanggal.label('tgl_invoice'),APInvoiceModel.ap_nomor, APInvoiceModel.ap_nama, 
                       APInvoiceModel.ap_rekening, APInvoiceModel.ap_npwp, KegiatanSubModel.nama.label('kegiatan_nm'),
                       func.sum(APInvoiceItemModel.nilai).label('nilai')
-                      ).filter(APInvoiceModel.unit_id==UnitModel.id, APInvoiceModel.kegiatan_sub_id==KegiatanSubModel.id,
+                      ).filter(APInvoiceModel.unit_id==Unit.id, APInvoiceModel.kegiatan_sub_id==KegiatanSubModel.id,
                       APInvoiceItemModel.apinvoice_id==APInvoiceModel.id, APInvoiceModel.unit_id==self.unit_id,
                       APInvoiceModel.tahun_id==self.tahun, APInvoiceModel.id==pk_id
-                      ).group_by(APInvoiceModel.tahun_id, UnitModel.nama,
+                      ).group_by(APInvoiceModel.tahun_id, Unit.nama,
                       case([(APInvoiceModel.jenis==1,"UP"),(APInvoiceModel.jenis==2,"TU"),(APInvoiceModel.jenis==3,"GU"),
                       (APInvoiceModel.jenis==4,"LS")], else_=""),
                       APInvoiceModel.id, APInvoiceModel.nama, 
@@ -765,17 +765,17 @@ class ViewTUSKPDLap(BaseViews):
         if self.logged :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             if url_dict['act']=='001' and self.is_akses_mod('read'):
-                query = DBSession.query(SppModel.tahun_id.label('tahun'), UnitModel.kode.label('unit_kd'), 
-                      UnitModel.nama.label('unit_nm'), KegiatanSubModel.nama.label('kegiatan_nm'),
-                      TahunModel.no_perkdh, TahunModel.tgl_perkdh, UrusanModel.nama.label('urusan_nm'),
+                query = DBSession.query(SppModel.tahun_id.label('tahun'), Unit.kode.label('unit_kd'), 
+                      Unit.nama.label('unit_nm'), KegiatanSubModel.nama.label('kegiatan_nm'),
+                      TahunModel.no_perkdh, TahunModel.tgl_perkdh, Urusan.nama.label('urusan_nm'),
                       SppModel.kode.label('spp_kd'), SppModel.nama, SppModel.bank_nama, SppModel.bank_account,
                       SppModel.tanggal, case([(SppModel.jenis==1,"UP"),(SppModel.jenis==2,"TU"),(SppModel.jenis==3,"GU"),
                       (SppModel.jenis==4,"LS")], else_="").label('jenis'), SppModel.nominal,
                       SpdModel.kode.label('spd_kd'), SpdModel.tanggal.label('tgl_spd')
-                      ).join(UnitModel,TahunModel,SppItemModel,APInvoiceModel,KegiatanSubModel
+                      ).join(Unit,TahunModel,SppItemModel,APInvoiceModel,KegiatanSubModel
                       ).outerjoin(SpdModel,SpdModel.id==SppModel.spd_id
-                      ).outerjoin(UrusanModel,UnitModel.urusan_id==UrusanModel.id
-                      ).filter(SppModel.unit_id==UnitModel.id, SppModel.id==SppItemModel.spp_id, 
+                      ).outerjoin(Urusan,Unit.urusan_id==Urusan.id
+                      ).filter(SppModel.unit_id==Unit.id, SppModel.id==SppItemModel.spp_id, 
                       SppItemModel.apinvoice_id==APInvoiceModel.id, KegiatanSubModel.id==APInvoiceModel.kegiatan_sub_id,
                       SppModel.tahun_id==TahunModel.id, SppModel.unit_id==self.unit_id, 
                       SppModel.tahun_id==self.tahun, SppModel.id==pk_id
@@ -789,17 +789,17 @@ class ViewTUSKPDLap(BaseViews):
                 return response
                 
             elif url_dict['act']=='002' and self.is_akses_mod('read'):
-                query = DBSession.query(SppModel.tahun_id.label('tahun'), UnitModel.kode.label('unit_kd'), 
-                      UnitModel.nama.label('unit_nm'), KegiatanSubModel.nama.label('kegiatan_nm'),
-                      TahunModel.no_perkdh, TahunModel.tgl_perkdh, UrusanModel.nama.label('urusan_nm'),
+                query = DBSession.query(SppModel.tahun_id.label('tahun'), Unit.kode.label('unit_kd'), 
+                      Unit.nama.label('unit_nm'), KegiatanSubModel.nama.label('kegiatan_nm'),
+                      TahunModel.no_perkdh, TahunModel.tgl_perkdh, Urusan.nama.label('urusan_nm'),
                       SppModel.kode.label('spp_kd'), SppModel.nama, SppModel.bank_nama, SppModel.bank_account,
                       SppModel.tanggal, case([(SppModel.jenis==1,"UP"),(SppModel.jenis==2,"TU"),(SppModel.jenis==3,"GU"),
                       (SppModel.jenis==4,"LS")], else_="").label('jenis'), SppModel.nominal,
                       SpdModel.kode.label('spd_kd'), SpdModel.tanggal.label('tgl_spd')
-                      ).join(UnitModel,TahunModel,SppItemModel,APInvoiceModel,KegiatanSubModel
+                      ).join(Unit,TahunModel,SppItemModel,APInvoiceModel,KegiatanSubModel
                       ).outerjoin(SpdModel,SpdModel.id==SppModel.spd_id
-                      ).outerjoin(UrusanModel,UnitModel.urusan_id==UrusanModel.id
-                      ).filter(SppModel.unit_id==UnitModel.id, SppModel.id==SppItemModel.spp_id, 
+                      ).outerjoin(Urusan,Unit.urusan_id==Urusan.id
+                      ).filter(SppModel.unit_id==Unit.id, SppModel.id==SppItemModel.spp_id, 
                       SppItemModel.apinvoice_id==APInvoiceModel.id, KegiatanSubModel.id==APInvoiceModel.kegiatan_sub_id,
                       SppModel.tahun_id==TahunModel.id, SppModel.unit_id==self.unit_id, 
                       SppModel.tahun_id==self.tahun, SppModel.id==pk_id
@@ -813,17 +813,17 @@ class ViewTUSKPDLap(BaseViews):
                 return response
 
             elif url_dict['act']=='003' and self.is_akses_mod('read'):
-                query = DBSession.query(SppModel.tahun_id.label('tahun'), UnitModel.kode.label('unit_kd'), 
-                      UnitModel.nama.label('unit_nm'), KegiatanSubModel.nama.label('kegiatan_nm'),
-                      TahunModel.no_perkdh, TahunModel.tgl_perkdh, UrusanModel.nama.label('urusan_nm'),
+                query = DBSession.query(SppModel.tahun_id.label('tahun'), Unit.kode.label('unit_kd'), 
+                      Unit.nama.label('unit_nm'), KegiatanSubModel.nama.label('kegiatan_nm'),
+                      TahunModel.no_perkdh, TahunModel.tgl_perkdh, Urusan.nama.label('urusan_nm'),
                       SppModel.kode.label('spp_kd'), SppModel.nama, SppModel.bank_nama, SppModel.bank_account,
                       SppModel.tanggal, case([(SppModel.jenis==1,"UP"),(SppModel.jenis==2,"TU"),(SppModel.jenis==3,"GU"),
                       (SppModel.jenis==4,"LS")], else_="").label('jenis'), SppModel.nominal,
                       SpdModel.kode.label('spd_kd'), SpdModel.tanggal.label('tgl_spd')
-                      ).join(UnitModel,TahunModel,SppItemModel,APInvoiceModel,KegiatanSubModel
+                      ).join(Unit,TahunModel,SppItemModel,APInvoiceModel,KegiatanSubModel
                       ).outerjoin(SpdModel,SpdModel.id==SppModel.spd_id
-                      ).outerjoin(UrusanModel,UnitModel.urusan_id==UrusanModel.id
-                      ).filter(SppModel.unit_id==UnitModel.id, SppModel.id==SppItemModel.spp_id, 
+                      ).outerjoin(Urusan,Unit.urusan_id==Urusan.id
+                      ).filter(SppModel.unit_id==Unit.id, SppModel.id==SppItemModel.spp_id, 
                       SppItemModel.apinvoice_id==APInvoiceModel.id, KegiatanSubModel.id==APInvoiceModel.kegiatan_sub_id,
                       SppModel.tahun_id==TahunModel.id, SppModel.unit_id==self.unit_id, 
                       SppModel.tahun_id==self.tahun, SppModel.id==pk_id
@@ -856,11 +856,11 @@ class ViewTUSKPDLap(BaseViews):
                 subq1 = DBSession.query(SpmModel.id.label('spm_id'), SpmModel.kode.label('spm_kd'), SpmModel.nama.label('spm_nm'), SpmModel.tanggal.label('spm_tgl'), SppModel.id.label('spp_id'), 
                          SppModel.kode.label('spp_kd'), SppModel.nama.label('spp_nm'), SppModel.tanggal.label('spp_tgl'), SppModel.jenis.label('jenis'), 
                          SppModel.bank_nama.label('bank_nama'), SppModel.bank_account.label('bank_account'), SppModel.ap_nama.label('ap_nama'), SppModel.ap_bank.label('ap_bank'), SppModel.ap_rekening.label('ap_rekening'), SppModel.ap_npwp.label('ap_npwp'), 
-                         SppModel.tahun_id.label('tahun_id'), UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'), KegiatanModel.kode.label('keg_kd'), 
+                         SppModel.tahun_id.label('tahun_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), KegiatanModel.kode.label('keg_kd'), 
                          KegiatanModel.nama.label('keg_nm'), ProgramModel.kode.label('prg_kd'), ProgramModel.nama.label('prg_nm'), SppModel.spd_id.label('spd_id'),
                          func.sum(APInvoiceItemModel.nilai).label('nilai'), func.sum(APInvoiceItemModel.ppn).label('ppn'), 
                          func.sum(APInvoiceItemModel.pph).label('pph'), literal_column('0').label('potongan')
-                         ).filter(SpmModel.spp_id==SppModel.id, SppModel.unit_id==UnitModel.id,
+                         ).filter(SpmModel.spp_id==SppModel.id, SppModel.unit_id==Unit.id,
                          SppItemModel.spp_id==SppModel.id, SppItemModel.apinvoice_id==APInvoiceItemModel.apinvoice_id, APInvoiceItemModel.kegiatan_item_id==KegiatanItemModel.id,
                          KegiatanItemModel.rekening_id==RekeningModel.id, KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                          KegiatanSubModel.kegiatan_id==KegiatanModel.id, KegiatanModel.program_id==ProgramModel.id,
@@ -869,18 +869,18 @@ class ViewTUSKPDLap(BaseViews):
                          ).group_by(SpmModel.id, SpmModel.kode, 
                          SpmModel.nama, SpmModel.tanggal, SppModel.id, SppModel.kode, SppModel.nama, SppModel.tanggal, 
                          SppModel.jenis, SppModel.bank_nama, SppModel.bank_account, SppModel.ap_nama, SppModel.ap_bank, 
-                         SppModel.ap_rekening, SppModel.ap_npwp, SppModel.tahun_id, UnitModel.kode, UnitModel.nama, 
+                         SppModel.ap_rekening, SppModel.ap_npwp, SppModel.tahun_id, Unit.kode, Unit.nama, 
                          KegiatanModel.kode, KegiatanModel.nama, ProgramModel.kode, ProgramModel.nama, SppModel.spd_id
                          )                         
 
                 subq2 = DBSession.query(SpmModel.id.label('spm_id'), SpmModel.kode.label('spm_kd'), SpmModel.nama.label('spm_nm'), SpmModel.tanggal.label('spm_tgl'), SppModel.id.label('spp_id'), 
                          SppModel.kode.label('spp_kd'), SppModel.nama.label('spp_nm'), SppModel.tanggal.label('spp_tgl'), SppModel.jenis.label('jenis'), 
                          SppModel.bank_nama.label('bank_nama'), SppModel.bank_account.label('bank_account'), SppModel.ap_nama.label('ap_nama'), SppModel.ap_bank.label('ap_bank'), SppModel.ap_rekening.label('ap_rekening'), SppModel.ap_npwp.label('ap_npwp'), 
-                         SppModel.tahun_id.label('tahun_id'), UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'), KegiatanModel.kode.label('keg_kd'), 
+                         SppModel.tahun_id.label('tahun_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), KegiatanModel.kode.label('keg_kd'), 
                          KegiatanModel.nama.label('keg_nm'), ProgramModel.kode.label('prg_kd'), ProgramModel.nama.label('prg_nm'), SppModel.spd_id.label('spd_id'),
                          literal_column('0').label('nilai'), literal_column('0').label('ppn'), 
                          literal_column('0').label('pph'), func.sum(APInvoiceItemModel.nilai).label('potongan')
-                         ).filter(SpmModel.spp_id==SppModel.id, SppModel.unit_id==UnitModel.id,
+                         ).filter(SpmModel.spp_id==SppModel.id, SppModel.unit_id==Unit.id,
                          SppItemModel.spp_id==SppModel.id, SppItemModel.apinvoice_id==APInvoiceItemModel.apinvoice_id, APInvoiceItemModel.kegiatan_item_id==KegiatanItemModel.id,
                          KegiatanItemModel.rekening_id==RekeningModel.id, KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                          KegiatanSubModel.kegiatan_id==KegiatanModel.id, KegiatanModel.program_id==ProgramModel.id,
@@ -889,7 +889,7 @@ class ViewTUSKPDLap(BaseViews):
                          ).group_by(SpmModel.id, SpmModel.kode, 
                          SpmModel.nama, SpmModel.tanggal, SppModel.id, SppModel.kode, SppModel.nama, SppModel.tanggal, 
                          SppModel.jenis, SppModel.bank_nama, SppModel.bank_account, SppModel.ap_nama, SppModel.ap_bank, 
-                         SppModel.ap_rekening, SppModel.ap_npwp, SppModel.tahun_id, UnitModel.kode, UnitModel.nama, 
+                         SppModel.ap_rekening, SppModel.ap_npwp, SppModel.tahun_id, Unit.kode, Unit.nama, 
                          KegiatanModel.kode, KegiatanModel.nama, ProgramModel.kode, ProgramModel.nama, SppModel.spd_id 
                          )                         
                 
@@ -944,19 +944,19 @@ class ViewTUSKPDLap(BaseViews):
             selesai = 'selesai' in params and params['selesai'] or 0
             if url_dict['act']=='1' and self.is_akses_mod('read'):
               if tipe==0 :
-                query = DBSession.query(APInvoiceModel.tahun_id.label('tahun'), UnitModel.nama.label('unit_nm'),
+                query = DBSession.query(APInvoiceModel.tahun_id.label('tahun'), Unit.nama.label('unit_nm'),
                       APInvoiceModel.ap_tanggal.label('tgl_invoice'),
                       case([(APInvoiceModel.jenis==1,"UP"),(APInvoiceModel.jenis==2,"TU"),(APInvoiceModel.jenis==3,"GU"),
                       (APInvoiceModel.jenis==4,"LS")], else_="").label('jenis'),
                       APInvoiceModel.ap_nomor.label('invoice_kd'), KegiatanSubModel.nama.label('kegiatan_nm'), 
                       RekeningModel.kode.label('rek_kd'),RekeningModel.nama.label('rek_nm'), 
                       func.sum(APInvoiceItemModel.nilai).label('jumlah')
-                      ).filter(APInvoiceModel.unit_id==UnitModel.id, APInvoiceModel.kegiatan_sub_id==KegiatanSubModel.id,
+                      ).filter(APInvoiceModel.unit_id==Unit.id, APInvoiceModel.kegiatan_sub_id==KegiatanSubModel.id,
                       APInvoiceModel.id==APInvoiceItemModel.apinvoice_id, APInvoiceItemModel.kegiatan_item_id==KegiatanItemModel.id,
                       KegiatanItemModel.rekening_id==RekeningModel.id, APInvoiceModel.unit_id==self.unit_id,
                       APInvoiceModel.tahun_id==self.session['tahun'],  
                       APInvoiceModel.ap_tanggal.between(mulai,selesai)
-                      ).group_by(APInvoiceModel.tahun_id, UnitModel.nama,
+                      ).group_by(APInvoiceModel.tahun_id, Unit.nama,
                       APInvoiceModel.ap_tanggal,
                       case([(APInvoiceModel.jenis==1,"UP"),(APInvoiceModel.jenis==2,"TU"),(APInvoiceModel.jenis==3,"GU"),
                       (APInvoiceModel.jenis==4,"LS")], else_=""),
@@ -964,19 +964,19 @@ class ViewTUSKPDLap(BaseViews):
                       RekeningModel.kode,RekeningModel.nama
                       ).order_by(APInvoiceModel.ap_tanggal).all()
               else:
-                    query = DBSession.query(APInvoiceModel.tahun_id.label('tahun'), UnitModel.nama.label('unit_nm'),
+                    query = DBSession.query(APInvoiceModel.tahun_id.label('tahun'), Unit.nama.label('unit_nm'),
                       APInvoiceModel.ap_tanggal.label('tgl_invoice'),
                       case([(APInvoiceModel.jenis==1,"UP"),(APInvoiceModel.jenis==2,"TU"),(APInvoiceModel.jenis==3,"GU"),
                       (APInvoiceModel.jenis==4,"LS")], else_="").label('jenis'),
                       APInvoiceModel.ap_nomor.label('invoice_kd'), KegiatanSubModel.nama.label('kegiatan_nm'), 
                       RekeningModel.kode.label('rek_kd'),RekeningModel.nama.label('rek_nm'), 
                       func.sum(APInvoiceItemModel.nilai).label('jumlah')
-                      ).filter(APInvoiceModel.unit_id==UnitModel.id, APInvoiceModel.kegiatan_sub_id==KegiatanSubModel.id,
+                      ).filter(APInvoiceModel.unit_id==Unit.id, APInvoiceModel.kegiatan_sub_id==KegiatanSubModel.id,
                       APInvoiceModel.id==APInvoiceItemModel.apinvoice_id, APInvoiceItemModel.kegiatan_item_id==KegiatanItemModel.id,
                       KegiatanItemModel.rekening_id==RekeningModel.id, APInvoiceModel.unit_id==self.unit_id,
                       APInvoiceModel.tahun_id==self.session['tahun'], APInvoiceModel.jenis==tipe, 
                       APInvoiceModel.ap_tanggal.between(mulai,selesai)
-                      ).group_by(APInvoiceModel.tahun_id, UnitModel.nama,
+                      ).group_by(APInvoiceModel.tahun_id, Unit.nama,
                       APInvoiceModel.ap_tanggal,
                       case([(APInvoiceModel.jenis==1,"UP"),(APInvoiceModel.jenis==2,"TU"),(APInvoiceModel.jenis==3,"GU"),
                       (APInvoiceModel.jenis==4,"LS")], else_=""),
@@ -1020,7 +1020,7 @@ class ViewTUSKPDLap(BaseViews):
             selesai = 'selesai' in params and params['selesai'] or 0
             if url_dict['act']=='1' and self.is_akses_mod('read'):
                 if tipe ==0 :
-                   query = DBSession.query(SppModel.tahun_id.label('tahun'), UnitModel.nama.label('unit_nm'),
+                   query = DBSession.query(SppModel.tahun_id.label('tahun'), Unit.nama.label('unit_nm'),
                       case([(SppModel.jenis==1,"UP"),(SppModel.jenis==2,"TU"),(SppModel.jenis==3,"GU"),(SppModel.jenis==4,"LS")], else_="").label('jenis'),
                       SppModel.kode.label('spp_kd'), SppModel.nama.label('spp_nm'), SppModel.tanggal.label('tgl_spp'),
                       SpmModel.kode.label('spm_kd'), SpmModel.tanggal.label('tgl_spm'),
@@ -1029,19 +1029,19 @@ class ViewTUSKPDLap(BaseViews):
                       ).filter(SppItemModel.spp_id==SppModel.id, SppItemModel.apinvoice_id==APInvoiceModel.id,
                       APInvoiceItemModel.apinvoice_id==APInvoiceModel.id, APInvoiceItemModel.kegiatan_item_id==KegiatanItemModel.id,
                       KegiatanItemModel.rekening_id==RekeningModel.id,
-                      SppModel.unit_id==UnitModel.id, SppModel.unit_id==self.unit_id,
+                      SppModel.unit_id==Unit.id, SppModel.unit_id==self.unit_id,
                       SppModel.tahun_id==self.session['tahun'],
                       SppModel.tanggal.between(mulai,selesai)        
                       ).outerjoin(SpmModel,SpmModel.spp_id==SppModel.id
                       ).outerjoin(Sp2dModel,Sp2dModel.spm_id==SpmModel.id
-                      ).group_by(SppModel.tahun_id, UnitModel.nama,
+                      ).group_by(SppModel.tahun_id, Unit.nama,
                       case([(SppModel.jenis==1,"UP"),(SppModel.jenis==2,"TU"),(SppModel.jenis==3,"GU"),(SppModel.jenis==4,"LS")], else_=""),
                       SppModel.kode, SppModel.nama, SppModel.tanggal,
                       SpmModel.kode, SpmModel.tanggal,
                       Sp2dModel.kode, Sp2dModel.tanggal,
                       ).order_by(SppModel.tanggal).all()
                 else:
-                    query = DBSession.query(SppModel.tahun_id.label('tahun'), UnitModel.nama.label('unit_nm'),
+                    query = DBSession.query(SppModel.tahun_id.label('tahun'), Unit.nama.label('unit_nm'),
                       case([(SppModel.jenis==1,"UP"),(SppModel.jenis==2,"TU"),(SppModel.jenis==3,"GU"),(SppModel.jenis==4,"LS")], else_="").label('jenis'),
                       SppModel.kode.label('spp_kd'), SppModel.nama.label('spp_nm'), SppModel.tanggal.label('tgl_spp'),
                       SpmModel.kode.label('spm_kd'), SpmModel.tanggal.label('tgl_spm'),
@@ -1050,12 +1050,12 @@ class ViewTUSKPDLap(BaseViews):
                       ).filter(SppItemModel.spp_id==SppModel.id, SppItemModel.apinvoice_id==APInvoiceModel.id,
                       APInvoiceItemModel.apinvoice_id==APInvoiceModel.id, APInvoiceItemModel.kegiatan_item_id==KegiatanItemModel.id,
                       KegiatanItemModel.rekening_id==RekeningModel.id,
-                      SppModel.unit_id==UnitModel.id, SppModel.unit_id==self.unit_id,
+                      SppModel.unit_id==Unit.id, SppModel.unit_id==self.unit_id,
                       SppModel.tahun_id==self.session['tahun'], SppModel.jenis==tipe, 
                       SppModel.tanggal.between(mulai,selesai)
                       ).outerjoin(SpmModel,SpmModel.spp_id==SppModel.id
                       ).outerjoin(Sp2dModel,Sp2dModel.spm_id==SpmModel.id
-                      ).group_by(SppModel.tahun_id, UnitModel.nama,
+                      ).group_by(SppModel.tahun_id, Unit.nama,
                       case([(SppModel.jenis==1,"UP"),(SppModel.jenis==2,"TU"),(SppModel.jenis==3,"GU"),(SppModel.jenis==4,"LS")], else_=""),
                       SppModel.kode, SppModel.nama, SppModel.tanggal,
                       SpmModel.kode, SpmModel.tanggal,
@@ -1072,7 +1072,7 @@ class ViewTUSKPDLap(BaseViews):
             elif url_dict['act']=='2' and self.is_akses_mod('read'):
                 if tipe ==0 :
                     query = DBSession.query(SppModel.tahun_id.label('tahun'), 
-                      UnitModel.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spp'), 
+                      Unit.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spp'), 
                       SppModel.kode.label('spp_kd'), SppModel.nama.label('spp_nm'),
                       func.sum(case([(SppModel.jenis==1,APInvoiceItemModel.nilai)], else_=0)).label('UP'),
                       func.sum(case([(SppModel.jenis==2,APInvoiceItemModel.nilai)], else_=0)).label('GU'),
@@ -1082,15 +1082,15 @@ class ViewTUSKPDLap(BaseViews):
                       ).filter(SppItemModel.spp_id==SppModel.id, SppItemModel.apinvoice_id==APInvoiceModel.id,
                       APInvoiceItemModel.apinvoice_id==APInvoiceModel.id, APInvoiceItemModel.kegiatan_item_id==KegiatanItemModel.id,
                       KegiatanItemModel.rekening_id==RekeningModel.id,
-                      SppModel.unit_id==UnitModel.id, SppModel.unit_id==self.unit_id,
+                      SppModel.unit_id==Unit.id, SppModel.unit_id==self.unit_id,
                       SppModel.tahun_id==self.session['tahun'], 
                       SppModel.tanggal.between(mulai,selesai)        
-                      ).group_by(SppModel.tahun_id, UnitModel.nama, SppModel.tanggal, 
+                      ).group_by(SppModel.tahun_id, Unit.nama, SppModel.tanggal, 
                       SppModel.kode, SppModel.nama
                       ).order_by(SppModel.tanggal).all()
                 else:
                     query = DBSession.query(SppModel.tahun_id.label('tahun'), 
-                      UnitModel.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spp'), 
+                      Unit.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spp'), 
                       SppModel.kode.label('spp_kd'), SppModel.nama.label('spp_nm'),
                       func.sum(case([(SppModel.jenis==1,APInvoiceItemModel.nilai)], else_=0)).label('UP'),
                       func.sum(case([(SppModel.jenis==2,APInvoiceItemModel.nilai)], else_=0)).label('GU'),
@@ -1100,10 +1100,10 @@ class ViewTUSKPDLap(BaseViews):
                       ).filter(SppItemModel.spp_id==SppModel.id, SppItemModel.apinvoice_id==APInvoiceModel.id,
                       APInvoiceItemModel.apinvoice_id==APInvoiceModel.id, APInvoiceItemModel.kegiatan_item_id==KegiatanItemModel.id,
                       KegiatanItemModel.rekening_id==RekeningModel.id,
-                      SppModel.unit_id==UnitModel.id, SppModel.unit_id==self.unit_id,
+                      SppModel.unit_id==Unit.id, SppModel.unit_id==self.unit_id,
                       SppModel.tahun_id==self.session['tahun'], SppModel.jenis==tipe, 
                       SppModel.tanggal.between(mulai,selesai)        
-                      ).group_by(SppModel.tahun_id, UnitModel.nama, SppModel.tanggal, 
+                      ).group_by(SppModel.tahun_id, Unit.nama, SppModel.tanggal, 
                       SppModel.kode, SppModel.nama
                       ).order_by(SppModel.tanggal).all()
                       
@@ -1117,25 +1117,25 @@ class ViewTUSKPDLap(BaseViews):
             elif url_dict['act']=='3' and self.is_akses_mod('read'):
                 if tipe ==0 :
                     query = DBSession.query(SppModel.tahun_id.label('tahun'), 
-                      UnitModel.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spp'), 
+                      Unit.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spp'), 
                       SppModel.kode.label('spp_kd'), SppModel.nama.label('spp_nm'),
                       case([(SppModel.jenis==1,SppModel.nominal)], else_=0).label('UP'),
                       case([(SppModel.jenis==2,SppModel.nominal)], else_=0).label('GU'),
                       case([(SppModel.jenis==3,SppModel.nominal)], else_=0).label('TU'),
                       case([(SppModel.jenis==4,SppModel.nominal)], else_=0).label('LS'),
-                      ).filter(SppModel.unit_id==UnitModel.id, SppModel.unit_id==self.unit_id,
+                      ).filter(SppModel.unit_id==Unit.id, SppModel.unit_id==self.unit_id,
                       SppModel.tahun_id==self.session['tahun'], 
                       SppModel.tanggal.between(mulai,selesai)        
                       ).order_by(SppModel.tanggal).all()
                 else:
                     query = DBSession.query(SppModel.tahun_id.label('tahun'), 
-                      UnitModel.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spp'), 
+                      Unit.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spp'), 
                       SppModel.kode.label('spp_kd'), SppModel.nama.label('spp_nm'),
                       case([(SppModel.jenis==1,SppModel.nominal)], else_=0).label('UP'),
                       case([(SppModel.jenis==2,SppModel.nominal)], else_=0).label('GU'),
                       case([(SppModel.jenis==3,SppModel.nominal)], else_=0).label('TU'),
                       case([(SppModel.jenis==4,SppModel.nominal)], else_=0).label('LS'),
-                      ).filter(SppModel.unit_id==UnitModel.id, SppModel.unit_id==self.unit_id,
+                      ).filter(SppModel.unit_id==Unit.id, SppModel.unit_id==self.unit_id,
                       SppModel.tahun_id==self.session['tahun'], SppModel.jenis==tipe, 
                       SppModel.tanggal.between(mulai,selesai)        
                       ).order_by(SppModel.tanggal).all()
@@ -1150,25 +1150,25 @@ class ViewTUSKPDLap(BaseViews):
             elif url_dict['act']=='4' and self.is_akses_mod('read'):
                 if tipe ==0 :
                     query = DBSession.query(SppModel.tahun_id.label('tahun'), 
-                      UnitModel.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spm'), 
+                      Unit.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spm'), 
                       SppModel.kode.label('spm_kd'), SppModel.nama.label('spm_nm'),
                       case([(SppModel.nominal==1,SppModel.nominal)], else_=0).label('BRUTO'),
                       case([(SppModel.nominal==2,SppModel.nominal)], else_=0).label('POTONGAN'),
                       case([(SppModel.nominal==3,SppModel.nominal)], else_=0).label('NETTO'),
                       case([(SppModel.nominal==4,SppModel.nominal)], else_=0).label('INFORMASI')
-                      ).filter(SppModel.unit_id==UnitModel.id, SppModel.unit_id==self.unit_id,
+                      ).filter(SppModel.unit_id==Unit.id, SppModel.unit_id==self.unit_id,
                       SppModel.tahun_id==self.session['tahun'], 
                       SppModel.tanggal.between(mulai,selesai)        
                       ).order_by(SppModel.tanggal).all()
                 else:
                     query = DBSession.query(SppModel.tahun_id.label('tahun'), 
-                      UnitModel.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spm'), 
+                      Unit.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spm'), 
                       SppModel.kode.label('spm_kd'), SppModel.nama.label('spm_nm'),
                       case([(SppModel.nominal==1,SppModel.nominal)], else_=0).label('BRUTO'),
                       case([(SppModel.nominal==2,SppModel.nominal)], else_=0).label('POTONGAN'),
                       case([(SppModel.nominal==3,SppModel.nominal)], else_=0).label('NETTO'),
                       case([(SppModel.nominal==4,SppModel.nominal)], else_=0).label('INFORMASI')
-                      ).filter(SppModel.unit_id==UnitModel.id, SppModel.unit_id==self.unit_id,
+                      ).filter(SppModel.unit_id==Unit.id, SppModel.unit_id==self.unit_id,
                       SppModel.tahun_id==self.session['tahun'], SppModel.jenis==tipe, 
                       SppModel.tanggal.between(mulai,selesai)        
                       ).order_by(SppModel.tanggal).all()
@@ -1208,7 +1208,7 @@ class ViewTUSKPDLap(BaseViews):
             selesai = 'selesai' in params and params['selesai'] or 0
             if url_dict['act']=='1' and self.is_akses_mod('read'):
                 if tipe ==0 :
-                   query = DBSession.query(SppModel.tahun_id.label('tahun'), UnitModel.nama.label('unit_nm'),
+                   query = DBSession.query(SppModel.tahun_id.label('tahun'), Unit.nama.label('unit_nm'),
                       case([(SppModel.jenis==1,"UP"),(SppModel.jenis==2,"TU"),(SppModel.jenis==3,"GU"),(SppModel.jenis==4,"LS")], else_="").label('jenis'),
                       SppModel.kode.label('spp_kd'), SppModel.nama.label('spp_nm'), SppModel.tanggal.label('tgl_spp'),
                       SpmModel.kode.label('spm_kd'), SpmModel.tanggal.label('tgl_spm'),
@@ -1217,12 +1217,12 @@ class ViewTUSKPDLap(BaseViews):
                       ).filter(SppItemModel.spp_id==SppModel.id, SppItemModel.apinvoice_id==APInvoiceModel.id,
                       APInvoiceItemModel.apinvoice_id==APInvoiceModel.id, APInvoiceItemModel.kegiatan_item_id==KegiatanItemModel.id,
                       KegiatanItemModel.rekening_id==RekeningModel.id,
-                      SppModel.unit_id==UnitModel.id, SppModel.unit_id==self.unit_id,
+                      SppModel.unit_id==Unit.id, SppModel.unit_id==self.unit_id,
                       SppModel.tahun_id==self.session['tahun'],
                       SpmModel.tanggal.between(mulai,selesai)        
                       ).outerjoin(SpmModel,SpmModel.spp_id==SppModel.id
                       ).outerjoin(Sp2dModel,Sp2dModel.spm_id==SpmModel.id
-                      ).group_by(SppModel.tahun_id, UnitModel.nama,
+                      ).group_by(SppModel.tahun_id, Unit.nama,
                       case([(SppModel.jenis==1,"UP"),(SppModel.jenis==2,"TU"),(SppModel.jenis==3,"GU"),(SppModel.jenis==4,"LS")], else_=""),
                       SppModel.kode, SppModel.nama, SppModel.tanggal,
                       SpmModel.kode, SpmModel.tanggal,
@@ -1230,7 +1230,7 @@ class ViewTUSKPDLap(BaseViews):
                       ).order_by(SppModel.tanggal).all()
 
                 else:
-                    query = DBSession.query(SppModel.tahun_id.label('tahun'), UnitModel.nama.label('unit_nm'),
+                    query = DBSession.query(SppModel.tahun_id.label('tahun'), Unit.nama.label('unit_nm'),
                       case([(SppModel.jenis==1,"UP"),(SppModel.jenis==2,"TU"),(SppModel.jenis==3,"GU"),(SppModel.jenis==4,"LS")], else_="").label('jenis'),
                       SppModel.kode.label('spp_kd'), SppModel.nama.label('spp_nm'), SppModel.tanggal.label('tgl_spp'),
                       SpmModel.kode.label('spm_kd'), SpmModel.tanggal.label('tgl_spm'),
@@ -1239,12 +1239,12 @@ class ViewTUSKPDLap(BaseViews):
                       ).filter(SppItemModel.spp_id==SppModel.id, SppItemModel.apinvoice_id==APInvoiceModel.id,
                       APInvoiceItemModel.apinvoice_id==APInvoiceModel.id, APInvoiceItemModel.kegiatan_item_id==KegiatanItemModel.id,
                       KegiatanItemModel.rekening_id==RekeningModel.id,
-                      SppModel.unit_id==UnitModel.id, SppModel.unit_id==self.unit_id,
+                      SppModel.unit_id==Unit.id, SppModel.unit_id==self.unit_id,
                       SppModel.tahun_id==self.session['tahun'], SppModel.jenis==tipe, 
                       SpmModel.tanggal.between(mulai,selesai)
                       ).outerjoin(SpmModel,SpmModel.spp_id==SppModel.id
                       ).outerjoin(Sp2dModel,Sp2dModel.spm_id==SpmModel.id
-                      ).group_by(SppModel.tahun_id, UnitModel.nama,
+                      ).group_by(SppModel.tahun_id, Unit.nama,
                       case([(SppModel.jenis==1,"UP"),(SppModel.jenis==2,"TU"),(SppModel.jenis==3,"GU"),(SppModel.jenis==4,"LS")], else_=""),
                       SppModel.kode, SppModel.nama, SppModel.tanggal,
                       SpmModel.kode, SpmModel.tanggal,
@@ -1261,7 +1261,7 @@ class ViewTUSKPDLap(BaseViews):
             elif url_dict['act']=='2' and self.is_akses_mod('read'):
                 if tipe ==0 :
                     query = DBSession.query(SppModel.tahun_id.label('tahun'), 
-                      UnitModel.nama.label('unit_nm'), SpmModel.tanggal.label('tgl_spp'), 
+                      Unit.nama.label('unit_nm'), SpmModel.tanggal.label('tgl_spp'), 
                       SpmModel.kode.label('spp_kd'), SpmModel.nama.label('spp_nm'),
                       func.sum(case([(SppModel.jenis==1,APInvoiceItemModel.nilai)], else_=0)).label('UP'),
                       func.sum(case([(SppModel.jenis==2,APInvoiceItemModel.nilai)], else_=0)).label('GU'),
@@ -1271,17 +1271,17 @@ class ViewTUSKPDLap(BaseViews):
                       ).filter(SppItemModel.spp_id==SppModel.id, SppItemModel.apinvoice_id==APInvoiceModel.id,
                       APInvoiceItemModel.apinvoice_id==APInvoiceModel.id, APInvoiceItemModel.kegiatan_item_id==KegiatanItemModel.id,
                       KegiatanItemModel.rekening_id==RekeningModel.id,
-                      SppModel.unit_id==UnitModel.id, SppModel.unit_id==self.unit_id,
+                      SppModel.unit_id==Unit.id, SppModel.unit_id==self.unit_id,
                       SppModel.tahun_id==self.session['tahun'],  
                       SpmModel.tanggal.between(mulai,selesai)        
                       ).outerjoin(SpmModel,SpmModel.spp_id==SppModel.id
                       ).outerjoin(Sp2dModel,Sp2dModel.spm_id==SpmModel.id
-                      ).group_by(SppModel.tahun_id, UnitModel.nama, SpmModel.tanggal, 
+                      ).group_by(SppModel.tahun_id, Unit.nama, SpmModel.tanggal, 
                       SpmModel.kode, SpmModel.nama
                       ).order_by(SpmModel.tanggal).all()
                 else:
                     query = DBSession.query(SppModel.tahun_id.label('tahun'), 
-                      UnitModel.nama.label('unit_nm'), SpmModel.tanggal.label('tgl_spp'), 
+                      Unit.nama.label('unit_nm'), SpmModel.tanggal.label('tgl_spp'), 
                       SpmModel.kode.label('spp_kd'), SpmModel.nama.label('spp_nm'),
                       func.sum(case([(SppModel.jenis==1,APInvoiceItemModel.nilai)], else_=0)).label('UP'),
                       func.sum(case([(SppModel.jenis==2,APInvoiceItemModel.nilai)], else_=0)).label('GU'),
@@ -1293,10 +1293,10 @@ class ViewTUSKPDLap(BaseViews):
                       ).filter(SppItemModel.spp_id==SppModel.id, SppItemModel.apinvoice_id==APInvoiceModel.id,
                       APInvoiceItemModel.apinvoice_id==APInvoiceModel.id, APInvoiceItemModel.kegiatan_item_id==KegiatanItemModel.id,
                       KegiatanItemModel.rekening_id==RekeningModel.id,
-                      SppModel.unit_id==UnitModel.id, SppModel.unit_id==self.unit_id,
+                      SppModel.unit_id==Unit.id, SppModel.unit_id==self.unit_id,
                       SppModel.tahun_id==self.session['tahun'], SppModel.jenis==tipe,   
                       SpmModel.tanggal.between(mulai,selesai)        
-                      ).group_by(SppModel.tahun_id, UnitModel.nama, SpmModel.tanggal, 
+                      ).group_by(SppModel.tahun_id, Unit.nama, SpmModel.tanggal, 
                       SpmModel.kode, SpmModel.nama
                       ).order_by(SpmModel.tanggal).all()
 
@@ -1310,25 +1310,25 @@ class ViewTUSKPDLap(BaseViews):
             elif url_dict['act']=='3' and self.is_akses_mod('read'):
                 if tipe ==0 :
                     query = DBSession.query(SppModel.tahun_id.label('tahun'), 
-                      UnitModel.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spp'), 
+                      Unit.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spp'), 
                       SppModel.kode.label('spp_kd'), SppModel.nama.label('spp_nm'),
                       case([(SppModel.jenis==1,SppModel.nominal)], else_=0).label('UP'),
                       case([(SppModel.jenis==2,SppModel.nominal)], else_=0).label('GU'),
                       case([(SppModel.jenis==3,SppModel.nominal)], else_=0).label('TU'),
                       case([(SppModel.jenis==4,SppModel.nominal)], else_=0).label('LS'),
-                      ).filter(SppModel.unit_id==UnitModel.id, SppModel.unit_id==self.unit_id,
+                      ).filter(SppModel.unit_id==Unit.id, SppModel.unit_id==self.unit_id,
                       SppModel.tahun_id==self.session['tahun'], 
                       SppModel.tanggal.between(mulai,selesai)        
                       ).order_by(SppModel.tanggal).all()
                 else:
                     query = DBSession.query(SppModel.tahun_id.label('tahun'), 
-                      UnitModel.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spp'), 
+                      Unit.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spp'), 
                       SppModel.kode.label('spp_kd'), SppModel.nama.label('spp_nm'),
                       case([(SppModel.jenis==1,SppModel.nominal)], else_=0).label('UP'),
                       case([(SppModel.jenis==2,SppModel.nominal)], else_=0).label('GU'),
                       case([(SppModel.jenis==3,SppModel.nominal)], else_=0).label('TU'),
                       case([(SppModel.jenis==4,SppModel.nominal)], else_=0).label('LS'),
-                      ).filter(SppModel.unit_id==UnitModel.id, SppModel.unit_id==self.unit_id,
+                      ).filter(SppModel.unit_id==Unit.id, SppModel.unit_id==self.unit_id,
                       SppModel.tahun_id==self.session['tahun'], SppModel.jenis==tipe, 
                       SppModel.tanggal.between(mulai,selesai)        
                       ).order_by(SppModel.tanggal).all()
@@ -1343,25 +1343,25 @@ class ViewTUSKPDLap(BaseViews):
             elif url_dict['act']=='4' and self.is_akses_mod('read'):
                 if tipe ==0 :
                     query = DBSession.query(SppModel.tahun_id.label('tahun'), 
-                      UnitModel.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spm'), 
+                      Unit.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spm'), 
                       SppModel.kode.label('spm_kd'), SppModel.nama.label('spm_nm'),
                       case([(SppModel.nominal==1,SppModel.nominal)], else_=0).label('BRUTO'),
                       case([(SppModel.nominal==2,SppModel.nominal)], else_=0).label('POTONGAN'),
                       case([(SppModel.nominal==3,SppModel.nominal)], else_=0).label('NETTO'),
                       case([(SppModel.nominal==4,SppModel.nominal)], else_=0).label('INFORMASI')
-                      ).filter(SppModel.unit_id==UnitModel.id, SppModel.unit_id==self.unit_id,
+                      ).filter(SppModel.unit_id==Unit.id, SppModel.unit_id==self.unit_id,
                       SppModel.tahun_id==self.session['tahun'], 
                       SppModel.tanggal.between(mulai,selesai)        
                       ).order_by(SppModel.tanggal).all()
                 else:
                     query = DBSession.query(SppModel.tahun_id.label('tahun'), 
-                      UnitModel.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spm'), 
+                      Unit.nama.label('unit_nm'), SppModel.tanggal.label('tgl_spm'), 
                       SppModel.kode.label('spm_kd'), SppModel.nama.label('spm_nm'),
                       case([(SppModel.nominal==1,SppModel.nominal)], else_=0).label('BRUTO'),
                       case([(SppModel.nominal==2,SppModel.nominal)], else_=0).label('POTONGAN'),
                       case([(SppModel.nominal==3,SppModel.nominal)], else_=0).label('NETTO'),
                       case([(SppModel.nominal==4,SppModel.nominal)], else_=0).label('INFORMASI')
-                      ).filter(SppModel.unit_id==UnitModel.id, SppModel.unit_id==self.unit_id,
+                      ).filter(SppModel.unit_id==Unit.id, SppModel.unit_id==self.unit_id,
                       SppModel.tahun_id==self.session['tahun'], SppModel.jenis==tipe, 
                       SppModel.tanggal.between(mulai,selesai)        
                       ).order_by(SppModel.tanggal).all()
@@ -1400,7 +1400,7 @@ class ViewTUSKPDLap(BaseViews):
             bulan = 'bulan' in params and params['bulan'] and int(params['bulan']) or 0
             if url_dict['act']=='1' and self.is_akses_mod('read'):
                 query = DBSession.query(APInvoiceModel
-                      ).filter(APInvoiceModel.unit_id==UnitModel.id, APInvoiceModel.kegiatan_sub_id==KegiatanSubModel.id,
+                      ).filter(APInvoiceModel.unit_id==Unit.id, APInvoiceModel.kegiatan_sub_id==KegiatanSubModel.id,
                       APInvoiceModel.id==APInvoiceItemModel.apinvoice_id, APInvoiceItemModel.kegiatan_item_id==KegiatanItemModel.id,
                       KegiatanItemModel.rekening_id==RekeningModel.id, APInvoiceModel.unit_id==self.unit_id,
                       APInvoiceModel.tahun_id==self.session['tahun'],  
@@ -1439,7 +1439,7 @@ class ViewTUSKPDLap(BaseViews):
             bulan = 'bulan' in params and params['bulan'] and int(params['bulan']) or 0
             if url_dict['act']=='1' and self.is_akses_mod('read'):
                 query = DBSession.query(APInvoiceModel
-                      ).filter(APInvoiceModel.unit_id==UnitModel.id, APInvoiceModel.kegiatan_sub_id==KegiatanSubModel.id,
+                      ).filter(APInvoiceModel.unit_id==Unit.id, APInvoiceModel.kegiatan_sub_id==KegiatanSubModel.id,
                       APInvoiceModel.id==APInvoiceItemModel.apinvoice_id, APInvoiceItemModel.kegiatan_item_id==KegiatanItemModel.id,
                       KegiatanItemModel.rekening_id==RekeningModel.id, APInvoiceModel.unit_id==self.unit_id,
                       APInvoiceModel.tahun_id==self.session['tahun'],  

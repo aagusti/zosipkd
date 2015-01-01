@@ -24,7 +24,7 @@ from osipkd.models.gaji import GajiPotongan, GajiPegawai
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
 from osipkd.models.pemda_model import (
-    UserUnitModel, UnitModel)
+    UserUnit, Unit)
     
 
 SESS_ADD_FAILED = 'Tambah potongan gaji gagal'
@@ -268,7 +268,7 @@ class view_gajipotongan(BaseViews):
                       GajiPegawai.tahun == ses['tahun'],
                       GajiPegawai.bulan == ses['bulan'],
                     )
-            rows = UserUnitModel.get_filtered(self.request)
+            rows = UserUnit.get_filtered(self.request)
             if rows and rows.sub_unit:
                 query = query.filter(GajiPegawai.unitkd.like( '%s%%' % self.request.session['unit_kd']))
             else:
@@ -492,7 +492,7 @@ class view_gajipotongan(BaseViews):
                   GajiPegawai.tahun == self.request.session['tahun'],
                   GajiPegawai.bulan == self.request.session['bulan'],
                 )
-        rows = UserUnitModel.get_filtered(self.request)
+        rows = UserUnit.get_filtered(self.request)
         if rows and rows.sub_unit:
             query = query.filter(GajiPegawai.unitkd.like( '%s%%' % self.request.session['unit_kd']))
         else:

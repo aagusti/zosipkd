@@ -15,7 +15,7 @@ from ..models import (
     Resource,
     User,
     )
-
+from osipkd.models.pemda_model import  STATUS_APBD
 from datetime import (datetime, date)
 
 from pyjasper.client import JasperGenerator
@@ -90,8 +90,6 @@ class BaseViews(object):
         request.user.resources.append(resource)
         """
         
-        
-
     def _DTstrftime(self, chain):
         ret = chain and datetime.strftime(chain, '%d-%m-%Y')
         if ret:
@@ -107,7 +105,15 @@ class BaseViews(object):
             return ret
         else:
             return chain
-
+    def _StatusAPBD(self, chain):
+        if chain:
+            for (id,value) in STATUS_APBD:
+                if id==chain:
+                    ret = value
+        if ret:
+            return ret
+        else:
+            return chain    
 @view_config(route_name='change-act', renderer='json', permission='view')
 def change_act(request):
     ses = request.session

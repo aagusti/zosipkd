@@ -12,8 +12,8 @@ from sqlalchemy.exc import DBAPIError
 from osipkd.views.views import *
 from osipkd.models.model_base import *
 from osipkd.models.apbd_rka_models import (KegiatanIndikatorModel, KegiatanSubModel, KegiatanItemModel)
-from osipkd.models.apbd_admin_models import (TahunModel, UserApbdModel,UnitModel,
-     UrusanModel, RekeningModel, ProgramModel, KegiatanModel, TapdModel, JabatanModel, PegawaiModel, PejabatModel)
+from osipkd.models.apbd_admin_models import (TahunModel, UserApbdModel,Unit,
+     Urusan, RekeningModel, ProgramModel, KegiatanModel, TapdModel, JabatanModel, PegawaiModel, PejabatModel)
 from datetime import datetime
 import os
 from pyramid.renderers import render_to_response
@@ -55,9 +55,9 @@ class AnggaranViews(AnggaranBaseViews):
             unit_id = 'unit_id' in params and int(params['unit_id']) or 0
             if unit_id > 0:
                 self.session['unit_id'] = unit_id
-                row = DBSession.query(UnitModel).join(UrusanModel)\
-                      .filter(UnitModel.urusan_id==UrusanModel.id, \
-                              UnitModel.id==self.session['unit_id']).first()
+                row = DBSession.query(Unit).join(Urusan)\
+                      .filter(Unit.urusan_id==Urusan.id, \
+                              Unit.id==self.session['unit_id']).first()
                 self.session['unit_kd'] = row and ''.join([row.urusans.kode,'.',row.kode]) or ""
                 self.session['unit_nm'] = row and row.nama or ""
                 self.d['msg']='Sukses Ubah Unit'
@@ -111,8 +111,8 @@ class AnggaranViews(AnggaranBaseViews):
             if programkd and kegiatankd:
                 row = DBSession.query(KegiatanModel.id, KegiatanModel.nama)\
                       .join(ProgramModel)\
-                      .join(UrusanModel)\
-                      .filter(UrusanModel.kode==urusankd,
+                      .join(Urusan)\
+                      .filter(Urusan.kode==urusankd,
                               KegiatanModel.kode==kegiatankd,
                               ProgramModel.kode==programkd).first()
                 if row:
@@ -285,8 +285,8 @@ class ViewAnggaran010(AnggaranBaseViews):
         self.datas["kegiatanKd"] = "urusankd=%s&programkd=%s&kegiatankd=%s" %(ursKd, prgKd,kegKd)
         if self.logged and self.is_akses_mod('read'):
             self.datas['kegiatan'] = DBSession.query(KegiatanModel).\
-                       join(ProgramModel).join(UrusanModel).filter(
-                            UrusanModel.kode==ursKd,
+                       join(ProgramModel).join(Urusan).filter(
+                            Urusan.kode==ursKd,
                             ProgramModel.kode==prgKd,
                             KegiatanModel.kode==kegKd 
                             ).first()
@@ -329,8 +329,8 @@ class ViewAnggaran021(AnggaranBaseViews):
         
         if self.logged and self.is_akses_mod('read'):
             self.datas['kegiatan'] = DBSession.query(KegiatanModel).\
-                       join(ProgramModel).join(UrusanModel).filter(
-                            UrusanModel.kode==ursKd,
+                       join(ProgramModel).join(Urusan).filter(
+                            Urusan.kode==ursKd,
                             ProgramModel.kode==prgKd,
                             KegiatanModel.kode==kegKd 
                             ).first()
@@ -372,8 +372,8 @@ class ViewAnggaran031(AnggaranBaseViews):
         
         if self.logged and self.is_akses_mod('read'):
             self.datas['kegiatan'] = DBSession.query(KegiatanModel).\
-                       join(ProgramModel).join(UrusanModel).filter(
-                            UrusanModel.kode==ursKd,
+                       join(ProgramModel).join(Urusan).filter(
+                            Urusan.kode==ursKd,
                             ProgramModel.kode==prgKd,
                             KegiatanModel.kode==kegKd 
                             ).first()
@@ -415,8 +415,8 @@ class ViewAnggaran032(AnggaranBaseViews):
         
         if self.logged and self.is_akses_mod('read'):
             self.datas['kegiatan'] = DBSession.query(KegiatanModel).\
-                       join(ProgramModel).join(UrusanModel).filter(
-                            UrusanModel.kode==ursKd,
+                       join(ProgramModel).join(Urusan).filter(
+                            Urusan.kode==ursKd,
                             ProgramModel.kode==prgKd,
                             KegiatanModel.kode==kegKd 
                             ).first()
@@ -531,7 +531,7 @@ class ViewAnggaran022(AnggaranBaseViews):
                              KegiatanItemModel.hsat_4).label('dppa'))\
                     .join(KegiatanModel)\
                     .join(ProgramModel)\
-                    .join(UrusanModel)\
+                    .join(Urusan)\
                     .outerjoin(KegiatanItemModel)\
                     .filter(
                             KegiatanSubModel.unit_id==self.unit_id,
@@ -543,7 +543,7 @@ class ViewAnggaran022(AnggaranBaseViews):
                             KegiatanSubModel.no_urut,
                             KegiatanSubModel.nama,
                             ProgramModel.kode, ProgramModel.nama,
-                            KegiatanModel.kode, UrusanModel.kode, PegawaiModel.kode, PegawaiModel.nama
+                            KegiatanModel.kode, Urusan.kode, PegawaiModel.kode, PegawaiModel.nama
                             )
                 rowTable = DataTables(req, KegiatanSubModel, query, columns)
                 # returns what is needed by DataTable

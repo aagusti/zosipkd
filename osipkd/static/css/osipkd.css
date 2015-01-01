@@ -143,3 +143,16 @@ div.tab-content {
 .form-horizontal .form-group {
     margin-bottom: 4px !important; 
 }
+
+.picker {
+  font-size: 12px;
+  text-align: left;
+  line-height: 1.2;
+  color: #000000;
+  position: absolute;
+  z-index: 10000;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}

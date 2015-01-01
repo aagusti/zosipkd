@@ -46,7 +46,8 @@ class AddSchema(colander.Schema):
                     colander.Integer(),)
     kode = colander.SchemaNode(
                     colander.String(),
-                    validator=colander.Length(max=18))
+                    validator=colander.Length(max=18)
+                    )
     nama = colander.SchemaNode(
                     colander.String())
     disabled = colander.SchemaNode(
@@ -68,6 +69,36 @@ class view_rekening(BaseViews):
     ##########                    
     # Action #
     ##########    
+    def get_kode_dict(self, term, prefix=None):
+        q = DBSession.query(Rekening.id, Rekening.kode, Rekening.nama
+                  ).filter(Rekening.kode.ilike('%s%%' % prefix),
+                           Rekening.kode.ilike('%%%s%%' % term))
+        rows = q.all()
+        r = []
+        for k in rows:
+            d={}
+            d['id']          = k[0]
+            d['value']       = k[1]
+            d['kode']        = k[1]
+            d['nama']        = k[2]
+            r.append(d)    
+        return r
+        
+    def get_nama_dict(self, term, prefix=None):
+        q = DBSession.query(Rekening.id, Rekening.kode, Rekening.nama
+                  ).filter(Rekening.kode.ilike('%s%%' % prefix),
+                           Rekening.nama.ilike('%%%s%%' % term))
+        rows = q.all()
+        r = []
+        for k in rows:
+            d={}
+            d['id']          = k[0]
+            d['value']       = k[2]
+            d['kode']        = k[1]
+            d['nama']        = k[2]
+            r.append(d)    
+        return r
+
     @view_config(route_name='rekening-act', renderer='json',
                  permission='view')
     def gaji_rekening_act(self):
@@ -90,34 +121,41 @@ class view_rekening(BaseViews):
             
         elif url_dict['act']=='headof':
             term = 'term' in params and params['term'] or '' 
-            rows = DBSession.query(Rekening.id, Rekening.kode, Rekening.nama
-                      ).filter(Rekening.children == None,
-                      Rekening.nama.ilike('%%%s%%' % term) ).all()
-            r = []
-            for k in rows:
-                d={}
-                d['id']          = k[0]
-                d['value']       = k[2]
-                d['kode']        = k[1]
-                d['nama']        = k[2]
-                r.append(d)
-            return r
+            return self.get_nama_dict(term)
             
         elif url_dict['act']=='headofkode':
             term = 'term' in params and params['term'] or '' 
-            rows = DBSession.query(Rekening.id, Rekening.kode, Rekening.nama
-                      ).filter(Rekening.children == None,
-                      Rekening.kode.ilike('%%%s%%' % term) ).all()
-            r = []
-            for k in rows:
-                d={}
-                d['id']          = k[0]
-                d['value']       = k[1]
-                d['kode']        = k[1]
-                d['nama']        = k[2]
-                r.append(d)
-            return r
+            return self.get_kode_dict(term)
             
+        elif url_dict['act']=='headofnama4':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_nama_dict(term,'4')
+            
+        elif url_dict['act']=='headofkode4':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_kode_dict(term,'4')
+        elif url_dict['act']=='headofnama5':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_nama_dict(term,'5')
+            
+        elif url_dict['act']=='headofkode5':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_kode_dict(term,'5')
+            
+        elif url_dict['act']=='headofnama8':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_nama_dict(term,'8')
+            
+        elif url_dict['act']=='headofkode8':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_kode_dict(term,'8')
+        elif url_dict['act']=='headofnama9':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_nama_dict(term,'9')
+            
+        elif url_dict['act']=='headofkode9':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_kode_dict(term,'9')
         elif url_dict['act']=='import':
             pass
             

@@ -14,8 +14,8 @@ from sqlalchemy.exc import DBAPIError
 from osipkd.views.views import *
 from osipkd.models.model_base import *
 from osipkd.models.apbd_rka_models import *
-from osipkd.models.apbd_admin_models import (TahunModel, UserApbdModel,UnitModel,
-     UrusanModel, RekeningModel, ProgramModel, KegiatanModel, PegawaiModel, FungsiModel, JabatanModel, PejabatModel)
+from osipkd.models.apbd_admin_models import (TahunModel, UserApbdModel,Unit,
+     Urusan, RekeningModel, ProgramModel, KegiatanModel, PegawaiModel, FungsiModel, JabatanModel, PejabatModel)
 from datetime import datetime
 import os
 from pyramid.renderers import render_to_response
@@ -1896,7 +1896,7 @@ class ViewAnggaranLap(BaseViews):
 
         if self.logged :
             if url_dict['act']=='r001' and self.is_akses_mod('read'):
-                query = DBSession.query(UrusanModel.kode, UrusanModel.nama).order_by(UrusanModel.kode).all()
+                query = DBSession.query(Urusan.kode, Urusan.nama).order_by(Urusan.kode).all()
                 generator = r001Generator()
                 pdf = generator.generate(query)
                 response=req.response
@@ -1905,8 +1905,8 @@ class ViewAnggaranLap(BaseViews):
                 response.write(pdf)
                 return response
             elif url_dict['act']=='r002' and self.is_akses_mod('read'):
-                query = DBSession.query(UrusanModel.kode.label("urusankd"), UnitModel.kode, UnitModel.nama, UnitModel.kategori, UnitModel.singkat).\
-                        filter(UnitModel.urusan_id==UrusanModel.id).order_by(UrusanModel.kode,UnitModel.kode).all()
+                query = DBSession.query(Urusan.kode.label("urusankd"), Unit.kode, Unit.nama, Unit.kategori, Unit.singkat).\
+                        filter(Unit.urusan_id==Urusan.id).order_by(Urusan.kode,Unit.kode).all()
                 generator = r002Generator()
                 pdf = generator.generate(query)
                 response=req.response
@@ -1970,8 +1970,8 @@ class ViewAnggaranLap(BaseViews):
                 response.write(pdf)   
                 return response
             elif url_dict['act']=='r011' and self.is_akses_mod('read'):
-                query = DBSession.query(PegawaiModel.kode, PegawaiModel.nama, JabatanModel.nama.label('jabatan'), UnitModel.nama.label('skpd'), PejabatModel.mulai, PejabatModel.selesai
-                      ).filter(PejabatModel.pegawai_id==PegawaiModel.id, PejabatModel.unit_id==UnitModel.id, PejabatModel.jabatan_id==JabatanModel.id
+                query = DBSession.query(PegawaiModel.kode, PegawaiModel.nama, JabatanModel.nama.label('jabatan'), Unit.nama.label('skpd'), PejabatModel.mulai, PejabatModel.selesai
+                      ).filter(PejabatModel.pegawai_id==PegawaiModel.id, PejabatModel.unit_id==Unit.id, PejabatModel.jabatan_id==JabatanModel.id
                       ).order_by(PegawaiModel.kode).all()
                 generator = r011Generator()
                 pdf = generator.generate(query)
@@ -2038,12 +2038,12 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.vol_2_1* KegiatanItemModel.vol_2_2*KegiatanItemModel.hsat_2).label('jml2'),
                     (KegiatanItemModel.vol_3_1* KegiatanItemModel.vol_3_2*KegiatanItemModel.hsat_3).label('jml3'),
                     (KegiatanItemModel.vol_4_1* KegiatanItemModel.vol_4_2*KegiatanItemModel.hsat_4).label('jml4'),
-                    KegiatanSubModel.tahun_id.label('tahun'), UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'))\
+                    KegiatanSubModel.tahun_id.label('tahun'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id)\
                     .subquery()
@@ -2083,12 +2083,12 @@ class ViewAnggaranLap(BaseViews):
                     KegiatanItemModel.hsat_4.label('harga4'),
                     (KegiatanItemModel.vol_4_1* KegiatanItemModel.vol_4_2*KegiatanItemModel.hsat_4).label('jml4'),
                     KegiatanSubModel.tahun_id.label('tahun'), 
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'))\
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id==2)\
@@ -2133,13 +2133,13 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.vol_2_1* KegiatanItemModel.vol_2_2*KegiatanItemModel.hsat_2).label('jml2'),
                     (KegiatanItemModel.vol_3_1* KegiatanItemModel.vol_3_2*KegiatanItemModel.hsat_3).label('jml3'),
                     (KegiatanItemModel.vol_4_1* KegiatanItemModel.vol_4_2*KegiatanItemModel.hsat_4).label('jml4'),
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
                     KegiatanSubModel.tahun_id.label('tahun'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id==3)\
@@ -2213,13 +2213,13 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.vol_2_1* KegiatanItemModel.vol_2_2*KegiatanItemModel.hsat_2).label('jml2'),
                     (KegiatanItemModel.vol_3_1* KegiatanItemModel.vol_3_2*KegiatanItemModel.hsat_3).label('jml3'),
                     (KegiatanItemModel.vol_4_1* KegiatanItemModel.vol_4_2*KegiatanItemModel.hsat_4).label('jml4'),
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
                     KegiatanSubModel.tahun_id.label('tahun'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id.in_([4,5]))\
@@ -2254,13 +2254,13 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.vol_2_1* KegiatanItemModel.vol_2_2*KegiatanItemModel.hsat_2).label('jml2'),
                     (KegiatanItemModel.vol_3_1* KegiatanItemModel.vol_3_2*KegiatanItemModel.hsat_3).label('jml3'),
                     (KegiatanItemModel.vol_4_1* KegiatanItemModel.vol_4_2*KegiatanItemModel.hsat_4).label('jml4'),
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
                     KegiatanSubModel.tahun_id.label('tahun'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id==4)\
@@ -2295,13 +2295,13 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.vol_2_1* KegiatanItemModel.vol_2_2*KegiatanItemModel.hsat_2).label('jml2'),
                     (KegiatanItemModel.vol_3_1* KegiatanItemModel.vol_3_2*KegiatanItemModel.hsat_3).label('jml3'),
                     (KegiatanItemModel.vol_4_1* KegiatanItemModel.vol_4_2*KegiatanItemModel.hsat_4).label('jml4'),
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
                     KegiatanSubModel.tahun_id.label('tahun'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id==5)\
@@ -2366,13 +2366,13 @@ class ViewAnggaranLap(BaseViews):
                 return rowTable.output_result()
 
             elif url_dict['act']=='0' and self.is_akses_mod('read'):
-                query = DBSession.query(KegiatanSubModel.tahun_id,UrusanModel.kode.label('urusan_kd'),
-                   UrusanModel.nama.label('urusan_nm'),UnitModel.id.label('unit_id'),UnitModel.kode.label('unit_kd'),
-                   UnitModel.nama.label('unit_nm'))\
-                   .filter(KegiatanSubModel.unit_id==UnitModel.id,UnitModel.urusan_id==UrusanModel.id,
+                query = DBSession.query(KegiatanSubModel.tahun_id,Urusan.kode.label('urusan_kd'),
+                   Urusan.nama.label('urusan_nm'),Unit.id.label('unit_id'),Unit.kode.label('unit_kd'),
+                   Unit.nama.label('unit_nm'))\
+                   .filter(KegiatanSubModel.unit_id==Unit.id,Unit.urusan_id==Urusan.id,
                    KegiatanSubModel.tahun_id==self.session['tahun'],KegiatanSubModel.unit_id==self.unit_id)\
-                   .group_by(KegiatanSubModel.tahun_id,UrusanModel.kode,UrusanModel.nama,UnitModel.id,UnitModel.kode,
-                   UnitModel.nama)
+                   .group_by(KegiatanSubModel.tahun_id,Urusan.kode,Urusan.nama,Unit.id,Unit.kode,
+                   Unit.nama)
 
                 generator = r200Generator()
                 pdf = generator.generate(query)
@@ -2402,12 +2402,12 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.bln04+KegiatanItemModel.bln05+KegiatanItemModel.bln06).label('trw2'),
                     (KegiatanItemModel.bln07+KegiatanItemModel.bln08+KegiatanItemModel.bln09).label('trw3'),
                     (KegiatanItemModel.bln10+KegiatanItemModel.bln11+KegiatanItemModel.bln12).label('trw4'),
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'))\
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id==2)\
@@ -2454,13 +2454,13 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.bln04+KegiatanItemModel.bln05+KegiatanItemModel.bln06).label('trw2'),
                     (KegiatanItemModel.bln07+KegiatanItemModel.bln08+KegiatanItemModel.bln09).label('trw3'),
                     (KegiatanItemModel.bln10+KegiatanItemModel.bln11+KegiatanItemModel.bln12).label('trw4'),
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
                     KegiatanSubModel.tahun_id.label('tahun'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id==3)\
@@ -2488,8 +2488,8 @@ class ViewAnggaranLap(BaseViews):
                 return response
 
             elif url_dict['act']=='22' and self.is_akses_mod('read'):
-                query = DBSession.query(KegiatanSubModel.tahun_id.label('tahun'), UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
-                      UnitModel.id.label('unit_id'), UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
+                query = DBSession.query(KegiatanSubModel.tahun_id.label('tahun'), Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
+                      Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
                       ProgramModel.kode.label('program_kd'), ProgramModel.nama.label('program_nm'), 
                       KegiatanModel.kode.label('kegiatan_kd'), KegiatanModel.nama.label('kegiatan_nm'), 
                       KegiatanSubModel.lokasi.label('lokasi'), KegiatanSubModel.target.label('target'), 
@@ -2498,18 +2498,18 @@ class ViewAnggaranLap(BaseViews):
 					  func.sum(KegiatanItemModel.bln07+KegiatanItemModel.bln08+KegiatanItemModel.bln09).label('trw3'), 
 					  func.sum(KegiatanItemModel.bln10+KegiatanItemModel.bln11+KegiatanItemModel.bln12).label('trw4'))\
                       .filter(KegiatanSubModel.id==KegiatanItemModel.kegiatan_sub_id,
-							KegiatanSubModel.unit_id==UnitModel.id,
-							UrusanModel.id==UnitModel.urusan_id,
+							KegiatanSubModel.unit_id==Unit.id,
+							Urusan.id==Unit.urusan_id,
 							KegiatanModel.id==KegiatanSubModel.kegiatan_id, 
 							ProgramModel.id==KegiatanModel.program_id,
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id>6)\
-                      .group_by(KegiatanSubModel.tahun_id, UrusanModel.kode, UrusanModel.nama,
-                      UnitModel.id, UnitModel.kode, UnitModel.nama,
+                      .group_by(KegiatanSubModel.tahun_id, Urusan.kode, Urusan.nama,
+                      Unit.id, Unit.kode, Unit.nama,
                       ProgramModel.kode, ProgramModel.nama, 
                       KegiatanModel.kode, KegiatanModel.nama, 
                       KegiatanSubModel.lokasi, KegiatanSubModel.target)\
-                      .order_by(UrusanModel.kode, UnitModel.kode, ProgramModel.kode, KegiatanModel.kode).all()
+                      .order_by(Urusan.kode, Unit.kode, ProgramModel.kode, KegiatanModel.kode).all()
 
                 generator = r203Generator()
                 pdf = generator.generate(query)
@@ -2543,13 +2543,13 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.bln04+KegiatanItemModel.bln05+KegiatanItemModel.bln06).label('trw2'),
                     (KegiatanItemModel.bln07+KegiatanItemModel.bln08+KegiatanItemModel.bln09).label('trw3'),
                     (KegiatanItemModel.bln10+KegiatanItemModel.bln11+KegiatanItemModel.bln12).label('trw4'),
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
                     KegiatanSubModel.tahun_id.label('tahun'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id.in_([4,5]))\
@@ -2586,13 +2586,13 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.bln04+KegiatanItemModel.bln05+KegiatanItemModel.bln06).label('trw2'),
                     (KegiatanItemModel.bln07+KegiatanItemModel.bln08+KegiatanItemModel.bln09).label('trw3'),
                     (KegiatanItemModel.bln10+KegiatanItemModel.bln11+KegiatanItemModel.bln12).label('trw4'),
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
                     KegiatanSubModel.tahun_id.label('tahun'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id==4)\
@@ -2629,13 +2629,13 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.bln04+KegiatanItemModel.bln05+KegiatanItemModel.bln06).label('trw2'),
                     (KegiatanItemModel.bln07+KegiatanItemModel.bln08+KegiatanItemModel.bln09).label('trw3'),
                     (KegiatanItemModel.bln10+KegiatanItemModel.bln11+KegiatanItemModel.bln12).label('trw4'),
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
                     KegiatanSubModel.tahun_id.label('tahun'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id==5)\
@@ -2698,13 +2698,13 @@ class ViewAnggaranLap(BaseViews):
                 return rowTable.output_result()
 
             elif url_dict['act']=='0' and self.is_akses_mod('read'):
-                query = DBSession.query(KegiatanSubModel.tahun_id,UrusanModel.kode.label('urusan_kd'),
-                   UrusanModel.nama.label('urusan_nm'),UnitModel.id.label('unit_id'),UnitModel.kode.label('unit_kd'),
-                   UnitModel.nama.label('unit_nm'))\
-                   .filter(KegiatanSubModel.unit_id==UnitModel.id,UnitModel.urusan_id==UrusanModel.id,
+                query = DBSession.query(KegiatanSubModel.tahun_id,Urusan.kode.label('urusan_kd'),
+                   Urusan.nama.label('urusan_nm'),Unit.id.label('unit_id'),Unit.kode.label('unit_kd'),
+                   Unit.nama.label('unit_nm'))\
+                   .filter(KegiatanSubModel.unit_id==Unit.id,Unit.urusan_id==Urusan.id,
                    KegiatanSubModel.tahun_id==self.session['tahun'],KegiatanSubModel.unit_id==self.unit_id)\
-                   .group_by(KegiatanSubModel.tahun_id,UrusanModel.kode,UrusanModel.nama,UnitModel.id,UnitModel.kode,
-                   UnitModel.nama)
+                   .group_by(KegiatanSubModel.tahun_id,Urusan.kode,Urusan.nama,Unit.id,Unit.kode,
+                   Unit.nama)
 
                 generator = r300Generator()
                 pdf = generator.generate(query)
@@ -2724,13 +2724,13 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.bln04+KegiatanItemModel.bln05+KegiatanItemModel.bln06).label('trw2'),
                     (KegiatanItemModel.bln07+KegiatanItemModel.bln08+KegiatanItemModel.bln09).label('trw3'),
                     (KegiatanItemModel.bln10+KegiatanItemModel.bln11+KegiatanItemModel.bln12).label('trw4'),
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
                     KegiatanSubModel.perubahan, KegiatanSubModel.tahun_id.label('tahun'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id==2)\
@@ -2767,13 +2767,13 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.bln04+KegiatanItemModel.bln05+KegiatanItemModel.bln06).label('trw2'),
                     (KegiatanItemModel.bln07+KegiatanItemModel.bln08+KegiatanItemModel.bln09).label('trw3'),
                     (KegiatanItemModel.bln10+KegiatanItemModel.bln11+KegiatanItemModel.bln12).label('trw4'),
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
                     KegiatanSubModel.perubahan, KegiatanSubModel.tahun_id.label('tahun'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id==3)\
@@ -2801,8 +2801,8 @@ class ViewAnggaranLap(BaseViews):
                 return response
 
             elif url_dict['act']=='22' and self.is_akses_mod('read'):
-                query = DBSession.query(KegiatanSubModel.tahun_id.label('tahun'), UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
-                      UnitModel.id.label('unit_id'), UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
+                query = DBSession.query(KegiatanSubModel.tahun_id.label('tahun'), Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
+                      Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
                       ProgramModel.kode.label('program_kd'), ProgramModel.nama.label('program_nm'), 
                       KegiatanModel.kode.label('kegiatan_kd'), KegiatanModel.nama.label('kegiatan_nm'), 
                       KegiatanSubModel.lokasi.label('lokasi'), KegiatanSubModel.target.label('target'), 
@@ -2811,18 +2811,18 @@ class ViewAnggaranLap(BaseViews):
 					  func.sum(KegiatanItemModel.vol_3_1*KegiatanItemModel.vol_3_2*KegiatanItemModel.hsat_3).label('jumlah3'), 
 					  func.sum(KegiatanItemModel.vol_4_1*KegiatanItemModel.vol_4_2*KegiatanItemModel.hsat_4).label('jumlah4'))\
                       .filter(KegiatanSubModel.id==KegiatanItemModel.kegiatan_sub_id,
-							KegiatanSubModel.unit_id==UnitModel.id,
-							UrusanModel.id==UnitModel.urusan_id,
+							KegiatanSubModel.unit_id==Unit.id,
+							Urusan.id==Unit.urusan_id,
 							KegiatanModel.id==KegiatanSubModel.kegiatan_id, 
 							ProgramModel.id==KegiatanModel.program_id,
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id>6)\
-                      .group_by(KegiatanSubModel.tahun_id, UrusanModel.kode, UrusanModel.nama,
-                      UnitModel.id, UnitModel.kode, UnitModel.nama,
+                      .group_by(KegiatanSubModel.tahun_id, Urusan.kode, Urusan.nama,
+                      Unit.id, Unit.kode, Unit.nama,
                       ProgramModel.kode, ProgramModel.nama, 
                       KegiatanModel.kode, KegiatanModel.nama, 
                       KegiatanSubModel.lokasi, KegiatanSubModel.target)\
-                      .order_by(UrusanModel.kode, UnitModel.kode, ProgramModel.kode, KegiatanModel.kode).all()
+                      .order_by(Urusan.kode, Unit.kode, ProgramModel.kode, KegiatanModel.kode).all()
 
                 generator = r303Generator()
                 pdf = generator.generate(query)
@@ -2856,13 +2856,13 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.bln04+KegiatanItemModel.bln05+KegiatanItemModel.bln06).label('trw2'),
                     (KegiatanItemModel.bln07+KegiatanItemModel.bln08+KegiatanItemModel.bln09).label('trw3'),
                     (KegiatanItemModel.bln10+KegiatanItemModel.bln11+KegiatanItemModel.bln12).label('trw4'),
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
                     KegiatanSubModel.perubahan, KegiatanSubModel.tahun_id.label('tahun'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id.in_([4,5]))\
@@ -2899,13 +2899,13 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.bln04+KegiatanItemModel.bln05+KegiatanItemModel.bln06).label('trw2'),
                     (KegiatanItemModel.bln07+KegiatanItemModel.bln08+KegiatanItemModel.bln09).label('trw3'),
                     (KegiatanItemModel.bln10+KegiatanItemModel.bln11+KegiatanItemModel.bln12).label('trw4'),
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
                     KegiatanSubModel.perubahan, KegiatanSubModel.tahun_id.label('tahun'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id==4)\
@@ -2942,13 +2942,13 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.bln04+KegiatanItemModel.bln05+KegiatanItemModel.bln06).label('trw2'),
                     (KegiatanItemModel.bln07+KegiatanItemModel.bln08+KegiatanItemModel.bln09).label('trw3'),
                     (KegiatanItemModel.bln10+KegiatanItemModel.bln11+KegiatanItemModel.bln12).label('trw4'),
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
                     KegiatanSubModel.perubahan, KegiatanSubModel.tahun_id.label('tahun'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id==5)\
@@ -3011,13 +3011,13 @@ class ViewAnggaranLap(BaseViews):
                 return rowTable.output_result()
 
             elif url_dict['act']=='0' and self.is_akses_mod('read'):
-                query = DBSession.query(KegiatanSubModel.tahun_id,UrusanModel.kode.label('urusan_kd'),
-                   UrusanModel.nama.label('urusan_nm'),UnitModel.id.label('unit_id'),UnitModel.kode.label('unit_kd'),
-                   UnitModel.nama.label('unit_nm'))\
-                   .filter(KegiatanSubModel.unit_id==UnitModel.id,UnitModel.urusan_id==UrusanModel.id,
+                query = DBSession.query(KegiatanSubModel.tahun_id,Urusan.kode.label('urusan_kd'),
+                   Urusan.nama.label('urusan_nm'),Unit.id.label('unit_id'),Unit.kode.label('unit_kd'),
+                   Unit.nama.label('unit_nm'))\
+                   .filter(KegiatanSubModel.unit_id==Unit.id,Unit.urusan_id==Urusan.id,
                    KegiatanSubModel.tahun_id==self.session['tahun'],KegiatanSubModel.unit_id==self.unit_id)\
-                   .group_by(KegiatanSubModel.tahun_id,UrusanModel.kode,UrusanModel.nama,UnitModel.id,UnitModel.kode,
-                   UnitModel.nama)
+                   .group_by(KegiatanSubModel.tahun_id,Urusan.kode,Urusan.nama,Unit.id,Unit.kode,
+                   Unit.nama)
 
                 generator = r400Generator()
                 pdf = generator.generate(query)
@@ -3037,13 +3037,13 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.bln04+KegiatanItemModel.bln05+KegiatanItemModel.bln06).label('trw2'),
                     (KegiatanItemModel.bln07+KegiatanItemModel.bln08+KegiatanItemModel.bln09).label('trw3'),
                     (KegiatanItemModel.bln10+KegiatanItemModel.bln11+KegiatanItemModel.bln12).label('trw4'),
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
                     KegiatanSubModel.perubahan, KegiatanSubModel.tahun_id.label('tahun'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id==2)\
@@ -3080,13 +3080,13 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.bln04+KegiatanItemModel.bln05+KegiatanItemModel.bln06).label('trw2'),
                     (KegiatanItemModel.bln07+KegiatanItemModel.bln08+KegiatanItemModel.bln09).label('trw3'),
                     (KegiatanItemModel.bln10+KegiatanItemModel.bln11+KegiatanItemModel.bln12).label('trw4'),
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
                     KegiatanSubModel.perubahan, KegiatanSubModel.tahun_id.label('tahun'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id==3)\
@@ -3114,8 +3114,8 @@ class ViewAnggaranLap(BaseViews):
                 return response
 
             elif url_dict['act']=='22' and self.is_akses_mod('read'):
-                query = DBSession.query(KegiatanSubModel.tahun_id.label('tahun'), UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
-                      UnitModel.id.label('unit_id'), UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
+                query = DBSession.query(KegiatanSubModel.tahun_id.label('tahun'), Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
+                      Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
                       ProgramModel.kode.label('program_kd'), ProgramModel.nama.label('program_nm'), 
                       KegiatanModel.kode.label('kegiatan_kd'), KegiatanModel.nama.label('kegiatan_nm'), 
                       KegiatanSubModel.lokasi.label('lokasi'), KegiatanSubModel.target.label('target'), 
@@ -3124,18 +3124,18 @@ class ViewAnggaranLap(BaseViews):
 					  func.sum(KegiatanItemModel.vol_3_1*KegiatanItemModel.vol_3_2*KegiatanItemModel.hsat_3).label('jumlah3'), 
 					  func.sum(KegiatanItemModel.vol_4_1*KegiatanItemModel.vol_4_2*KegiatanItemModel.hsat_4).label('jumlah4'))\
                       .filter(KegiatanSubModel.id==KegiatanItemModel.kegiatan_sub_id,
-							KegiatanSubModel.unit_id==UnitModel.id,
-							UrusanModel.id==UnitModel.urusan_id,
+							KegiatanSubModel.unit_id==Unit.id,
+							Urusan.id==Unit.urusan_id,
 							KegiatanModel.id==KegiatanSubModel.kegiatan_id, 
 							ProgramModel.id==KegiatanModel.program_id,
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id>6)\
-                      .group_by(KegiatanSubModel.tahun_id, UrusanModel.kode, UrusanModel.nama,
-                      UnitModel.id, UnitModel.kode, UnitModel.nama,
+                      .group_by(KegiatanSubModel.tahun_id, Urusan.kode, Urusan.nama,
+                      Unit.id, Unit.kode, Unit.nama,
                       ProgramModel.kode, ProgramModel.nama, 
                       KegiatanModel.kode, KegiatanModel.nama, 
                       KegiatanSubModel.lokasi, KegiatanSubModel.target)\
-                      .order_by(UrusanModel.kode, UnitModel.kode, ProgramModel.kode, KegiatanModel.kode).all()
+                      .order_by(Urusan.kode, Unit.kode, ProgramModel.kode, KegiatanModel.kode).all()
 
                 generator = r403Generator()
                 pdf = generator.generate(query)
@@ -3169,13 +3169,13 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.bln04+KegiatanItemModel.bln05+KegiatanItemModel.bln06).label('trw2'),
                     (KegiatanItemModel.bln07+KegiatanItemModel.bln08+KegiatanItemModel.bln09).label('trw3'),
                     (KegiatanItemModel.bln10+KegiatanItemModel.bln11+KegiatanItemModel.bln12).label('trw4'),
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
                     KegiatanSubModel.perubahan, KegiatanSubModel.tahun_id.label('tahun'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id.in_([4,5]))\
@@ -3212,13 +3212,13 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.bln04+KegiatanItemModel.bln05+KegiatanItemModel.bln06).label('trw2'),
                     (KegiatanItemModel.bln07+KegiatanItemModel.bln08+KegiatanItemModel.bln09).label('trw3'),
                     (KegiatanItemModel.bln10+KegiatanItemModel.bln11+KegiatanItemModel.bln12).label('trw4'),
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
                     KegiatanSubModel.perubahan, KegiatanSubModel.tahun_id.label('tahun'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id==4)\
@@ -3255,13 +3255,13 @@ class ViewAnggaranLap(BaseViews):
                     (KegiatanItemModel.bln04+KegiatanItemModel.bln05+KegiatanItemModel.bln06).label('trw2'),
                     (KegiatanItemModel.bln07+KegiatanItemModel.bln08+KegiatanItemModel.bln09).label('trw3'),
                     (KegiatanItemModel.bln10+KegiatanItemModel.bln11+KegiatanItemModel.bln12).label('trw4'),
-                    UnitModel.kode.label('unit_kd'), UnitModel.nama.label('unit_nm'),
-                    UrusanModel.kode.label('urusan_kd'), UrusanModel.nama.label('urusan_nm'),
+                    Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                    Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'),
                     KegiatanSubModel.perubahan, KegiatanSubModel.tahun_id.label('tahun'))\
                     .filter(KegiatanItemModel.kegiatan_sub_id==KegiatanSubModel.id,
                             KegiatanItemModel.rekening_id==RekeningModel.id,
-                            KegiatanSubModel.unit_id==UnitModel.id,
-                            UnitModel.urusan_id==UrusanModel.id,
+                            KegiatanSubModel.unit_id==Unit.id,
+                            Unit.urusan_id==Urusan.id,
                             KegiatanSubModel.tahun_id==self.session['tahun'],
                             KegiatanSubModel.unit_id==self.unit_id,
                             KegiatanSubModel.kegiatan_id==5)\

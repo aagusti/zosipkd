@@ -21,7 +21,7 @@ from osipkd.models import (
     DBSession,
     Group
     )
-from osipkd.models.pemda_model import UnitModel, UrusanModel, UserUnitModel
+from osipkd.models.pemda_model import Unit, Urusan, UserUnit
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
 
@@ -29,8 +29,8 @@ SESS_ADD_FAILED = 'Tambah unit gagal'
 SESS_EDIT_FAILED = 'Edit unit gagal'
 
 class AddSchema(colander.Schema):
-    choices = DBSession.query(UrusanModel.id,
-                  UrusanModel.nama).order_by(UrusanModel.nama).all()
+    choices = DBSession.query(Urusan.id,
+                  Urusan.nama).order_by(Urusan.nama).all()
     kode = colander.SchemaNode(
                     colander.String(),
                     validator=colander.Length(max=18))
@@ -77,31 +77,31 @@ class view_unit(BaseViews):
             groups = groupfinder(req.user, req)
             ids = []
             if req.user.id==1 or 'group:admin' in groups:
-                query = UnitModel.query() #DBSession.query(UnitModel)
+                query = Unit.query() #DBSession.query(Unit)
             else:
-                units = DBSession.query(UserUnitModel.unit_id, 
-                             UserUnitModel.sub_unit, UnitModel.kode
-                             ).join(UnitModel).filter(UnitModel.id==UserUnitModel.unit_id,
-                                    UserUnitModel.user_id==req.user.id).all() 
+                units = DBSession.query(UserUnit.unit_id, 
+                             UserUnit.sub_unit, Unit.kode
+                             ).join(Unit).filter(Unit.id==UserUnit.unit_id,
+                                    UserUnit.user_id==req.user.id).all() 
 
                 for unit in units:
                     if unit.sub_unit:
-                        rows = DBSession.query(UnitModel.id).filter(UnitModel.kode.ilike('%s%%' % unit.kode)).all()
+                        rows = DBSession.query(Unit.id).filter(Unit.kode.ilike('%s%%' % unit.kode)).all()
                     else:
-                        rows = DBSession.query(UnitModel.id).filter(UnitModel.kode==unit.kode).all()
+                        rows = DBSession.query(Unit.id).filter(Unit.kode==unit.kode).all()
                     for i in range(len(rows)):
                         ids.append(rows[i])
-                query = DBSession.query(UnitModel).filter((UnitModel.id).in_(ids))
-            rowTable = DataTables(req, UnitModel, query, columns)
+                query = DBSession.query(Unit).filter((Unit.id).in_(ids))
+            rowTable = DataTables(req, Unit, query, columns)
             return rowTable.output_result()
             
         elif url_dict['act']=='changeid':
-            ids  = UserUnitModel.unit_granted(req.user.id, params['unit_id'])
+            ids  = UserUnit.unit_granted(req.user.id, params['unit_id'])
             if req.user.id>1 and 'g:admin' not in groupfinder(req.user, req)\
                     and not ids:
                 return {'success':False, 'msg':'Anda tidak boleh mengubah ke unit yang bukan hak akses anda'}
 
-            row = UnitModel.get_by_id('unit_id' in params and params['unit_id'] or 0)
+            row = Unit.get_by_id('unit_id' in params and params['unit_id'] or 0)
             if row:
                 ses['unit_id']=row.id
                 ses['unit_kd']=row.kode
@@ -110,9 +110,9 @@ class view_unit(BaseViews):
                 
         elif url_dict['act']=='headofnama':
             term = 'term' in params and params['term'] or '' 
-            rows = DBSession.query(UnitModel.id, UnitModel.kode, UnitModel.nama
+            rows = DBSession.query(Unit.id, Unit.kode, Unit.nama
                       ).filter(
-                      UnitModel.nama.ilike('%%%s%%' % term) ).all()
+                      Unit.nama.ilike('%%%s%%' % term) ).all()
             r = []
             for k in rows:
                 d={}
@@ -122,6 +122,22 @@ class view_unit(BaseViews):
                 d['nama']        = k[2]
                 r.append(d)
             return r
+            
+        elif url_dict['act']=='headofkode':
+            term = 'term' in params and params['term'] or '' 
+            rows = DBSession.query(Unit.id, Unit.kode, Unit.nama
+                      ).filter(
+                      Unit.kode.ilike('%%%s%%' % term) ).all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[1]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
+            return r
+            
         elif url_dict['act']=='import':
             rows = DBSession.execute("""SELECT a.kode, a.nama, a.passwd, b.unit_id 
                                         FROM admin.users2 a
@@ -136,7 +152,7 @@ class view_unit(BaseViews):
                 DBSession.add(user)
                 DBSession.flush()
                 if user.id:
-                    user_unit=UserUnitModel()
+                    user_unit=UserUnit()
                     user_unit.user_id = user.id
                     user_unit.unit_id = unit_id
                     user_unit.status  = 1
@@ -150,7 +166,7 @@ class view_unit(BaseViews):
     def form_validator(self, form, value):
         if 'id' in form.request.matchdict:
             uid = form.request.matchdict['id']
-            q = DBSession.query(UnitModel).filter_by(id=uid)
+            q = DBSession.query(Unit).filter_by(id=uid)
             unit = q.first()
         else:
             unit = None
@@ -163,7 +179,7 @@ class view_unit(BaseViews):
         return Form(schema, buttons=('simpan','batal'))
     def save(self, values, user, row=None):
         if not row:
-            row = UnitModel()
+            row = Unit()
             row.created = datetime.now()
             row.create_uid = user.id
         row.from_dict(values)
@@ -207,7 +223,7 @@ class view_unit(BaseViews):
     # Edit #
     ########
     def query_id(self):
-        return DBSession.query(UnitModel).filter_by(id=self.request.matchdict['id'])
+        return DBSession.query(Unit).filter_by(id=self.request.matchdict['id'])
     def id_not_found(self):    
         msg = 'unit ID %s Tidak Ditemukan.' % self.request.matchdict['id']
         request.session.flash(msg, 'error')
