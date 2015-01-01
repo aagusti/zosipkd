@@ -161,29 +161,34 @@ for row in rows:
     row_data = DBSession.query(func.sum(AR.amount).label('s')).\
                   filter(AR.tahun==tahun, AR.bulan < eis_month,
                          AR.kode.ilike("%s%%" % row.kode)).scalar()
-    if row_data:
-        row.amt_tahun = row_data
+    if not row_data:
+        row_data = 0
+    row.amt_tahun = row_data
 
     row_data = DBSession.query(func.sum(AR.amount).label('s')).\
                   filter(AR.tahun==tahun, AR.bulan == eis_month,
                          AR.hari < eis_day,
                          AR.kode.ilike("%s%%" % row.kode)).scalar()
-    if row_data:
-        row.amt_bulan = row_data
+    if not row_data:
+        row_data = 0
+        
+    row.amt_bulan = row_data
 
     row_data = DBSession.query(func.sum(AR.amount).label('s')).\
                   filter(AR.tahun==tahun, AR.bulan == eis_month,
                          AR.hari == eis_day,
                          AR.kode.ilike("%s%%" % row.kode)).scalar()
-    if row_data:
-        row.amt_hari = row_data
+    if not row_data:
+        row_data = 0
+    row.amt_hari = row_data
     #update mingguan
     row_data = DBSession.query(func.sum(AR.amount).label('s')).\
                   filter(AR.tahun==tahun, AR.bulan == eis_month,
                          AR.minggu == eis_week,
                          AR.kode.ilike("%s%%" % row.kode)).scalar()
-    if row_data:
-        row.amt_minggu = row_data - row.amt_hari
+    if not row_data:
+        row_data = 0
+    row.amt_minggu = row_data - row.amt_hari
     DBSession.add(row)
         
 DBSession.flush()
