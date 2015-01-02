@@ -84,7 +84,7 @@ class view_rekening(BaseViews):
             r.append(d)    
         return r
         
-    def get_nama_dict(self, term, prefix=None):
+    def get_nama_dict(self, term, prefix=''):
         q = DBSession.query(Rekening.id, Rekening.kode, Rekening.nama
                   ).filter(Rekening.kode.ilike('%s%%' % prefix),
                            Rekening.nama.ilike('%%%s%%' % term))
@@ -127,25 +127,64 @@ class view_rekening(BaseViews):
             term = 'term' in params and params['term'] or '' 
             return self.get_kode_dict(term)
             
+        #######################################################################
+        # PENDAPATAN 
         elif url_dict['act']=='headofnama4':
             term = 'term' in params and params['term'] or '' 
             return self.get_nama_dict(term,'4')
-            
         elif url_dict['act']=='headofkode4':
             term = 'term' in params and params['term'] or '' 
             return self.get_kode_dict(term,'4')
+        
+        #######################################################################
+        # BELANJA
         elif url_dict['act']=='headofnama5':
             term = 'term' in params and params['term'] or '' 
             return self.get_nama_dict(term,'5')
-            
         elif url_dict['act']=='headofkode5':
             term = 'term' in params and params['term'] or '' 
             return self.get_kode_dict(term,'5')
+        #######################################################################
+        # BTL
+        elif url_dict['act']=='headofnama51':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_nama_dict(term,'5.1')
+        elif url_dict['act']=='headofkode51':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_kode_dict(term,'5.1')
+        #######################################################################
+        # BL
+        elif url_dict['act']=='headofnama52':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_nama_dict(term,'5.2')
+        elif url_dict['act']=='headofkode52':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_kode_dict(term,'5.2')
+        #######################################################################
+        # PENERIMAAN
+        elif url_dict['act']=='headofnama61':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_nama_dict(term,'6.1')
+        elif url_dict['act']=='headofkode61':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_kode_dict(term,'6.1')            
+        #######################################################################
+        # PENGELUARAN
+        elif url_dict['act']=='headofnama62':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_nama_dict(term,'6.2')
+        elif url_dict['act']=='headofkode62':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_kode_dict(term,'6.2')            
             
+        #######################################################################
+        # LO PENDAPATAN
         elif url_dict['act']=='headofnama8':
             term = 'term' in params and params['term'] or '' 
             return self.get_nama_dict(term,'8')
             
+        #######################################################################
+        # LO BELANJA
         elif url_dict['act']=='headofkode8':
             term = 'term' in params and params['term'] or '' 
             return self.get_kode_dict(term,'8')

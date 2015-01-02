@@ -30,6 +30,15 @@ class view_ak_jurnal(BaseViews):
     ##########                    
     # Action #
     ##########    
+    def get_row_item(self):
+        return DBSession.query(KegiatanItem.id, KegiatanItem.rekening_id, 
+                  Rekening.kode.label('rekening_kd'), Rekening.nama.label('rekening_nm'), 
+                  KegiatanItem.nama, KegiatanItem.no_urut,
+                  (KegiatanItem.vol_1_1*KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('amount_1'),
+                  (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('amount_2'),
+                  (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('amount_3'),
+                  (KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('amount_4')).join(Rekening)
+                  
     @view_config(route_name='ag-kegiatan-item-act', renderer='json',
                  permission='read')
     def ak_jurnal_act(self):
@@ -48,18 +57,15 @@ class view_ak_jurnal(BaseViews):
             columns.append(ColumnDT('amount_%s' %ag_step_id, filter=self._number_format))
             columns.append(ColumnDT('rekening_nm'))
             columns.append(ColumnDT('rekening_id'))
-            
-            query = DBSession.query(KegiatanItem.id, KegiatanItem.rekening_id, 
-                      Rekening.kode.label('rekening_kd'), Rekening.nama.label('rekening_nm'), 
-                      KegiatanItem.nama, KegiatanItem.no_urut,
-                       
-                      (KegiatanItem.vol_1_1*KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('amount_1'),
-                      (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('amount_2'),
-                      (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('amount_3'),
-                      (KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('amount_4')).filter(
-                      KegiatanItem.kegiatan_sub_id==kegiatan_sub_id).join(Rekening).filter(
+            #if kegiatan_sub_id:
+            query = self.get_row_item().filter(
                       KegiatanItem.kegiatan_sub_id==kegiatan_sub_id)
-                    
+            #elif int(type) == 4:
+            #    query = self.get_row_item().join(KegiatanSub).join(Kegiatan).filter(
+            #          KegiatanSub.unit_id == ses['unit_id'],
+            #          KegiatanSub.tahun_id  == ses['tahun'],
+            #          Kegiatan.kode == '0.00.00.10')
+                
             rowTable = DataTables(req, KegiatanItem,  query, columns)
             return rowTable.output_result()
             
@@ -79,7 +85,6 @@ class view_ak_jurnal(BaseViews):
         kegiatan_item_id = 'kegiatan_item_id' in params and params['kegiatan_item_id'] or None
         if not kegiatan_item_id:
             row = KegiatanItem()
-            row_dict['no_urut']     = KegiatanItem.max_no_urut(kegiatan_sub_id,rekening_id)+1
             row_dict = {}
         else:
             row = DBSession.query(KegiatanItem).filter(KegiatanItem.id==kegiatan_item_id).first()
@@ -87,13 +92,16 @@ class view_ak_jurnal(BaseViews):
                 return {'success':False, 'msg':'Data Tidak Ditemukan'}
             row_dict = row.to_dict()
             
+        row_dict['no_urut']         = 'no_urut' in params and params['no_urut'] or \
+                                      KegiatanItem.max_no_urut(kegiatan_sub_id,rekening_id)+1
         row_dict['kegiatan_sub_id'] = kegiatan_sub_id
         row_dict['rekening_id']     = rekening_id
         row_dict['nama']            = 'nama' in params and params['nama'] or None
         row_dict['kode']            = 'kode' in params and params['kode'] or None
         
         ag_step_id = ses['ag_step_id']
-        amount = 'amount' in params and params['amount'] or 0
+        amount = 'amount' in params and params['amount'].replace('.', '') or 0
+        
         if ag_step_id<2:
             row_dict['hsat_1'] = amount 
         if ag_step_id<3:
@@ -104,10 +112,12 @@ class view_ak_jurnal(BaseViews):
             row_dict['hsat_4'] = amount 
             
         row.from_dict(row_dict)
+        DBSession.add(row)
+        DBSession.flush()
+        return {"success": True, 'id': row.id, "msg":'Success Tambah Data'}
+        
         try:
-            DBSession.add(row)
-            DBSession.flush()
-            return {"success": True, 'id': row.id, "msg":'Success Tambah Data'}
+          pass
         except:
             return {'success':False, 'msg':'Gagal Tambah Data'}
             

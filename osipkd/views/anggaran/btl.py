@@ -25,7 +25,7 @@ class view_ak_jurnal(BaseViews):
     ########                    
     # List #
     ########    
-    @view_config(route_name='ag-pendapatan', renderer='templates/ag-pendapatan/list.pt',
+    @view_config(route_name='ag-btl', renderer='templates/ag-pendapatan/list.pt',
                  permission='read')
     def view_list(self):
         ses = self.request.session
@@ -33,9 +33,8 @@ class view_ak_jurnal(BaseViews):
         params = req.params
         url_dict = req.matchdict
         row = {}
-        row['rekening_kd'] = '0.00.00.10'
-        row['rekening_nm'] = 'PENDAPATAN'
-        row['rekeninghead'] = 4
-        
+        row['rekening_kd'] = '0.00.00.21'
+        row['rekening_nm'] = 'BELANJA TIDAK LANGSUNG'
+        row['rekeninghead'] = 51
         return dict(project='EIS', row = row)
         

@@ -25,20 +25,20 @@
       </div>
 
       <!----------------------------------------------------------------------->
-      <input id="unit_id" type="hidden" value="" name="unit_id">
+      <input id="unit_id" type="hidden" value="${request.session['unit_id']}" name="unit_id">
       <div class="form-group"><!--SKPD-->
         <div class="col-md-3">
           <div id="item-unit_kd">
             <label for="unit_kd" class="control-label col-md-3" id="req-unit_kd">
                     SKPD</label>
             <div class="col-md-9">
-               <input id="unit_kd" class="form-control typeahead" type="text" value="" name="unit_kd">
+               <input id="unit_kd" class="form-control typeahead" type="text" value="${request.session['unit_kd']}" name="unit_kd">
             </div>
           </div>
         </div>
         
         <div class="col-md-5">
-           <input id="unit_nm" class=" form-control " type="text" value="" name="unit_nm">
+           <input id="unit_nm" class=" form-control " type="text" value="${request.session['unit_nm']}" name="unit_nm">
         </div>
       </div>
       <script>
@@ -77,11 +77,8 @@
                     oTable.fnReloadAjax(oTableUrl);
                     $("#errors").html("<span class=''></span> " + '');
                 } else {
-                  //$("#errors").css('display', 'inline', 'important');
                   $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
                   $('#kegiatan_sub_id').val('');
-                  //$('#unit_nm').val('');
-                  //$('#unit_id').val('');
                 }
               },
               beforeSend: function () {
@@ -181,6 +178,7 @@
     <div class="row">
         <fieldset class="deformFormFieldset">
           <!--REKENING------------------------------------------------------------->
+          <input id="kegiatan_item_id" type="hidden" value="" name="kegiatan_item_id">
           <input id="rekening_id" type="hidden" value="" name="rekening_id">
           <div class="form-group">
             <div class="col-md-3">
@@ -209,11 +207,11 @@
           <!--InternalKode Item-->
           <div class="form-group">
             <div class="col-md-3">
-              <div id="item-kode">
-                <label for="kode" class="control-label col-md-3" id="req-rekening_kd">
-                        Kode</label>
+              <div id="item-no_urut">
+                <label for="no_urut" class="control-label col-md-3" id="req-no_urut">
+                        No.</label>
                 <div class="col-md-9">
-                   <input id="kode" class=" form-control " type="text" value="" name="kode">
+                   <input id="no_urut" class=" form-control " type="text" value="" name="no_urut">
                 </div>
               </div>
             </div>
@@ -223,8 +221,8 @@
             </div>
             <!--Button----------------------------------------------------------->
             <div class="col-md-2">
-                  <button id="rekening_save" name="simpan" type="submit" class="btn btn-primary "
-                        value="simpan">Baru</button>
+                  <button id="rekening_add" name="baru" type="button" class="btn btn-primary "
+                        value="baru">Baru</button>
                   <button id="rekening_save" name="simpan" type="submit" class="btn btn-primary "
                         value="simpan">Update</button>
                   <button id="rekening_cancel" name="batal" type="reset" class="btn btn-default "
@@ -234,11 +232,17 @@
           </div>
           
           <script>
+           $('#rekening_add').click(function () {
+                $('#kegiatan_item_id').val('');
+                $('#header').submit();
+           })
+         
+         
           $('#rekening_kd').typeahead({
               "hint": true,
               "highlight": true,
               "minLength": 1,
-              "remote": "/rekening/act/headofkode4?term=%QUERY", 
+              "remote": "/rekening/act/headofkode${row.rekeninghead}?term=%QUERY", 
           },
           {
             "name": 'rekening_kd',
@@ -249,7 +253,7 @@
               "hint": true,
               "highlight": true,
               "minLength": 1,
-              "remote": "/rekening/act/headofnama4?term=%QUERY", 
+              "remote": "/rekening/act/headofnama${row.rekeninghead}?term=%QUERY", 
           },
           {
             "name": 'rekening_nm',
@@ -292,7 +296,6 @@
                     if (html.success == true) {
                       $('#kegiatan_sub_id').val(html.id);
                     oTableUrl = "/ag-kegiatan-item/act/grid?kegiatan_sub_id="+html.kegiatan_sub_id;  
-                    //oTable.fnReloadAjax(oTableUrl);
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
                     } else {
                       $("#errors").css('display', 'inline', 'important');
@@ -316,13 +319,18 @@
                 success: function (html) {
                   if (html.success == true) {
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                    $('#kegiatan_item_id').val('');
+                    $('#nama').val('');
+                    $('#amount').val('');
+                    $('#rekening_kd').val('');
+                    $('#no_urut').val('');
+                    $('#rekening_nm').val('');
+                    $('#rekening_id').val('');
+
                     oTable.fnReloadAjax(oTableUrl);
                   } else {
                     $("#errors").css('display', 'inline', 'important');
                     $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
-                    //$('#unit_kd').val('');
-                    //$('#unit_nm').val('');
-                    //$('#unit_id').val('');
                   }
                 },
                 beforeSend: function () {
@@ -347,8 +355,7 @@
       var mThn;
       var oTable;
       var iPos;
-      var oTableUrl = "/ag-kegiatan-item/act/grid?kegiatan_sub_id=0";  
-        
+      var oTableUrl = "/ag-kegiatan-item/act/grid?type=4";  
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
           "sDom": '<"toolbar">lfrtip',
@@ -370,14 +377,14 @@
           "aoColumnDefs": [{
                         "bSearchable": false,
                         "bVisible": false,
-                        "aTargets": [0]
+                        "aTargets": [0,5,6]
                     }],
           "aoColumns": [
               null,
               {"width": "150px"},
+              {"width": "50px"},
               null,
-               {"width": "100px", "sClass":"left"},
-              null,
+               {"width": "150px", "sClass":"left"},
               null,
               null,
           ]
@@ -389,11 +396,10 @@
           '	<button id="btn_edit" class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',
           '	<!--button id="btn_pdf" class="btn btn btn-warning" type="button">PDF</button-->',
-          '	<button id="btn_csv" class="btn btn btn-default" type="button">CSV</button>',
+          '	<button id="btn_print" class="btn btn btn-default" type="button">Print</button>',
           '	&nbsp;',
           '</div>',
         ];
-
 
         var tb = tb_array.join(' ');
         $("div.toolbar").html(tb);
@@ -404,29 +410,41 @@
             } else {
                 iPos = oTable.fnGetPosition(this);
                 var aData = oTable.fnGetData(iPos);
-                //mID = aData[0];
                 oTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
+                $('#kegiatan_item_id').val(aData[0]);
+                $('#nama').val(aData[3]);
+                $('#amount').val(aData[4]);
+                $('#rekening_kd').val(aData[1]);
+                $('#no_urut').val(aData[2]);
+                $('#rekening_nm').val(aData[5]);
+                $('#rekening_id').val(aData[6]);
                 mID = aData[0];
-                        oTable.$('tr.row_selected').removeClass('row_selected');
-                        $(this).addClass('row_selected');
-                        /*oTable2.fnReloadAjax("egaji/grid2?id=" + mID);*/                
-            }
+                oTable.$('tr.row_selected').removeClass('row_selected');
+                $(this).addClass('row_selected');
+        }
         });
         $('#btn_add').click(function () {
-            window.location = '/ak-jurnal/add';
+            window.location = '/ag-kegiatan-item/add';
         });
 
         $('#btn_edit').click(function () {
-            if (mID) window.location = '/ak-jurnal/'+mID+'/edit';
+            if (mID) window.location = '/ag-kegiatan-item/'+mID+'/edit';
             else alert('Pilih Baris yang akan di edit');
         });
 
         $('#btn_delete').click(function () {
-            if (mID) window.location = '/ak-jurnal/'+mID+'/delete';
+            if (mID) window.location = '/ag-kegiatan-item/'+mID+'/delete';
             else alert('Pilih Baris yang akan di hapus');
         });        
-
+        $('#btn_delete').click(function () {
+            if (mID) window.location = '/ag-report/rka_${headof}?'+mID+'/delete';
+            else alert('Pilih Baris yang akan di hapus');
+        });
+        
+        })
+        $(function(){
+            reload_kegiatan();
         })
     </script>
   </div>

@@ -124,6 +124,7 @@ class view_gajipegawai(BaseViews):
                       GajiPegawai.tahun == ses['tahun'],
                       GajiPegawai.bulan == ses['bulan']
                     )
+
             rows = UserUnit.get_filtered(self.request)
             if rows and rows.sub_unit:
                 query = query.filter(GajiPegawai.unitkd.like( '%s%%' % ses['unit_kd']))

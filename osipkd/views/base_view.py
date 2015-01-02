@@ -30,7 +30,7 @@ class BaseViews(object):
         cday = datetime.today()    
         if not 'tahun' in self.session:
             self.session['tahun'] =  cday.strftime('%Y')
-        self.session['tahun'] =  cday.strftime('%Y')
+        #self.session['tahun'] =  cday.strftime('%Y')
         if not 'bulan' in self.session:
             self.session['bulan'] = str(cday.month).zfill(2)
         
