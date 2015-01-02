@@ -57,15 +57,8 @@ class view_ak_jurnal(BaseViews):
             columns.append(ColumnDT('amount_%s' %ag_step_id, filter=self._number_format))
             columns.append(ColumnDT('rekening_nm'))
             columns.append(ColumnDT('rekening_id'))
-            #if kegiatan_sub_id:
             query = self.get_row_item().filter(
                       KegiatanItem.kegiatan_sub_id==kegiatan_sub_id)
-            #elif int(type) == 4:
-            #    query = self.get_row_item().join(KegiatanSub).join(Kegiatan).filter(
-            #          KegiatanSub.unit_id == ses['unit_id'],
-            #          KegiatanSub.tahun_id  == ses['tahun'],
-            #          Kegiatan.kode == '0.00.00.10')
-                
             rowTable = DataTables(req, KegiatanItem,  query, columns)
             return rowTable.output_result()
             

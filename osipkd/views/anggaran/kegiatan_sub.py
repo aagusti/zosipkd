@@ -32,7 +32,7 @@ class view_ak_jurnal(BaseViews):
     ##########    
     @view_config(route_name='ag-kegiatan-sub-act', renderer='json',
                  permission='read')
-    def ak_jurnal_act(self):
+    def ak_kegiatan_sub_act(self):
         ses = self.request.session
         req = self.request
         params = req.params
@@ -43,6 +43,7 @@ class view_ak_jurnal(BaseViews):
                 return {'success':False}
             query = DBSession.query(KegiatanSub).join(Kegiatan).filter(
                        KegiatanSub.unit_id == ses['unit_id'],
+                       KegiatanSub.tahun_id == ses['tahun'],
                        Kegiatan.kode == kegiatan_kd
                        ).first()
                        

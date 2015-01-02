@@ -1,0 +1,754 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R00001" language="groovy" pageWidth="1008" pageHeight="612" orientation="Landscape" columnWidth="968" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.210000000000003"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString language="xPath">
+		<![CDATA[/apbd/spp]]>
+	</queryString>
+	<field name="tahun_id" class="java.lang.String">
+		<fieldDescription><![CDATA[tahun_id]]></fieldDescription>
+	</field>
+	<field name="unit_nm" class="java.lang.String">
+		<fieldDescription><![CDATA[unit_nm]]></fieldDescription>
+	</field>
+	<field name="spp_nm" class="java.lang.String">
+		<fieldDescription><![CDATA[spp_nm]]></fieldDescription>
+	</field>
+	<field name="spm_kd" class="java.lang.String">
+		<fieldDescription><![CDATA[spm_kd]]></fieldDescription>
+	</field>
+	<field name="tgl_spm" class="java.lang.String">
+		<fieldDescription><![CDATA[tgl_spm]]></fieldDescription>
+	</field>
+	<field name="sp2d_kd" class="java.lang.String">
+		<fieldDescription><![CDATA[sp2d_kd]]></fieldDescription>
+	</field>
+	<field name="tgl_sp2d" class="java.lang.String">
+		<fieldDescription><![CDATA[tgl_sp2d]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="185" splitType="Stretch">
+			<textField>
+				<reportElement x="1" y="0" width="967" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["KOTA TANGERANG SELATAN"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="16" width="967" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["LAPORAN PERTANGGUNG JAWABAN BENDAHARA PENGELUARAN"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="145" width="50" height="40"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Kode Rekening]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="245" y="145" width="180" height="20"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[SPJ LS-Gaji]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="245" y="165" width="60" height="20"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Sd.
+Bulan Lalu]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="305" y="165" width="60" height="20"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Bulan ini]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="145" width="135" height="40"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Kegiatan Nama]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="1" y="32" width="967" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SPJ BELANJA FUNGSIONAL"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="61" width="107" height="16"/>
+				<textElement markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SKPD"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="77" width="106" height="16"/>
+				<textElement markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Ketua Pengguna Anggaran"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="93" width="106" height="16"/>
+				<textElement markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Bendahara Pengeluaran"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="109" width="106" height="16"/>
+				<textElement markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tahun Anggaran"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="125" width="106" height="16"/>
+				<textElement markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Bulan"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="185" y="145" width="60" height="40"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Jumlah
+Anggaran]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="108" y="61" width="16" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[":"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="108" y="77" width="16" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[":"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="108" y="93" width="16" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[":"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="108" y="109" width="16" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[":"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="365" y="165" width="60" height="20"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Sd.
+Bulan Ini]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="108" y="125" width="16" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[":"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="485" y="165" width="60" height="20"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Bulan ini]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="425" y="165" width="60" height="20"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Sd.
+Bulan Lalu]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="545" y="165" width="60" height="20"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Sd.
+Bulan Ini]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="425" y="145" width="180" height="20"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[SPJ LS-Barang dan Jasa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="605" y="165" width="60" height="20"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Sd.
+Bulan Lalu]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="725" y="165" width="60" height="20"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Sd.
+Bulan Ini]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="605" y="145" width="180" height="20"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[SPJ LS-Barang dan Jasa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="665" y="165" width="60" height="20"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Bulan ini]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="785" y="145" width="61" height="40"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Jumlah SPJ
+(LS+UP/GU/TU)
+s.d Bulaun Ini]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="846" y="145" width="61" height="40"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Pengembalian
+(Kontra Pos)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="907" y="145" width="61" height="40"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Sisa Pagu
+Anggaran]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="305" y="0" width="60" height="16"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="50" height="16"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="50" y="0" width="135" height="16"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="185" y="0" width="60" height="16"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="245" y="0" width="60" height="16"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="365" y="0" width="60" height="16"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="425" y="0" width="60" height="16"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="485" y="0" width="60" height="16"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="545" y="0" width="60" height="16"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="605" y="0" width="60" height="16"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="665" y="0" width="60" height="16"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="725" y="0" width="60" height="16"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="785" y="0" width="61" height="16"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="846" y="0" width="61" height="16"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="907" y="0" width="61" height="16"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="133" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="50" height="16"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="185" y="0" width="60" height="16"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="245" y="0" width="60" height="16"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="305" y="0" width="60" height="16"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="365" y="0" width="60" height="16"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="425" y="0" width="60" height="16"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="485" y="0" width="60" height="16"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="545" y="0" width="60" height="16"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="50" y="0" width="135" height="16"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="605" y="0" width="60" height="16"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="665" y="0" width="60" height="16"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="725" y="0" width="60" height="16"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="785" y="0" width="61" height="16"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="846" y="0" width="61" height="16"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="907" y="0" width="61" height="16"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="786" y="32" width="182" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tangerang, {Tgl}"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="786" y="48" width="182" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Bendahara Pengeluaran"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="786" y="101" width="182" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Nama"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="786" y="117" width="182" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["NIP"]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

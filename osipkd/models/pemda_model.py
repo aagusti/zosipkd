@@ -135,9 +135,10 @@ class Rekening(NamaModel, Base):
                       {'extend_existing':True, 
                       'schema' : 'admin',})
     tahun = Column(Integer)
-    level_id  = Column(SmallInteger)
+    level_id  = Column(SmallInteger, default=1)
     parent_id  = Column(BigInteger, ForeignKey('admin.rekenings.id'))
-    disabled = Column(SmallInteger)
+    disabled = Column(SmallInteger, default=0)
+    defsign = Column(SmallInteger, default=1)
     children   = relationship("Rekening", backref=backref('parent', remote_side='Rekening.id'))
     
     @classmethod

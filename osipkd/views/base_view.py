@@ -26,7 +26,8 @@ class BaseViews(object):
         self.request = request
         self.session = request.session
         self.cust_nm   = "PEMERINTAH KABUPATEN/KOTA DEMO"
-
+        self.datas = {}
+        
         cday = datetime.today()    
         if not 'tahun' in self.session:
             self.session['tahun'] =  cday.strftime('%Y')
@@ -50,7 +51,6 @@ class BaseViews(object):
             self.session['unit_nm'] = ""
         if not 'cust_nm' in self.session:
             self.session['cust_nm'] = self.cust_nm
-        
         # Inisiasi tahun anggaran
         ########################################################################
         #remark in production  

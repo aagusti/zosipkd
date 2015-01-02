@@ -395,8 +395,8 @@
           '	<button id="btn_add" class="btn btn btn-primary" type="button">Tambah</button>',
           '	<button id="btn_edit" class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',
-          '	<!--button id="btn_pdf" class="btn btn btn-warning" type="button">PDF</button-->',
-          '	<button id="btn_print" class="btn btn btn-default" type="button">Print</button>',
+          '	<button id="btn_pdf" class="btn btn btn-warning" type="button">PDF</button>',
+          '	<!--button id="btn_csv" class="btn btn btn-default" type="button">CSV</button-->',
           '	&nbsp;',
           '</div>',
         ];
@@ -437,15 +437,26 @@
             if (mID) window.location = '/ag-kegiatan-item/'+mID+'/delete';
             else alert('Pilih Baris yang akan di hapus');
         });        
-        $('#btn_delete').click(function () {
-            if (mID) window.location = '/ag-report/rka_${headof}?'+mID+'/delete';
-            else alert('Pilih Baris yang akan di hapus');
+        
+        $('#btn_pdf').click(function () {
+            if ($('#kegiatan_kd').val()=='0.00.00.10')
+                url = "/ag-report/r${request.session['ag_step_id']}00/act/1";
+            else if ($('#kegiatan_kd').val()=='0.00.00.21')
+                url = "/ag-report/r${request.session['ag_step_id']}00/act/21";
+            else if ($('#kegiatan_kd').val()=='0.00.00.31')
+                url = "/ag-report/r${request.session['ag_step_id']}00/act/3";
+            else if ($('#kegiatan_kd').val()=='0.00.00.21')
+                url = "/ag-report/r${request.session['ag_step_id']}00/act/3";
+                
+            alert(url);
+            window.location = url;
         });
         
-        })
         $(function(){
             reload_kegiatan();
+        });
         })
+
     </script>
   </div>
 </html>

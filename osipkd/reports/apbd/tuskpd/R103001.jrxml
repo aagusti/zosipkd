@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R103001" language="groovy" pageWidth="595" pageHeight="842" columnWidth="487" leftMargin="54" rightMargin="54" topMargin="72" bottomMargin="72">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString language="xPath">
+		<![CDATA[/apbd/invoice]]>
+	</queryString>
+	<field name="tahun" class="java.lang.String">
+		<fieldDescription><![CDATA[tahun]]></fieldDescription>
+	</field>
+	<field name="unit_nm" class="java.lang.String">
+		<fieldDescription><![CDATA[unit_nm]]></fieldDescription>
+	</field>
+	<field name="jenis" class="java.lang.String">
+		<fieldDescription><![CDATA[jenis]]></fieldDescription>
+	</field>
+	<field name="invoice_id" class="java.lang.String">
+		<fieldDescription><![CDATA[invoice_id]]></fieldDescription>
+	</field>
+	<field name="invoice_nm" class="java.lang.String">
+		<fieldDescription><![CDATA[invoice_nm]]></fieldDescription>
+	</field>
+	<field name="tgl_invoice" class="java.lang.String">
+		<fieldDescription><![CDATA[tgl_invoice]]></fieldDescription>
+	</field>
+	<field name="ap_nomor" class="java.lang.String">
+		<fieldDescription><![CDATA[ap_nomor]]></fieldDescription>
+	</field>
+	<field name="ap_nama" class="java.lang.String">
+		<fieldDescription><![CDATA[ap_nama]]></fieldDescription>
+	</field>
+	<field name="ap_rekening" class="java.lang.String">
+		<fieldDescription><![CDATA[ap_rekening]]></fieldDescription>
+	</field>
+	<field name="ap_npwp" class="java.lang.String">
+		<fieldDescription><![CDATA[ap_npwp]]></fieldDescription>
+	</field>
+	<field name="kegiatan_nm" class="java.lang.String">
+		<fieldDescription><![CDATA[kegiatan_nm]]></fieldDescription>
+	</field>
+	<field name="nilai" class="java.lang.String">
+		<fieldDescription><![CDATA[nilai]]></fieldDescription>
+	</field>
+	<variable name="nilai" class="java.lang.Double">
+		<variableExpression><![CDATA[Double.parseDouble($F{nilai})]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="325" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="52" height="16"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Nomor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="16" width="52" height="16"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Rekening]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="32" width="52" height="16"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[NPWP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="52" y="0" width="10" height="16"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="52" y="16" width="10" height="16"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="52" y="32" width="10" height="16"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="62" y="0" width="168" height="16"/>
+				<textElement markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ap_nomor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="62" y="16" width="168" height="16"/>
+				<textElement markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ap_rekening}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="62" y="32" width="168" height="16"/>
+				<textElement markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ap_npwp}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="59" width="487" height="20"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[INVOICE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="125" y="93" width="10" height="16"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="27" y="93" width="98" height="16"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Sudah Terima Dari]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="27" y="145" width="98" height="16"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Terbilang]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="125" y="145" width="10" height="16"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="125" y="180" width="10" height="16"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="27" y="180" width="98" height="16"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Untuk Keperluan]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="125" y="127" width="35" height="16"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[:  Rp.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="27" y="127" width="98" height="16"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Jumlah Uang]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="135" y="93" width="352" height="33"/>
+				<textElement markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ap_nama}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="135" y="145" width="352" height="35"/>
+				<textElement markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="135" y="180" width="352" height="35"/>
+				<textElement markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{invoice_nm}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="156" y="127" width="143" height="16"/>
+				<textElement markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{nilai})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
