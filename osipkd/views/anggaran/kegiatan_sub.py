@@ -30,6 +30,7 @@ class view_ak_jurnal(BaseViews):
     ##########                    
     # Action #
     ##########    
+       
     @view_config(route_name='ag-kegiatan-sub-act', renderer='json',
                  permission='read')
     def ak_kegiatan_sub_act(self):
@@ -51,7 +52,58 @@ class view_ak_jurnal(BaseViews):
                 return {'success':False, 'msg':'Data Sub Kegiatan Tidak Ditemukan'}
                        
             return {"success": True, 'kegiatan_sub_id': query.id, 'msg':''}
-        
+
+        if url_dict['act']=='reload':
+            kegiatan_kd = 'kegiatan_kd' in params and  params['kegiatan_kd'] or None
+            if not kegiatan_kd:
+                return {'success':False}
+            query = DBSession.query(KegiatanSub).join(Kegiatan).filter(
+                       KegiatanSub.unit_id == ses['unit_id'],
+                       KegiatanSub.tahun_id == ses['tahun'],
+                       Kegiatan.kode == kegiatan_kd
+                       ).first()
+                       
+            if not query:
+                return {'success':False, 'msg':'Data Sub Kegiatan Tidak Ditemukan'}
+                       
+            return {"success": True, 'kegiatan_sub_id': query.id, 'msg':''}
+            
+        elif url_dict['act']=='headofkode':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(KegiatanSub.id, Kegiatan.kode, KegiatanSub.no_urut,
+                                KegiatanSub.nama
+                      ).join(Kegiatan).filter(KegiatanSub.unit_id == ses['unit_id'],
+                           KegiatanSub.tahun_id==ses['tahun'],
+                           Kegiatan.kode.ilike('%s%%' % term))
+                           
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = ''.join([k[1],'-',str(k[2])])
+                d['kode']        = ''.join([k[1],'-',str(k[2])])
+                d['nama']        = k[3]
+                r.append(d)    
+            return r
+        elif url_dict['act']=='headofnama':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(KegiatanSub.id, Kegiatan.kode, KegiatanSub.no_urut,
+                                KegiatanSub.nama).join(Kegiatan).filter(
+                      KegiatanSub.unit_id == ses['unit_id'],
+                      KegiatanSub.tahun_id==ses['tahun'],
+                      Kegiatan.nama.ilike('%s%%' % term))
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[3]
+                d['kode']        = ''.join([k[1],'-',str(k[2])])
+                d['nama']        = k[3]
+                r.append(d)    
+            return r
+            
     ###############                    
     # Tambah  Data#
     ###############    

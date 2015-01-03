@@ -48,42 +48,6 @@
       
     </div>
     
-    <div class="form-group"><!--Kegiatan-->
-      <div tal:define="field form['kegiatan_sub_id']" style="display: none;">
-          ${structure:field.serialize()}
-      </div>
-      
-      <div class="col-md-4" tal:define="field form['kegiatan_sub_kd']"  id="item-${field.oid}">
-        <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
-                ${field.title}</label>
-        <div class="col-md-8">
-           ${structure:field.serialize()}
-            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-               tal:repeat="error field.error.messages()">
-               ${error}</p>
-        </div>
-      </div>
-      <div class="col-md-8" tal:define="field form['kegiatan_sub_nm']" id="item-${field.oid}">
-           ${structure:field.serialize()}
-            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-               tal:repeat="error field.error.messages()">
-               ${error}</p>
-      </div>
-      
-      <script>
-          $('#kegiatan_sub_kd').bind('typeahead:selected', function(obj, datum, name) {      
-                $('#kegiatan_sub_id').val(datum.id);
-                $('#kegiatan_sub_nm').val(datum.nama);
-                $('#kegiatan_sub_kd').val(datum.kode);
-          });
-          $('#kegiatan_sub_nm').bind('typeahead:selected', function(obj, datum, name) {      
-                $('#kegiatan_sub_id').val(datum.id);
-                $('#kegiatan_sub_nm').val(datum.nama);
-                $('#kegiatan_sub_kd').val(datum.kode);
-          });
-      </script>
-      
-    </div>
 
     <div class="form-group"><!--Tanggal/JV Type-->
       <div class="col-md-4" tal:define="field form['tanggal']" id="item-${field.oid}">
@@ -193,60 +157,7 @@
           </div>
         </div>
     </div>
-    <div class="form-group"><!--Rekening-->
-      <div tal:define="field form['rekening_id']" id="item-${field.oid}" style="display: none;">
-           ${structure:field.serialize()}
-      </div>
-    
-      
-      <div class="col-md-4" tal:define="field form['rekening_kd']" >
-        <div id="item-${field.oid}">
-          <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
-                  ${field.title}</label>
-          <div class="col-md-8">
-             ${structure:field.serialize()}
-            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-               tal:repeat="error field.error.messages()">
-               ${error}</p>
-          </div>
-        </div>
-      </div>
-      
-      <div class="col-md-5" tal:define="field form['rekening_nm']">
-         ${structure:field.serialize()}
-          <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-             tal:repeat="error field.error.messages()">
-             ${error}</p>
-      </div>
-
-      <div class="col-md-3">
-        <div class="form-group" tal:define="field form['amount']" id="item-${field.oid}">
-          <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}" style="text-align:left;!important;">
-                  ${field.title}</label>
-          <div class="col-md-10">
-             ${structure:field.serialize()}
-              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                 tal:repeat="error field.error.messages()">
-                 ${error}</p>
-          </div>
-        </div>
-      </div>
-      
-    </div>
-
-      <script>
-        $('#rekening_kd').bind('typeahead:selected', function(obj, datum, name) {  
-              $('#rekening_nm').val(datum.nama);
-              $('#rekening_id').val(datum.id);
-        });
-
-        $('#rekening_nm').bind('typeahead:selected', function(obj, datum, name) {      
-              $('#rekening_kd').val(datum.kode);
-              $('#rekening_id').val(datum.id);
-        });
-      </script>       
-      
-      
+     
     <div class="col-md-offset-2"><!--Button-->
       <div class="form-group">
           <button id="deformsave" name="simpan" type="submit" class="btn btn-primary "
@@ -264,6 +175,7 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Kegiatan</th>
                 <th>Rekening</th>
                 <th>Uraian</th>
                 <th>Ref. Kode</th>
@@ -275,47 +187,66 @@
         </tbody>
     </table>
   </div>
+  
   <div class="row">
     <form id="deform" method="POST" enctype="multipart/form-data" accept-charset="utf-8" 
       class="form-horizontal">
-      <input id="rekening_id_item" type="hidden" value="" name="rekening_id_item">
+    <div class="form-group"><!--Kegiatan-->
+      <input id="kegiatan_sub_id" type="hidden" value="" name="rekening_id_item">
+            
+      <div class="col-md-3" id="item-kegiatan_sub_kd">
+        <label for="kegiatan_sub_kd" class="control-label col-md-3" id="req-kegiatan_sub_kd">
+                Kegiatan</label>
+        <div class="col-md-9">
+               <input id="kegiatan_sub_kd" class=" form-control " type="text" value="" name="kegiatan_sub_kd">
+        </div>
+      </div>
+      <div class="col-md-8" id="item-kegiatan_sub_nm">
+           <input id="kegiatan_sub_nm" class=" form-control " type="text" value="" name="kegiatan_sub_nm">
+      </div>      
+      <script>
+          $('#kegiatan_sub_kd').bind('typeahead:selected', function(obj, datum, name) {      
+                $('#kegiatan_sub_id').val(datum.id);
+                $('#kegiatan_sub_nm').val(datum.nama);
+                $('#kegiatan_sub_kd').val(datum.kode);
+          });
+          $('#kegiatan_sub_nm').bind('typeahead:selected', function(obj, datum, name) {      
+                $('#kegiatan_sub_id').val(datum.id);
+                $('#kegiatan_sub_nm').val(datum.nama);
+                $('#kegiatan_sub_kd').val(datum.kode);
+          });
+      </script>
+    </div>
+    
+    <!--REKENING -------------------------------------------------------------->  
+      <input id="rekening_id" type="hidden" value="" name="rekening_id">
       <div class="form-group"><!--Rekening-->
         <div class="col-md-3">
-          <div id="item-rekening_kd_item">
-            <label for="rekening_kd_item" class="control-label col-md-3" id="req-rekening_kd_item">
+          <div id="item-rekening_kd">
+            <label for="rekening_kd" class="control-label col-md-3" id="req-rekening_kd">
                     Rekening</label>
             <div class="col-md-9">
-               <input id="rekening_kd_item" class=" form-control " type="text" value="" name="rekening_kd_item">
+               <input id="rekening_kd" class=" form-control " type="text" value="" name="rekening_kd">
             </div>
           </div>
         </div>
         
         <div class="col-md-5">
-           <input id="rekening_nm_item" class=" form-control " type="text" value="" name="rekening_nm_item">
+           <input id="rekening_nm" class=" form-control " type="text" value="" name="rekening_nm">
         </div>
 
         <div class="col-md-3">
           <div class="form-group" tal:define="field form['amount']" id="item-amount-item">
-            <label for="amount_item" class="control-label col-md-2" id="req-amount-item" style="text-align:left;!important;">
+            <label for="amount" class="control-label col-md-2" id="req-amount-item" style="text-align:left;!important;">
                     Nilai</label>
             <div class="col-md-10">
-               <input id="amount_item" class=" form-control " type="text" value="0" name="amount_item">
+               <input id="amount" class=" form-control " type="text" value="0" name="amount">
             </div>
           </div>
         </div>
+        
       </div>
 
-      <script>
-        $('#rekening_kd').bind('typeahead:selected', function(obj, datum, name) {  
-              $('#rekening_nm').val(datum.nama);
-              $('#rekening_id').val(datum.id);
-        });
-
-        $('#rekening_nm').bind('typeahead:selected', function(obj, datum, name) {      
-              $('#rekening_kd').val(datum.kode);
-              $('#rekening_id').val(datum.id);
-        });
-      </script> 
       <div class="form-group"><!--Referensi-->
         <div class="col-md-3">
           <div id="item-ref_kd_item">

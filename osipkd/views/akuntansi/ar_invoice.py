@@ -26,7 +26,17 @@ SUMBER_ID = (
     (2, 'PBB'),
     (3, 'BPHTB'),
     (4, 'PADL'))
-    
+
+
+@colander.deferred
+def deferred_unit_kd(node, kw):
+    def validate_unit_kd(node, value):
+        request = kw.get('request')
+        unit_kd = request.session['unit_kd']
+        if value != unit_kd:
+            raise ValueError('Kode Error ')
+    return validate_csrf
+            
 class AddSchema(colander.Schema):
     unit_kd_widget = widget.AutocompleteInputWidget(
             values = '/unit/act/headofkode',
@@ -56,7 +66,7 @@ class AddSchema(colander.Schema):
                     colander.String(),
                     oid='unit_kd',
                     title="SKPD",
-                    widget = unit_kd_widget,)
+                    widget = unit_kd_widget)
 
     unit_nm  = colander.SchemaNode(
                     colander.String(),
@@ -151,7 +161,10 @@ class view_ar_invoice_item(BaseViews):
         req = self.request
         params = req.params
         url_dict = req.matchdict
-        return dict(project='EIS')
+        row = {}
+        row['kegiatan_kd']='0.00.00.10'
+        row['kegiatan_nm']='PENDAPATAN'
+        return dict(project='EIS', row=row)
         
     ##########                    
     # Action #
@@ -174,7 +187,8 @@ class view_ar_invoice_item(BaseViews):
             columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
             columns.append(ColumnDT('amount',  filter=self._number_format))
             
-            query = DBSession.query(ARItem)
+            query = DBSession.query(ARItem).filter(ARItem.tahun==ses['tahun'],
+                      ARItem.unit_id==ses['unit_id'])
             rowTable = DataTables(req, ARItem, query, columns)
             return rowTable.output_result()
         
@@ -205,6 +219,11 @@ class view_ar_invoice_item(BaseViews):
         row.from_dict(values)
         row.updated = datetime.now()
         row.update_uid = user.id
+        tanggal = datetime.strptime(values['tanggal'], '%Y-%m-%d') 
+        row.tahun = tanggal.year
+        row.bulan = tanggal.month
+        row.hari  = tanggal.day
+        row.minggu = tanggal.isocalendar()[1]
         row.disable   = 'disable' in values and values['disable'] and 1 or 0
         row.is_kota   = 'is_kota' in values and values['is_kota'] and 1 or 0
         DBSession.add(row)

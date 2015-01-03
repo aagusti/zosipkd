@@ -48,6 +48,7 @@
       </script>
       
     </div>
+    
     <div class="form-group"><!--Tanggal/Nilai-->
       <div class="col-md-4" tal:define="field form['tanggal']" id="item-${field.oid}">
           <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">

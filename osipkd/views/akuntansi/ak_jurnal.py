@@ -189,7 +189,6 @@ class view_ak_jurnal(BaseViews):
         if url_dict['act']=='grid':
             columns = []
             columns.append(ColumnDT('id'))
-            columns.append(ColumnDT('units.kode'))
             columns.append(ColumnDT('kode'))
             columns.append(ColumnDT('nama'))
             columns.append(ColumnDT('ref_kode'))

@@ -39,12 +39,12 @@ class AddSchema(colander.Schema):
                     
     kegiatan_nm_widget = widget.AutocompleteInputWidget(
             size=60,
-            values = '/kegiatan-sub/act/headofnama',
+            values = '/ag-kegiatan-sub/act/headofnama',
             min_length=1)
   
     kegiatan_kd_widget = widget.AutocompleteInputWidget(
             size=60,
-            values = '/kegiatan-sub/act/headofkode',
+            values = '/ag-kegiatan-sub/act/headofkode',
             min_length=1)
 
     rekening_nm_widget = widget.AutocompleteInputWidget(
@@ -77,19 +77,18 @@ class AddSchema(colander.Schema):
 
     kegiatan_sub_id  = colander.SchemaNode(
                     colander.Integer(),
-                    oid='unit_id',
+                    oid='kegiatan_sub_id',
                     title="SKPD")
 
     kegiatan_sub_kd  = colander.SchemaNode(
                     colander.String(),
-                    oid='unit_kd',
+                    oid='kegiatan_sub_kd',
                     title="Kegiatan",
                     widget = kegiatan_kd_widget,)
 
     kegiatan_sub_nm  = colander.SchemaNode(
                     colander.String(),
-                    oid='unit_nm',
-                    title="SKPD",
+                    oid='kegiatan_sub_nm',
                     widget = kegiatan_nm_widget)
 
     rekening_id  = colander.SchemaNode(
@@ -131,7 +130,9 @@ class AddSchema(colander.Schema):
     sumber_id  =  colander.SchemaNode(
                     colander.String(),
                     validator=colander.Length(max=32),
-                    widget=widget.SelectWidget(values=SUMBER_ID)) # deferred_source_type)
+                    widget=widget.SelectWidget(values=SUMBER_ID)) 
+                    # deferred_source_type)
+                    
     ############## DI DROP DULU                
     kecamatan_kd = colander.SchemaNode(
                     colander.String(),
@@ -189,10 +190,12 @@ class view_ar_payment_item(BaseViews):
         req = self.request
         params = req.params
         url_dict = req.matchdict
+        kegiatan_sub_id = 'kegiatan_sub_id' in params and params['kegiatan_sub_id'] or 0
         if url_dict['act']=='grid':
             columns = []
             columns.append(ColumnDT('id'))
-            columns.append(ColumnDT('units.kode'))
+            columns.append(ColumnDT('kegiatan_subs.kegiatans.kode'))
+            columns.append(ColumnDT('kegiatan_subs.no_urut'))
             columns.append(ColumnDT('kode'))
             columns.append(ColumnDT('nama'))
             columns.append(ColumnDT('ref_kode'))
@@ -200,7 +203,10 @@ class view_ar_payment_item(BaseViews):
             columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
             columns.append(ColumnDT('amount',  filter=self._number_format))
             
-            query = DBSession.query(ARPaymentItem)
+            query = DBSession.query(ARPaymentItem).filter(
+                      ARPaymentItem.tahun == ses['tahun'],
+                      ARPaymentItem.unit_id == ses['unit_id']
+                      )
             rowTable = DataTables(req, ARPaymentItem, query, columns)
             return rowTable.output_result()
         
@@ -231,6 +237,11 @@ class view_ar_payment_item(BaseViews):
         row.from_dict(values)
         row.updated = datetime.now()
         row.update_uid = user.id
+        tanggal    = datetime.strptime(values['tanggal'], '%Y-%m-%d')
+        row.tahun  = tanggal.year
+        row.bulan  = tanggal.month
+        row.hari   = tanggal.day
+        row.minggu = tanggal.isocalendar()[1]
         row.disable   = 'disable' in values and values['disable'] and 1 or 0
         row.is_kota   = 'is_kota' in values and values['is_kota'] and 1 or 0
         DBSession.add(row)
@@ -301,6 +312,9 @@ class view_ar_payment_item(BaseViews):
         rowd['unit_id']     = row.unit_id
         rowd['unit_nm']     = row.units.nama
         rowd['unit_kd']     = row.units.kode
+        rowd['kegiatan_sub_id'] =row.kegiatan_sub_id
+        rowd['kegiatan_sub_kd'] ="".join([row.kegiatan_subs.kegiatans.kode,'-',str(row.kegiatan_subs.no_urut)])
+        rowd['kegiatan_sub_nm'] =row.kegiatan_subs.nama
         rowd['rekening_id'] = row.rekening_id
         rowd['kode']        = row.kode
         rowd['nama']        = row.nama

@@ -49,8 +49,9 @@
       
     </div>
     
-    <div class="form-group"><!--Kegiatan-->
-      <div tal:define="field form['kegiatan_sub_id']" style="display: none;">
+    <!--Kegiatan-->
+    <div class="form-group">
+      <div tal:define="field form['kegiatan_sub_id']" style="display: none">
           ${structure:field.serialize()}
       </div>
       
