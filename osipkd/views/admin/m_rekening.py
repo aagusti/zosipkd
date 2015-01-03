@@ -69,7 +69,7 @@ class view_rekening(BaseViews):
     ##########                    
     # Action #
     ##########    
-    def get_kode_dict(self, term, prefix=None):
+    def get_kode_dict(self, term, prefix=''):
         q = DBSession.query(Rekening.id, Rekening.kode, Rekening.nama
                   ).filter(Rekening.kode.ilike('%s%%' % prefix),
                            Rekening.kode.ilike('%%%s%%' % term))
@@ -119,7 +119,7 @@ class view_rekening(BaseViews):
             rowTable = DataTables(req, Rekening, query, columns)
             return rowTable.output_result()
             
-        elif url_dict['act']=='headof':
+        elif url_dict['act']=='headofnama':
             term = 'term' in params and params['term'] or '' 
             return self.get_nama_dict(term)
             

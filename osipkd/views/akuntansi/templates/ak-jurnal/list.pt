@@ -22,9 +22,9 @@
         
       </div>
 
-      <!----------------------------------------------------------------------->
+      <!--SKPD--------------------------------------------------------------------->
       <input id="unit_id" type="hidden" value="${request.session['unit_id']}" name="unit_id">
-      <div class="form-group"><!--SKPD-->
+      <div class="form-group">
         <div class="col-md-3">
           <div id="item-unit_kd">
             <label for="unit_kd" class="control-label col-md-3" id="req-unit_kd">
@@ -107,12 +107,11 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Tanggal</th>
                 <th>Kode</th>
                 <th>Uraian</th>
-                <th>Ref. Kode</th>
-                <th>Ref. Nama</th>
-                <th>Tanggal</th>
                 <th>Nilai</th>
+                <th>Posted</th>
             </tr>
         </thead>
         <tbody>
@@ -156,10 +155,8 @@
               {"width": "75px"},
               {"width": "75px"},
               null,
-               {"width": "100px", "sClass":"left"},
-              null,
-              {"width": "75px", "sClass":"center"},
               {"width": "100px", "sClass":"right"},
+              {"width": "75px", "sClass":"right"},
           ]
         });
           

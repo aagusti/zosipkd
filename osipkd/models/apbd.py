@@ -134,7 +134,7 @@ class Jurnal(NamaModel, Base):
     source_no       = Column(String(30),    nullable=False)
     tgl_source      = Column(Date)
     posted          = Column(SmallInteger,  nullable=False)
-    posted_by       = Column(Integer,       nullable=False) 
+    posted_uid       = Column(Integer) 
     posted_date     = Column(Date) 
     notes           = Column(String(225),   nullable=False)
     is_skpd         = Column(SmallInteger,  nullable=False)
@@ -154,7 +154,7 @@ class Jurnal(NamaModel, Base):
         else:
            return 1
 
-class JurnalItem(NamaModel, Base):
+class JurnalItem(DefaultModel, Base):
     __tablename__   ='jurnal_items'
     __table_args__  = {'extend_existing':True,'schema' :'apbd'}
 
@@ -172,7 +172,7 @@ class JurnalItem(NamaModel, Base):
     #debet           = Column(BigInteger)
     #kredit          = Column(BigInteger)
     amount           = Column(BigInteger,  default=0) 
-    notes           = Column(String(225), nullable=False)
+    notes           = Column(String(225), nullable=True)
 
 #    @classmethod
 #    def get_jurnal_item_id(cls, p):

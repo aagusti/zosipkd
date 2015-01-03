@@ -83,18 +83,18 @@
     </div>
 
     <div class="container">
-      <div class="alert alert-danger" style="display: none;" id='errors'></div>
+      <div>
+      <div class="alert alert-danger" style="display: none;" id='errors' width="100%"></div>
+      <div class="alert alert-success" style="display: none;" id='sukses' width="100%"></div>
+      </div>
       <div tal:condition="request.session.peek_flash()">
         <div class="alert alert-success" tal:repeat="message request.session.pop_flash()">${message}</div>
       </div>
       <div tal:condition="request.session.peek_flash('error')">
         <div class="alert alert-danger" tal:repeat="message request.session.pop_flash('error')">${message}</div>
       </div>
-          
       <div metal:define-slot="content"></div>    
     </div> <!-- /container -->
-
-
     <script src="/static/datatables/media/js/jquery.dataTables.min.js"></script>
     <!--script src="/static/datatables/media/js/jquery.jeditable.js'"></script-->
     <script src="/static/datatables/media/js/jquery.dataTables.ext.js"></script>
@@ -102,9 +102,12 @@
     <script src="/static/datatables/media/js/dataTables.bootstrap.js"></script>
     <script>
         window.setInterval(function() {
-              if ($('#errors').css('display')=='inline'){
-                  $('#errors').delay(2000).fadeOut('slow');
-              }
+          if ($('#errors').css('display')=='inline'){
+              $('#errors').delay(2000).fadeOut('slow');
+          }
+          if ($('#sukses').css('display')=='inline'){
+              $('#sukses').delay(2000).fadeOut('slow');
+          }
         }, 5000);
 
     </script>

@@ -1,0 +1,22 @@
+<html metal:use-macro="load: ../base.pt">
+  <div metal:fill-slot="content">
+    <h4>${request.title}</h4>
+    <hr>
+   <div class="btn-group" data-toggle="buttons">
+      <input type="radio" name="jns"value="bb">Buku Besar
+      <br>                
+      <input type="radio" name="jns"value="lra">Laporan Realisasi Anggaran
+      <br>                
+      <input type="radio" name="jns"value="sal">Perubahan SAL
+      <br>                
+      <input type="radio" name="jns"value="neraca">Neraca
+      <br>                
+      <input type="radio" name="jns"value="lo">Laporan Operasional
+      <br>                
+      <input type="radio" name="jns"value="lpe">Laporan Perubahan Ekuitas
+      <br>                
+      <input type="radio" name="jns"value="lak">Laporan Arus Kas
+    
+   </div>
+  </div>
+</html>

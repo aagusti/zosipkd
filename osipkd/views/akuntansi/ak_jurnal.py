@@ -8,7 +8,7 @@ from pyramid.httpexceptions import ( HTTPFound, )
 import colander
 from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
-from osipkd.models.apbd import Jurnal
+from osipkd.models.apbd import Jurnal, JurnalItem
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -21,9 +21,9 @@ def deferred_jv_type(node, kw):
     return widget.SelectWidget(values=values)
     
 JV_TYPE = (
-    ('lra', 'LRA'),
-    ('lo', 'LO'),
-    ('ju', 'Jurnal Umum'),
+    (1, 'LRA'),
+    (2, 'LO'),
+    (3, 'Jurnal Umum'),
     )
 
 class AddSchema(colander.Schema):
@@ -35,28 +35,7 @@ class AddSchema(colander.Schema):
             values = '/unit/act/headofnama',
             min_length=1)
             
-                    
-    kegiatan_nm_widget = widget.AutocompleteInputWidget(
-            size=60,
-            values = '/kegiatan-sub/act/headofnama',
-            min_length=1)
-  
-    kegiatan_kd_widget = widget.AutocompleteInputWidget(
-            size=60,
-            values = '/kegiatan-sub/act/headofkode',
-            min_length=1)
-
-    rekening_nm_widget = widget.AutocompleteInputWidget(
-            size=60,
-            values = '/rekening/act/headofnama4',
-            min_length=1)
-  
-    rekening_kd_widget = widget.AutocompleteInputWidget(
-            size=60,
-            values = '/rekening/act/headofkode4',
-            min_length=1,
-            )
-            
+          
     unit_id  = colander.SchemaNode(
                     colander.Integer(),
                     oid='unit_id',
@@ -73,48 +52,6 @@ class AddSchema(colander.Schema):
                     oid='unit_nm',
                     title="SKPD NM",
                     widget = unit_nm_widget)
-
-    kegiatan_sub_id  = colander.SchemaNode(
-                    colander.Integer(),
-                    oid='kegiatan_sub_id',
-                    title="Keg Id")
-
-    kegiatan_sub_kd  = colander.SchemaNode(
-                    colander.String(),
-                    oid='kegiatan_sub_kd',
-                    title="Kegiatan",
-                    widget = kegiatan_kd_widget,)
-
-    kegiatan_sub_nm  = colander.SchemaNode(
-                    colander.String(),
-                    oid='kegiatan_sub_nm',
-                    title="Keg Nm",
-                    widget = kegiatan_nm_widget)
-
-    rekening_id  = colander.SchemaNode(
-                    colander.Integer(),
-                    oid='rekening_id')
-                    
-    rekening_kd  = colander.SchemaNode(
-                    colander.String(),
-                    widget = rekening_kd_widget,                    
-                    oid='rekening_kd',
-                    title='Rekening',
-                    )
-                    
-    amount = colander.SchemaNode(
-                    colander.Integer(),
-                    validator=colander.Length(max=32),
-                    default = 0,
-                    title = "Nilai"
-                    )
-                    
-    rekening_nm = colander.SchemaNode(
-                    colander.String(),
-                    validator=colander.Length(max=128),
-                    widget = rekening_nm_widget,
-                    oid = 'rekening_nm')
-                    
     kode        = colander.SchemaNode(
                     colander.String(),
                     )
@@ -125,11 +62,7 @@ class AddSchema(colander.Schema):
     tanggal     = colander.SchemaNode(
                   colander.Date(),
                   )
-
-    tgl_transaksi= colander.SchemaNode(
-                colander.Date(),
-                )
-                
+               
     jv_type     = colander.SchemaNode(
                     colander.String(),
                     widget=widget.SelectWidget(values=JV_TYPE),
@@ -161,7 +94,8 @@ class AddSchema(colander.Schema):
 class EditSchema(AddSchema):
     id = colander.SchemaNode(colander.String(),
             missing=colander.drop,
-            widget=widget.HiddenWidget(readonly=True))
+            widget=widget.HiddenWidget(readonly=True),
+            oid="id")
             
 class view_ak_jurnal(BaseViews):
     ########                    
@@ -189,14 +123,21 @@ class view_ak_jurnal(BaseViews):
         if url_dict['act']=='grid':
             columns = []
             columns.append(ColumnDT('id'))
+            columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
             columns.append(ColumnDT('kode'))
             columns.append(ColumnDT('nama'))
-            columns.append(ColumnDT('ref_kode'))
-            columns.append(ColumnDT('ref_nama'))
-            columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
             columns.append(ColumnDT('amount',  filter=self._number_format))
+            columns.append(ColumnDT('posted'))
             
-            query = DBSession.query(Jurnal)
+            query = DBSession.query(Jurnal.id, Jurnal.tanggal, Jurnal.kode, 
+                      Jurnal.nama, Jurnal.posted,
+                      func.div(func.coalesce(func.sum(JurnalItem.amount),0),2).label('amount')).\
+                    outerjoin(JurnalItem).\
+                    group_by(Jurnal.id, Jurnal.tanggal, Jurnal.kode, 
+                             Jurnal.nama, ).\
+                    filter(Jurnal.tahun_id == ses['tahun'],
+                           Jurnal.unit_id == ses['unit_id'],)
+                      
             rowTable = DataTables(req, Jurnal, query, columns)
             return rowTable.output_result()
         
@@ -225,10 +166,16 @@ class view_ak_jurnal(BaseViews):
             row.created = datetime.now()
             row.create_uid = user.id
         row.from_dict(values)
+        tanggal    = datetime.strptime(values['tanggal'], '%Y-%m-%d')
+        row.tahun_id  = tanggal.year
+        row.periode  = tanggal.month
+        row.hari   = tanggal.day
+        
         row.updated = datetime.now()
         row.update_uid = user.id
         row.disable   = 'disable' in values and values['disable'] and 1 or 0
-        row.is_kota   = 'is_kota' in values and values['is_kota'] and 1 or 0
+        row.is_skpd   = 'is_skpd' in values and values['is_skpd'] and 1 or 0
+        row.posted    = 'posted' in values and values['posted'] and 1 or 0
         DBSession.add(row)
         DBSession.flush()
         return row
@@ -238,12 +185,15 @@ class view_ak_jurnal(BaseViews):
             values['id'] = self.request.matchdict['id']
         row = self.save(values, self.request.user, row)
         self.request.session.flash('Jurnal sudah disimpan.')
+        return row
             
-    def route_list(self):
-        return HTTPFound(location=self.request.route_url('ak-jurnal') )
+    def route_list(self, id):
+        if id:
+            return HTTPFound(location=self.request.route_url('ak-jurnal-edit', id=id) )
+        else:
+            return HTTPFound(location=self.request.route_url('ak-jurnal', id=id) )
         
     def session_failed(self, session_name):
-            
         #r = dict(form=self.session[session_name])
         del self.session[session_name]
         #return r
@@ -264,8 +214,9 @@ class view_ak_jurnal(BaseViews):
                     #form.set_appstruct(rowd)
                     return dict(form=form)
                     #return HTTPFound(location=req.route_url('ak-jurnal-add'))
-                self.save_request(dict(controls))
-            return self.route_list()
+                id = self.save_request(dict(controls)).id
+            return self.route_list(id)
+            
         elif SESS_ADD_FAILED in req.session:
             return dict(form=form)
         
@@ -297,20 +248,14 @@ class view_ak_jurnal(BaseViews):
         rowd['unit_id']       = row.unit_id
         rowd['unit_nm']       = row.units.nama
         rowd['unit_kd']       = row.units.kode
-        rowd['rekening_id']   = row.rekening_id
         rowd['kode']          = row.kode
         rowd['nama']          = row.nama
-        rowd['ref_kode']      = row.ref_kode
-        rowd['ref_nama']      = row.ref_nama
+        rowd['source_no']     = row.source_no
+        rowd['source']        = row.source
+        rowd['tgl_source']    = row.tgl_source
         rowd['tanggal']       = row.tanggal
-        rowd['amount']        = row.amount
-        rowd['kecamatan_kd']  = row.kecamatan_kd
-        rowd['kecamatan_nm']  = row.kecamatan_nm
-        rowd['kelurahan_kd']  = row.kelurahan_kd
-        rowd['kelurahan_nm']  = row.kelurahan_nm
-        rowd['is_kota']       = row.is_kota
+        rowd['jv_type']       = row.jv_type
         rowd['disabled']      = row.disabled
-        rowd['sumber_id']     = row.sumber_id
         
         form = self.get_form(EditSchema)
         form.set_appstruct(rowd)
@@ -325,8 +270,8 @@ class view_ak_jurnal(BaseViews):
                     #request.session[SESS_EDIT_FAILED] = e.render()               
                     #return HTTPFound(location=request.route_url('ak-jurnal-edit',
                     #                  id=row.id))
-                self.save_request(dict(controls), row)
-            return self.route_list()
+                id = self.save_request(dict(controls)).id
+            return self.route_list(id)
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
         return dict(form=form)

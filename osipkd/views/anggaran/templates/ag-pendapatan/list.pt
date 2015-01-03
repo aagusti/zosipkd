@@ -384,7 +384,7 @@
               {"width": "150px"},
               {"width": "50px"},
               null,
-               {"width": "150px", "sClass":"left"},
+               {"width": "150px", "sClass":"right"},
               null,
               null,
           ]

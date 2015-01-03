@@ -7,7 +7,7 @@
           <li class="dropdown" tal:attributes="class request.path in ['/password'] and 'active'">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Pendapatan<b class="caret"></b></a>
             <ul class="dropdown-menu">
-              <li><a href="/anggaran/pendapatan">Anggaran</a></li>
+              <li><a href="/ag-pendapatan">Anggaran</a></li>
               <li><a href="/ar-invoice-item">Ketetapan</a></li>
               <li><a href="/ar-payment-item">Realisasi</a></li>
               <li><a href="/ar-report-item">Laporan</a></li>
@@ -19,6 +19,8 @@
             <ul class="dropdown-menu">
               <li><a href="/ak-jurnal">Jurnal</a></li>
               <li><a href="/ak-report">Laporan</a></li>
+              <li><a href="/ak-report-lkpj">LK-PJ</a></li>
+              
             </ul>
           </li>          
     </ul>
