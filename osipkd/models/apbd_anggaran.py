@@ -228,7 +228,12 @@ class KegiatanSub(NamaModel, Base):
     disabled = Column(SmallInteger, nullable=False, default=0)
     UniqueConstraint('unit_id', 'tahun_id', 'kegiatan_id' , 'no_urut',  
                 name = 'kegiatan_sub_ukey')
-
+    @classmethod
+    def max_no_urut(cls,tahun_id,unit_id,kegiatan_id):
+          return DBSession.query(func.max(cls.no_urut).label('m')).filter(
+                   cls.tahun_id   == tahun_id,
+                   cls.unit_id    == unit_id,
+                   cls.kegiatan_id == kegiatan_id).scalar() or 0
         
            
 ############################################
