@@ -271,7 +271,7 @@
 
         $('#btn_item').click(function () {
             if (mID) {
-                window.location = '/ag-item/' + mID;
+                window.location = '/ag-kegiatan-item/' + mID;
             } else {
                 alert('Silahkan pilih kegiatan terlebih dahulu');
             }                

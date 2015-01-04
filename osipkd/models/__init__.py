@@ -51,7 +51,7 @@ class CommonModel(object):
         
     def from_dict(self, values):
         for column in self.__table__.columns:
-            if column.name in values and values[column.name]:
+            if column.name in values and values[column.name] and values[column.name]!='None':
                 setattr(self, column.name, values[column.name])
 
     def as_timezone(self, fieldname):

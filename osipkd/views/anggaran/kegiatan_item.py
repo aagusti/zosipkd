@@ -27,6 +27,17 @@ JV_TYPE = (
     )
 
 class view_ak_jurnal(BaseViews):
+    @view_config(route_name="ag-kegiatan-item", renderer="templates/ag-kegiatan-item/list.pt")
+    def view_list(self):
+        ses = self.request.session
+        req = self.request
+        params = req.params
+        url_dict = req.matchdict
+        kegiatan_sub_id =  url_dict['kegiatan_sub_id']
+        row = KegiatanSub.query_id(kegiatan_sub_id).filter(KegiatanSub.unit_id==ses['unit_id']).first()
+        rek_head = 5
+        return dict(project='OSIPKD', row = row, rek_head=rek_head)
+        
     ##########                    
     # Action #
     ##########    
@@ -113,4 +124,352 @@ class view_ak_jurnal(BaseViews):
           pass
         except:
             return {'success':False, 'msg':'Gagal Tambah Data'}
+
+#######    
+# Add #
+#######
+def form_validator(form, value):
+    def err_kegiatan():
+        raise colander.Invalid(form,
+            'Kegiatan dengan no urut tersebut sudah ada')
+                
+class AddSchema(colander.Schema):
+
+    kegiatan_sub_id = colander.SchemaNode(
+                          colander.String(),
+                          )
+    rekening_id      = colander.SchemaNode(
+                          colander.String(),
+                          oid="rekening_id"
+                          )
+    rekening_kd      = colander.SchemaNode(
+                          colander.String(),
+                          title="Rekening",
+                          oid="rekening_kd"
+                          )
+    rekening_nm      = colander.SchemaNode(
+                          colander.String(),
+                          oid="rekening_nm"
+                          )
+    kode             = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          )
+    nama             = colander.SchemaNode(
+                          colander.String(),
+                          )
+    no_urut          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          )
+    header_id        = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          )
+    vol_1_1          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=1,
+                          )
+    sat_1_1          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          )
+    vol_1_2          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=1,)
+    sat_1_2          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          )
+    hsat_1           = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=0)
+    vol_2_1          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=1,)
+    sat_2_1          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          )
+    vol_2_2          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=1,)
+    sat_2_2          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          )
+    hsat_2           = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=0)
+    vol_3_1          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=1,)
+    sat_3_1          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          )
+    vol_3_2          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=1,)
+    sat_3_2          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          )
+    hsat_3           = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=0)
+    vol_4_1          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=1)
+    sat_4_1          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          )
+    vol_4_2          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=1,)
+    sat_4_2          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          )
+    hsat_4           = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=0)
+    pelaksana        = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          )
+    mulai            = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          )
+    selesai          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          )
+    bln01            = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=0)
+    bln02            = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=0)
+    bln03            = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=0)
+    bln04            = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=0)
+    bln05            = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=0)
+    bln06            = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=0)
+    bln07            = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=0)
+    bln08            = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=0)
+    bln09            = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=0)
+    bln10            = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=0)
+    bln11            = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=0)
+    bln12            = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          default=0)
+    ssh_id           = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          )
+    is_summary       = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          )
+    is_apbd          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          )
+    keterangan       = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          )
+
+class EditSchema(AddSchema):
+    id             = colander.SchemaNode(
+                          colander.Integer(),)
+
+def get_form(request, class_form):
+    schema = class_form(validator=form_validator)
+    schema = schema.bind()
+    schema.request = request
+    return Form(schema, buttons=('simpan','batal'))
+    
+def save(values, request, row=None):
+    if not row:
+        row = KegiatanItem()
+    ag_step_id = request.session['ag_step_id']
+    if ag_step_id<2:
+        values['vol_2_1'] = values['vol_%s_1' % ag_step_id] 
+        values['vol_2_2'] = values['vol_%s_2' % ag_step_id] 
+        values['sat_2_1'] = values['sat_%s_1' % ag_step_id] 
+        values['sat_2_2'] = values['sat_%s_2' % ag_step_id] 
+        values['hsat_2'] = values['hsat_%s' % ag_step_id] 
+    if ag_step_id<4:
+        values['vol_3_1'] = values['vol_%s_1' % ag_step_id] 
+        values['vol_3_2'] = values['vol_%s_2' % ag_step_id] 
+        values['sat_3_1'] = values['sat_%s_1' % ag_step_id] 
+        values['sat_3_2'] = values['sat_%s_2' % ag_step_id] 
+        values['hsat_3'] = values['hsat_%s' % ag_step_id] 
+    if ag_step_id<5:
+        values['vol_4_1'] = values['vol_%s_1' % ag_step_id] 
+        values['vol_4_2'] = values['vol_%s_2' % ag_step_id] 
+        values['sat_4_1'] = values['sat_%s_1' % ag_step_id] 
+        values['sat_4_2'] = values['sat_%s_2' % ag_step_id] 
+        values['hsat_4'] = values['hsat_%s' % ag_step_id] 
+        
+    row.from_dict(values)
+    if not row.no_urut:
+          row.no_urut = KegiatanItem.max_no_urut(values['kegiatan_sub_id'],values['rekening_id'])+1;
+          
+
             
+    DBSession.add(row)
+    DBSession.flush()
+    return row
+                                      
+def save_request(values, request, row=None):
+    if 'id' in request.matchdict:
+        values['id'] = request.matchdict['id']
+    row = save(values, request, row)
+    request.session.flash('Kegiatan sudah disimpan.')
+        
+def route_list(request,kegiatan_sub_id):
+    return HTTPFound(location=request.route_url('ag-kegiatan-item',kegiatan_sub_id=kegiatan_sub_id))
+    
+def session_failed(request, session_name):
+    r = dict(form=request.session[session_name])
+    del request.session[session_name]
+    return r
+    
+@view_config(route_name='ag-kegiatan-item-add', renderer='templates/ag-kegiatan-item/add.pt',
+             permission='add')
+def view_add(request):
+    form = get_form(request, AddSchema)
+    kegiatan_sub_id = request.matchdict['kegiatan_sub_id']
+    ses = request.session
+    rows = KegiatanSub.query_id(kegiatan_sub_id).filter(KegiatanSub.unit_id==ses['unit_id']).first()
+    if request.POST:
+        if 'simpan' in request.POST:
+            controls = request.POST.items()
+            controls_dicted = dict(controls)
+            #return dict(form=form.render(appstruct=controls_dicted))
+            try:
+                c = form.validate(controls)
+            except ValidationFailure, e:
+                return dict(form=form, row=rows, rek_head=5)
+                #request.session[SESS_ADD_FAILED] = e.render()               
+                #return HTTPFound(location=request.route_url('ag-kegiatan-item-add'))
+            save_request(controls_dicted, request)
+        return route_list(request,kegiatan_sub_id)
+    elif SESS_ADD_FAILED in request.session:
+        del request.session[SESS_ADD_FAILED]
+        #return session_failed(request, SESS_ADD_FAILED)
+    return dict(form=form, row=rows, rek_head=5)
+
+########
+# Edit #
+########
+def query_id(request):
+    return DBSession.query(KegiatanItem).filter(KegiatanItem.id==request.matchdict['id'])
+    
+def id_not_found(request,kegiatan_sub_id):    
+    msg = 'ITEM ID %s not found.' % request.matchdict['id']
+    request.session.flash(msg, 'error')
+    return route_list(request,kegiatan_sub_id)
+
+@view_config(route_name='ag-kegiatan-item-edit', renderer='templates/ag-kegiatan-item/add.pt',
+             permission='edit')
+def view_edit(request):
+    ses = request.session
+    kegiatan_sub_id = request.matchdict['kegiatan_sub_id']
+    row = query_id(request).first()
+    if not row:
+        return id_not_found(request,kegiatan_sub_id)
+    form = get_form(request, EditSchema)
+    rows = KegiatanSub.query_id(kegiatan_sub_id).filter(KegiatanSub.unit_id==ses['unit_id']).first()
+    if request.POST:
+        if 'simpan' in request.POST:
+            controls = request.POST.items()
+            
+            try:
+                c = form.validate(controls)
+            except ValidationFailure, e:
+                return dict(form=form, row=rows, rek_head=5)
+                #request.session[SESS_EDIT_FAILED] = e.render()               
+                #return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',
+                #                  id=row.id))
+            save_request(dict(controls), request, row)
+        return route_list(request,kegiatan_sub_id)
+    elif SESS_EDIT_FAILED in request.session:
+        del request.session[SESS_EDIT_FAILED]
+        return dict(form=form)
+    values = row.to_dict() #dict(zip(row.keys(), row))
+    values['rekening_kd']=row.rekenings.kode
+    values['rekening_nm']=row.rekenings.nama
+    form.set_appstruct(values) 
+    return dict(form=form, row=rows, rek_head=5)
+
+##########
+# Delete #
+##########    
+@view_config(route_name='ag-kegiatan-item-delete', renderer='templates/ag-kegiatan-item/delete.pt',
+             permission='delete')
+def view_delete(request):
+    q = query_id(request)
+    row = q.first()
+    if not row:
+        return id_not_found(request)
+    form = Form(colander.Schema(), buttons=('hapus','cancel'))
+    values= {}
+    if request.POST:
+        if 'hapus' in request.POST:
+            msg = '%s Kode %s  No. %s %s sudah dihapus.' % (request.title, row.kode, row.no_urut, row.nama)
+            DBSession.query(KegiatanItem).filter(KegiatanItem.id==request.matchdict['id']).delete()
+            DBSession.flush()
+            request.session.flash(msg)
+        return route_list(request)
+    return dict(row=row,
+                 form=form.render())
+
+            
+                        
