@@ -154,7 +154,7 @@ class view_ak_jurnal(BaseViews):
                 
     def get_form(self, class_form, row=None):
         schema = class_form(validator=self.form_validator)
-        schema = schema.bind(jv_type=JV_TYPE)
+        schema = schema.bind(ap_type=AP_TYPE)
         schema.request = self.request
         if row:
           schema.deserialize(row)

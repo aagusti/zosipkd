@@ -72,22 +72,18 @@ class Jabatan(NamaModel, Base):
     __tablename__  = 'jabatans'
     __table_args__ = {'extend_existing':True,'schema' : 'apbd'}
         
-class PegawaiJabatan(NamaModel, Base):
-    __tablename__  = 'pegawai_jabatans'
+class Pejabat(DefaultModel, Base):
+    __tablename__  = 'pejabats'
     __table_args__ = {'extend_existing':True,'schema' : 'apbd'}
     unit_id    = Column(Integer, ForeignKey("admin.units.id"))
+    units      = relationship("Unit", backref=backref('pejabats'))
     pegawai_id = Column(Integer, ForeignKey("apbd.pegawais.id"))
+    pegawais   = relationship("Pegawai", backref=backref('pejabats'))
     jabatan_id = Column(Integer, ForeignKey("apbd.jabatans.id"))
+    jabatans   = relationship("Jabatan", backref=backref('pejabats'))
     uraian     = Column(String(25))
     mulai      = Column(Date)
     selesai    = Column(Date)
-    def __init__(self, data):
-        NamaModel.__init__(self,data)
-        self.unit_id    = data['unit_id']
-        self.pegawai_id = data['pegawai_id']
-        self.jabatan_id = data['jabatan_id']
-        self.mulai      = data['mulai']
-        self.selesai    = data['selesai']
 
 """class Tapd(NamaModel, Base):
     __tablename__  = 'tapds'
@@ -148,20 +144,6 @@ class Kegiatan(NamaModel, Base):
     locked     = Column(Integer)
     program_id = Column(Integer, ForeignKey("apbd.programs.id"))
 
-class Pejabat(NamaModel, Base):
-    __tablename__  = 'pejabats'
-    __table_args__ = {'extend_existing':True,'schema' : 'apbd'}
-    units          = relationship("Unit", backref="pejabats")
-    jabatans       = relationship("Jabatan", backref="pejabats")
-    pegawais       = relationship("Pegawai", backref="pejabats")
-    keterangan     = Column(String(250))
-    unit_id        = Column(Integer, ForeignKey("admin.units.id"))
-    jabatan_id     = Column(Integer, ForeignKey("apbd.jabatans.id"))
-    pegawai_id     = Column(Integer, ForeignKey("apbd.pegawais.id"))
-    mulai          = Column(Date)
-    selesai        = Column(Date)
-    disabled       = Column(Integer, nullable=False, default=0)
-        
 class KegiatanSub(NamaModel, Base):
     __tablename__  = 'kegiatan_subs'
     __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}

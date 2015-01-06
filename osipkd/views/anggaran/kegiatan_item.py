@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, or_
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
@@ -73,6 +73,32 @@ class view_ak_jurnal(BaseViews):
             rowTable = DataTables(req, KegiatanItem,  query, columns)
             return rowTable.output_result()
             
+        elif url_dict['act']=='headofnama':
+            term = 'term' in params and params['term'] or ''
+            kegiatan_sub_id =  'kegiatan_sub_id' in params and params['kegiatan_sub_id'] or 0
+            q = DBSession.query(KegiatanItem.id, Rekening.kode, 
+                                KegiatanItem.nama, 
+                                (KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2).label('anggaran')
+                                )\
+                         .join(Rekening)\
+                         .join(KegiatanSub)\
+                         .filter(KegiatanSub.unit_id  == ses['unit_id'],
+                                 KegiatanSub.tahun_id == ses['tahun'],
+                                 KegiatanItem.kegiatan_sub_id==kegiatan_sub_id,
+                                 or_(KegiatanItem.nama.ilike('%%%s%%' % term),
+                                  Rekening.kode.ilike('%%%s%%' % term)))
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = ''.join([k[1],'-',str(k[2])])
+                d['kode']        = ''.join([k[1]])
+                d['nama']        = k[2]
+                d['amount']      = k[3]
+                
+                r.append(d)    
+            return r            
         
     ###############                    
     # Tambah  Data#

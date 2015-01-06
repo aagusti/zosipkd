@@ -62,7 +62,7 @@ class view_program(BaseViews):
     ##########    
     @view_config(route_name='program-act', renderer='json',
                  permission='view')
-    def gaji_program_act(self):
+    def view_act(self):
         ses = self.request.session
         req = self.request
         params = req.params
@@ -73,41 +73,10 @@ class view_program(BaseViews):
             columns.append(ColumnDT('kode'))
             columns.append(ColumnDT('nama'))
             columns.append(ColumnDT('disabled'))
-            
-            groups = groupfinder(req.user, req)
-            ids = []
-            if req.user.id==1 or 'group:admin' in groups:
-                query = Program.query() #DBSession.query(Program)
-            else:
-                programs = DBSession.query(UserProgram.program_id, 
-                             UserProgram.sub_program, Program.kode
-                             ).join(Program).filter(Program.id==UserProgram.program_id,
-                                    UserProgram.user_id==req.user.id).all() 
-
-                for program in programs:
-                    if program.sub_program:
-                        rows = DBSession.query(Program.id).filter(Program.kode.ilike('%s%%' % program.kode)).all()
-                    else:
-                        rows = DBSession.query(Program.id).filter(Program.kode==program.kode).all()
-                    for i in range(len(rows)):
-                        ids.append(rows[i])
-                query = DBSession.query(Program).filter((Program.id).in_(ids))
+            query = DBSession.query(Program)
             rowTable = DataTables(req, Program, query, columns)
             return rowTable.output_result()
             
-        elif url_dict['act']=='changeid':
-            ids  = UserProgram.program_granted(req.user.id, params['program_id'])
-            if req.user.id>1 and 'g:admin' not in groupfinder(req.user, req)\
-                    and not ids:
-                return {'success':False, 'msg':'Anda tidak boleh mengubah ke program yang bukan hak akses anda'}
-
-            row = Program.get_by_id('program_id' in params and params['program_id'] or 0)
-            if row:
-                ses['program_id']=row.id
-                ses['program_kd']=row.kode
-                ses['program_nm']=row.nama
-                return {'success':True, 'msg':'Sukses ubah SKPD'}
-                
         elif url_dict['act']=='headofnama':
             term = 'term' in params and params['term'] or '' 
             rows = DBSession.query(Program.id, Program.kode, Program.nama
@@ -138,28 +107,6 @@ class view_program(BaseViews):
                 r.append(d)
             return r
             
-        elif url_dict['act']=='import':
-            rows = DBSession.execute("""SELECT a.kode, a.nama, a.passwd, b.program_id 
-                                        FROM admin.users2 a
-                                        INNER JOIN admin.user_programs2 b
-                                        ON a.id = b.id""").all()
-            for kode,nama,passwd, program_id in rows:
-                user = Users()
-                user.user_name = nama
-                user.user_password = passwd
-                user.email = ''.join([nama,'@tangerangkab.org'])
-                user.status = 1
-                DBSession.add(user)
-                DBSession.flush()
-                if user.id:
-                    user_program=UserProgram()
-                    user_program.user_id = user.id
-                    user_program.program_id = program_id
-                    user_program.status  = 1
-                    DBSession.add(user_program)
-                    DBSession.flush()
-                
-                  
     #######    
     # Add #
     #######
@@ -202,7 +149,7 @@ class view_program(BaseViews):
         return r
     @view_config(route_name='program-add', renderer='templates/program/add.pt',
                  permission='add')
-    def view_program_add(self):
+    def view_add(self):
         req = self.request
         ses = self.session
         form = self.get_form(AddSchema)
@@ -219,6 +166,7 @@ class view_program(BaseViews):
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
         return dict(form=form.render())
+        
     ########
     # Edit #
     ########
@@ -230,7 +178,7 @@ class view_program(BaseViews):
         return route_list()
     @view_config(route_name='program-edit', renderer='templates/program/edit.pt',
                  permission='edit')
-    def view_program_edit(self):
+    def view_edit(self):
         request = self.request
         row = self.query_id().first()
         if not row:
@@ -257,7 +205,7 @@ class view_program(BaseViews):
     ##########    
     @view_config(route_name='program-delete', renderer='templates/program/delete.pt',
                  permission='delete')
-    def view_program_delete(self):
+    def view_delete(self):
         request = self.request
         q = self.query_id()
         row = q.first()

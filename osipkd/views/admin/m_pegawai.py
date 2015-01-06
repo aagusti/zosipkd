@@ -21,25 +21,19 @@ from osipkd.models import (
     DBSession,
     Group
     )
-from osipkd.models.apbd_anggaran import Program, Kegiatan
+from osipkd.models.apbd_anggaran import Pegawai
 
 
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
 
-SESS_ADD_FAILED = 'Tambah kegiatan gagal'
-SESS_EDIT_FAILED = 'Edit kegiatan gagal'
+SESS_ADD_FAILED = 'Tambah pegawai gagal'
+SESS_EDIT_FAILED = 'Edit pegawai gagal'
 
 class AddSchema(colander.Schema):
-    choices = DBSession.query(Program.id,
-                  Program.nama).order_by(Program.nama).all()
     kode = colander.SchemaNode(
                     colander.String(),
                     validator=colander.Length(max=18))
-    program_id = colander.SchemaNode(
-                    colander.Integer(),
-                    widget = widget.SelectWidget(values=choices),
-                    title="Program")
                     
     nama = colander.SchemaNode(
                     colander.String())
@@ -50,20 +44,20 @@ class EditSchema(AddSchema):
     id = colander.SchemaNode(colander.String(),
             missing=colander.drop,
             widget=widget.HiddenWidget(readonly=True))
-class view_kegiatan(BaseViews):
+class view_pegawai(BaseViews):
     ########                    
     # List #
     ########    
-    @view_config(route_name='kegiatan', renderer='templates/kegiatan/list.pt',
+    @view_config(route_name='pegawai', renderer='templates/pegawai/list.pt',
                  permission='read')
     def view_list(self):
         return dict(a={})
     ##########                    
     # Action #
     ##########    
-    @view_config(route_name='kegiatan-act', renderer='json',
+    @view_config(route_name='pegawai-act', renderer='json',
                  permission='view')
-    def gaji_act(self):
+    def view_act(self):
         ses = self.request.session
         req = self.request
         params = req.params
@@ -73,17 +67,16 @@ class view_kegiatan(BaseViews):
             columns.append(ColumnDT('id'))
             columns.append(ColumnDT('kode'))
             columns.append(ColumnDT('nama'))
-            columns.append(ColumnDT('programs.nama'))
             columns.append(ColumnDT('disabled'))
-            query = Kegiatan.query() #DBSession.query(Kegiatan)
-            rowTable = DataTables(req, Kegiatan, query, columns)
+            query = Pegawai.query() #DBSession.query(Pegawai)
+            rowTable = DataTables(req, Pegawai, query, columns)
             return rowTable.output_result()
                 
         elif url_dict['act']=='headofkode':
             term = 'term' in params and params['term'] or '' 
-            rows = DBSession.query(Kegiatan.id, Kegiatan.kode, Kegiatan.nama
-                      ).join(Program).filter( Program.kode!="0.00.00",
-                      Kegiatan.kode.ilike('%%%s%%' % term) ).all()
+            rows = DBSession.query(Pegawai.id, Pegawai.kode, Pegawai.nama
+                      ).join(Program).filter(
+                      Pegawai.kode.ilike('%%%s%%' % term) ).all()
             r = []
             for k in rows:
                 d={}
@@ -93,12 +86,11 @@ class view_kegiatan(BaseViews):
                 d['nama']        = k[2]
                 r.append(d)
             return r
-                
         elif url_dict['act']=='headofnama':
             term = 'term' in params and params['term'] or '' 
-            rows = DBSession.query(Kegiatan.id, Kegiatan.kode, Kegiatan.nama
-                      ).join(Program).filter( Program.kode!="0.00.00",
-                      Kegiatan.nama.ilike('%%%s%%' % term) ).all()
+            rows = DBSession.query(Pegawai.id, Pegawai.kode, Pegawai.nama
+                      ).join(Program).filter(
+                      Pegawai.nama.ilike('%%%s%%' % term) ).all()
             r = []
             for k in rows:
                 d={}
@@ -115,10 +107,10 @@ class view_kegiatan(BaseViews):
     def form_validator(self, form, value):
         if 'id' in form.request.matchdict:
             uid = form.request.matchdict['id']
-            q = DBSession.query(Kegiatan).filter_by(id=uid)
-            kegiatan = q.first()
+            q = DBSession.query(Pegawai).filter_by(id=uid)
+            pegawai = q.first()
         else:
-            kegiatan = None
+            pegawai = None
     def get_form(self, class_form, row=None):
         schema = class_form(validator=self.form_validator)
         schema = schema.bind()
@@ -128,7 +120,7 @@ class view_kegiatan(BaseViews):
         return Form(schema, buttons=('simpan','batal'))
     def save(self, values, user, row=None):
         if not row:
-            row = Kegiatan()
+            row = Pegawai()
             row.created = datetime.now()
             row.create_uid = user.id
         row.from_dict(values)
@@ -142,15 +134,15 @@ class view_kegiatan(BaseViews):
         if 'id' in self.request.matchdict:
             values['id'] = self.request.matchdict['id']
         row = self.save(values, self.request.user, row)
-        self.request.session.flash('kegiatan sudah disimpan.')
+        self.request.session.flash('pegawai sudah disimpan.')
     def route_list(self):
-        return HTTPFound(location=self.request.route_url('kegiatan'))
+        return HTTPFound(location=self.request.route_url('pegawai'))
     def session_failed(self, session_name):
         r = dict(form=self.session[session_name])
         del self.session[session_name]
         return r
         
-    @view_config(route_name='kegiatan-add', renderer='templates/kegiatan/add.pt',
+    @view_config(route_name='pegawai-add', renderer='templates/pegawai/add.pt',
                  permission='add')
     def view_add(self):
         req = self.request
@@ -163,7 +155,7 @@ class view_kegiatan(BaseViews):
                     c = form.validate(controls)
                 except ValidationFailure, e:
                     req.session[SESS_ADD_FAILED] = e.render()               
-                    return HTTPFound(location=req.route_url('kegiatan-add'))
+                    return HTTPFound(location=req.route_url('pegawai-add'))
                 self.save_request(dict(controls))
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
@@ -173,12 +165,12 @@ class view_kegiatan(BaseViews):
     # Edit #
     ########
     def query_id(self):
-        return DBSession.query(Kegiatan).filter_by(id=self.request.matchdict['id'])
+        return DBSession.query(Pegawai).filter_by(id=self.request.matchdict['id'])
     def id_not_found(self):    
-        msg = 'kegiatan ID %s Tidak Ditemukan.' % self.request.matchdict['id']
+        msg = 'pegawai ID %s Tidak Ditemukan.' % self.request.matchdict['id']
         request.session.flash(msg, 'error')
         return route_list()
-    @view_config(route_name='kegiatan-edit', renderer='templates/kegiatan/edit.pt',
+    @view_config(route_name='pegawai-edit', renderer='templates/pegawai/edit.pt',
                  permission='edit')
     def view_edit(self):
         request = self.request
@@ -194,7 +186,7 @@ class view_kegiatan(BaseViews):
                     c = form.validate(controls)
                 except ValidationFailure, e:
                     request.session[SESS_EDIT_FAILED] = e.render()               
-                    return HTTPFound(location=request.route_url('kegiatan-edit',
+                    return HTTPFound(location=request.route_url('pegawai-edit',
                                       id=row.id))
                 self.save_request(dict(controls), row)
             return self.route_list()
@@ -205,7 +197,7 @@ class view_kegiatan(BaseViews):
     ##########
     # Delete #
     ##########    
-    @view_config(route_name='kegiatan-delete', renderer='templates/kegiatan/delete.pt',
+    @view_config(route_name='pegawai-delete', renderer='templates/pegawai/delete.pt',
                  permission='delete')
     def view_delete(self):
         request = self.request
@@ -216,12 +208,12 @@ class view_kegiatan(BaseViews):
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
-                msg = 'kegiatan ID %d %s sudah dihapus.' % (row.id, row.nama)
+                msg = 'pegawai ID %d %s sudah dihapus.' % (row.id, row.nama)
                 try:
                   q.delete()
                   DBSession.flush()
                 except:
-                  msg = 'kegiatan ID %d %s tidak dapat dihapus.' % (row.id, row.nama)
+                  msg = 'pegawai ID %d %s tidak dapat dihapus.' % (row.id, row.nama)
                 request.session.flash(msg)
             return self.route_list()
         return dict(row=row,

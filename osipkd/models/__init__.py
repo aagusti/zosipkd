@@ -222,32 +222,6 @@ class RootFactory(object):
         self.__acl__ = [(Allow, 'Admin', ALL_PERMISSIONS), 
                         (Allow, Authenticated, 'view'),]
 
-class GajiFactory(RootFactory):
-    def __init__(self, request):
-        super(GajiFactory, self ).__init__(request)
-        self.__acl__.append((Allow, 'g:gaji', 'read'))
-        self.__acl__.append((Allow, 'g:gaji', 'add'))
-        self.__acl__.append((Allow, 'g:gaji', 'edit'))
-        self.__acl__.append((Allow, 'g:gaji', 'delete'))
-        
-        self.__acl__.append((Allow, 'g:bank', 'read'))
-        self.__acl__.append((Allow, 'g:bank', 'add'))
-        self.__acl__.append((Allow, 'g:bank', 'edit'))
-        
-        self.__acl__.append((Allow, 'g:bp', 'read'))
-        self.__acl__.append((Allow, 'g:bp', 'add'))
-        self.__acl__.append((Allow, 'g:bp', 'edit'))
-        
-        
-class AdminFactory(RootFactory):
-    def __init__(self, request):
-        super(AdminFactory, self ).__init__(request)
-        self.__acl__.append((Allow, 'g:admin', 'read'))
-        self.__acl__.append((Allow, 'g:admin', 'add'))
-        self.__acl__.append((Allow, 'g:admin', 'edit'))
-        self.__acl__.append((Allow, 'g:admin', 'delete'))
-
-        
 class ResourceFactory(RootFactory):
     def __init__(self, request):
         super( ResourceFactory, self ).__init__(request)

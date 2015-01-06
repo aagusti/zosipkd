@@ -29,6 +29,9 @@
           <li><a href="/urusan">Urusan</a></li>
           <li><a href="/unit">Unit</a></li>
           <li><a href="/user/unit">User Unit</a></li>
+          <li><a href="/pegawai">Pegawai</a></li>
+          <li><a href="/jabatan">Jabatan</a></li>
+          <li><a href="/pejabat">Pejabat</a></li>
           <!--li><a href="/fungsi">Fungsi</a></li-->
         </ul>
       </li>

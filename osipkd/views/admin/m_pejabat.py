@@ -21,49 +21,68 @@ from osipkd.models import (
     DBSession,
     Group
     )
-from osipkd.models.apbd_anggaran import Program, Kegiatan
+from osipkd.models.pemda_model import Unit
+from osipkd.models.apbd_anggaran import Pejabat, Pegawai, Jabatan
 
 
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
 
-SESS_ADD_FAILED = 'Tambah kegiatan gagal'
-SESS_EDIT_FAILED = 'Edit kegiatan gagal'
+SESS_ADD_FAILED = 'Tambah pejabat gagal'
+SESS_EDIT_FAILED = 'Edit pejabat gagal'
 
 class AddSchema(colander.Schema):
-    choices = DBSession.query(Program.id,
-                  Program.nama).order_by(Program.nama).all()
-    kode = colander.SchemaNode(
+    unit_choices = DBSession.query(Unit.id,
+                  Unit.nama).order_by(Unit.nama).all()
+                  
+    jab_choices = DBSession.query(Jabatan.id,
+                  Jabatan.nama).order_by(Jabatan.nama).all()
+                  
+    peg_choices = DBSession.query(Pegawai.id,
+                  Pegawai.nama).order_by(Pegawai.nama).all()
+                  
+    unit_id = colander.SchemaNode(
                     colander.String(),
-                    validator=colander.Length(max=18))
-    program_id = colander.SchemaNode(
-                    colander.Integer(),
-                    widget = widget.SelectWidget(values=choices),
-                    title="Program")
+                    widget = widget.SelectWidget(values=unit_choices),
+                    )
                     
-    nama = colander.SchemaNode(
+    pegawai_id = colander.SchemaNode(
+                    colander.Integer(),
+                    widget = widget.SelectWidget(values=peg_choices),
+                    titel="Pegawai")
+                    
+    jabatan_id = colander.SchemaNode(
+                    colander.Integer(),
+                    widget = widget.SelectWidget(values=jab_choices),
+                    titel="Pegawai")
+                    
+    uraian = colander.SchemaNode(
                     colander.String())
+                    
+    mulai = colander.SchemaNode(
+                    colander.Date())
+    selesai = colander.SchemaNode(
+                    colander.Date())
     disabled = colander.SchemaNode(
                     colander.Boolean())
-                    
 class EditSchema(AddSchema):
     id = colander.SchemaNode(colander.String(),
             missing=colander.drop,
             widget=widget.HiddenWidget(readonly=True))
-class view_kegiatan(BaseViews):
+class view_pejabat(BaseViews):
     ########                    
     # List #
     ########    
-    @view_config(route_name='kegiatan', renderer='templates/kegiatan/list.pt',
+    @view_config(route_name='pejabat', renderer='templates/pejabat/list.pt',
                  permission='read')
     def view_list(self):
         return dict(a={})
     ##########                    
     # Action #
     ##########    
-    @view_config(route_name='kegiatan-act', renderer='json',
+    @view_config(route_name='pejabat-act', renderer='json',
                  permission='view')
-    def gaji_act(self):
+    def view_act(self):
         ses = self.request.session
         req = self.request
         params = req.params
@@ -71,19 +90,33 @@ class view_kegiatan(BaseViews):
         if url_dict['act']=='grid':
             columns = []
             columns.append(ColumnDT('id'))
-            columns.append(ColumnDT('kode'))
-            columns.append(ColumnDT('nama'))
-            columns.append(ColumnDT('programs.nama'))
-            columns.append(ColumnDT('disabled'))
-            query = Kegiatan.query() #DBSession.query(Kegiatan)
-            rowTable = DataTables(req, Kegiatan, query, columns)
+            columns.append(ColumnDT('pegawais.nama'))
+            columns.append(ColumnDT('jabatans.nama'))
+            columns.append(ColumnDT('units.nama'))
+            query = DBSession.query(Pejabat)
+            rowTable = DataTables(req, Pejabat, query, columns)
             return rowTable.output_result()
-                
+            
+        elif url_dict['act']=='headofnama':
+            term = 'term' in params and params['term'] or '' 
+            rows = DBSession.query(Pejabat.id, Pejabat.kode, Pejabat.nama
+                      ).filter(
+                      Pejabat.nama.ilike('%%%s%%' % term) ).all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[2]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
+            return r
+            
         elif url_dict['act']=='headofkode':
             term = 'term' in params and params['term'] or '' 
-            rows = DBSession.query(Kegiatan.id, Kegiatan.kode, Kegiatan.nama
-                      ).join(Program).filter( Program.kode!="0.00.00",
-                      Kegiatan.kode.ilike('%%%s%%' % term) ).all()
+            rows = DBSession.query(Pejabat.id, Pejabat.kode, Pejabat.nama
+                      ).filter(
+                      Pejabat.kode.ilike('%%%s%%' % term) ).all()
             r = []
             for k in rows:
                 d={}
@@ -93,32 +126,17 @@ class view_kegiatan(BaseViews):
                 d['nama']        = k[2]
                 r.append(d)
             return r
-                
-        elif url_dict['act']=='headofnama':
-            term = 'term' in params and params['term'] or '' 
-            rows = DBSession.query(Kegiatan.id, Kegiatan.kode, Kegiatan.nama
-                      ).join(Program).filter( Program.kode!="0.00.00",
-                      Kegiatan.nama.ilike('%%%s%%' % term) ).all()
-            r = []
-            for k in rows:
-                d={}
-                d['id']          = k[0]
-                d['value']       = k[2]
-                d['kode']        = k[1]
-                d['nama']        = k[2]
-                r.append(d)
-            return r            
-                  
+            
     #######    
     # Add #
     #######
     def form_validator(self, form, value):
         if 'id' in form.request.matchdict:
             uid = form.request.matchdict['id']
-            q = DBSession.query(Kegiatan).filter_by(id=uid)
-            kegiatan = q.first()
+            q = DBSession.query(Pejabat).filter_by(id=uid)
+            pejabat = q.first()
         else:
-            kegiatan = None
+            pejabat = None
     def get_form(self, class_form, row=None):
         schema = class_form(validator=self.form_validator)
         schema = schema.bind()
@@ -128,7 +146,7 @@ class view_kegiatan(BaseViews):
         return Form(schema, buttons=('simpan','batal'))
     def save(self, values, user, row=None):
         if not row:
-            row = Kegiatan()
+            row = Pejabat()
             row.created = datetime.now()
             row.create_uid = user.id
         row.from_dict(values)
@@ -142,15 +160,14 @@ class view_kegiatan(BaseViews):
         if 'id' in self.request.matchdict:
             values['id'] = self.request.matchdict['id']
         row = self.save(values, self.request.user, row)
-        self.request.session.flash('kegiatan sudah disimpan.')
+        self.request.session.flash('pejabat sudah disimpan.')
     def route_list(self):
-        return HTTPFound(location=self.request.route_url('kegiatan'))
+        return HTTPFound(location=self.request.route_url('pejabat'))
     def session_failed(self, session_name):
         r = dict(form=self.session[session_name])
         del self.session[session_name]
         return r
-        
-    @view_config(route_name='kegiatan-add', renderer='templates/kegiatan/add.pt',
+    @view_config(route_name='pejabat-add', renderer='templates/pejabat/add.pt',
                  permission='add')
     def view_add(self):
         req = self.request
@@ -163,22 +180,23 @@ class view_kegiatan(BaseViews):
                     c = form.validate(controls)
                 except ValidationFailure, e:
                     req.session[SESS_ADD_FAILED] = e.render()               
-                    return HTTPFound(location=req.route_url('kegiatan-add'))
+                    return HTTPFound(location=req.route_url('pejabat-add'))
                 self.save_request(dict(controls))
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
         return dict(form=form.render())
+        
     ########
     # Edit #
     ########
     def query_id(self):
-        return DBSession.query(Kegiatan).filter_by(id=self.request.matchdict['id'])
+        return DBSession.query(Pejabat).filter_by(id=self.request.matchdict['id'])
     def id_not_found(self):    
-        msg = 'kegiatan ID %s Tidak Ditemukan.' % self.request.matchdict['id']
+        msg = 'pejabat ID %s Tidak Ditemukan.' % self.request.matchdict['id']
         request.session.flash(msg, 'error')
         return route_list()
-    @view_config(route_name='kegiatan-edit', renderer='templates/kegiatan/edit.pt',
+    @view_config(route_name='pejabat-edit', renderer='templates/pejabat/edit.pt',
                  permission='edit')
     def view_edit(self):
         request = self.request
@@ -194,7 +212,7 @@ class view_kegiatan(BaseViews):
                     c = form.validate(controls)
                 except ValidationFailure, e:
                     request.session[SESS_EDIT_FAILED] = e.render()               
-                    return HTTPFound(location=request.route_url('kegiatan-edit',
+                    return HTTPFound(location=request.route_url('pejabat-edit',
                                       id=row.id))
                 self.save_request(dict(controls), row)
             return self.route_list()
@@ -205,7 +223,7 @@ class view_kegiatan(BaseViews):
     ##########
     # Delete #
     ##########    
-    @view_config(route_name='kegiatan-delete', renderer='templates/kegiatan/delete.pt',
+    @view_config(route_name='pejabat-delete', renderer='templates/pejabat/delete.pt',
                  permission='delete')
     def view_delete(self):
         request = self.request
@@ -216,12 +234,12 @@ class view_kegiatan(BaseViews):
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
-                msg = 'kegiatan ID %d %s sudah dihapus.' % (row.id, row.nama)
+                msg = 'pejabat ID %d %s sudah dihapus.' % (row.id, row.nama)
                 try:
                   q.delete()
                   DBSession.flush()
                 except:
-                  msg = 'kegiatan ID %d %s tidak dapat dihapus.' % (row.id, row.nama)
+                  msg = 'pejabat ID %d %s tidak dapat dihapus.' % (row.id, row.nama)
                 request.session.flash(msg)
             return self.route_list()
         return dict(row=row,
