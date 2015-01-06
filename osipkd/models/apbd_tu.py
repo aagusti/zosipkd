@@ -61,22 +61,18 @@ class Spp(NamaModel, Base):
 
     spds           = relationship("Spd", backref="spps")
     units          = relationship("Unit", backref="spps")
-
-    ap_spd_id         = Column(BigInteger, ForeignKey("apbd.ap_spds.id"),   nullable=False) 
+    
+    ap_spd_id         = Column(BigInteger, ForeignKey("apbd.ap_spds.id"),   nullable=True) 
     tahun_id       = Column(BigInteger, ForeignKey("apbd.tahuns.id"), nullable=False)
     unit_id        = Column(Integer,    ForeignKey("admin.units.id"),  nullable=False) 
     no_urut        = Column(BigInteger, nullable=False)
     tanggal        = Column(Date) 
-    nama           = Column(String(64), nullable=False)
-    kode           = Column(String(64), nullable=False)
     jenis          = Column(BigInteger, nullable=False)                 
     nominal        = Column(BigInteger, nullable=False)
     ttd_uid        = Column(Integer)
     ttd_nip        = Column(String(32))
     ttd_nama       = Column(String(64))
     ttd_jab        = Column(String(64))
-    bank_nama      = Column(String(64), nullable=False)
-    bank_account   = Column(String(32), nullable=False)
     ap_nama        = Column(String(64), nullable=False)
     ap_bank        = Column(String(64), nullable=False)
     ap_rekening    = Column(String(32), nullable=False)
@@ -104,26 +100,16 @@ class Spp(NamaModel, Base):
     kasi_nip       = Column(String(32))
     kasi_nama      = Column(String(64))
     kasi_jab       = Column(String(64))
-    verified_uid   = Column(Integer, nullable=False)
+    verified_uid   = Column(Integer, nullable=True)
 
-    posted         = Column(SmallInteger, nullable=False)
-
-    @classmethod
-    def get_header(cls, unit_id, sub_keg_id):
-        return DBSession.query(cls.id,
-            cls.no_urut,
-            cls.nama).filter(cls.unit_id==unit_id,cls.id==sub_keg_id).first()
+    posted         = Column(SmallInteger, default=0, nullable=False)
 
     @classmethod
-    def get_no_urut(cls, p):
-        row = DBSession.query(func.max(cls.no_urut).label('no_urut'))\
-                .filter(cls.tahun_id==p['tahun_id'],
-                        cls.unit_id==p['unit_id']
-                ).first()
-        if row and row.no_urut:
-           return row.no_urut+1
-        else:
-           return 1
+    def max_no_urut(cls, tahun, unit_id):
+        return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
+                .filter(cls.tahun_id==tahun,
+                        cls.unit_id==unit_id
+                ).scalar() or 0
     
     @classmethod
     def get_nominal(cls, p):
@@ -137,13 +123,15 @@ class Spp(NamaModel, Base):
 
 class SppItem(DefaultModel, Base):
     __tablename__  ='ap_spp_items'
-    __table_args__ = {'extend_existing':True,'schema' :'apbd'}
+    __table_args__ = (UniqueConstraint("ap_invoice_id", name="ap_spp_uq1"),
+                        {'extend_existing':True,'schema' :'apbd'})
 
     spps           = relationship("Spp",       backref=backref("spps"))
     apinvoices     = relationship("APInvoice", backref=backref("apinvoices"))
 
     ap_spp_id         = Column(BigInteger, ForeignKey("apbd.ap_spps.id"),       nullable=False)
     ap_invoice_id   = Column(BigInteger, ForeignKey("apbd.ap_invoices.id"), nullable=False)
+    
 
 class Spm(NamaModel, Base):
     __tablename__  = 'ap_spms'

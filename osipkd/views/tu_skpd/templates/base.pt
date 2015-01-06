@@ -18,9 +18,9 @@
         <ul class="dropdown-menu">
         
           <li><a href="/ap-invoice-skpd">Tagihan/Utang</a></li>
-          <li><a href="/ap-spp-skpd">SPP</a></li>
-          <li><a href="/ap-spm-skpd">SPM</a></li>
-          <li><a href="/ap-report-skpd">Laporan</a></li>
+          <li><a href="/ap-spp">SPP</a></li>
+          <li><a href="/ap-spm">SPM</a></li>
+          <li><a href="/ap-report">Laporan</a></li>
         </ul>
       </li>
       

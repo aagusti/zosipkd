@@ -247,9 +247,9 @@
         <thead>
             <tr>
                 <th>Index</th>
-                <th>Rekening</th>
                 <th>No</th>
                 <th>Uraian</th>
+                <th>Rekening</th>
                 <th>Jumlah</th>
                 <th>PPn</th>
                 <th>PPh</th>

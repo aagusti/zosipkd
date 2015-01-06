@@ -62,25 +62,47 @@ class view_ap_invoice_skpd(BaseViews):
                 columns.append(ColumnDT('amount',filter = self._number_format))
                 columns.append(ColumnDT('ppn',filter = self._number_format))
                 columns.append(ColumnDT('pph',filter = self._number_format))
-                query = DBSession.query(APInvoice.id,
-                                        APInvoice.no_urut,
-                                        Kegiatan.kode,
-                                        APInvoice.nama,
+                query = DBSession.query(APInvoice.id, APInvoice.no_urut,
+                                        Kegiatan.kode, APInvoice.nama,
                                         func.sum(APInvoiceItem.amount).label('amount'),
                                         func.sum(APInvoiceItem.ppn).label('ppn'),
                                         func.sum(APInvoiceItem.pph).label('pph'),
-                                        ).filter(APInvoice.tahun_id==ses['tahun'],
-                                                 APInvoice.unit_id==ses['unit_id'])\
-                                        .join(KegiatanSub)\
-                                        .join(Kegiatan)\
-                                        .outerjoin(APInvoiceItem).\
-                                        group_by(APInvoice.id, Kegiatan.kode,
-                                                 APInvoice.nama)
-                                        
+                                        )\
+                            .filter(APInvoice.tahun_id==ses['tahun'],
+                                    APInvoice.unit_id==ses['unit_id'])\
+                            .join(KegiatanSub)\
+                            .join(Kegiatan)\
+                            .outerjoin(APInvoiceItem)\
+                            .group_by(APInvoice.id, Kegiatan.kode,
+                                      APInvoice.nama)
                 rowTable = DataTables(req, APInvoice, query, columns)
                 return rowTable.output_result()
-                
-  
+        elif url_dict['act']=='headofnama':
+            query = DBSession.query(APInvoice.id, 
+                                    APInvoice.no_urut,
+                                    APInvoice.nama,
+                                    func.sum(APInvoiceItem.amount).label('amount'),
+                                    func.sum(APInvoiceItem.ppn).label('ppn'),
+                                    func.sum(APInvoiceItem.pph).label('pph'),
+                                    )\
+                        .filter(APInvoice.tahun_id==ses['tahun'],
+                                APInvoice.unit_id==ses['unit_id'],
+                                APInvoice.posted==0)\
+                        .join(APInvoiceItem)\
+                        .group_by(APInvoice.id, APInvoice.no_urut,
+                                  APInvoice.nama)
+            rows = query.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = ''.join([str(k[1]),' - ',str(k[2])])
+                d['amount']      = int(k[3])
+                d['ppn']         = int(k[4])
+                d['pph']         = int(k[5])
+                r.append(d) 
+            print r
+            return r
 #######    
 # Add #
 #######
@@ -100,46 +122,45 @@ class AddSchema(colander.Schema):
     no_urut          = colander.SchemaNode(
                           colander.Integer(),
                           missing=colander.drop)
-    jenis             = colander.SchemaNode(
+    jenis           = colander.SchemaNode(
                           colander.String(),
                           widget=widget.SelectWidget(values=AP_TYPE),
                           title="Jenis")
-                          
-    tanggal          = colander.SchemaNode(
+    tanggal         = colander.SchemaNode(
                           colander.Date())
                           
-    kegiatan_sub_id  = colander.SchemaNode(
+    kegiatan_sub_id = colander.SchemaNode(
                           colander.Integer(),
                           oid="kegiatan_sub_id")
-    kegiatan_kd       = colander.SchemaNode(
+    kegiatan_kd     = colander.SchemaNode(
                           colander.String(),
                           title = "Kegiatan",
                           oid="kegiatan_kd")
                           
-    kegiatan_nm       = colander.SchemaNode(
+    kegiatan_nm     = colander.SchemaNode(
                           colander.String(),
                           oid="kegiatan_nm")
                           
-    nama          = colander.SchemaNode(
+    nama            = colander.SchemaNode(
                           colander.String(),
                           title="Uraian")
 
-    ap_nomor          = colander.SchemaNode(
+    ap_nomor        = colander.SchemaNode(
                           colander.String(),
                           title="Nomor")
-    ap_nama           = colander.SchemaNode(
+    ap_nama         = colander.SchemaNode(
                           colander.String(),
                           title="Nama")
-    ap_tanggal        = colander.SchemaNode(
+    ap_tanggal      = colander.SchemaNode(
                           colander.Date(),
                           title="Tanggal")
-    ap_rekening       = colander.SchemaNode(
+    ap_rekening     = colander.SchemaNode(
                           colander.String(),
                           title="Rekening")
-    ap_npwp           = colander.SchemaNode(
+    ap_npwp         = colander.SchemaNode(
                           colander.String(),
                           title="NPWP")
-    amount       = colander.SchemaNode(
+    amount          = colander.SchemaNode(
                           colander.Integer(),
                           default=0,
                           title="Jml. Tagihan"

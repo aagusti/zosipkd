@@ -18,20 +18,7 @@ from osipkd.views.base_view import BaseViews
 SESS_ADD_FAILED = 'Tambah ap-invoice-skpd-item gagal'
 SESS_EDIT_FAILED = 'Edit ap-invoice-skpd-item gagal'
 
-def deferred_jv_type(node, kw):
-    values = kw.get('jv_type', [])
-    return widget.SelectWidget(values=values)
-    
-AP_TYPE = (
-    ('1', 'UP'),
-    ('2', 'TU'),
-    ('3', 'GU'),
-    ('4', 'LS'),
-    )
-
 class view_ap_invoice_skpd_item(BaseViews):
-
-        
     ##########                    
     # Action #
     ##########    
@@ -59,9 +46,6 @@ class view_ap_invoice_skpd_item(BaseViews):
                 columns.append(ColumnDT('vol_2'))
                 columns.append(ColumnDT('harga'))
                 columns.append(ColumnDT('kegiatanitems.nama'))
-                
-                
-                
                 query = DBSession.query(APInvoiceItem).\
                           filter(APInvoiceItem.ap_invoice_id==ap_invoice_id)
                 rowTable = DataTables(req, APInvoiceItem, query, columns)
@@ -87,8 +71,8 @@ def view_add(request):
     if not ap_invoice:
         return {"success": False, 'msg':'Invoice tidak ditemukan'}
     
+    #Cek lagi ditakutkan skpd ada yang iseng inject script
     if ap_invoice_item_id:
-        #Cek lagi ditakutkan skpd ada yang iseng inject script
         row = DBSession.query(APInvoiceItem)\
                   .join(APInvoice)\
                   .filter(APInvoiceItem.id==ap_invoice_item_id,
@@ -112,12 +96,12 @@ def view_add(request):
     row.pph              = controls['pph'].replace('.','')
     row.amount           = float(controls['vol_1'].replace('.',''))*float(controls['vol_2'].replace('.',''))*float(controls['harga'].replace('.',''))
     
-    #try:
-    DBSession.add(row)
-    DBSession.flush()
-    return {"success": True, 'id': row.id, "msg":'Success Tambah Item Invoice'}
-    #except:
-    #return {'success':False, 'msg':'Gagal Tambah Item Invoice'}
+    try:
+        DBSession.add(row)
+        DBSession.flush()
+        return {"success": True, 'id': row.id, "msg":'Success Tambah Item Invoice'}
+    except:
+        return {'success':False, 'msg':'Gagal Tambah Item Invoice'}
 
 
 ########
@@ -130,32 +114,6 @@ def id_not_found(request):
     msg = 'User ID %s not found.' % request.matchdict['id']
     request.session.flash(msg, 'error')
     return route_list(request)
-
-@view_config(route_name='ap-invoice-skpd-item-edit', renderer='templates/ap-invoice-skpd-item/add.pt',
-             permission='edit')
-def view_edit(request):
-    row = query_id(request).first()
-    if not row:
-        return id_not_found(request)
-    form = get_form(request, EditSchema)
-    if request.POST:
-        if 'simpan' in request.POST:
-            controls = request.POST.items()
-            
-            try:
-                c = form.validate(controls)
-            except ValidationFailure, e:
-                return dict(form=form)
-            save_request(dict(controls), request, row)
-        return route_list(request)
-    elif SESS_EDIT_FAILED in request.session:
-        del request.session[SESS_EDIT_FAILED]
-        return dict(form=form)
-    values = row.to_dict() #dict(zip(row.keys(), row))
-    values['kegiatan_nm']=row.kegiatan_subs.nama
-    values['kegiatan_kd']=row.kegiatan_subs.kode
-    form.set_appstruct(values) 
-    return dict(form=form)
 
 ##########
 # Delete #
