@@ -30,6 +30,9 @@
 	<field name="unit_nm" class="java.lang.String">
 		<fieldDescription><![CDATA[unit_nm]]></fieldDescription>
 	</field>
+	<field name="customer" class="java.lang.String">
+		<fieldDescription><![CDATA[customer]]></fieldDescription>
+	</field>
 	<group name="unit_kd" isStartNewPage="true" isResetPageNumber="true">
 		<groupExpression><![CDATA[$F{unit_kd}]]></groupExpression>
 		<groupHeader>
@@ -65,7 +68,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textElement textAlignment="Center" markup="none">
 						<font isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA["PEMERINTAH "]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="0" y="40" width="447" height="14"/>
@@ -110,11 +113,11 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textFieldExpression><![CDATA[": "+$F{urusan_kd}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="125" y="22" width="53" height="14"/>
+					<reportElement x="125" y="22" width="63" height="14"/>
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[": "+$F{urusan_kd}+"."+$F{unit_kd}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[": "+$F{unit_kd}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="178" y="3" width="362" height="14"/>

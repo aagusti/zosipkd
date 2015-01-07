@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_dpa_22" language="groovy" pageWidth="1008" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="954" leftMargin="36" rightMargin="18" topMargin="36" bottomMargin="72">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="464"/>
 	<property name="ireport.y" value="3"/>
 	<queryString language="xPath">
 		<![CDATA[apbd/unit/rekening]]>
@@ -45,17 +45,14 @@
 	<field name="sdana" class="java.lang.String">
 		<fieldDescription><![CDATA[sdana]]></fieldDescription>
 	</field>
-	<field name="jumlah1" class="java.lang.String">
-		<fieldDescription><![CDATA[jumlah1]]></fieldDescription>
-	</field>
-	<field name="jumlah2" class="java.lang.String">
-		<fieldDescription><![CDATA[jumlah2]]></fieldDescription>
-	</field>
 	<field name="jumlah3" class="java.lang.String">
 		<fieldDescription><![CDATA[jumlah3]]></fieldDescription>
 	</field>
 	<field name="jumlah4" class="java.lang.String">
 		<fieldDescription><![CDATA[jumlah4]]></fieldDescription>
+	</field>
+	<field name="customer" class="java.lang.String">
+		<fieldDescription><![CDATA[customer]]></fieldDescription>
 	</field>
 	<variable name="jumlah1" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{jumlah3})]]></variableExpression>
@@ -110,7 +107,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textElement textAlignment="Center" markup="none">
 						<font isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA["PEMERINTAH "]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="0" y="40" width="668" height="14"/>
@@ -155,11 +152,11 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textFieldExpression><![CDATA[": "+$F{urusan_kd}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="125" y="22" width="53" height="14"/>
+					<reportElement x="125" y="22" width="63" height="14"/>
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[": "+$F{urusan_kd}+"."+$F{unit_kd}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[": "+$F{unit_kd}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="178" y="3" width="612" height="14"/>
@@ -604,9 +601,9 @@ Dana]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Top">
-						<font size="9"/>
+						<font size="9" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{unit_kd}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{kegiatan_kd}.substring( 0, 1 )]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToBandHeight" x="24" y="0" width="24" height="14"/>
@@ -617,9 +614,9 @@ Dana]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Top">
-						<font size="9"/>
+						<font size="9" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{program_kd}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{kegiatan_kd}.substring( 2, 4 )]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToBandHeight" x="72" y="0" width="198" height="14"/>
@@ -630,7 +627,7 @@ Dana]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement verticalAlignment="Top">
-						<font size="9"/>
+						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{program_nm}]]></textFieldExpression>
 				</textField>
@@ -667,7 +664,7 @@ Dana]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="false"/>
+						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah1_p})]]></textFieldExpression>
 				</textField>
@@ -680,7 +677,7 @@ Dana]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="false"/>
+						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{jumlah2_p}-$V{jumlah1_p})<0 ? "("+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{jumlah2_p}-$V{jumlah1_p})*-1)+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah2_p}-$V{jumlah1_p})]]></textFieldExpression>
 				</textField>
@@ -693,7 +690,7 @@ Dana]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="false"/>
+						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[(($V{jumlah2_p}-$V{jumlah1_p})*100/$V{jumlah1_p})<0 ? "("+new DecimalFormat("0.00").format(($V{jumlah2_p}-$V{jumlah1_p})*100*-1/$V{jumlah1_p})+")" : new DecimalFormat("0.00").format(($V{jumlah2_p}-$V{jumlah1_p})*100/$V{jumlah1_p})]]></textFieldExpression>
 				</textField>
@@ -706,7 +703,7 @@ Dana]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="false"/>
+						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah2_p})]]></textFieldExpression>
 				</textField>
@@ -898,7 +895,7 @@ Dana]]></text>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{unit_kd}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{kegiatan_kd}.substring( 0, 1 )]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="24" y="0" width="24" height="14"/>
@@ -911,7 +908,7 @@ Dana]]></text>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{program_kd}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{kegiatan_kd}.substring( 2, 4 )]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="72" y="0" width="198" height="14"/>
@@ -937,7 +934,7 @@ Dana]]></text>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{kegiatan_kd}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{kegiatan_kd}.substring( 8, 10 )]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="270" y="0" width="95" height="14"/>

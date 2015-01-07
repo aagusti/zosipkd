@@ -24,26 +24,8 @@
 	<field name="volume1" class="java.lang.String">
 		<fieldDescription><![CDATA[volume1]]></fieldDescription>
 	</field>
-	<field name="volume2" class="java.lang.String">
-		<fieldDescription><![CDATA[volume2]]></fieldDescription>
-	</field>
-	<field name="volume3" class="java.lang.String">
-		<fieldDescription><![CDATA[volume3]]></fieldDescription>
-	</field>
-	<field name="volume4" class="java.lang.String">
-		<fieldDescription><![CDATA[volume4]]></fieldDescription>
-	</field>
 	<field name="harga1" class="java.lang.String">
 		<fieldDescription><![CDATA[harga1]]></fieldDescription>
-	</field>
-	<field name="harga2" class="java.lang.String">
-		<fieldDescription><![CDATA[harga2]]></fieldDescription>
-	</field>
-	<field name="harga3" class="java.lang.String">
-		<fieldDescription><![CDATA[harga3]]></fieldDescription>
-	</field>
-	<field name="harga4" class="java.lang.String">
-		<fieldDescription><![CDATA[harga4]]></fieldDescription>
 	</field>
 	<field name="satuan11" class="java.lang.String">
 		<fieldDescription><![CDATA[satuan11]]></fieldDescription>
@@ -51,35 +33,8 @@
 	<field name="satuan12" class="java.lang.String">
 		<fieldDescription><![CDATA[satuan12]]></fieldDescription>
 	</field>
-	<field name="satuan21" class="java.lang.String">
-		<fieldDescription><![CDATA[satuan21]]></fieldDescription>
-	</field>
-	<field name="satuan22" class="java.lang.String">
-		<fieldDescription><![CDATA[satuan22]]></fieldDescription>
-	</field>
-	<field name="satuan31" class="java.lang.String">
-		<fieldDescription><![CDATA[satuan31]]></fieldDescription>
-	</field>
-	<field name="satuan32" class="java.lang.String">
-		<fieldDescription><![CDATA[satuan32]]></fieldDescription>
-	</field>
-	<field name="satuan41" class="java.lang.String">
-		<fieldDescription><![CDATA[satuan41]]></fieldDescription>
-	</field>
-	<field name="satuan42" class="java.lang.String">
-		<fieldDescription><![CDATA[satuan42]]></fieldDescription>
-	</field>
 	<field name="jumlah1" class="java.lang.String">
 		<fieldDescription><![CDATA[jumlah1]]></fieldDescription>
-	</field>
-	<field name="jumlah2" class="java.lang.String">
-		<fieldDescription><![CDATA[jumlah2]]></fieldDescription>
-	</field>
-	<field name="jumlah3" class="java.lang.String">
-		<fieldDescription><![CDATA[jumlah3]]></fieldDescription>
-	</field>
-	<field name="jumlah4" class="java.lang.String">
-		<fieldDescription><![CDATA[jumlah4]]></fieldDescription>
 	</field>
 	<variable name="jumlah" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{jumlah1})]]></variableExpression>
@@ -129,17 +84,23 @@
 			<printWhenExpression><![CDATA[$F{level_id}=="4"]]></printWhenExpression>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="56" y="0" width="13" height="14"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{item_kd}]]></textFieldExpression>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_kd}==null ? "" : $F{item_kd}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="69" y="0" width="199" height="14"/>
-				<textElement/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{item_nm}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="456" y="0" width="86" height="14"/>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
@@ -149,12 +110,16 @@
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="317" y="0" width="63" height="14"/>
-				<textElement/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{satuan11}==null ? "" : $F{satuan11}+" "+($F{satuan12}==null ? "" : "/"+$F{satuan12})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="380" y="0" width="76" height="14"/>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{harga})]]></textFieldExpression>
 			</textField>
 		</band>

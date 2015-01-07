@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_rka_22" language="groovy" pageWidth="1008" pageHeight="612" orientation="Landscape" columnWidth="954" leftMargin="36" rightMargin="18" topMargin="36" bottomMargin="72" >
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_rka_22" language="groovy" pageWidth="1008" pageHeight="612" orientation="Landscape" columnWidth="954" leftMargin="36" rightMargin="18" topMargin="36" bottomMargin="20">
 	<property name="ireport.zoom" value="1.9487171000000014"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="222"/>
+	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[apbd/master/rka]]>
 	</queryString>
@@ -57,6 +57,9 @@
 	<field name="jumlah4" class="java.lang.String">
 		<fieldDescription><![CDATA[jumlah4]]></fieldDescription>
 	</field>
+	<field name="customer" class="java.lang.String">
+		<fieldDescription><![CDATA[customer]]></fieldDescription>
+	</field>
 	<variable name="jumlah" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{jumlah1})]]></variableExpression>
 	</variable>
@@ -101,19 +104,19 @@
 		<groupHeader>
 			<band height="54">
 				<rectangle>
-					<reportElement  x="0" y="27" width="760" height="27"/>
+					<reportElement x="0" y="27" width="760" height="27"/>
 					<graphicElement>
 						<pen lineWidth="0.25"/>
 					</graphicElement>
 				</rectangle>
 				<rectangle>
-					<reportElement  x="760" y="0" width="104" height="54"/>
+					<reportElement x="760" y="0" width="104" height="54"/>
 					<graphicElement>
 						<pen lineWidth="0.25"/>
 					</graphicElement>
 				</rectangle>
 				<staticText>
-					<reportElement  x="0" y="0" width="760" height="27"/>
+					<reportElement x="0" y="0" width="760" height="27"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -127,28 +130,28 @@
 SATUAN KERJA PERANGKAT DAERAH]]></text>
 				</staticText>
 				<textField>
-					<reportElement  x="0" y="27" width="760" height="14"/>
+					<reportElement x="0" y="27" width="760" height="14"/>
 					<textElement textAlignment="Center" markup="none">
 						<font isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA["PEMERINTAH "]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement  x="0" y="40" width="760" height="14"/>
+					<reportElement x="0" y="40" width="760" height="14"/>
 					<textElement textAlignment="Center" markup="none">
 						<font isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA["TAHUN ANGGARAN "+$F{tahun}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement  x="760" y="27" width="104" height="25"/>
+					<reportElement x="760" y="27" width="104" height="25"/>
 					<textElement textAlignment="Center">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[RKA SKPD - 2.2]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="760" y="12" width="104" height="28"/>
+					<reportElement x="760" y="12" width="104" height="28"/>
 					<textElement textAlignment="Center">
 						<font size="12" isBold="false"/>
 					</textElement>
@@ -157,54 +160,54 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 			</band>
 			<band height="38">
 				<rectangle>
-					<reportElement  x="0" y="19" width="864" height="19"/>
+					<reportElement x="0" y="19" width="864" height="19"/>
 					<graphicElement>
 						<pen lineWidth="0.25"/>
 					</graphicElement>
 				</rectangle>
 				<rectangle>
-					<reportElement  x="0" y="0" width="864" height="19"/>
+					<reportElement x="0" y="0" width="864" height="19"/>
 					<graphicElement>
 						<pen lineWidth="0.25"/>
 					</graphicElement>
 				</rectangle>
 				<textField isBlankWhenNull="true">
-					<reportElement  x="125" y="3" width="53" height="14"/>
+					<reportElement x="125" y="3" width="53" height="14"/>
 					<textElement>
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[": "+$F{urusan_kd}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement  x="125" y="22" width="53" height="14"/>
+					<reportElement x="125" y="22" width="64" height="14"/>
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[": "+$F{urusan_kd}+"."+$F{unit_kd}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[": "+$F{unit_kd}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement  x="178" y="3" width="686" height="14"/>
+					<reportElement x="178" y="3" width="686" height="14"/>
 					<textElement>
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{urusan_nm}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement  x="178" y="22" width="686" height="14"/>
+					<reportElement x="178" y="22" width="686" height="14"/>
 					<textElement>
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{unit_nm}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement  x="5" y="3" width="120" height="14"/>
+					<reportElement x="5" y="3" width="120" height="14"/>
 					<textElement>
 						<font size="9"/>
 					</textElement>
 					<text><![CDATA[URUSAN PEMERINTAHAN]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="5" y="22" width="120" height="14"/>
+					<reportElement x="5" y="22" width="120" height="14"/>
 					<textElement>
 						<font size="9"/>
 					</textElement>
@@ -213,7 +216,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 			</band>
 			<band height="26">
 				<staticText>
-					<reportElement  x="0" y="0" width="864" height="26"/>
+					<reportElement x="0" y="0" width="864" height="26"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -228,7 +231,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 			</band>
 			<band height="44">
 				<staticText>
-					<reportElement  x="72" y="0" width="174" height="44"/>
+					<reportElement x="72" y="0" width="174" height="44"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -241,7 +244,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[URAIAN]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="0" y="0" width="72" height="15"/>
+					<reportElement x="0" y="0" width="72" height="15"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -254,7 +257,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[KODE]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="0" y="15" width="24" height="29"/>
+					<reportElement x="0" y="15" width="24" height="29"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -267,7 +270,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[BID]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="24" y="15" width="24" height="29"/>
+					<reportElement x="24" y="15" width="24" height="29"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -280,7 +283,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[PRO]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="48" y="15" width="24" height="29"/>
+					<reportElement x="48" y="15" width="24" height="29"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -293,7 +296,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[KEG]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="246" y="0" width="98" height="44"/>
+					<reportElement x="246" y="0" width="98" height="44"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -306,7 +309,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[LOKASI KEGIATAN]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="344" y="0" width="115" height="44"/>
+					<reportElement x="344" y="0" width="115" height="44"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -319,7 +322,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[TARGET KINERJA (KUANTITATIVE)]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="459" y="15" width="81" height="29"/>
+					<reportElement x="459" y="15" width="81" height="29"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -332,7 +335,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[BELANJA PEGAWAI]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="540" y="15" width="81" height="29"/>
+					<reportElement x="540" y="15" width="81" height="29"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -345,7 +348,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[BELANJA BARANG JASA]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="621" y="15" width="81" height="29"/>
+					<reportElement x="621" y="15" width="81" height="29"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -358,7 +361,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[BELANJA MODAL]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="702" y="15" width="81" height="29"/>
+					<reportElement x="702" y="15" width="81" height="29"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -371,7 +374,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[JUMLAH (Rp.)]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="783" y="0" width="81" height="44"/>
+					<reportElement x="783" y="0" width="81" height="44"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -384,7 +387,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[TAHUN N + 1 (Rp.)]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="459" y="0" width="324" height="15"/>
+					<reportElement x="459" y="0" width="324" height="15"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -399,7 +402,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 			</band>
 			<band height="14">
 				<staticText>
-					<reportElement  x="0" y="0" width="24" height="14"/>
+					<reportElement x="0" y="0" width="24" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -412,7 +415,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[1]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="24" y="0" width="24" height="14"/>
+					<reportElement x="24" y="0" width="24" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -425,7 +428,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[2]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="48" y="0" width="24" height="14"/>
+					<reportElement x="48" y="0" width="24" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -438,7 +441,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[3]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="72" y="0" width="174" height="14"/>
+					<reportElement x="72" y="0" width="174" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -451,7 +454,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[4]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="246" y="0" width="98" height="14"/>
+					<reportElement x="246" y="0" width="98" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -464,7 +467,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[5]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="344" y="0" width="115" height="14"/>
+					<reportElement x="344" y="0" width="115" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -477,7 +480,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[6]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="459" y="0" width="81" height="14"/>
+					<reportElement x="459" y="0" width="81" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -490,7 +493,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[7]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="540" y="0" width="81" height="14"/>
+					<reportElement x="540" y="0" width="81" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -503,7 +506,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[8]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="621" y="0" width="81" height="14"/>
+					<reportElement x="621" y="0" width="81" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -516,7 +519,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[9]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="702" y="0" width="81" height="14"/>
+					<reportElement x="702" y="0" width="81" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -529,7 +532,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[10=7+8+9]]></text>
 				</staticText>
 				<staticText>
-					<reportElement  x="783" y="0" width="81" height="14"/>
+					<reportElement x="783" y="0" width="81" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -544,9 +547,9 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="130">
+			<band height="128">
 				<textField>
-					<reportElement  x="459" y="0" width="81" height="16"/>
+					<reportElement x="459" y="0" width="81" height="16"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -559,7 +562,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{b_pegawai_u})]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement  x="540" y="0" width="81" height="16"/>
+					<reportElement x="540" y="0" width="81" height="16"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -572,7 +575,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{b_jasa_u})]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement  x="621" y="0" width="81" height="16"/>
+					<reportElement x="621" y="0" width="81" height="16"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -585,7 +588,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{b_modal_u})]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement  x="702" y="0" width="81" height="16"/>
+					<reportElement x="702" y="0" width="81" height="16"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -598,7 +601,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{b_pegawai_u}+$V{b_jasa_u}+$V{b_modal_u})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="783" y="0" width="81" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="783" y="0" width="81" height="16"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -608,7 +611,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textElement/>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="72" y="0" width="174" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="72" y="0" width="174" height="16"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -621,7 +624,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textFieldExpression><![CDATA["JUMLAH"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="246" y="0" width="98" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="246" y="0" width="98" height="16"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -631,7 +634,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textElement/>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="344" y="0" width="115" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="344" y="0" width="115" height="16"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -641,7 +644,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textElement/>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="0" y="0" width="72" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="72" height="16"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -651,19 +654,19 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textElement textAlignment="Center"/>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement  x="681" y="42" width="183" height="16"/>
+					<reportElement x="681" y="42" width="183" height="16"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement  x="681" y="112" width="183" height="16"/>
+					<reportElement x="681" y="112" width="183" height="16"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement  x="681" y="26" width="183" height="16"/>
+					<reportElement x="681" y="26" width="183" height="16"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement  x="681" y="96" width="183" height="16"/>
+					<reportElement x="681" y="96" width="183" height="16"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				</textField>
 			</band>
@@ -674,7 +677,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 		<groupHeader>
 			<band height="16">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="0" y="0" width="24" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="24" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -682,10 +685,10 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textElement textAlignment="Center">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{unit_kd}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{kegiatan_kd}.substring( 0, 1 )]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="24" y="0" width="24" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="24" y="0" width="24" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -693,10 +696,10 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textElement textAlignment="Center">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{program_kd}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{kegiatan_kd}.substring( 2, 4 )]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="72" y="0" width="174" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="72" y="0" width="174" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -707,7 +710,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textFieldExpression><![CDATA[$F{program_nm}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="program_kd" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="621" y="0" width="81" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="621" y="0" width="81" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -718,7 +721,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{b_modal_p})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="program_kd" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="459" y="0" width="81" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="459" y="0" width="81" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -729,7 +732,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{b_pegawai_p})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="program_kd" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="540" y="0" width="81" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="540" y="0" width="81" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -740,7 +743,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{b_jasa_p})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="48" y="0" width="24" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="48" y="0" width="24" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -748,7 +751,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textElement textAlignment="Center"/>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="246" y="0" width="98" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="246" y="0" width="98" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -756,7 +759,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textElement/>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="344" y="0" width="115" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="344" y="0" width="115" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -764,7 +767,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textElement/>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="program_kd" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="702" y="0" width="81" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="702" y="0" width="81" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -775,7 +778,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{b_pegawai_p}+$V{b_jasa_p}+$V{b_modal_p})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="783" y="0" width="81" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="783" y="0" width="81" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -790,34 +793,34 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 		<groupHeader>
 			<band height="16">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="48" y="0" width="24" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="48" y="0" width="24" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Center"/>
-					<textFieldExpression><![CDATA[$F{kegiatan_kd}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{kegiatan_kd}.substring( 8, 10 )]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="24" y="0" width="24" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="24" y="0" width="24" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Center"/>
-					<textFieldExpression><![CDATA[$F{program_kd}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{kegiatan_kd}.substring( 2, 4 )]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="0" y="0" width="24" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="24" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Center"/>
-					<textFieldExpression><![CDATA[$F{unit_kd}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{kegiatan_kd}.substring( 0, 1 )]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="72" y="0" width="174" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="72" y="0" width="174" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -826,7 +829,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textFieldExpression><![CDATA[$F{kegiatan_nm}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="kegiatan_kd" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="540" y="0" width="81" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="540" y="0" width="81" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -835,7 +838,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{b_jasa_k})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="kegiatan_kd" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="459" y="0" width="81" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="459" y="0" width="81" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -844,7 +847,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{b_pegawai_k})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="kegiatan_kd" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="621" y="0" width="81" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="621" y="0" width="81" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -853,7 +856,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{b_modal_k})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="246" y="0" width="98" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="246" y="0" width="98" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -862,7 +865,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textFieldExpression><![CDATA[$F{lokasi}=="None" ? "" : $F{lokasi}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="344" y="0" width="115" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="344" y="0" width="115" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -871,7 +874,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textFieldExpression><![CDATA[$F{target}=="None" ? "" : $F{target}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="kegiatan_kd" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="702" y="0" width="81" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="702" y="0" width="81" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -880,7 +883,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{b_pegawai_k}+$V{b_jasa_k}+$V{b_modal_k})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement  stretchType="RelativeToBandHeight" x="783" y="0" width="81" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="783" y="0" width="81" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -894,7 +897,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 		<band height="14">
 			<printWhenExpression><![CDATA[$V{PAGE_NUMBER}>1]]></printWhenExpression>
 			<staticText>
-				<reportElement  x="0" y="0" width="24" height="14"/>
+				<reportElement x="0" y="0" width="24" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -907,7 +910,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 				<text><![CDATA[1]]></text>
 			</staticText>
 			<staticText>
-				<reportElement  x="24" y="0" width="24" height="14"/>
+				<reportElement x="24" y="0" width="24" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -920,7 +923,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 				<text><![CDATA[2]]></text>
 			</staticText>
 			<staticText>
-				<reportElement  x="48" y="0" width="24" height="14"/>
+				<reportElement x="48" y="0" width="24" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -933,7 +936,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 				<text><![CDATA[3]]></text>
 			</staticText>
 			<staticText>
-				<reportElement  x="72" y="0" width="174" height="14"/>
+				<reportElement x="72" y="0" width="174" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -946,7 +949,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 				<text><![CDATA[4]]></text>
 			</staticText>
 			<staticText>
-				<reportElement  x="246" y="0" width="98" height="14"/>
+				<reportElement x="246" y="0" width="98" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -959,7 +962,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 				<text><![CDATA[5]]></text>
 			</staticText>
 			<staticText>
-				<reportElement  x="344" y="0" width="115" height="14"/>
+				<reportElement x="344" y="0" width="115" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -972,7 +975,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 				<text><![CDATA[6]]></text>
 			</staticText>
 			<staticText>
-				<reportElement  x="459" y="0" width="81" height="14"/>
+				<reportElement x="459" y="0" width="81" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -985,7 +988,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 				<text><![CDATA[7]]></text>
 			</staticText>
 			<staticText>
-				<reportElement  x="540" y="0" width="81" height="14"/>
+				<reportElement x="540" y="0" width="81" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -998,7 +1001,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 				<text><![CDATA[8]]></text>
 			</staticText>
 			<staticText>
-				<reportElement  x="621" y="0" width="81" height="14"/>
+				<reportElement x="621" y="0" width="81" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -1011,7 +1014,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 				<text><![CDATA[9]]></text>
 			</staticText>
 			<staticText>
-				<reportElement  x="702" y="0" width="81" height="14"/>
+				<reportElement x="702" y="0" width="81" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -1024,7 +1027,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 				<text><![CDATA[10=7+8+9]]></text>
 			</staticText>
 			<staticText>
-				<reportElement  x="783" y="0" width="81" height="14"/>
+				<reportElement x="783" y="0" width="81" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>

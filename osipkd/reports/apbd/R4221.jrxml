@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_dpa_221" language="groovy" pageWidth="612" pageHeight="1008" whenNoDataType="AllSectionsNoDetail" columnWidth="544" leftMargin="50" rightMargin="18" topMargin="36" bottomMargin="72">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="228"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["Z:\\py_os\\osipkd\\osipkd\\reports\\apbd\\"]]></defaultValueExpression>
 	</parameter>
@@ -64,6 +64,9 @@
 	<field name="perubahan" class="java.lang.String">
 		<fieldDescription><![CDATA[perubahan]]></fieldDescription>
 	</field>
+	<field name="customer" class="java.lang.String">
+		<fieldDescription><![CDATA[customer]]></fieldDescription>
+	</field>
 	<group name="kegiatan_kd" isStartNewPage="true" isResetPageNumber="true">
 		<groupExpression><![CDATA[$F{kegiatan_kd}]]></groupExpression>
 		<groupHeader>
@@ -94,13 +97,13 @@
 					<text><![CDATA[DOKUMEN PELAKSANAAN PERUBAHAN ANGGARAN
 SATUAN KERJA PERANGKAT DAERAH]]></text>
 				</staticText>
-				<staticText>
+				<textField>
 					<reportElement x="0" y="27" width="544" height="14"/>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Center" markup="none">
 						<font isBold="false"/>
 					</textElement>
-					<text><![CDATA[PEMERINTAH]]></text>
-				</staticText>
+					<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
+				</textField>
 				<textField>
 					<reportElement x="0" y="40" width="544" height="14"/>
 					<textElement textAlignment="Center" markup="none">
@@ -262,7 +265,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[": "+$F{urusan_kd}+"."+$F{unit_kd}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[": "+$F{unit_kd}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="5" y="2" width="120" height="14"/>
@@ -291,7 +294,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[": "+$F{urusan_kd}+"."+$F{unit_kd}+"."+$F{program_kd}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[": "+$F{program_kd}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToBandHeight" x="199" y="3" width="345" height="16"/>
@@ -320,7 +323,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[": "+$F{urusan_kd}+"."+$F{unit_kd}+"."+$F{program_kd}+"."+$F{kegiatan_kd}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[": "+$F{kegiatan_kd}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToBandHeight" x="199" y="3" width="345" height="14"/>
