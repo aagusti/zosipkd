@@ -16,12 +16,12 @@
       <li tal:attributes="class request.path == '/laporan' and 'active'">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Laporan<b class="caret"></b></a>
           <ul class="dropdown-menu">
-            <li><a href="/ag-laporan/rka">RKA</a></li>
-            <li><a href="/ag-laporan/dpa">DPA</a></li>
-            <li><a href="/ag-laporan/rpka">RPKA</a></li>
-            <li><a href="/ag-laporan/dppa">PPA</a></li>
-            <li><a href="/ag-laporan/apbd">APBD</a></li>
-            <li><a href="/ag-laporan/papbd">Perubahan APBD</a></li>
+            <li><a href="/ag-report/r100">RKA</a></li>
+            <li><a href="/ag-report/r200">DPA</a></li>
+            <li><a href="/ag-report/r300">RPKA</a></li>
+            <li><a href="/ag-report/r400">DPPA</a></li>
+            <li><a href="/ag-report/r500">APBD</a></li>
+            <li><a href="/ag-report/r600">Perubahan APBD</a></li>
           </ul>
       </li>    
       
