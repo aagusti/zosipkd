@@ -23,6 +23,13 @@ class Spd(NamaModel, Base):
     is_bl       = Column(SmallInteger, nullable=False)
     
     @classmethod
+    def max_no_urut(cls, tahun):
+        return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
+                .filter(cls.tahun_id==tahun
+                ).scalar() or 0
+    
+    
+    @classmethod
     def get_kode(cls, p):
         spd_kode = FixLength(SPD_KODE)
         
@@ -152,8 +159,30 @@ class Spm(NamaModel, Base):
                    
     posted         = Column(SmallInteger, nullable=False)
     disabled       = Column(SmallInteger, nullable=False, default=1)
+    @classmethod
+    def max_no_urut(cls, tahun, unit_id):
+        return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
+                .filter(cls.tahun_id==tahun,
+                        cls.unit_id==unit_id
+                ).scalar() or 0
 
-
+class SpmPotongan(DefaultModel,Base):
+    __tablename__  = 'ap_spm_potongans'
+    __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}
+    
+                   
+    ap_spm_id      = Column(BigInteger,   ForeignKey("apbd.ap_spms.id"), nullable=False)
+    no_urut        = Column(SmallInteger, nullable=False)
+    rekening_id    = Column(Integer, ForeignKey("admin.rekenings.id"), nullable=False)
+    spms           = relationship("Spm", backref=backref("spmpotongans")
+    rekenings      = relationship("Rekening", backref=backref("spmpotongans")
+    @classmethod
+    def max_no_urut(cls, spm_id):
+        return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
+                .filter(cls.tahun_id==tahun,
+                        cls.unit_id==unit_id
+                ).scalar() or 0
+    
 class Sp2d(NamaModel, Base):
     __tablename__  = 'ap_sp2ds'
     __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}
@@ -171,7 +200,11 @@ class Sp2d(NamaModel, Base):
     verified_nama  = Column(String(64), nullable=False)
 
     posted         = Column(SmallInteger, nullable=False, default=0)
-
+    @classmethod
+    def max_no_urut(cls, tahun):
+        return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
+                .filter(cls.tahun_id==tahun
+                ).scalar() or 0
 
 class APInvoice(NamaModel, Base):
     __tablename__  = 'ap_invoices'
@@ -200,19 +233,6 @@ class APInvoice(NamaModel, Base):
 
     UniqueConstraint('tahun_id', 'unit_id', 'no_urut',
                 name = 'invoice_ukey')
-
-    @classmethod
-    def get_by_id(cls, id):
-        return DBSession.query(cls)\
-                .join(KegiatanSub)\
-                .filter(cls.id==id
-                ).first()
-                
-    @classmethod
-    def get_header(cls, unit_id, sub_keg_id):
-        return DBSession.query(cls.id,
-            cls.no_urut,
-            cls.nama).first()
 
     @classmethod
     def max_no_urut(cls, tahun, unit_id):
@@ -279,7 +299,12 @@ class Giro(NamaModel, Base):
 
     UniqueConstraint('tahun_id', 'unit_id', 'kode',
                 name = 'giro_ukey')
-
+    @classmethod
+    def max_no_urut(cls, tahun, unit_id):
+        return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
+                .filter(cls.tahun_id==tahun,
+                        cls.unit_id==unit_id
+                ).scalar() or 0
 
 class GiroItem(DefaultModel, Base):
     __tablename__  ='ap_giro_items'
@@ -325,17 +350,12 @@ class ARInvoice(NamaModel, Base):
                                       ).first()
                     
     @classmethod
-    def get_by_id(cls, id):
-        return DBSession.query(cls)\
-                .join(KegiatanSub)\
-                .filter(cls.id==id
-                ).first()
+    def max_no_urut(cls, tahun, unit_id):
+        return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
+                .filter(cls.tahun_id==tahun,
+                        cls.unit_id==unit_id
+                ).scalar() or 0
                 
-    @classmethod
-    def get_header(cls, unit_id):
-        return DBSession.query(cls.id,
-            cls.nama).first()
-
 class ARInvoiceItem(DefaultModel, Base):
     __tablename__  = 'ar_invoice_items'
     __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}
@@ -352,72 +372,31 @@ class ARInvoiceItem(DefaultModel, Base):
     harga            = Column(BigInteger,   nullable=False, default=0)
     nilai            = Column(BigInteger,   nullable=False, default=0)
     notes1           = Column(String(64))  
+    @classmethod
+    def max_no_urut(cls, ar_invoice_id):
+        return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
+                .filter(cls.tahun_id==tahun,
+                        cls.unit_id==unit_id
+                ).scalar() or 0
     
-               
-    @classmethod
-    def get_no_urut(cls, p):
-        row = DBSession.query(func.max(cls.no_urut).label('no_urut'))\
-                .filter(cls.arinvoice_id==p['arinvoice_id']
-                ).first()
-        if row and row.no_urut:
-           return row.no_urut+1
-        else:
-           return 1   
-
-    @classmethod
-    def get_arinvoice_item_id(cls, p):
-        row = DBSession.query(func.max(cls.id).label('arinvoice_item_id'))\
-                .filter(cls.arinvoice_id==p['arinvoice_id']
-                ).first()
-        if row and row.arinvoice_item_id:
-           return row.arinvoice_item_id+1
-        else:
-           return 1              
-
-class Ketetapan(NamaModel, Base):
-    __tablename__  ='ar_ketetapans'
+class ARInvoiceDetail(NamaModel, Base):
+    __tablename__  ='ar_invoice_details'
     __table_args__ = {'extend_existing':True,'schema' :'apbd'}
-
-    rekenings      = relationship("Rekening", backref=backref("ketetapans"))
-    units          = relationship("Unit",     backref=backref("ketetapans"))
 
     tahun_id       = Column(BigInteger, ForeignKey("apbd.tahuns.id"),    nullable=False)
     unit_id        = Column(Integer,    ForeignKey("admin.units.id"),     nullable=False) 
     rekening_id    = Column(Integer,    ForeignKey("admin.rekenings.id"), nullable=False)
-    nama           = Column(String(150))
     jumlah         = Column(BigInteger, nullable=False)
     tgl_ketetapan  = Column(Date)    
-
+    units          = relationship("Unit",     backref=backref("arinvoicedetails"))
+    rekenings      = relationship("Rekening", backref=backref("arinvoicedetails"))
     UniqueConstraint('tahun_id', 'unit_id', 'kode',
-                name = 'ketetapan_ukey')
-
-    def __init__(self, data):
-        NamaModel.__init__(self,data)
-        self.tahun_id      = data['tahun_id'] or self.tahun
-        self.unit_id       = data['unit_id'] or None
-        self.rekening_id   = data['rekening_id'] or None
-        self.nama          = data['nama'] or None        
-        self.jumlah        = data['jumlah'] or 0               
-        self.tgl_ketetapan = data['tgl_ketetapan'] 
-
-    @classmethod
-    def get_by_id(cls, id):
-        return DBSession.query(cls)\
-                .join(Rekening)\
-                .filter(cls.id==id
-                ).first()
-                
-    @classmethod
-    def get_header(cls, unit_id):
-        return DBSession.query(cls.id,
-            cls.nama).first()
+                name = 'ar_invoice_detail_ukey')
 
 class Sts(NamaModel, Base):
     __tablename__  = 'ar_sts'
     __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}
-
     units          = relationship("Unit", backref="sts")
-
     tahun_id       = Column(BigInteger, ForeignKey("apbd.tahuns.id"), nullable=False)
     unit_id        = Column(Integer,    ForeignKey("admin.units.id"),  nullable=False) 
     no_urut        = Column(BigInteger, nullable=False)
@@ -433,36 +412,21 @@ class Sts(NamaModel, Base):
     bank_account   = Column(String(64), nullable=False)
     tgl_sts        = Column(Date) 
     tgl_validasi   = Column(Date)
-    posted          = Column(SmallInteger, nullable=False, default=0)
-
+    posted         = Column(SmallInteger, nullable=False, default=0)
     @classmethod
-    def get_nominal(cls, p):
-        return DBSession.query(func.sum(ARInvoice.nilai).label('nilai')
-                             ).join(StsItem,
-                             ).outerjoin(cls,
-                             ).filter(
-                                  ARInvoice.id==StsItem.arinvoice_id, 
-                                  StsItem.sts_id==cls.id,
-                                  cls.id==p['id']).first()
-
-    @classmethod
-    def get_no_urut(cls, p):
-        row = DBSession.query(func.max(cls.no_urut).label('no_urut'))\
-                .filter(cls.tahun_id==p['tahun_id'],
-                        cls.unit_id==p['unit_id']
-                ).first()
-        if row and row.no_urut:
-           return row.no_urut+1
-        else:
-           return 1  
-
+    def max_no_urut(cls, tahun, unit_id):
+        return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
+                .filter(cls.tahun_id==tahun,
+                        cls.unit_id==unit_id
+                ).scalar() or 0
 
 class StsItem(DefaultModel, Base):
-    __tablename__  ='ar_sts_items'
-    __table_args__ = {'extend_existing':True,'schema' :'apbd'}
+    __tablename__      = 'ar_sts_items'
+    __table_args__     = {'extend_existing':True,'schema' :'apbd'}
 
-    sts            =  relationship("Sts",       backref="sts_items")
-    arinvoices     =  relationship("ARInvoice", backref="sts_items")
+    sts                = relationship("Sts",       backref="sts_items")
+    arinvoices         = relationship("ARInvoice", backref="sts_items")
 
-    ar_sts_id         = Column(BigInteger, ForeignKey("apbd.ar_sts.id"),        nullable=False)
-    ar_invoice_id   = Column(BigInteger, ForeignKey("apbd.ar_invoices.id"), nullable=False)
+    ar_sts_id          = Column(BigInteger, ForeignKey("apbd.ar_sts.id"),        nullable=False)
+    kegiatan_item_id   = Column(BigInteger, ForeignKey("apbd.kegiatan_item.id"), nullable=False)
+    amount             = Column(BigInteger)
