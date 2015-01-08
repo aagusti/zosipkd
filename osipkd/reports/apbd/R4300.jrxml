@@ -60,6 +60,9 @@
 	<field name="perubahan" class="java.lang.String">
 		<fieldDescription><![CDATA[perubahan]]></fieldDescription>
 	</field>
+	<field name="customer" class="java.lang.String">
+		<fieldDescription><![CDATA[customer]]></fieldDescription>
+	</field>
 	<variable name="jumlah1" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{jumlah3})]]></variableExpression>
 	</variable>
@@ -79,31 +82,28 @@
 		<variableExpression><![CDATA[Double.parseDouble($F{trw4})]]></variableExpression>
 	</variable>
 	<variable name="jumlah_trw2" class="java.lang.Double" resetType="Group" resetGroup="unit_kd" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{trw2} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{trw2} : 0]]></variableExpression>
 	</variable>
 	<variable name="jumlah_trw3" class="java.lang.Double" resetType="Group" resetGroup="unit_kd" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{trw3} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{trw3} : 0]]></variableExpression>
 	</variable>
 	<variable name="jumlah_trw4" class="java.lang.Double" resetType="Group" resetGroup="unit_kd" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{trw4} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{trw4} : 0]]></variableExpression>
 	</variable>
 	<variable name="jumlah_unit1" class="java.lang.Double" resetType="Group" resetGroup="unit_kd" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{jumlah1} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{jumlah1} : 0]]></variableExpression>
 	</variable>
 	<variable name="jumlah2" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{jumlah4})]]></variableExpression>
 	</variable>
 	<variable name="jumlah_unit2" class="java.lang.Double" resetType="Group" resetGroup="unit_kd" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{jumlah2} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{jumlah2} : 0]]></variableExpression>
 	</variable>
 	<variable name="Pembiayaan" class="java.lang.String">
 		<variableExpression><![CDATA[$F{rek_kd}.substring( 0, 1 )]]></variableExpression>
 	</variable>
-	<variable name="jumlah_pembiayaan1" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{jumlah_defsign1} : 0]]></variableExpression>
-	</variable>
 	<variable name="jumlah_pembiayaan_det1" class="java.lang.Double" resetType="Group" resetGroup="pembiayaan_det" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{jumlah1} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{jumlah1} : 0]]></variableExpression>
 	</variable>
 	<variable name="Pembiayaan_det" class="java.lang.String">
 		<variableExpression><![CDATA[$F{rek_kd}=="6.1"||$F{rek_kd}=="6.2"]]></variableExpression>
@@ -115,10 +115,13 @@
 		<variableExpression><![CDATA[Double.parseDouble($F{jumlah4})*Double.parseDouble($F{defsign})]]></variableExpression>
 	</variable>
 	<variable name="jumlah_pembiayaan2" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{jumlah_defsign2} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{jumlah_defsign2} : 0]]></variableExpression>
 	</variable>
 	<variable name="jumlah_pembiayaan_det2" class="java.lang.Double" resetType="Group" resetGroup="pembiayaan_det" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{jumlah2} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{jumlah2} : 0]]></variableExpression>
+	</variable>
+	<variable name="jumlah_pembiayaan1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{jumlah_defsign1} : 0]]></variableExpression>
 	</variable>
 	<group name="unit_kd">
 		<groupExpression><![CDATA[$F{unit_kd}]]></groupExpression>
@@ -155,7 +158,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textElement textAlignment="Center" markup="none">
 						<font isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA["PEMERINTAH "]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="0" y="40" width="540" height="14"/>
@@ -311,7 +314,7 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[": "+$F{urusan_kd}+"."+$F{unit_kd}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[": "+$F{unit_kd}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToBandHeight" x="178" y="3" width="362" height="14"/>

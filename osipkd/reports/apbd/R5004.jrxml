@@ -48,6 +48,9 @@
 	<field name="jumlah4" class="java.lang.String">
 		<fieldDescription><![CDATA[jumlah4]]></fieldDescription>
 	</field>
+	<field name="customer" class="java.lang.String">
+		<fieldDescription><![CDATA[customer]]></fieldDescription>
+	</field>
 	<variable name="btl_pegawai" class="java.lang.Double">
 		<variableExpression><![CDATA[$F{rek_kd}.substring( 0, 5 )=="5.1.1" ? Double.parseDouble($F{jumlah2}) : 0]]></variableExpression>
 	</variable>
@@ -139,7 +142,7 @@ Tanggal :]]></text>
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["PEMERINTAH "]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="0" y="47" width="551" height="26"/>
@@ -409,7 +412,9 @@ dan Kegiatan]]></text>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
-					<textElement/>
+					<textElement>
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{urusan_kd}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
@@ -418,7 +423,9 @@ dan Kegiatan]]></text>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
-					<textElement/>
+					<textElement>
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{urusan_nm}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="urusan_kd" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
@@ -427,7 +434,9 @@ dan Kegiatan]]></text>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
-					<textElement textAlignment="Right"/>
+					<textElement textAlignment="Right">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_pegawai_ur}+$V{btl_nonpegawai_ur}+$V{bl_pegawai_ur}+$V{bl_jasa_ur}+$V{bl_modal_ur})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="urusan_kd" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
@@ -436,7 +445,9 @@ dan Kegiatan]]></text>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
-					<textElement textAlignment="Right"/>
+					<textElement textAlignment="Right">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_pegawai_ur})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="urusan_kd" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
@@ -445,7 +456,9 @@ dan Kegiatan]]></text>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
-					<textElement textAlignment="Right"/>
+					<textElement textAlignment="Right">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_nonpegawai_ur})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="urusan_kd" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
@@ -454,7 +467,9 @@ dan Kegiatan]]></text>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
-					<textElement textAlignment="Right"/>
+					<textElement textAlignment="Right">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_pegawai_ur})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="urusan_kd" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
@@ -463,7 +478,9 @@ dan Kegiatan]]></text>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
-					<textElement textAlignment="Right"/>
+					<textElement textAlignment="Right">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_jasa_ur})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="urusan_kd" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
@@ -472,7 +489,9 @@ dan Kegiatan]]></text>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
-					<textElement textAlignment="Right"/>
+					<textElement textAlignment="Right">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_modal_ur})]]></textFieldExpression>
 				</textField>
 			</band>
@@ -488,7 +507,9 @@ dan Kegiatan]]></text>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
-					<textElement/>
+					<textElement>
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{unit_nm}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="unit_kd" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
@@ -497,7 +518,9 @@ dan Kegiatan]]></text>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
-					<textElement textAlignment="Right"/>
+					<textElement textAlignment="Right">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_pegawai_u}+$V{btl_nonpegawai_u}+$V{bl_pegawai_u}+$V{bl_jasa_u}+$V{bl_modal_u})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="unit_kd" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
@@ -506,7 +529,9 @@ dan Kegiatan]]></text>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
-					<textElement textAlignment="Right"/>
+					<textElement textAlignment="Right">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_pegawai_u})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="unit_kd" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
@@ -515,7 +540,9 @@ dan Kegiatan]]></text>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
-					<textElement textAlignment="Right"/>
+					<textElement textAlignment="Right">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_nonpegawai_u})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="unit_kd" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
@@ -524,7 +551,9 @@ dan Kegiatan]]></text>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
-					<textElement textAlignment="Right"/>
+					<textElement textAlignment="Right">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_pegawai_u})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="unit_kd" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
@@ -533,7 +562,9 @@ dan Kegiatan]]></text>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
-					<textElement textAlignment="Right"/>
+					<textElement textAlignment="Right">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_jasa_u})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="unit_kd" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
@@ -542,7 +573,9 @@ dan Kegiatan]]></text>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
-					<textElement textAlignment="Right"/>
+					<textElement textAlignment="Right">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_modal_u})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
@@ -551,8 +584,10 @@ dan Kegiatan]]></text>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
-					<textElement/>
-					<textFieldExpression><![CDATA[$F{urusan_kd}+"."+$F{unit_kd}]]></textFieldExpression>
+					<textElement>
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{unit_kd}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>

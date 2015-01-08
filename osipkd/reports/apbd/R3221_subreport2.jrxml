@@ -154,7 +154,7 @@
 	<detail>
 		<band height="14">
 			<printWhenExpression><![CDATA[$F{level_id}=="4"]]></printWhenExpression>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="56" y="0" width="13" height="14"/>
 				<textElement>
 					<font size="9"/>

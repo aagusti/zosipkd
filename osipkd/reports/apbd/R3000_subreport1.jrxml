@@ -46,28 +46,28 @@
 		<variableExpression><![CDATA[$F{rek_kd}.substring( 0, 1)]]></variableExpression>
 	</variable>
 	<variable name="jumlah_rek11" class="java.lang.Double" resetType="Group" resetGroup="rek1" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{jumlah_defsign1} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{jumlah_defsign1} : 0]]></variableExpression>
 	</variable>
 	<variable name="Surplus_defisit" class="java.lang.String">
 		<variableExpression><![CDATA[($V{rek1}=="4" || $V{rek1}=="5") ? "Surplus/(Defisit)" : ""]]></variableExpression>
 	</variable>
 	<variable name="jumlah_surplus_defisit1" class="java.lang.Double" resetType="Group" resetGroup="surplus_defisit" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{jumlah_defsign1} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{jumlah_defsign1} : 0]]></variableExpression>
 	</variable>
 	<variable name="pembiayaan" class="java.lang.String">
-		<variableExpression><![CDATA[$F{level_id}=="1" && ($F{rek_kd}.substring( 0, 3 )=="6.1" || $F{rek_kd}.substring( 0, 3 )=="6.2")]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="2" && ($F{rek_kd}.substring( 0, 3 )=="6.1" || $F{rek_kd}.substring( 0, 3 )=="6.2")]]></variableExpression>
 	</variable>
 	<variable name="jumlah_pembiayaan1" class="java.lang.Double" resetType="Group" resetGroup="pembiayaan" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{jumlah1} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{jumlah1} : 0]]></variableExpression>
 	</variable>
 	<variable name="jumlah_rek12" class="java.lang.Double" resetType="Group" resetGroup="rek1" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{jumlah_defsign2} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{jumlah_defsign2} : 0]]></variableExpression>
 	</variable>
 	<variable name="jumlah_surplus_defisit2" class="java.lang.Double" resetType="Group" resetGroup="surplus_defisit" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{jumlah_defsign2} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{jumlah_defsign2} : 0]]></variableExpression>
 	</variable>
 	<variable name="jumlah_pembiayaan2" class="java.lang.Double" resetType="Group" resetGroup="pembiayaan" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{jumlah2} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{jumlah2} : 0]]></variableExpression>
 	</variable>
 	<group name="surplus_defisit">
 		<groupExpression><![CDATA[$V{Surplus_defisit}]]></groupExpression>
@@ -228,7 +228,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Top">
 						<font size="9" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{level_id}=="4" ? ($F{rek_kd}.substring( 0,3 )=="6.1" ? "Jumlah Penerimaan" : $F{rek_kd}.substring( 0,3 )=="6.2" ? "Jumlah Pengeluaran" : "") : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{level_id}=="5" ? ($F{rek_kd}.substring( 0,3 )=="6.1" ? "Jumlah Penerimaan" : $F{rek_kd}.substring( 0,3 )=="6.2" ? "Jumlah Pengeluaran" : "") : ""]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToBandHeight" x="296" y="0" width="70" height="14"/>

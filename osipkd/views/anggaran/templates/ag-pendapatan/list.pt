@@ -448,8 +448,8 @@
             else if ($('#kegiatan_kd').val()=='0.00.00.21')
                 url = "/ag-report/r${request.session['ag_step_id']}00/act/3";
                 
-            alert(url);
-            window.location = url;
+            //alert(url);
+            window.open(url);
         });
         
         $(function(){

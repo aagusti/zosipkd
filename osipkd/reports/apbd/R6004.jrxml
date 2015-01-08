@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_lampiran_5" language="groovy" pageWidth="1008" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="972" leftMargin="18" rightMargin="18" topMargin="36" bottomMargin="72">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="566"/>
+	<property name="ireport.x" value="27"/>
 	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[apbd/perda/lamp5]]>
@@ -47,6 +47,9 @@
 	</field>
 	<field name="jumlah4" class="java.lang.String">
 		<fieldDescription><![CDATA[jumlah4]]></fieldDescription>
+	</field>
+	<field name="customer" class="java.lang.String">
+		<fieldDescription><![CDATA[customer]]></fieldDescription>
 	</field>
 	<variable name="btl_pegawai1" class="java.lang.Double">
 		<variableExpression><![CDATA[$F{rek_kd}.substring( 0, 5 )=="5.1.1" ? Double.parseDouble($F{jumlah2}) : 0]]></variableExpression>
@@ -223,7 +226,7 @@ Tanggal :]]></text>
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["PEMERINTAH "]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="0" y="46" width="954" height="26"/>
@@ -243,7 +246,7 @@ KETERPADUAN URUSAN PEMERINTAHAN DAERAH DAN FUNGSI DALAM]]></text>
 			</band>
 			<band height="54">
 				<staticText>
-					<reportElement x="0" y="0" width="36" height="54"/>
+					<reportElement x="0" y="0" width="45" height="54"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -256,7 +259,7 @@ KETERPADUAN URUSAN PEMERINTAHAN DAERAH DAN FUNGSI DALAM]]></text>
 					<text><![CDATA[Kode]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="36" y="0" width="109" height="54"/>
+					<reportElement x="45" y="0" width="100" height="54"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -602,7 +605,7 @@ Pegawai]]></text>
 					<text><![CDATA[3]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="36" y="0" width="109" height="14"/>
+					<reportElement x="45" y="0" width="100" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -615,7 +618,7 @@ Pegawai]]></text>
 					<text><![CDATA[2]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="0" y="0" width="36" height="14"/>
+					<reportElement x="0" y="0" width="45" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -765,7 +768,7 @@ Pegawai]]></text>
 		<groupHeader>
 			<band height="14" splitType="Stretch">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="36" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="45" height="14"/>
 					<box leftPadding="3">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -776,7 +779,7 @@ Pegawai]]></text>
 					<textFieldExpression><![CDATA[$F{urusan_kd}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="36" y="0" width="109" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="45" y="0" width="100" height="14"/>
 					<box leftPadding="1">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -948,7 +951,7 @@ Pegawai]]></text>
 		<groupHeader>
 			<band height="14" splitType="Stretch">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="36" y="0" width="109" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="45" y="0" width="100" height="14"/>
 					<box leftPadding="1">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -1025,7 +1028,7 @@ Pegawai]]></text>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_modal_u1})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="36" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="45" height="14"/>
 					<box leftPadding="3">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -1033,7 +1036,7 @@ Pegawai]]></text>
 					<textElement>
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{urusan_kd}+"."+$F{unit_kd}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{unit_kd}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="unit_kd" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToBandHeight" x="565" y="0" width="60" height="14"/>
@@ -1182,7 +1185,7 @@ Pegawai]]></text>
 				<text><![CDATA[3]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="36" y="0" width="109" height="14"/>
+				<reportElement x="45" y="0" width="100" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -1195,7 +1198,7 @@ Pegawai]]></text>
 				<text><![CDATA[2]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="0" width="36" height="14"/>
+				<reportElement x="0" y="0" width="45" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>

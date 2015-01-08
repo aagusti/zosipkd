@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_lampiran_3" language="groovy" pageWidth="612" pageHeight="1008" columnWidth="540" leftMargin="54" rightMargin="18" topMargin="36" bottomMargin="72">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="346"/>
+	<property name="ireport.y" value="213"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
@@ -85,6 +85,9 @@
 	<field name="rekening_id" class="java.lang.String">
 		<fieldDescription><![CDATA[rekening_id]]></fieldDescription>
 	</field>
+	<field name="customer" class="java.lang.String">
+		<fieldDescription><![CDATA[customer]]></fieldDescription>
+	</field>
 	<variable name="jumlah" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{jumlah2})]]></variableExpression>
 	</variable>
@@ -92,10 +95,10 @@
 		<variableExpression><![CDATA[]]></variableExpression>
 	</variable>
 	<variable name="jumlah_p" class="java.lang.Double" resetType="Group" resetGroup="program_kd" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{jumlah_defsign} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{jumlah_defsign} : 0]]></variableExpression>
 	</variable>
 	<variable name="jumlah_k" class="java.lang.Double" resetType="Group" resetGroup="kegiatan_kd" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{jumlah_defsign} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{jumlah_defsign} : 0]]></variableExpression>
 	</variable>
 	<variable name="jumlah_r" class="java.lang.Double" resetType="Group" resetGroup="rek_kd" calculation="Sum">
 		<variableExpression><![CDATA[$V{jumlah}]]></variableExpression>
@@ -104,16 +107,16 @@
 		<variableExpression><![CDATA[Double.parseDouble($F{jumlah2})*Double.parseDouble($F{defsign})]]></variableExpression>
 	</variable>
 	<variable name="jumlah_j" class="java.lang.Double" resetType="Group" resetGroup="jenis" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{jumlah_defsign} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{jumlah_defsign} : 0]]></variableExpression>
 	</variable>
 	<variable name="pend_bel_biaya" class="java.lang.String">
 		<variableExpression><![CDATA[$F{jenis}=="1" ? 1 : ($F{jenis}=="2"||$F{jenis}=="3") ? 2 : 3]]></variableExpression>
 	</variable>
 	<variable name="jumlah_pbb" class="java.lang.Double" resetType="Group" resetGroup="pend_bel_biaya" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{jumlah_defsign} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{jumlah_defsign} : 0]]></variableExpression>
 	</variable>
 	<variable name="jumlah_surplus" class="java.lang.Double" resetType="Group" resetGroup="surplus_defisit" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="4" ? $V{jumlah_defsign} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="5" ? $V{jumlah_defsign} : 0]]></variableExpression>
 	</variable>
 	<variable name="surplus_defisit" class="java.lang.String">
 		<variableExpression><![CDATA[($F{jenis}=="1"||$F{jenis}=="2"||$F{jenis}=="3") ? "Surplus/(Defisit)" : ""]]></variableExpression>
@@ -149,7 +152,7 @@ Tanggal :]]></text>
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["PEMERINTAH "]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="0" y="62" width="540" height="26"/>
@@ -190,11 +193,11 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<textFieldExpression><![CDATA[$F{urusan_nm}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="130" y="15" width="53" height="14"/>
+					<reportElement x="130" y="15" width="63" height="14"/>
 					<textElement>
 						<font size="9" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[": "+$F{urusan_kd}+"."+$F{unit_kd}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[": "+$F{unit_kd}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="183" y="15" width="357" height="14"/>
@@ -619,7 +622,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<textElement>
 						<font size="9" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{program_kd}+"."+$F{kegiatan_kd}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{kegiatan_kd}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToBandHeight" x="388" y="0" width="152" height="14"/>

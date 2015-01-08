@@ -85,14 +85,14 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{item_nm}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="69" y="0" width="26" height="12"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{vol_sat}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="95" y="0" width="56" height="12"/>
 				<textElement textAlignment="Right">
 					<font size="8"/>

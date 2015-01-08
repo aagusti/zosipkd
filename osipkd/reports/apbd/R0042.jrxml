@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rekening aset" pageWidth="595" pageHeight="842" columnWidth="495" leftMargin="50" rightMargin="50" topMargin="28" bottomMargin="20" >
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rekening aset" pageWidth="595" pageHeight="842" columnWidth="495" leftMargin="50" rightMargin="50" topMargin="28" bottomMargin="20">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="265"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -20,13 +20,23 @@
 	<field name="level_id" class="java.lang.String">
 		<fieldDescription><![CDATA[level_id]]></fieldDescription>
 	</field>
+	<field name="customer" class="java.lang.String">
+		<fieldDescription><![CDATA[customer]]></fieldDescription>
+	</field>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="41" splitType="Stretch">
+		<band height="51" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="4" width="495" height="15"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
+			</textField>
 			<staticText>
-				<reportElement  x="0" y="4" width="495" height="15"/>
+				<reportElement x="0" y="19" width="495" height="15"/>
 				<textElement textAlignment="Center">
 					<font isBold="true"/>
 				</textElement>
@@ -37,7 +47,7 @@
 	<pageHeader>
 		<band height="12" splitType="Stretch">
 			<staticText>
-				<reportElement  x="84" y="0" width="384" height="12"/>
+				<reportElement x="84" y="0" width="384" height="12"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -50,7 +60,7 @@
 				<text><![CDATA[Uraian]]></text>
 			</staticText>
 			<staticText>
-				<reportElement  x="0" y="0" width="84" height="12"/>
+				<reportElement x="0" y="0" width="84" height="12"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -63,7 +73,7 @@
 				<text><![CDATA[Kode]]></text>
 			</staticText>
 			<staticText>
-				<reportElement  x="468" y="0" width="27" height="12"/>
+				<reportElement x="468" y="0" width="27" height="12"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -83,7 +93,7 @@
 	<detail>
 		<band height="12" splitType="Stretch">
 			<textField>
-				<reportElement  x="0" y="0" width="84" height="12"/>
+				<reportElement x="0" y="0" width="84" height="12"/>
 				<box leftPadding="3">
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -94,7 +104,7 @@
 				<textFieldExpression><![CDATA[$F{kode}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement  x="84" y="0" width="384" height="12"/>
+				<reportElement x="84" y="0" width="384" height="12"/>
 				<box leftPadding="3">
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -105,7 +115,7 @@
 				<textFieldExpression><![CDATA[$F{uraian}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement  x="468" y="0" width="27" height="12"/>
+				<reportElement x="468" y="0" width="27" height="12"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -126,7 +136,7 @@
 	<summary>
 		<band height="1" splitType="Stretch">
 			<line>
-				<reportElement  x="0" y="0" width="495" height="1"/>
+				<reportElement x="0" y="0" width="495" height="1"/>
 			</line>
 		</band>
 	</summary>
