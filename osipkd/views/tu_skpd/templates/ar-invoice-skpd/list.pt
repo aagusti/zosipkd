@@ -265,15 +265,15 @@
             }
         });
         $('#btn_print').click(function () {
-            url = "/ap-report-skpd/id="+mID;
+            url = "/ar-report-skpd/act/arinvoice?id="+mID;
             if (mID) {
-                   window.open(url);
+                window.open(url);
             } else {
                 alert('Silahkan pilih Kegiatan ID');
             }
         });
         $("#btn_close").click(function () {
-            window.location = '/ar-invoice-skpd';
+            window.location = '/tu-skpd';
             return false;
         });
      });
