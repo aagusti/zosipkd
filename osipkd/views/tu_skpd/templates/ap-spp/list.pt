@@ -111,11 +111,11 @@
       <thead>
         <tr>
             <th>Index</th>
-            <th>No</th>
+            <th>Kode</th>
+            <th>Tanggal SPP</th>
+            <th>Jenis</th>
             <th>Uraian</th>
             <th>Nilai</th>
-            <th>PPn</th>
-            <th>PPh</th>
         </tr>
       </thead>
       <tbody>
@@ -169,20 +169,20 @@
             },{
                 "bSearchable": true,
                 "bSortable"  : true,
-                "aTargets"   : [3]
+                "aTargets"   : [3,4]
             },{
                 "sClass"   : "right",
-                "aTargets" : [4,5],
-                //"mRender"  : function (data, type, full) {
-                //return formatNumber(data);}
+                "aTargets" : [5],
+                "mRender"  : function (data, type, full) {
+                             return formatNumber(data);}
             }],
             "aoColumns": [
                 null, 
-                {"sWidth": "60px"}, 
-                null, 
-                {"sWidth": "100px"}, 
-                {"sWidth": "100px"}, 
-                {"sWidth": "100px"}
+                {"sWidth": "30px"}, 
+                {"sWidth": "30px"}, 
+                {"sWidth": "30px"}, 
+                {"sWidth": "200px"},
+                {"sWidth": "100px"},
             ],
             
             "fnRowCallback": function (nRow, aData, iDisplayIndex) {
