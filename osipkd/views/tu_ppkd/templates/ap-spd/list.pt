@@ -132,7 +132,8 @@
           '	<button id="btn_tambah" class="btn btn btn-primary" type="button">Tambah</button>',
           '	<button id="btn_edit" class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',
-          '	<button id="btn_print" class="btn btn btn-primary" type="button">Print</button>',
+          '	<button id="btn_print" class="btn btn btn-primary" type="button">Cetak</button>',
+          ' <button id="btn_close" class="btn btn-warning" type="button" >Tutup</button>',
           '	&nbsp;',
           '</div>',
       ];
@@ -231,15 +232,16 @@
             }
         });
         $('#btn_print').click(function () {
-            url = "/ap-report-skpd/id="+mID;
+            url = "/ap-report-sp2d/act/spd?id="+mID;
             if (mID) {
                    window.open(url);
             } else {
                 alert('Silahkan pilih Kegiatan ID');
             }
         });
+        
         $("#btn_close").click(function () {
-            window.location = '/ap-spd';
+            window.location = '/tu-ppkd';
             return false;
         });
      });
