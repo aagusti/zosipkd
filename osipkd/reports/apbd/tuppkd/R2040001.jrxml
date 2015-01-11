@@ -36,6 +36,9 @@
 	<field name="LS_GJ" class="java.lang.String">
 		<fieldDescription><![CDATA[LS_GJ]]></fieldDescription>
 	</field>
+	<field name="customer" class="java.lang.String">
+		<fieldDescription><![CDATA[customer]]></fieldDescription>
+	</field>
 	<variable name="UP" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{UP})]]></variableExpression>
 	</variable>
@@ -76,6 +79,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font isBold="true"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="1" y="16" width="801" height="16"/>
