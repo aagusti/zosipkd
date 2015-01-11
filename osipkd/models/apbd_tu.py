@@ -174,8 +174,8 @@ class SpmPotongan(DefaultModel,Base):
     ap_spm_id      = Column(BigInteger,   ForeignKey("apbd.ap_spms.id"), nullable=False)
     no_urut        = Column(SmallInteger, nullable=False)
     rekening_id    = Column(Integer, ForeignKey("admin.rekenings.id"), nullable=False)
-    spms           = relationship("Spm", backref=backref("spmpotongans")
-    rekenings      = relationship("Rekening", backref=backref("spmpotongans")
+    #spms           = relationship("Spm", backref=backref("spmpotongans")
+    #rekenings      = relationship("Rekening", backref=backref("spmpotongans")
     @classmethod
     def max_no_urut(cls, spm_id):
         return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
