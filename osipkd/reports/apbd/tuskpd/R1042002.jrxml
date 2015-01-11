@@ -36,6 +36,9 @@
 	<field name="LS_GJ" class="java.lang.String">
 		<fieldDescription><![CDATA[LS_GJ]]></fieldDescription>
 	</field>
+	<field name="customer" class="java.lang.String">
+		<fieldDescription><![CDATA[customer]]></fieldDescription>
+	</field>
 	<variable name="UP" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{UP})]]></variableExpression>
 	</variable>
@@ -70,7 +73,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="122" splitType="Stretch">
+		<band height="91" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="1" y="0" width="801" height="16"/>
 				<textElement textAlignment="Center" markup="none">
@@ -82,10 +85,28 @@
 				<textElement textAlignment="Center" markup="none">
 					<font isBold="true"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="32" width="801" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA["REGISTER SPM"]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="1" y="48" width="801" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unit_nm}.toUpperCase()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="61">
 			<staticText>
-				<reportElement x="1" y="61" width="41" height="61"/>
+				<reportElement x="1" y="0" width="41" height="61"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -96,7 +117,7 @@
 				<text><![CDATA[No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="42" y="61" width="62" height="61"/>
+				<reportElement x="42" y="0" width="62" height="61"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -107,7 +128,7 @@
 				<text><![CDATA[Tanggal]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="104" y="61" width="87" height="61"/>
+				<reportElement x="104" y="0" width="87" height="61"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -118,7 +139,7 @@
 				<text><![CDATA[No.SPP]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="191" y="61" width="211" height="61"/>
+				<reportElement x="191" y="0" width="211" height="61"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -128,15 +149,8 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Uraian]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="1" y="32" width="801" height="16"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{unit_nm}.toUpperCase()]]></textFieldExpression>
-			</textField>
 			<staticText>
-				<reportElement x="402" y="82" width="80" height="40"/>
+				<reportElement x="402" y="21" width="80" height="40"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -147,7 +161,7 @@
 				<text><![CDATA[UP]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="402" y="61" width="400" height="21"/>
+				<reportElement x="402" y="0" width="400" height="21"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -158,7 +172,7 @@
 				<text><![CDATA[Jumlah SPM (Rp)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="642" y="82" width="160" height="20"/>
+				<reportElement x="642" y="21" width="160" height="20"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -169,7 +183,7 @@
 				<text><![CDATA[LS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="482" y="82" width="80" height="40"/>
+				<reportElement x="482" y="21" width="80" height="40"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -180,7 +194,7 @@
 				<text><![CDATA[GU]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="562" y="82" width="80" height="40"/>
+				<reportElement x="562" y="21" width="80" height="40"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -191,7 +205,7 @@
 				<text><![CDATA[TU]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="642" y="102" width="80" height="20"/>
+				<reportElement x="642" y="41" width="80" height="20"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -202,7 +216,7 @@
 				<text><![CDATA[Gaji]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="722" y="102" width="80" height="20"/>
+				<reportElement x="722" y="41" width="80" height="20"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -213,7 +227,7 @@
 				<text><![CDATA[Barang & Jasa]]></text>
 			</staticText>
 		</band>
-	</title>
+	</pageHeader>
 	<detail>
 		<band height="20" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
