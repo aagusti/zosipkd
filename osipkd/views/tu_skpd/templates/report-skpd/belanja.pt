@@ -92,9 +92,15 @@
             }
         });
 
+        $("#btn_close").click(function () {
+            window.location = '/tu-skpd';
+            return false;
+        });
+
         $("#mulai,#selesai").datepicker({dateFormat:'dd-mm-yy'});
 
         $('input[name="jenis"]').prop('checked', false);
+
     });
   
     </script>
@@ -293,6 +299,8 @@
         <div class="col-md-9">
             <button id="btn_cetak" name="btn_cetak" type="button" class="btn btn-primary "
           value="btn_cetak">Cetak Laporan</button>
+            <button id="btn_close" name="btn_close" type="button" class="btn btn-warning"
+          value="btn_close">Tutup</button>
         </div>  
     </div>    
   </fieldset>
