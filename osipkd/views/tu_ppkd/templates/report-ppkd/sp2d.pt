@@ -47,8 +47,11 @@
             //}
         });
 
-
         $('input[name="jenis"]').prop('checked', false);
+        $("#btn_close").click(function () {
+            window.location = '/tu-ppkd';
+            return false;
+        });
     });
   
     </script>
@@ -148,8 +151,6 @@
       </script> 
 
     </div>
-  </fieldset>
-</form>
 <script>
     $("#mulai,#selesai").datepicker({dateFormat:'dd-mm-yy'});
 </script>    
@@ -205,9 +206,14 @@
     
     <div class="form-group">
         <div class="col-xs-3">
-            <button type="button" class="btn-primary" id="btn_cetak">Cetak Laporan</button>
+            <button id="btn_cetak" name="btn_cetak" type="button" class="btn btn-primary "
+          value="btn_cetak">Cetak Laporan</button>
+            <button id="btn_close" name="btn_close" type="button" class="btn btn-warning"
+          value="btn_close">Tutup</button>
         </div>  
     </div>    
+  </fieldset>
+</form>
     <br><br><br>
   </div> 
 </html>
