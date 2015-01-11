@@ -4,17 +4,22 @@
         <h4 class="panel-title">Laporan Pendapatan</h4>
     </div>
     <script>
+    $(document).ready(function(){
         $('#btn_cetak').click(function () {
             if($('#unit_nm').val()=='Pilih Unit') {
                 alert('Silahkan pilih Unit terlebih dahulu!');
                 return;
             }
             
-            var jenis = $('input[name="jenis"]:checked').val();
+            var rpt = $('input[name="rpt"]:checked').val();
             var tipe = $('#tipe').val();
             var mulai = ($('#mulai').val()).substr(6,4)+"-"+($('#mulai').val()).substr(3,2)+"-"+($('#mulai').val()).substr(0,2);
             var selesai = ($('#selesai').val()).substr(6,4)+"-"+($('#selesai').val()).substr(3,2)+"-"+($('#selesai').val()).substr(0,2);
             
+            if(rpt==undefined) {
+                alert('Silahkan pilih jenis laporan yang akan ditampilkan!');
+                return;
+            }
             if($('#mulai').val()=='') {
                 alert('Silahkan isikan tanggal terlebih dahulu!');
                 return;
@@ -23,19 +28,15 @@
                 alert('Silahkan isikan tanggal terlebih dahulu!');
                 return;
             }
-            if(jenis==undefined) {
-                alert('Silahkan pilih laporan yang akan ditampilkan!');
-                return;
-            } 
             
-            window.open('/b104/r100/'+jenis+'?tipe='+tipe+'&mulai='+mulai+'&selesai='+selesai);
+            //window.open('/b104/r100/'+jenis+'?tipe='+tipe+'&mulai='+mulai+'&selesai='+selesai);
+            window.open('/ar-report-skpd/act/'+rpt+'?tipe='+tipe+'&mulai='+mulai+'&selesai='+selesai);
 
         });
         
         $("#mulai,#selesai").datepicker({dateFormat:'dd-mm-yy'});
         
         $('#div_tblkegiatan').hide();
-        $('input[name="jenis"]').prop('checked', false);
         
         $("#btn_close").click(function () {
             //window.location = "/b100";
@@ -139,39 +140,22 @@
       </script> 
 
     </div>
-  </fieldset>
     
     <div class="panel-body">
         <div class="form-group">
-        <label class="control-label col-xs-2" for="jenis">Jenis Laporan</label>
+        <label class="control-label col-xs-2" for="rpt">Jenis Laporan</label>
         <div class="col-sm-2">
             <div class="radio">
-                <label><input type="radio" name="jenis" value="1">Invoice</label>
+                <label><input type="radio" name="rpt" value="1">Invoice</label>
             </div>
             <div class="radio">
-                <label><input type="radio" name="jenis" value="2">AR Payment</label>
+                <label><input type="radio" name="rpt" value="2">AR Payment</label>
             </div>
         </div>
 
-        <div class="form-group">
-            <div class="row">
-                <label class="control-label col-xs-2" for="jenis">Format Laporan</label>
-                <div class="col-xs-2">
-                    <div class="form-group"> 
-                        <div class="radio">
-                            <label><input type="radio" name="jenis" value="1">Standard</label>
-                        </div>
-                        <div class="radio">
-                            <label><input type="radio" name="jenis" value="2">SKPD</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         </div>
     </div>
     
-
       <!--Mulai S/d---------------------------------------------------------------->
       <div class="form-group">
         <label class="control-label col-xs-1" for="jenis"></label>
@@ -190,28 +174,13 @@
         </div>
       </div>       
 
-      <!--Type---------------------------------------------------------------->
-      <div class="form-group">
-        <label class="control-label col-xs-1" for="jenis"></label>
-        <div class="col-md-3">
-               <label class="control-label col-md-3" for="jenis">Type</label>
-                <div class="col-md-9">
-                    <select class="form-control" id="tipe" name="tipe">
-                        <option value="0">Semua Jenis</option>
-                        <option value="1">UP</option>
-                        <option value="2">TU</option>
-                        <option value="3">GU</option>
-                        <option value="4">LS</option>
-                    </select>
-                </div>
-        </div>
-      </div>    
-    
     <div class="form-group">
         <div class="col-md-9">
             <button id="btn_cetak" name="btn_cetak" type="button" class="btn btn-primary "
           value="btn_cetak">Cetak Laporan</button>
         </div>  
     </div>      
+  </fieldset>
+</form>
   </div> 
 </html>

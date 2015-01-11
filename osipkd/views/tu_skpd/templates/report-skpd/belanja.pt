@@ -23,7 +23,6 @@
                 $('#div_jenis').hide();
             }
         });
-        $("#mulai,#selesai").datepicker({dateFormat:'dd-mm-yy'});
 
         $('#btn_cetak').click(function () {
             if($('#unit_nm').val()=='Pilih Unit') {
@@ -37,6 +36,10 @@
             var mulai = ($('#mulai').val()).substr(6,4)+"-"+($('#mulai').val()).substr(3,2)+"-"+($('#mulai').val()).substr(0,2);
             var selesai = ($('#selesai').val()).substr(6,4)+"-"+($('#selesai').val()).substr(3,2)+"-"+($('#selesai').val()).substr(0,2);
             
+            if(rpt==undefined) {
+                alert('Silahkan pilih jenis laporan yang akan ditampilkan!');
+                return;
+            }
             if($('#mulai').val()=='') {
                 alert('Silahkan isikan tanggal terlebih dahulu!');
                 return;
