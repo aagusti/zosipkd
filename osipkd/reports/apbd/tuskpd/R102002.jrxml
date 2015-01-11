@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R103001" language="groovy" pageWidth="595" pageHeight="842" columnWidth="487" leftMargin="54" rightMargin="54" topMargin="72" bottomMargin="72">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="259"/>
+	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[/apbd/arinvoice]]>
 	</queryString>
@@ -42,6 +42,9 @@
 	<field name="nilai" class="java.lang.String">
 		<fieldDescription><![CDATA[nilai]]></fieldDescription>
 	</field>
+	<field name="customer" class="java.lang.String">
+		<fieldDescription><![CDATA[customer]]></fieldDescription>
+	</field>
 	<variable name="nilai" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{nilai})]]></variableExpression>
 	</variable>
@@ -50,13 +53,13 @@
 	</background>
 	<title>
 		<band height="50">
-			<staticText>
+			<textField>
 				<reportElement x="0" y="2" width="487" height="16"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="false"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
+			</textField>
 			<staticText>
 				<reportElement x="0" y="18" width="487" height="16"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
