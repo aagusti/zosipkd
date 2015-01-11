@@ -22,7 +22,6 @@
         <div class="col-md-5">
            <input id="tahun_nm" class=" form-control " type="text" value="${request.session['ag_step_nm']}" name="tahun_nm" readonly>
         </div>
-        
       </div>
 
       <!----------------------------------------------------------------------->
@@ -44,25 +43,23 @@
       <script>
 
         $('#unit_kd').typeahead({
-            "hint": true,
+            "hint"     : true,
             "highlight": true,
             "minLength": 1,
-            "remote": "/unit/act/headofkode?term=%QUERY", 
-        },
-        {
-          "name": 'unit_kd',
-          "displayKey": 'value',
+            "remote"   : "/unit/act/headofkode?term=%QUERY", 
+        },{
+           "name"      : 'unit_kd',
+           "displayKey": 'value',
         }); 
                 
         $('#unit_nm').typeahead({
-            "hint": true,
+            "hint"     : true,
             "highlight": true,
             "minLength": 1,
-            "remote": "/unit/act/headofnama?term=%QUERY", 
-        },
-        {
-          "name": 'unit_nm',
-          "displayKey": 'value',
+            "remote"   : "/unit/act/headofnama?term=%QUERY", 
+        },{
+           "name"      : 'unit_nm',
+           "displayKey": 'value',
         }); 
         
         function reload_kegiatan(){
@@ -91,7 +88,7 @@
         function change_unit(){
             $.ajax({
               type: "POST",
-              url: "/unit/act/changeid",
+              url : "/unit/act/changeid",
               data: "unit_id="+$('#unit_id').val(),
               success: function (html) {
                 if (html.success == true) {
@@ -123,9 +120,8 @@
               $('#unit_id').val(datum.id);
               change_unit()
         });
-      </script> 
-        
-      </div><br>
+      </script>    
+      </div>
     </fieldset>
     </form>
     
@@ -183,18 +179,20 @@
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
-            "aoColumnDefs": [{
-                "bSearchable": false,
-                "bVisible"   : false,
-                "aTargets"   : [0]
-            },{"sClass": "right",
-             "aTargets": [7],
-             "mRender"  : function (data, type, full) {
-             return formatNumber(data);}
+            "aoColumnDefs": [
+            {
+               "bSearchable": false,
+               "bVisible"   : false,
+               "aTargets"   : [0]
             },{
-                "bSearchable": true,
-                "bSortable"  : false,
-                "aTargets"   : [2,3,4,5,6,7]
+               "sClass"     : "right",
+               "aTargets"   : [7],
+               "mRender"    : function (data, type, full) {
+                              return formatNumber(data);}
+            },{
+               "bSearchable": true,
+               "bSortable"  : false,
+               "aTargets"   : [2,3,4,5,6,7]
             }],
             "aoColumns": [
                 null, {
