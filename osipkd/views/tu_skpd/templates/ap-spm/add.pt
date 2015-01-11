@@ -1,0 +1,290 @@
+<html metal:use-macro="load: ../base.pt">
+  <div metal:fill-slot="content">
+    <script type='text/javascript'>
+        $(document).ready(function () {
+            $("#btn_close").click(function () {
+                window.location = '/ap-spm';
+                return false;
+            });
+        });
+    </script>
+  <div  class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">${request.title}</h3>
+    </div>
+    <div class="panel-body">
+      <form method="post" accept-charset="utf-8" id="myform" class="form-horizontal" enctype="multipart/form-data">
+        <div tal:condition="'id' in form" style="display:none;">
+          <div tal:define="field form['id']">
+              ${structure:field.serialize()}
+          </div>
+        </div>
+
+        <!--NO Urut/Kode-------------------------------------------------------------------->
+        <div class="form-group"> 
+          <div tal:define="field form['kode']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-2">
+               ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
+          </div>
+
+          <!--Tanggal-------------------------------------------------------------------->
+          <div tal:define="field form['tanggal']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-2">
+               ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
+          </div>
+         </div>
+        <div class="form-group"> 
+          <!--SPP-------------------------------------------------------------------->
+          <div tal:define="field form['ap_spp_id']" style="display: none;">
+            ${structure:field.serialize()}
+          </div>
+          <div tal:define="field form['spp_kd']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-2">
+               ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
+          </div> 
+          <div class="col-md-6" tal:define="field form['spp_nm']" id="item-${field.oid}">
+               ${structure:field.serialize()}
+                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                   tal:repeat="error field.error.messages()">
+                   ${error}</p>
+          </div>          
+          <script>
+            $('#spp_kd').typeahead({
+                "hint"     : true,
+                "highlight": true,
+                "minLength": 1,
+                "remote"   : "/ap-spp/act/headofkode1?term=%QUERY", 
+            },{
+               "name"      : 'spp_kd',
+               "displayKey": 'value',
+            });
+            $('#spp_nm').typeahead({
+                "hint"     : true,
+                "highlight": true,
+                "minLength": 1,
+                "remote"   : "/ap-spp/act/headofnama1?term=%QUERY", 
+            },{
+               "name"      : 'spp_nm',
+               "displayKey": 'value',
+            });
+          
+            $('#spp_kd').bind('typeahead:selected', function(obj, datum, name) {  
+                  $('#nama').val(datum.nama);
+                  $('#spp_nm').val(datum.nama);
+                  $('#ap_spp_id').val(datum.id);
+            });
+            $('#spp_nm').bind('typeahead:selected', function(obj, datum, name) {  
+                  $('#nama').val(datum.nama);
+                  $('#ap_spp_id').val(datum.id);
+            });
+            $("#spp_nm").attr('readonly',true);
+          </script>
+        </div>
+
+        <!--Uraian-------------------------------------------------------------------->
+        <div class="form-group"> 
+          <div tal:define="field form['nama']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-8">
+               ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
+          </div>
+        </div>
+
+        <!--nip------------------------------------------------------------------------>
+        <div class="form-group"> 
+          <div tal:define="field form['ttd_uid']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-1">
+               ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
+          </div>
+
+          <div tal:define="field form['ttd_nip']" id="item-${field.oid}">
+            <div class="col-md-2">
+               ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
+          </div>
+                
+          <!---ttd_nama------------------------------------------------------------------->
+            <div tal:define="field form['ttd_nama']" id="item-${field.oid}">
+              <div class="col-md-3">
+                 ${structure:field.serialize()}
+                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                   tal:repeat="error field.error.messages()">
+                   ${error}</p>
+              </div>
+            </div>
+           <script>
+           $('#ttd_uid').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofkode3?term=%QUERY",
+            },
+            {
+            "name"      : 'ttd_uid',
+            "displayKey": 'value',
+          });
+          $('#ttd_nip').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofnip3?term=%QUERY",
+            },
+            {
+              "name"      : 'ttd_nip',
+              "displayKey": 'value',
+            });
+          $('#ttd_nama').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofnama3?term=%QUERY",
+            },
+            {
+              "name"      : 'ttd_nama',
+              "displayKey": 'value',
+            });
+        
+        $('#ttd_uid').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#ttd_nama').val(datum.nama);
+              $('#ttd_nip').val(datum.nip);
+              $('#pejabat_id').val(datum.id);
+        });
+        $('#ttd_nama').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#ttd_uid').val(datum.kode);
+              $('#ttd_nip').val(datum.nip);
+              $('#pejabat_id').val(datum.id);
+        });
+        $('#ttd_nip').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#ttd_nama').val(datum.nama);
+              $('#ttd_uid').val(datum.kode);
+              $('#pejabat_id').val(datum.id);
+        });
+        $("#ttd_uid").attr('readonly',true);
+        $("#ttd_nip").attr('readonly',true);
+        </script>
+        </div>        
+
+        <!--verified_nip-------------------------------------------------------------------->
+        <div class="form-group"> 
+          <div tal:define="field form['verified_uid']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-1">
+               ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
+          </div>
+
+          <div tal:define="field form['verified_nip']" id="item-${field.oid}">
+            <div class="col-md-2">
+               ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
+          </div>
+                
+          <!---veriffied_nama------------------------------------------------------------------->
+          <div tal:define="field form['verified_nama']" id="item-${field.oid}">
+            <div class="col-md-3">
+               ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
+          </div>
+                  <script>
+           $('#verified_uid').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofkode3?term=%QUERY",
+            },
+            {
+            "name"      : 'verified_uid',
+            "displayKey": 'value',
+          });
+          $('#verified_nip').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofnip3?term=%QUERY",
+            },
+            {
+              "name"      : 'verified_nip',
+              "displayKey": 'value',
+            });
+          $('#verified_nama').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofnama3?term=%QUERY",
+            },
+            {
+              "name"      : 'verified_nama',
+              "displayKey": 'value',
+            });
+        
+        $('#verified_uid').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#verified_nama').val(datum.nama);
+              $('#verified_nip').val(datum.nip);
+              $('#pejabat_id').val(datum.id);
+        });
+        $('#verified_nama').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#verified_uid').val(datum.kode);
+              $('#verified_nip').val(datum.nip);
+              $('#pejabat_id').val(datum.id);
+        });
+        $('#verified_nip').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#verified_nama').val(datum.nama);
+              $('#verified_uid').val(datum.kode);
+              $('#pejabat_id').val(datum.id);
+        });
+        $("#verified_uid").attr('readonly',true);
+        $("#verified_nip").attr('readonly',true);
+        </script>
+          <div class="col-md-4"> 
+            <button type="submit" class="btn btn-primary" id="simpan" name="simpan">Simpan</button>
+            <button type="submit" class="btn btn-danger" id="batal" name="batal">Batal</button>
+          </div>
+        </div>              
+      </form>
+    </div>  
+  </div>   
+      </div> <!--panel-body-->
+
+</html>
