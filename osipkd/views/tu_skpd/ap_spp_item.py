@@ -10,7 +10,7 @@ from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
 from osipkd.models.pemda_model import Unit
-from osipkd.models.apbd_tu import Spp, SppItem, APInvoice, APInvoiceItem 
+from osipkd.models.apbd_tu import APInvoice, Spp, SppItem
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -29,97 +29,131 @@ class view_ap_spp_item(BaseViews):
         req = self.request
         params = req.params
         url_dict = req.matchdict
+
         if url_dict['act']=='grid':
+            pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             if url_dict['act']=='grid':
                 # defining columns
                 ap_spp_id = url_dict['ap_spp_id'].isdigit() and url_dict['ap_spp_id'] or 0
                 columns = []
                 columns.append(ColumnDT('id'))
-                columns.append(ColumnDT('no_urut'))
+                columns.append(ColumnDT('ap_invoice_id'))
+                columns.append(ColumnDT('kode'))
+                columns.append(ColumnDT('jenis'))
+                columns.append(ColumnDT('tanggal'))
                 columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('amount',filter=self._number_format))
-                columns.append(ColumnDT('ppn',filter=self._number_format))
-                columns.append(ColumnDT('pph',filter=self._number_format))
-                columns.append(ColumnDT('ap_invoice_id'))
-                query = DBSession.query(SppItem.id, SppItem.ap_invoice_id,
-                                        APInvoice.no_urut, APInvoice.nama,  
-                                        func.sum(APInvoiceItem.amount).label('amount'),
-                                        func.sum(APInvoiceItem.ppn).label('ppn'),
-                                        func.sum(APInvoiceItem.pph).label('pph'))\
-                          .join(APInvoice).join(APInvoiceItem)\
-                          .filter(SppItem.ap_spp_id==ap_spp_id)\
-                          .group_by(SppItem.id, SppItem.ap_invoice_id,
-                                    APInvoice.no_urut, APInvoice.nama,)
+                query = DBSession.query(SppItem.id,
+                                        SppItem.ap_invoice_id,
+                                        APInvoice.kode.label('kode'),
+                                        APInvoice.jenis.label('jenis'),
+                                        APInvoice.tanggal.label('tanggal'),
+                                        APInvoice.nama.label('nama'),
+                                        APInvoice.amount.label('amount'),
+                          ).join(APInvoice
+                          ).filter(SppItem.ap_spp_id==ap_spp_id
+                          ).group_by(SppItem.id, 
+                                     SppItem.ap_invoice_id,
+                                     APInvoice.kode.label('kode'),
+                                     APInvoice.jenis.label('jenis'),
+                                     APInvoice.tanggal.label('tanggal'),
+                                     APInvoice.nama.label('nama'),
+                                     APInvoice.amount.label('amount'))
                 rowTable = DataTables(req, SppItem, query, columns)
                 return rowTable.output_result()
-    #######    
-    # Add #
-    #######
-    @view_config(route_name='ap-spp-item-add', renderer='json',
-                 permission='add')
-    def view_add(self):
-        req = self.request
-        ses = req.session
-        params = req.params
-        url_dict = req.matchdict
-        ap_spp_id = 'ap_spp_id' in url_dict and url_dict['ap_spp_id'] or 0
-        controls = dict(req.POST.items())
-        
-        ap_invoice_id = 'ap_invoice_id' in controls and controls['ap_invoice_id'] or None
-        if not ap_invoice_id:
-            return {"success": False, 'msg':'Tagihan belum dipilih'}
-            
-        #Cek dulu ada penyusup gak dengan mengecek sessionnya
-        ap_spp = DBSession.query(Spp)\
-                      .filter(Spp.unit_id==ses['unit_id'],
-                              Spp.id==ap_spp_id).first()
-        if not ap_spp:
-            return {"success": False, 'msg':'SPP tidak ditemukan'}
-        
-        #Cek lagi ditakutkan skpd ada yang iseng inject script
-        row = SppItem()
-        row.ap_invoice_id    = ap_invoice_id
-        row.ap_spp_id    = ap_spp_id
-        try:
-          DBSession.add(row)
-          DBSession.flush()
-          row = DBSession.query(APInvoice).filter_by(id=ap_invoice_id).first()
-          row.posted=1
-          DBSession.add(row)
-          DBSession.flush()
-          return {"success": True, "msg":'Success Tambah Item SPP'}
-        except:
-            return {'success':False, 'msg':'Gagal Tambah Item SPP'}
-
-
-    ########
-    # Edit #
-    ########
-    def query_id(self):
-        return DBSession.query(SppItem).join(Spp)\
-                        .filter(SppItem.id==self.request.matchdict['id'],
-                                SppItem.ap_spp_id==self.request.matchdict['ap_spp_id'],
-                                )
-    def id_not_found(self):    
-        msg = 'Item ID %s not found.' % request.matchdict['id']
-        return msg
-
-    ##########
-    # Delete #
-    ##########    
-    @view_config(route_name='ap-spp-item-delete', renderer='json',
-                 permission='delete')
-    def view_delete(self):
-        q = self.query_id().filter(Spp.unit_id==self.session['unit_id'])
-        row = q.first()
+#######    
+# Add #
+#######
+@view_config(route_name='ap-spp-item-add', renderer='json',
+             permission='add')
+def view_add(request):
+    req = request
+    ses = req.session
+    params = req.params
+    url_dict = req.matchdict
+    ap_spp_id = 'ap_spp_id' in url_dict and url_dict['ap_spp_id'] or 0
+    controls = dict(request.POST.items())
+    
+    ap_spp_item_id = 'ap_spp_item_id' in controls and controls['ap_spp_item_id'] or 0
+    #Cek dulu ada penyusup gak dengan mengecek sessionnya
+    ap_spp = DBSession.query(Spp)\
+                  .filter(Spp.unit_id==ses['unit_id'],
+                          Spp.id==ap_spp_id).first()
+    if not ap_spp:
+        return {"success": False, 'msg':'SPP tidak ditemukan'}
+    
+    #Cek lagi ditakutkan skpd ada yang iseng inject script
+    if ap_spp_item_id:
+        row = DBSession.query(SppItem)\
+                  .join(Spp)\
+                  .filter(SppItem.id==ap_spp_item_id,
+                          Spp.unit_id==ses['unit_id'],
+                          SppItem.ap_spp_id==ap_spp_id).first()
         if not row:
-            return {'success':False, "msg":self.id_not_found()}
-        ap_invoice_id = row.ap_invoice_id
-        msg = 'Data sudah dihapus'
-        self.query_id().delete()
-        DBSession.flush()
-        row = DBSession.query(APInvoice).filter_by(id=ap_invoice_id).first()
-        row.posted=0
-        DBSession.add(row)
-        DBSession.flush()        
-        return {'success':True, "msg":msg}
+            return {"success": False, 'msg':'SPP tidak ditemukan'}
+    else:
+        row = SppItem()
+            
+    row.ap_spp_id    = ap_spp_id
+    row.ap_invoice_id = controls['ap_invoice_id']
+    #try:
+    DBSession.add(row)
+    DBSession.flush()
+    amount = "%d" % Spp.get_nilai(row.ap_spp_id) 
+    return {"success": True, 'id': row.id, "msg":'Success Tambah Invoice', 'jml_total':amount}
+    #except:
+    #    return {'success':False, 'msg':'Gagal Tambah Item Invoice'}
+
+
+########
+# Edit #
+########
+def query_id(request):
+    return DBSession.query(SppItem).filter(SppItem.id==request.matchdict['id'],
+                                           SppItem.ap_spp_id==request.matchdict['ap_spp_id'])
+    
+def id_not_found(request):    
+    msg = 'User ID %s not found.' % request.matchdict['id']
+    request.session.flash(msg, 'error')
+    return route_list(request)
+
+@view_config(route_name='ap-spp-item-edit', renderer='json',
+             permission='edit')
+def view_edit(request):
+    row = query_id(request).first()
+    if not row:
+        return id_not_found(request)
+    form = get_form(request, EditSchema)
+    if request.POST:
+        if 'simpan' in request.POST:
+            controls = request.POST.items()
+            try:
+                c = form.validate(controls)
+            except ValidationFailure, e:
+                return dict(form=form)
+            save_request(dict(controls), request, row)
+        return route_list(request)
+    elif SESS_EDIT_FAILED in request.session:
+        del request.session[SESS_EDIT_FAILED]
+        return dict(form=form)
+    values = row.to_dict() #dict(zip(row.keys(), row))
+    #values['kegiatan_nm']=row.kegiatan_subs.nama
+    #values['kegiatan_kd']=row.kegiatan_subs.kode
+    form.set_appstruct(values) 
+    return dict(form=form)
+
+##########
+# Delete #
+##########    
+@view_config(route_name='ap-spp-item-delete', renderer='json',
+             permission='delete')
+def view_delete(request):
+    q = query_id(request)
+    row = q.first()
+    if not row:
+        return {'success':False, "msg":self.id_not_found()}
+
+    msg = 'Data sudah dihapus'
+    query_id(request).delete()
+    DBSession.flush()
+    return {'success':True, "msg":msg}

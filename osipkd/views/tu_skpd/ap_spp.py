@@ -29,7 +29,7 @@ AP_TYPE = (
     ('4', 'LS'),
     )
 
-class view_ap_invoice_skpd(BaseViews):
+class view_ap_spp(BaseViews):
 
     @view_config(route_name="ap-spp", renderer="templates/ap-spp/list.pt")
     def view_list(self):
@@ -56,30 +56,75 @@ class view_ap_invoice_skpd(BaseViews):
                 # defining columns
                 columns = []
                 columns.append(ColumnDT('id'))
-                columns.append(ColumnDT('no_urut'))
+                columns.append(ColumnDT('kode'))
+                columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
+                columns.append(ColumnDT('jenis'))
                 columns.append(ColumnDT('nama'))
-                #columns.append(ColumnDT('amount',filter = self._number_format))
-                #columns.append(ColumnDT('ppn',filter = self._number_format))
-                #columns.append(ColumnDT('pph',filter = self._number_format))
-                query = DBSession.query(Spp.id, Spp.no_urut,
-                                        Spp.nama,
-                                        #Kegiatan.kode, 
-                                        #func.sum(SppItem.amount).label('amount'),
-                                        #func.sum(SppItem.ppn).label('ppn'),
-                                        #func.sum(SppItem.pph).label('pph'),
-                                        )\
-                            .filter(Spp.tahun_id==ses['tahun'],
-                                    Spp.unit_id==ses['unit_id'])\
-                            .outerjoin(SppItem)\
-                            .group_by(Spp.id, #Kegiatan.kode,
-                                      Spp.nama)
-                            #.join(KegiatanSub)\
-                            #.join(Kegiatan)\
-                            
+                columns.append(ColumnDT('nominal'))
+ 
+                query = DBSession.query(Spp.id,
+                          Spp.kode,
+                          Spp.tanggal,
+                          Spp.jenis,
+                          Spp.nama,
+                          Spp.nominal
+                        ).filter(Spp.tahun_id==ses['tahun'],
+                              Spp.unit_id==ses['unit_id'],
+                        ).order_by(Spp.no_urut.desc()
+                        )
+ 
                 rowTable = DataTables(req, Spp, query, columns)
                 return rowTable.output_result()
                 
-      
+        elif url_dict['act']=='headofnama':
+            term = 'term' in params and params['term'] or '' 
+            rows = DBSession.query(Spp.id, Spp.kode, Spp.nama
+                    ).filter(Spp.unit_id==ses['unit_id'],
+                            Spp.tahun_id==ses['tahun_id'],
+                            Spp.nama.ilike('%%%s%%' % term) ).all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[2]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
+            return r
+            
+        elif url_dict['act']=='headofkode1':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Spp.id, Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm')
+                      ).filter(Spp.unit_id == ses['unit_id'],
+                           Spp.tahun_id==ses['tahun'],
+                           Spp.kode.ilike('%s%%' % term))        
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[1]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)               
+            return r
+            
+        elif url_dict['act']=='headofnama1':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Spp.id, Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm')
+                      ).filter(Spp.unit_id == ses['unit_id'],
+                           Spp.tahun_id==ses['tahun'],
+                           Spp.nama.ilike('%s%%' % term))        
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[2]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)    
+            return r
     #######    
     # Add #
     #######
@@ -106,6 +151,7 @@ class view_ap_invoice_skpd(BaseViews):
         if not row.no_urut:
               row.no_urut = Spp.max_no_urut(row.tahun_id,row.unit_id)+1;
         row.disabled = 'disabled' in values and 1 or 0      
+        print('XXXXXXXXXXXXX');
         DBSession.add(row)
         DBSession.flush()
         return row
@@ -113,6 +159,7 @@ class view_ap_invoice_skpd(BaseViews):
     def save_request(self, values, row=None):
         if 'id' in self.request.matchdict:
             values['id'] = self.request.matchdict['id']
+        values["nominal"]=values["nominal"].replace('.','') 
         row = self.save(values, row)
         self.request.session.flash('SPP sudah disimpan.')
         return row
@@ -179,8 +226,8 @@ class view_ap_invoice_skpd(BaseViews):
             del request.session[SESS_EDIT_FAILED]
             return dict(form=form)
         values = row.to_dict() #dict(zip(row.keys(), row))
-        #values['kegiatan_nm']=row.kegiatansubs.nama
-        #values['kegiatan_kd']=row.kegiatansubs.kode
+        values['spd_nm']=row.spds.nama
+        values['spd_kd']=row.spds.kode
         form.set_appstruct(values) 
         return dict(form=form)
 
@@ -215,10 +262,21 @@ class AddSchema(colander.Schema):
                           colander.Integer(),
                           title="Tahun",
                           oid = "tahun_id")
-    ap_spd_id       = colander.SchemaNode(
+    kode            = colander.SchemaNode(
                           colander.String(),
-                          missing=colander.drop,
+                          title = "No. SPP"
+                          )
+    ap_spd_id       = colander.SchemaNode(
+                          colander.Integer(),
+                          title="Spd",
+                          oid = "ap_spd_id")
+    spd_kd          = colander.SchemaNode(
+                          colander.String(),
+                          oid='spd_kd',
                           title="SPD")
+    spd_nm          = colander.SchemaNode(
+                          colander.String(),
+                          oid='spd_nm')
     no_urut         = colander.SchemaNode(
                           colander.Integer(),
                           missing=colander.drop,
@@ -256,22 +314,31 @@ class AddSchema(colander.Schema):
                           title="NIP"
                           )
     nominal         = colander.SchemaNode(
-                          colander.Integer(),
-                          default = 0
+                          colander.String(),
+                          default = 0,
+                          oid="jml_total",
+                          title="Nominal"
                           )
-
+    ttd_uid         = colander.SchemaNode(
+                          colander.Integer(),
+                          missing=colander.drop,
+                          oid="ttd_uid"
+                          )
     ttd_nip         = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          oid="ttd_nip",
                           title="TTD"
                           )
     ttd_nama        = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          oid="ttd_nama",
                           title="Nama")
     ttd_jab         = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          oid="ttd_jab",
                           title="Jabatan")
     ap_bentuk       = colander.SchemaNode(
                           colander.String(),
@@ -314,42 +381,63 @@ class AddSchema(colander.Schema):
                           missing=colander.drop,
                           title="Uraian"
                           )
-    pptk_nama       = colander.SchemaNode(
-                          colander.String(),
+    pptk_uid         = colander.SchemaNode(
+                          colander.Integer(),
                           missing=colander.drop,
-                          title="Nama"
+                          oid="pptk_uid"
                           )
-    pptk_nip        = colander.SchemaNode(
+    pptk_nip         = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="PPTK NIP"
+                          oid="pptk_nip",
+                          title="PPTK"
                           )
-    barang_nip      = colander.SchemaNode(
+    pptk_nama        = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="BB NIP"
-                          )
-    barang_nama     = colander.SchemaNode(
-                          colander.String(),
-                          missing=colander.drop,
-                          title="Nama"
-                          )
-    barang_jab      = colander.SchemaNode(
-                          colander.String(),
-                          missing=colander.drop,
-                          title="Jabatan"
-                          )
-    kasi_nip        = colander.SchemaNode(
-                          colander.String(),
-                          missing=colander.drop,
-                          title="Kasie NIP")
-    kasi_nama       = colander.SchemaNode(
-                          colander.String(),
-                          missing=colander.drop,
+                          oid="pptk_nama",
                           title="Nama")
-    kasi_jab        = colander.SchemaNode(
+    barang_uid         = colander.SchemaNode(
+                          colander.Integer(),
+                          missing=colander.drop,
+                          oid="barang_uid"
+                          )
+    barang_nip         = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          oid="barang_nip",
+                          title="BB"
+                          )
+    barang_nama        = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          oid="barang_nama",
+                          title="Nama")
+    barang_jab         = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          oid="barang_jab",
+                          title="Jabatan")
+    kasi_uid         = colander.SchemaNode(
+                          colander.Integer(),
+                          missing=colander.drop,
+                          oid="kasi_uid"
+                          )
+    kasi_nip         = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          oid="kasi_nip",
+                          title="Kasi"
+                          )
+    kasi_nama        = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          oid="kasi_nama",
+                          title="Nama")
+    kasi_jab         = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          oid="kasi_jab",
                           title="Jabatan")
 
 class EditSchema(AddSchema):

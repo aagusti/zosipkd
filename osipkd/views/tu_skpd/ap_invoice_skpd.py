@@ -10,7 +10,7 @@ from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
 from osipkd.models.pemda_model import Unit
-from osipkd.models.apbd_tu import APInvoice, APInvoiceItem
+from osipkd.models.apbd_tu import APInvoice, APInvoiceItem, SppItem, Spp
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -56,27 +56,35 @@ class view_ap_invoice_skpd(BaseViews):
                 # defining columns
                 columns = []
                 columns.append(ColumnDT('id'))
-                columns.append(ColumnDT('no_urut'))
                 columns.append(ColumnDT('kode'))
+                columns.append(ColumnDT('jenis'))
+                columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
+                columns.append(ColumnDT('kegiatan_sub_nm'))
                 columns.append(ColumnDT('nama'))
-                columns.append(ColumnDT('amount',filter = self._number_format))
-                columns.append(ColumnDT('ppn',filter = self._number_format))
-                columns.append(ColumnDT('pph',filter = self._number_format))
-                query = DBSession.query(APInvoice.id, APInvoice.no_urut,
-                                        Kegiatan.kode, APInvoice.nama,
-                                        func.sum(APInvoiceItem.amount).label('amount'),
-                                        func.sum(APInvoiceItem.ppn).label('ppn'),
-                                        func.sum(APInvoiceItem.pph).label('pph'),
-                                        )\
-                            .filter(APInvoice.tahun_id==ses['tahun'],
-                                    APInvoice.unit_id==ses['unit_id'])\
-                            .join(KegiatanSub)\
-                            .join(Kegiatan)\
-                            .outerjoin(APInvoiceItem)\
-                            .group_by(APInvoice.id, Kegiatan.kode,
-                                      APInvoice.nama)
+                columns.append(ColumnDT('amount'))
+
+                query = DBSession.query(APInvoice.id,
+                          APInvoice.kode,
+                          APInvoice.jenis,                          
+                          APInvoice.tanggal,
+                          KegiatanSub.nama.label('kegiatan_sub_nm'),
+                          APInvoice.nama,
+                          APInvoice.amount,
+                        ).outerjoin(APInvoiceItem
+                        ).filter(APInvoice.tahun_id==ses['tahun'],
+                              APInvoice.unit_id==ses['unit_id'],
+                              APInvoice.kegiatan_sub_id==KegiatanSub.id,
+                        ).order_by(APInvoice.no_urut.desc()
+                        ).group_by(APInvoice.id,
+                          APInvoice.kode,
+                          APInvoice.jenis,
+                          APInvoice.tanggal,
+                          KegiatanSub.nama.label('kegiatan_sub_nm'),
+                          APInvoice.nama,
+                        )
                 rowTable = DataTables(req, APInvoice, query, columns)
                 return rowTable.output_result()
+
         elif url_dict['act']=='headofnama':
             query = DBSession.query(APInvoice.id, 
                                     APInvoice.no_urut,
@@ -103,6 +111,28 @@ class view_ap_invoice_skpd(BaseViews):
                 r.append(d) 
             print r
             return r
+            
+        elif url_dict['act']=='headofkode1':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(APInvoice.id,APInvoice.kode.label('kode1'),APInvoice.nama.label('nama1'),APInvoice.amount.label('amount1'),
+                                )\
+                                .filter(APInvoice.unit_id == ses['unit_id'],
+                                        APInvoice.tahun_id == ses['tahun'],
+                                        APInvoice.posted == 0,
+                                        APInvoice.kode.ilike('%s%%' % term))
+            rows = q.all()                               
+            r = []
+            for k in rows:
+                d={}
+                d['id']      = k[0]
+                d['value']   = k[1]
+                d['kode']    = k[1]
+                d['nama']    = k[2]
+                d['amount']  = k[3]
+                r.append(d)
+            print '---****----',r              
+            return r
+            
 #######    
 # Add #
 #######
@@ -112,16 +142,19 @@ def form_validator(form, value):
             'Kegiatan dengan no urut tersebut sudah ada')
                 
 class AddSchema(colander.Schema):
-    unit_id          = colander.SchemaNode(
+    unit_id         = colander.SchemaNode(
                           colander.String(),
                           oid = "unit_id")
-    tahun_id         = colander.SchemaNode(
+    tahun_id        = colander.SchemaNode(
                           colander.String(),
                           oid = "tahun_id",
                           title="Tahun")
-    no_urut          = colander.SchemaNode(
+    no_urut         = colander.SchemaNode(
                           colander.Integer(),
                           missing=colander.drop)
+    kode            = colander.SchemaNode(
+                          colander.String(),
+                          title="Kode")
     jenis           = colander.SchemaNode(
                           colander.String(),
                           widget=widget.SelectWidget(values=AP_TYPE),
@@ -161,8 +194,9 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           title="NPWP")
     amount          = colander.SchemaNode(
-                          colander.Integer(),
+                          colander.String(),
                           default=0,
+                          oid="jml_total",
                           title="Jml. Tagihan"
                           )
 
@@ -182,7 +216,7 @@ def save(values, row=None):
         row = APInvoice()
     row.from_dict(values)
     if not row.no_urut:
-          row.no_urut = APInvoice.max_no_urut(row.tahun_id,row.unit_id)+1;
+        row.no_urut = APInvoice.max_no_urut(row.tahun_id,row.unit_id)+1;
     DBSession.add(row)
     DBSession.flush()
     return row
@@ -190,6 +224,7 @@ def save(values, row=None):
 def save_request(values, request, row=None):
     if 'id' in request.matchdict:
         values['id'] = request.matchdict['id']
+    values["amount"]=values["amount"].replace('.','') 
     row = save(values, row)
     request.session.flash('Tagihan sudah disimpan.')
     return row
