@@ -1,0 +1,213 @@
+<html metal:use-macro="load: ../base.pt">
+  <div metal:fill-slot="content" class="panel panel-default ">
+    <h4>LAPORAN REGISTER SP2D</h4>
+    <hr>
+    <script>
+	
+    $(document).ready(function(){
+        //$('#div_jenis').hide();
+        //$('input[name="rpt"]').click(function(){
+        //    if($(this).val()=="1"){
+        //        $('#div_jenis').hide();
+        //    }
+        //    if($(this).val()=="2"){
+        //        $('#div_jenis').hide();
+        //    }
+        //});
+
+        $('#btn_cetak').click(function () {
+            if($('#unit_nm').val()=='Pilih Unit') {
+                alert('Silahkan pilih Unit terlebih dahulu!');
+                return;
+            }
+            
+            var rpt = $('input[name="rpt"]:checked').val();
+            var jenis = $('input[name="jenis"]:checked').val();
+            var tipe = $('#tipe').val();
+            var mulai = ($('#mulai').val()).substr(6,4)+"-"+($('#mulai').val()).substr(3,2)+"-"+($('#mulai').val()).substr(0,2);
+            var selesai = ($('#selesai').val()).substr(6,4)+"-"+($('#selesai').val()).substr(3,2)+"-"+($('#selesai').val()).substr(0,2);
+            
+            if($('#mulai').val()=='') {
+                alert('Silahkan isikan tanggal terlebih dahulu!');
+                return;
+            }
+            if($('#selesai').val()=='') {
+                alert('Silahkan isikan tanggal terlebih dahulu!');
+                return;
+            }
+            
+            //if(rpt=="2" || rpt=="3") {
+            if(jenis==undefined) {
+                alert('Silahkan pilih format laporan yang akan ditampilkan!');
+                return;
+            } 
+            //  window.open('/ap-report-skpd/act/'+rpt+jenis+'?tipe='+tipe+'&mulai='+mulai+'&selesai='+selesai);
+            //} else {
+              window.open('/ap-report-sp2d/act/'+jenis+'?tipe='+tipe+'&mulai='+mulai+'&selesai='+selesai);
+            //}
+        });
+
+
+        $('input[name="jenis"]').prop('checked', false);
+    });
+  
+    </script>
+    
+  <form id="header" method="POST" enctype="multipart/form-data" accept-charset="utf-8" 
+      class="form-horizontal">
+  <fieldset class="deformFormFieldset">
+    <div class="panel-heading">
+      <!--Tahun---------------------------------------------------------------->
+      <div class="form-group">
+        <div class="col-md-3">
+          <div id="item-tahun">
+            <label for="tahun" class="control-label col-md-3" id="req-tahun">
+                    Tahun</label>
+            <div class="col-md-9">
+               <input id="tahun" class=" form-control " type="text" 
+                      value="${request.session['tahun']}" 
+                      readonly name="tahun">
+            </div>
+          </div>
+        </div>
+
+        <input id="unit_id" type="hidden" value="${request.session['unit_id']}" name="unit_id">
+        <div class="col-md-3">
+          <div id="item-unit_kd">
+            <label for="unit_kd" class="control-label col-md-3" id="req-unit_kd">
+                    SKPD</label>
+            <div class="col-md-9">
+               <input id="unit_kd" class="form-control typeahead" type="text" value="${request.session['unit_kd']}" name="unit_kd">
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-5">
+           <input id="unit_nm" class=" form-control " type="text" value="${request.session['unit_nm']}" name="unit_nm">
+        </div>        
+      </div>
+      <script>
+
+        $('#unit_kd').typeahead({
+            "hint": true,
+            "highlight": true,
+            "minLength": 1,
+            "remote": "/unit/act/headofkode?term=%QUERY", 
+        },
+        {
+          "name": 'unit_kd',
+          "displayKey": 'value',
+        }); 
+                
+        $('#unit_nm').typeahead({
+            "hint": true,
+            "highlight": true,
+            "minLength": 1,
+            "remote": "/unit/act/headofnama?term=%QUERY", 
+        },
+        {
+          "name": 'unit_nm',
+          "displayKey": 'value',
+        }); 
+        
+        function change_unit(){
+            $.ajax({
+              type: "POST",
+              url: "/unit/act/changeid",
+              data: "unit_id="+$('#unit_id').val(),
+              success: function (html) {
+                if (html.success == true) {
+                  $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                  reload_kegiatan();
+                } else {
+                  $("#errors").css('display', 'inline', 'important');
+                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                  $('#unit_kd').val('');
+                  $('#unit_nm').val('');
+                  $('#unit_id').val('');
+                }
+              },
+              beforeSend: function () {
+                $("#errors").css('display', 'inline', 'important');
+                $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+              }
+            });
+        }
+        
+        $('#unit_kd').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#unit_nm').val(datum.nama);
+              $('#unit_id').val(datum.id);
+              change_unit();
+        });
+
+        $('#unit_nm').bind('typeahead:selected', function(obj, datum, name) {      
+              $('#unit_kd').val(datum.kode);
+              $('#unit_id').val(datum.id);
+              change_unit()
+        });
+      </script> 
+
+    </div>
+  </fieldset>
+</form>
+<script>
+    $("#mulai,#selesai").datepicker({dateFormat:'dd-mm-yy'});
+</script>    
+    <div class="panel-body">
+        <div class="form-group">
+        <div class="row">
+            <label class="control-label col-xs-2" for="mulai">Mulai</label>
+            <div class="col-xs-2">
+                <input class="form-control" type="text" name="mulai" id="mulai" value="" />
+            </div>
+            <div class="col-xs-2">
+              <div class="input-group">
+                <span class="input-group-addon">s.d</span>
+                <input class="form-control" type="text" name="selesai" id="selesai" value="" />
+              </div>
+            </div>
+            </div>
+        </div>
+          
+        <div class="form-group" id="div_tipe">
+            <div class="row">
+                <label class="control-label col-xs-2" for="jenis">Type</label>
+                <div class="col-xs-2">
+                    <select class="form-control" id="tipe" name="tipe">
+                        <option value="0">Semua Jenis</option>
+                        <option value="1">UP</option>
+                        <option value="2">TU</option>
+                        <option value="3">GU</option>
+                        <option value="4">LS</option>
+                    </select>
+                </div>
+            </div>
+        </div>   
+        
+        <div class="form-group" id="div_jenis">
+            <div class="row">
+                <label class="control-label col-xs-2" for="jenis">Format Laporan</label>
+                <div class="col-xs-2">
+                    <div class="form-group"> 
+                        <div class="radio">
+                            <label><input type="radio" name="jenis" value="1">Standard</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="jenis" value="2">SKPD</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
+    
+    <div class="form-group">
+        <div class="col-xs-3">
+            <button type="button" class="btn-primary" id="btn_cetak">Cetak Laporan</button>
+        </div>  
+    </div>    
+    <br><br><br>
+  </div> 
+</html>
