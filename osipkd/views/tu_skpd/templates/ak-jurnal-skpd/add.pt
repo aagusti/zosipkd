@@ -192,7 +192,7 @@
       class="form-horizontal" name="detail">
       <input id="jurnal_item_id" type="hidden" value="" name="jurnal_item_id">
       <input id="kegiatan_sub_id" type="hidden" value="" name="kegiatan_sub_id">
-      <input id="jurnal_id" type="hidden" value="" name="jurnal_id">
+      <input id="ak_jurnal_id" type="hidden" value="" name="ak_jurnal_id">
       <input id="rekening_id" type="hidden" value="" name="rekening_id">
       
       <div class="form-group"><!--Kegiatan-->
@@ -331,18 +331,18 @@
           Save Jurnal Item
           *********************************************************************/
           $( "#detail").submit(function( event ) {
-            var jurnal_id;
+            var ak_jurnal_id;
             var is_success;
             var kegiatan_sub_id ;
             var rekening_id;
-            jurnal_id = $('#id').val();
+            ak_jurnal_id = $('#id').val();
             is_success = true;
             kegiatan_sub_id = $('#kegiatan_sub_id').val();
             rekening_id = $('#rekening_id').val();
             /*********************************************************************
             Cek header
             *********************************************************************/
-            if (! jurnal_id || jurnal_id=='undefined'){
+            if (! ak_jurnal_id || ak_jurnal_id=='undefined'){
                 $("#errors").css('display', 'inline', 'important');
                 $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + 'Jurnal Belum Disimpan');
                 is_success = false;
@@ -361,15 +361,15 @@
             }
             
             if (is_success){
-              $('#jurnal_id').val(jurnal_id)
+              $('#ak_jurnal_id').val(ak_jurnal_id)
               $.ajax({
                 type: "POST",
-                url: "/ak-jurnal-item/add",
+                url: "/ak-jurnal-skpd-item/add",
                 data: $('#detail').serialize(),
                 success: function (html) {
                   if (html.success == true) {
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                    $('#jurnal_id').val('');
+                    $('#ak_jurnal_id').val('');
                     //$('#kegiatan_sub_id').val('');
                     //$('#kegiatan_sub_kd').val('');
                     //$('#kegiatan_sub_nm').val('');
@@ -408,7 +408,7 @@
       var mThn;
       var oTable;
       var iPos;
-      var oTableUrl = "/ak-jurnal-item/act/grid?jurnal_id="+$("#id").val();  
+      var oTableUrl = "/ak-jurnal-skpd-item/act/grid?ak_jurnal_id="+$("#id").val();  
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
           "sDom": '<"toolbar">lfrtip',
@@ -478,7 +478,7 @@
                 $("#rekening_nm").val(aData[4]);
                 $("#amount").val(aData[5]);
                 $("#kegiatan_sub_nm").val(aData[6]);
-                $("#jurnal_id").val(aData[7]);
+                $("#ak_jurnal_id").val(aData[7]);
                 $("#notes").val(aData[8]);
                 $("#kegiatan_sub_id").val(aData[9]);
                 $("#rekening_id").val(aData[10]);
@@ -491,11 +491,11 @@
             window.location = '/ak-jurnal-skpd';
         });
         $('#btn_add').click(function () {
-            window.location = '/ak-jurnal-item/add';
+            window.location = '/ak-jurnal-skpd-item/add';
         });
 
         $('#btn_edit').click(function () {
-            if (mID) window.location = '/ak-jurnal-item/'+mID+'/edit';
+            if (mID) window.location = '/ak-jurnal-skpd-item/'+mID+'/edit';
             else alert('Pilih Baris yang akan di edit');
         });
 
@@ -505,7 +505,7 @@
               if (confirm('Yakin di hapus?')==true){
                 $.ajax({
                   type: "POST",
-                  url: "/ak-jurnal-item/"+mID+"/delete",
+                  url: "/ak-jurnal-skpd-item/"+mID+"/delete",
                   success: function (html) {
                     if (html.success == true) {
                       $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
