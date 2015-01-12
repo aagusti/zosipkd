@@ -77,7 +77,7 @@ class view_ar_invoice_skpd(BaseViews):
 def form_validator(form, value):
     def err_kegiatan():
         raise colander.Invalid(form,
-            'Kegiatan dengan no urut tersebut sudah ada')
+            'Kegiatan dengan no urut tersebut sudah ada')      
                 
 class AddSchema(colander.Schema):
     unit_id          = colander.SchemaNode(
@@ -126,8 +126,9 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           title="Alamat")
     nilai            = colander.SchemaNode(
-                          colander.Integer(),
+                          colander.String(),
                           default=0,
+                          oid="jml_total",
                           title="Nilai")
 
 class EditSchema(AddSchema):
@@ -154,6 +155,7 @@ def save(values, row=None):
 def save_request(values, request, row=None):
     if 'id' in request.matchdict:
         values['id'] = request.matchdict['id']
+    values["nilai"]=values["nilai"].replace('.','')  
     row = save(values, row)
     request.session.flash('Tagihan sudah disimpan.')
     return row
@@ -172,7 +174,7 @@ def view_add(request):
     form = get_form(request, AddSchema)
     if request.POST:
         if 'simpan' in request.POST:
-            controls = request.POST.items()
+            controls = request.POST.items() 
             controls_dicted = dict(controls)
             try:
                 c = form.validate(controls)
@@ -207,7 +209,6 @@ def view_edit(request):
     if request.POST:
         if 'simpan' in request.POST:
             controls = request.POST.items()
-            
             try:
                 c = form.validate(controls)
             except ValidationFailure, e:

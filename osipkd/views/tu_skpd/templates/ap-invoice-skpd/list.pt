@@ -44,25 +44,23 @@
       <script>
 
         $('#unit_kd').typeahead({
-            "hint": true,
+            "hint"     : true,
             "highlight": true,
             "minLength": 1,
-            "remote": "/unit/act/headofkode?term=%QUERY", 
-        },
-        {
-          "name": 'unit_kd',
-          "displayKey": 'value',
+            "remote"   : "/unit/act/headofkode?term=%QUERY", 
+        },{
+           "name"      : 'unit_kd',
+           "displayKey": 'value',
         }); 
                 
         $('#unit_nm').typeahead({
-            "hint": true,
+            "hint"     : true,
             "highlight": true,
             "minLength": 1,
-            "remote": "/unit/act/headofnama?term=%QUERY", 
-        },
-        {
-          "name": 'unit_nm',
-          "displayKey": 'value',
+            "remote"   : "/unit/act/headofnama?term=%QUERY", 
+        },{
+           "name"      : 'unit_nm',
+           "displayKey": 'value',
         }); 
         
         function reload_kegiatan(){
@@ -91,7 +89,7 @@
         function change_unit(){
             $.ajax({
               type: "POST",
-              url: "/unit/act/changeid",
+              url : "/unit/act/changeid",
               data: "unit_id="+$('#unit_id').val(),
               success: function (html) {
                 if (html.success == true) {
@@ -134,12 +132,12 @@
       <thead>
         <tr>
             <th>Index</th>
-            <th>No</th>
+            <th>No. Tagihan</th>
+            <th>Jenis</th>
+            <th>Tanggal</th>
             <th>Kegiatan</th>
             <th>Uraian</th>
             <th>Nilai</th>
-            <th>PPn</th>
-            <th>PPh</th>
         </tr>
       </thead>
       <tbody>
@@ -154,10 +152,10 @@
       var tb_array = [
           '<div class="btn-group pull-left">',
           '	<button id="btn_tambah" class="btn btn btn-primary" type="button">Tambah</button>',
-          '	<button id="btn_edit" class="btn btn btn-primary" type="button">Edit</button>',
-          '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',
-          '	<button id="btn_print" class="btn btn btn-primary" type="button">Print</button>',
-          ' <button id="btn_close" class="btn btn-warning" type="button" >Tutup</button>',
+          '	<button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button>',
+          '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
+          '	<button id="btn_print"  class="btn btn btn-primary" type="button">Cetak</button>',
+          ' <button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
           '	&nbsp;',
           '</div>',
       ];
@@ -189,27 +187,32 @@
             },{
                 "bSearchable": false,
                 "bSortable"  : false,
-                "aTargets"   : [2,5,6]
+                "aTargets"   : [3,4,6]
             },{
                 "bSearchable": true,
-                "bSortable"  : true,
-                "aTargets"   : [3]
+                "bSortable"  : false,
+                "aTargets"   : [5]
             },{
-                "sClass"   : "right",
-                "aTargets" : [4,5,6],
-                //"mRender"  : function (data, type, full) {
-                //return formatNumber(data);}
+                "sClass"     : "right",
+                "aTargets"   : [6],
+                "mRender"    : function (data, type, full) {
+                               return formatNumber(data);}
             }],
             "aoColumns": [
-                null, 
-                {"sWidth": "60px"}, 
-                {"sWidth": "100px"}, 
-                null, 
-                {"sWidth": "100px"}, 
-                {"sWidth": "100px"}, 
-                {"sWidth": "100px"}
+                null, {
+                    "sWidth": "50px"
+                }, {
+                    "sWidth": "30px",
+                }, {
+                    "sWidth": "30px",
+                }, {
+                    "sWidth": "220px",
+                }, {
+                    "sWidth": "200px",
+                }, {
+                    "sWidth": "70px",
+                }
             ],
-            
             "fnRowCallback": function (nRow, aData, iDisplayIndex) {
                 $(nRow).on("click", function (event) {
                     if ($(this).hasClass('row_selected')) {
@@ -252,7 +255,7 @@
             if (mID) {
                 window.location = '/ap-invoice-skpd/' + mID +'/edit';
             } else {
-                alert('Silahkan pilih data yang akan diedit');
+                alert('Silahkan pilih data yang akan di edit');
             }
         });
         $('#btn_delete').click(function () {
@@ -263,7 +266,7 @@
             }
         });
         $('#btn_print').click(function () {
-            url = "/ap-report-skpd/id="+mID;
+            url = "/ap-report-skpd/act/apinvoice?id="+mID;
             if (mID) {
                    window.open(url);
             } else {
@@ -271,7 +274,7 @@
             }
         });
         $("#btn_close").click(function () {
-            window.location = '/ap-invoice-skpd';
+            window.location = '/tu-skpd';
             return false;
         });
      });

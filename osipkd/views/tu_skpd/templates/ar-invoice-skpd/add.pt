@@ -1,5 +1,5 @@
 <html metal:use-macro="load: ../base.pt">
-  <div metal:fill-slot="content" class="panel panel-default">
+  <div metal:fill-slot="content">
     <script type='text/javascript'>
         $(document).ready(function () {
             $("#btn_close").click(function () {
@@ -8,6 +8,7 @@
             });
         });
     </script>
+   <div  class="panel panel-default">
     <div class="panel-heading">
         <h3 class="panel-title">${request.title}</h3>
     </div>
@@ -19,8 +20,7 @@
         </div>
       </div>
          
-      <div class="form-group"> 
-        
+      <div class="form-group">   
         <div tal:define="field form['tahun_id']">
           <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                   ${field.title}</label>
@@ -145,7 +145,7 @@
         <div tal:define="field form['nama']" id="item-${field.oid}">
           <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                   ${field.title}</label>
-          <div class="col-md-10">
+          <div class="col-md-6">
              ${structure:field.serialize()}
             <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                tal:repeat="error field.error.messages()">
@@ -166,7 +166,7 @@
                ${error}</p>
           </div>
         </div>
-        <div class="col-md-8" tal:define="field form['bendahara_nm']" id="item-${field.oid}">
+        <div class="col-md-4" tal:define="field form['bendahara_nm']" id="item-${field.oid}">
           ${structure:field.serialize()}
           <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
              tal:repeat="error field.error.messages()">
@@ -203,6 +203,7 @@
               $('#bendahara_uid').val(datum.kode);
               $('#pejabat_id').val(datum.id);
         });
+        $("#bendahara_uid").attr('readonly',true);
         </script>
       </div>
  
@@ -222,7 +223,7 @@
           <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                   ${field.title}</label>
           <div class="col-md-2">
-             ${structure:field.serialize()}
+            ${structure:field.serialize()}
             <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                tal:repeat="error field.error.messages()">
                ${error}</p>
@@ -245,8 +246,10 @@
           <button type="submit" class="btn btn-primary" id="simpan" name="simpan">Simpan</button>
           <button type="submit" class="btn btn-danger"  id="batal"  name="batal">Batal</button>
         </div>
-      </div><br>
+      </div>
       </form>
+      </div>
+     </div>
 
     <div class="row">
       <table class="table table-bordered table-hover table-condensed" id="table1">
@@ -263,7 +266,11 @@
         </tbody>
     </table>
   </div>
-  <div class="row">
+  <div  class="panel panel-default">
+    <div class="panel-heading">
+        <h5 class="panel-title">Item Piutang</h5>
+    </div>
+  <div class="panel-body">
       <form method="post" id="detail" accept-charset="utf-8" id="myform" class="form-horizontal" enctype="multipart/form-data">
         <fieldset class="deformFormFieldset">
           <!--REKENING------------------------------------------------------------->
@@ -319,7 +326,8 @@
                         value="simpan">Update</button>
                   <button id="rekening_cancel" name="batal" type="reset" class="btn btn-danger "
                         value="batal">Batal</button>
-            </div>   
+            </div>
+          </div>            
           <script>
            
           $('#rekening_add').click(function () {
@@ -330,11 +338,10 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
-              "remote"   : "/ag-kegiatan-item/act/headofnama1?kegiatan_sub_id="+$("#kegiatan_sub_id").val()+"&term=%QUERY", 
-          },
-          {
-            "name"      : 'item_nm',
-            "displayKey": 'value',
+              "remote"   : "/ag-kegiatan-item/act/headofnama?kegiatan_sub_id="+$("#kegiatan_sub_id").val()+"&term=%QUERY", 
+          },{
+             "name"      : 'item_nm',
+             "displayKey": 'value',
           }); 
         
           $('#item_nm').bind('typeahead:selected', function(obj, datum, name) {  
@@ -363,6 +370,7 @@
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
                     $('#nilai').val('');
                     $('#no_urut').val('');
+                    $('#jml_total').val(formatNumber(html.jml_total)); 
                     oTable.fnReloadAjax(oTableUrl);
                   } else {
                     $("#errors").css('display', 'inline', 'important');
@@ -378,12 +386,10 @@
             event.preventDefault();
           });
           </script>
-          </div>
         </fieldset>
       </form>  
-    </div> <!--panel-body-->
-    </div>      
-  
+    </div> <!--panel-body-->     
+  </div>
     <script>
       var mID;
       var oTable;
@@ -400,7 +406,9 @@
       ];
 
       var tb = tb_array.join(' ');
-
+        function formatNumber(n) {
+            return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
             "sAjaxSource"    : oTableUrl,
@@ -416,8 +424,8 @@
             "sPaginationType": "full_numbers",
 
             "lengthMenu": [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
+                [5, 10, 15, 50, -1],
+                [5, 10, 15, 50, "All"]
             ],
             "aoColumnDefs": [
             {
@@ -427,12 +435,16 @@
             },{
                 "bSearchable": false,
                 "bSortable"  : false,
-                "aTargets"   : [1,2,3,4]
+                "aTargets"   : [1,3,4]
+            },{
+                "bSearchable": true,
+                "bSortable"  : false,
+                "aTargets"   : [2]
             },{ 
-                "sClass"   : "right",
-                "aTargets" : [4],
-                "mRender"  : function (data, type, full) {
-                return formatNumber(data);}
+                "sClass"     : "right",
+                "aTargets"   : [4],
+                "mRender"    : function (data, type, full) {
+                               return formatNumber(data);}
             }
             ],
             "aoColumns": [
@@ -459,6 +471,7 @@
                         $("#vol_1").val(data[5]);
                         $("#vol_2").val(data[6]);
                         $("#harga").val(data[7]);
+                        $("#kegiatan_item_id").val(data[9]);
 
                         oTable.$('tr.row_selected').removeClass('row_selected');
                         $(this).addClass('row_selected');
@@ -466,10 +479,6 @@
                 })
             },
         });
-
-        function formatNumber(n) {
-                 return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-                 }
 
         $("div.toolbar").html(tb);
 
@@ -488,9 +497,27 @@
         /**********************************************************************/
         $('#btn_delete').click(function () {
             if (mID) {
-                window.location = '/ar-invoice-skpd-item/' + mID +'/delete';
-            } else {
-                alert('Silahkan pilih data yang akan di hapus');
+              if (confirm('Yakin dihapus?')==true){
+                $.ajax({
+                type: "POST",
+                url: "/ar-invoice-skpd/item/"+$("#id").val()+"/"+mID+"/delete",
+                success: function (html) {
+                  if (html.success == true) {
+                    $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                    oTable.fnReloadAjax(oTableUrl);
+                  } else {
+                    $("#errors").css('display', 'inline', 'important');
+                    $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                  }
+                },
+                beforeSend: function () {
+                  $("#errors").css('display', 'inline', 'important');
+                  $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+                }
+                });
+              } else {
+                  alert('Silahkan pilih data yang akan di hapus');
+              }
             }
         });
         
@@ -503,7 +530,10 @@
             return false;
         });
 
-        
+        $("#jml_total").attr('readonly',true);
+        $("#kegiatan_nm").attr('readonly',true);
+        jml_total=$("#jml_total").val();
+        $("#jml_total").val(formatNumber(jml_total));
      });
     </script>
   </div>

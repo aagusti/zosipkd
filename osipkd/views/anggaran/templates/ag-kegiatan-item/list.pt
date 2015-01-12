@@ -301,7 +301,7 @@
           '	<button id="btn_add" class="btn btn btn-primary" type="button">Tambah</button>',
           '	<button id="btn_edit" class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',
-          '	<button id="btn_pdf" class="btn btn btn-warning" type="button">PDF</button>',
+          ' <button id="btn_close" class="btn btn-warning" type="button" >Tutup</button>',
           '	<!--button id="btn_csv" class="btn btn btn-default" type="button">CSV</button-->',
           '	&nbsp;',
           '</div>',
@@ -358,6 +358,11 @@
             window.location = url;
         });
         
+        $("#btn_close").click(function () {
+            window.location = '/ag-bl';
+            return false;
+        });
+
         })
 
     </script>

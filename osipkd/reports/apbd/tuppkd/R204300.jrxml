@@ -33,6 +33,9 @@
 	<field name="unit_nm" class="java.lang.String">
 		<fieldDescription><![CDATA[unit_nm]]></fieldDescription>
 	</field>
+	<field name="customer" class="java.lang.String">
+		<fieldDescription><![CDATA[customer]]></fieldDescription>
+	</field>
 	<variable name="jumlah" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{jumlah})]]></variableExpression>
 	</variable>
@@ -43,7 +46,7 @@
 		<variableExpression><![CDATA[$V{SurpDevisitKat}.equals(0) ? "Surplus/Defisit" : ""]]></variableExpression>
 	</variable>
 	<variable name="jumlah_defsign" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{level_id}=="2" ? Double.parseDouble($F{jumlah})*Double.parseDouble($F{defsign}) : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="3" ? Double.parseDouble($F{jumlah})*Double.parseDouble($F{defsign}) : 0]]></variableExpression>
 	</variable>
 	<variable name="PendBelPembKat" class="java.lang.String">
 		<variableExpression><![CDATA[$F{rek_kd}.substring( 0, 1 )]]></variableExpression>
@@ -58,19 +61,19 @@
 		<variableExpression><![CDATA[$V{PembiayaanKat}=="1" ? "" : "Pembiayaan Netto"]]></variableExpression>
 	</variable>
 	<variable name="jumlah_level" class="java.lang.Double" resetType="Group" resetGroup="level_id" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="2" ? $V{jumlah} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="3" ? $V{jumlah} : 0]]></variableExpression>
 	</variable>
 	<variable name="jumlah_PendBelPemb" class="java.lang.Double" resetType="Group" resetGroup="PendBelPembKat" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="2" ? $V{jumlah} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="3" ? $V{jumlah} : 0]]></variableExpression>
 	</variable>
 	<variable name="jumlah_SurplusDevisit" class="java.lang.Double" resetType="Group" resetGroup="SurpDefisitKat" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="2" ? $V{jumlah_defsign} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="3" ? $V{jumlah_defsign} : 0]]></variableExpression>
 	</variable>
 	<variable name="jumlah_Pembiayaan" class="java.lang.Double" resetType="Group" resetGroup="PembiayaanKat" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="2"&&$F{rek_kd}.substring( 0,1 )=="6" ? $V{jumlah_defsign} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="3"&&$F{rek_kd}.substring( 0,1 )=="6" ? $V{jumlah_defsign} : 0]]></variableExpression>
 	</variable>
 	<variable name="silpa" class="java.lang.Double" resetType="Group" resetGroup="tahun" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="2" ? $V{jumlah_defsign} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="3" ? $V{jumlah_defsign} : 0]]></variableExpression>
 	</variable>
 	<variable name="bulan_nm" class="java.lang.String">
 		<variableExpression><![CDATA[]]></variableExpression>
@@ -80,22 +83,22 @@
 		<variableExpression><![CDATA[Double.parseDouble($F{realisasi})]]></variableExpression>
 	</variable>
 	<variable name="realisasi_level" class="java.lang.Double" resetType="Group" resetGroup="level_id" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="2" ? $V{realisasi} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="3" ? $V{realisasi} : 0]]></variableExpression>
 	</variable>
 	<variable name="realisasi_PendBelPemb" class="java.lang.Double" resetType="Group" resetGroup="PendBelPembKat" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="2" ? $V{realisasi} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="3" ? $V{realisasi} : 0]]></variableExpression>
 	</variable>
 	<variable name="realisasi_SurplusDevisit" class="java.lang.Double" resetType="Group" resetGroup="SurpDefisitKat" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="2" ? $V{realisasi_defsign} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="3" ? $V{realisasi_defsign} : 0]]></variableExpression>
 	</variable>
 	<variable name="realisasi_defsign" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{level_id}=="2" ? Double.parseDouble($F{realisasi})*Double.parseDouble($F{defsign}) : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="3" ? Double.parseDouble($F{realisasi})*Double.parseDouble($F{defsign}) : 0]]></variableExpression>
 	</variable>
 	<variable name="realisasi_Pembiayaan" class="java.lang.Double" resetType="Group" resetGroup="PembiayaanKat" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="2"&&$F{rek_kd}.substring( 0,1 )=="6" ? $V{realisasi_defsign} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="3"&&$F{rek_kd}.substring( 0,1 )=="6" ? $V{realisasi_defsign} : 0]]></variableExpression>
 	</variable>
 	<variable name="realisasi_silpa" class="java.lang.Double" resetType="Group" resetGroup="tahun" calculation="Sum">
-		<variableExpression><![CDATA[$F{level_id}=="2" ? $V{realisasi_defsign} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{level_id}=="3" ? $V{realisasi_defsign} : 0]]></variableExpression>
 	</variable>
 	<group name="tahun" isStartNewPage="true" isResetPageNumber="true">
 		<groupExpression><![CDATA[$F{tahun}]]></groupExpression>
@@ -113,6 +116,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font isBold="true"/>
 					</textElement>
+					<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="0" y="34" width="540" height="15"/>
@@ -650,7 +654,7 @@ LEBIH/(KURANG)]]></text>
 		<groupExpression><![CDATA[$F{level_id}]]></groupExpression>
 		<groupFooter>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{level_id}=="2" && $F{rek_kd}.substring( 0, 1 )=="6"]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{level_id}=="3" && $F{rek_kd}.substring( 0, 1 )=="6"]]></printWhenExpression>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement x="40" y="0" width="222" height="14"/>
 					<box leftPadding="0" rightPadding="1">
@@ -816,7 +820,7 @@ LEBIH/(KURANG)]]></text>
 	</pageHeader>
 	<detail>
 		<band height="14">
-			<printWhenExpression><![CDATA[$F{level_id}=="0"]]></printWhenExpression>
+			<printWhenExpression><![CDATA[$F{level_id}=="1"]]></printWhenExpression>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="40" height="14"/>
 				<box leftPadding="3">
@@ -881,7 +885,7 @@ LEBIH/(KURANG)]]></text>
 			</textField>
 		</band>
 		<band height="14">
-			<printWhenExpression><![CDATA[$F{level_id}=="1"]]></printWhenExpression>
+			<printWhenExpression><![CDATA[$F{level_id}=="2"]]></printWhenExpression>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="40" y="0" width="222" height="14"/>
 				<box leftPadding="5">
@@ -950,7 +954,7 @@ LEBIH/(KURANG)]]></text>
 			</textField>
 		</band>
 		<band height="14">
-			<printWhenExpression><![CDATA[$F{level_id}=="2"]]></printWhenExpression>
+			<printWhenExpression><![CDATA[$F{level_id}=="3"]]></printWhenExpression>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="40" height="14"/>
 				<box leftPadding="3">

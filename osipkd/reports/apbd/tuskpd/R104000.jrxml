@@ -33,6 +33,9 @@
 	<field name="jumlah" class="java.lang.String">
 		<fieldDescription><![CDATA[jumlah]]></fieldDescription>
 	</field>
+	<field name="customer" class="java.lang.String">
+		<fieldDescription><![CDATA[customer]]></fieldDescription>
+	</field>
 	<variable name="jumlah" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{jumlah})]]></variableExpression>
 	</variable>
@@ -43,20 +46,27 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="52" splitType="Stretch">
+		<band height="74" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="16" width="801" height="16"/>
 				<textElement textAlignment="Center" markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{unit_nm}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["REGISTER TAGIHAN/KUITANSI"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="0" width="801" height="16"/>
 				<textElement textAlignment="Center" markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["REGISTER TAGIHAN/KUITANSI"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="32" width="801" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unit_nm}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

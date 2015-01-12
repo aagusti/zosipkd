@@ -29,6 +29,7 @@ class view_ap_invoice_skpd_item(BaseViews):
         req = self.request
         params = req.params
         url_dict = req.matchdict
+
         if url_dict['act']=='grid':
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             if url_dict['act']=='grid':
@@ -46,6 +47,7 @@ class view_ap_invoice_skpd_item(BaseViews):
                 columns.append(ColumnDT('vol_2'))
                 columns.append(ColumnDT('harga'))
                 columns.append(ColumnDT('kegiatanitems.nama'))
+                columns.append(ColumnDT('kegiatan_item_id'))
                 query = DBSession.query(APInvoiceItem).\
                           filter(APInvoiceItem.ap_invoice_id==ap_invoice_id)
                 rowTable = DataTables(req, APInvoiceItem, query, columns)
@@ -96,43 +98,65 @@ def view_add(request):
     row.pph              = controls['pph'].replace('.','')
     row.amount           = float(controls['vol_1'].replace('.',''))*float(controls['vol_2'].replace('.',''))*float(controls['harga'].replace('.',''))
     
-    try:
-        DBSession.add(row)
-        DBSession.flush()
-        return {"success": True, 'id': row.id, "msg":'Success Tambah Item Invoice'}
-    except:
-        return {'success':False, 'msg':'Gagal Tambah Item Invoice'}
+    #try:
+    DBSession.add(row)
+    DBSession.flush()
+    amount = "%d" % APInvoice.get_nilai(row.ap_invoice_id) 
+    return {"success": True, 'id': row.id, "msg":'Success Tambah Item Invoice', 'jml_total':amount}
+    #except:
+    #    return {'success':False, 'msg':'Gagal Tambah Item Invoice'}
 
 
 ########
 # Edit #
 ########
 def query_id(request):
-    return DBSession.query(APInvoice).filter(APInvoice.id==request.matchdict['id'])
+    return DBSession.query(APInvoiceItem).filter(APInvoiceItem.id==request.matchdict['id'],
+                                                 APInvoiceItem.ap_invoice_id==request.matchdict['ap_invoice_id'])
     
 def id_not_found(request):    
     msg = 'User ID %s not found.' % request.matchdict['id']
     request.session.flash(msg, 'error')
     return route_list(request)
 
+@view_config(route_name='ap-invoice-skpd-item-edit', renderer='json',
+             permission='edit')
+def view_edit(request):
+    row = query_id(request).first()
+    if not row:
+        return id_not_found(request)
+    form = get_form(request, EditSchema)
+    if request.POST:
+        if 'simpan' in request.POST:
+            controls = request.POST.items()
+            
+            try:
+                c = form.validate(controls)
+            except ValidationFailure, e:
+                return dict(form=form)
+            save_request(dict(controls), request, row)
+        return route_list(request)
+    elif SESS_EDIT_FAILED in request.session:
+        del request.session[SESS_EDIT_FAILED]
+        return dict(form=form)
+    values = row.to_dict() #dict(zip(row.keys(), row))
+    values['kegiatan_nm']=row.kegiatan_subs.nama
+    values['kegiatan_kd']=row.kegiatan_subs.kode
+    form.set_appstruct(values) 
+    return dict(form=form)
+
 ##########
 # Delete #
 ##########    
-@view_config(route_name='ap-invoice-skpd-item-delete', renderer='templates/ap-invoice-skpd-item/delete.pt',
+@view_config(route_name='ap-invoice-skpd-item-delete', renderer='json',
              permission='delete')
 def view_delete(request):
     q = query_id(request)
     row = q.first()
     if not row:
-        return id_not_found(request)
-    form = Form(colander.Schema(), buttons=('hapus','cancel'))
-    values= {}
-    if request.POST:
-        if 'hapus' in request.POST:
-            msg = '%s Kode %s  No. %s %s sudah dihapus.' % (request.title, row.kode, row.no_urut, row.nama)
-            DBSession.query(APInvoice).filter(APInvoice.id==request.matchdict['id']).delete()
-            DBSession.flush()
-            request.session.flash(msg)
-        return route_list(request)
-    return dict(row=row,
-                 form=form.render())
+        return {'success':False, "msg":self.id_not_found()}
+
+    msg = 'Data sudah dihapus'
+    query_id(request).delete()
+    DBSession.flush()
+    return {'success':True, "msg":msg}

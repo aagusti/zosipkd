@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R103002" language="groovy" pageWidth="595" pageHeight="842" columnWidth="487" leftMargin="54" rightMargin="54" topMargin="72" bottomMargin="72">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="355"/>
+	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[/apbd/spp]]>
 	</queryString>
@@ -33,11 +33,11 @@
 	<field name="nama" class="java.lang.String">
 		<fieldDescription><![CDATA[nama]]></fieldDescription>
 	</field>
-	<field name="bank_nama" class="java.lang.String">
-		<fieldDescription><![CDATA[bank_nama]]></fieldDescription>
+	<field name="ap_bank" class="java.lang.String">
+		<fieldDescription><![CDATA[ap_bank]]></fieldDescription>
 	</field>
-	<field name="bank_account" class="java.lang.String">
-		<fieldDescription><![CDATA[bank_account]]></fieldDescription>
+	<field name="ap_rekening" class="java.lang.String">
+		<fieldDescription><![CDATA[ap_rekening]]></fieldDescription>
 	</field>
 	<field name="jenis" class="java.lang.String">
 		<fieldDescription><![CDATA[jenis]]></fieldDescription>
@@ -54,6 +54,9 @@
 	<field name="tanggal" class="java.lang.String">
 		<fieldDescription><![CDATA[tanggal]]></fieldDescription>
 	</field>
+	<field name="customer" class="java.lang.String">
+		<fieldDescription><![CDATA[customer]]></fieldDescription>
+	</field>
 	<variable name="nominal" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{nominal})]]></variableExpression>
 	</variable>
@@ -61,23 +64,30 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="53" splitType="Stretch">
+		<band height="71" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="0" width="487" height="16"/>
 				<textElement textAlignment="Center" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["SURAT PERMINTAAN PEMBAYARAN "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="16" width="487" height="16"/>
 				<textElement textAlignment="Center" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{kegiatan_nm}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["SURAT PERMINTAAN PEMBAYARAN "]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="32" width="487" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kegiatan_nm}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="48" width="487" height="16"/>
 				<textElement textAlignment="Center" markup="none">
 					<font isBold="false"/>
 				</textElement>
@@ -261,7 +271,7 @@ Pengguna Anggaran / Kuasa Pengguna Anggaran
 				<textElement markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{bank_nama}+" "+$F{bank_account}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ap_bank}+" "+$F{ap_rekening}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="294" y="364" width="193" height="14"/>

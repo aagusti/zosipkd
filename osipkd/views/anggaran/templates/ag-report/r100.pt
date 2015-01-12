@@ -114,6 +114,12 @@
         
         $('#div_tblkegiatan').hide();
         $('input[name="jenis"]').prop('checked', false);
+
+        $("#btn_close").click(function () {
+            window.location = '/anggaran';
+            return false;
+        });
+        
       });
     </script>
     
@@ -246,10 +252,10 @@
                 <div class="radio">
                     <label><input type="radio" name="jenis" value="32">RKA-3.2</label>
                 </div>
-                
-                <div class="col-md-2">
-                      <button id="btn_cetak" name="btn_cetak" type="button" class="btn btn-primary "
-                            value="cetak">Cetak Laporan</button>
+                <br>
+                <div class="col-md-0">
+                      <button id="btn_cetak" name="btn_cetak" type="button" class="btn btn-primary" value="cetak">Cetak Laporan</button>
+                      <button id="btn_close" name="btn_close" type="button" class="btn btn-warning" value="btn_close">Tutup</button>
                 </div>          
             </div>
             

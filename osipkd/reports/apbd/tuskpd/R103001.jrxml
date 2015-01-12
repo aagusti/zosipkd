@@ -24,8 +24,8 @@
 	<field name="tgl_invoice" class="java.lang.String">
 		<fieldDescription><![CDATA[tgl_invoice]]></fieldDescription>
 	</field>
-	<field name="ap_nomor" class="java.lang.String">
-		<fieldDescription><![CDATA[ap_nomor]]></fieldDescription>
+	<field name="kode" class="java.lang.String">
+		<fieldDescription><![CDATA[kode]]></fieldDescription>
 	</field>
 	<field name="ap_nama" class="java.lang.String">
 		<fieldDescription><![CDATA[ap_nama]]></fieldDescription>
@@ -97,7 +97,7 @@
 				<textElement markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{ap_nomor}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{kode}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="62" y="16" width="168" height="16"/>

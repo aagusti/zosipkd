@@ -19,18 +19,21 @@
               ${structure:field.serialize()}
           </div>
         </div>
+
+          <!-- TAHUN -------------------------------------------------------------------->
         <div class="form-group"> 
           <div tal:define="field form['tahun_id']">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
             <div class="col-md-1">
-               <input type="text" class="form-control" id="${field.oid}" 
+               <input type="text" readonly class="form-control" id="${field.oid}" 
                       value="${request.session.tahun}" name="${field.oid}">
               <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                  tal:repeat="error field.error.messages()">
                  ${error}</p>
             </div>
           </div>
+
           <!-- UNIT -------------------------------------------------------------------->
           <div tal:define="field form['unit_id']" style="display: none;">
                <input type="text" class="form-control" id="${field.oid}" 
@@ -49,6 +52,65 @@
                    name="unit_nm" value="${request.session.unit_nm}" readonly>
           </div>
         </div>
+
+        <!--SPD-------------------------------------------------------------------->
+        <div class="form-group"> 
+          <div tal:define="field form['ap_spd_id']" style="display: none;">
+              ${structure:field.serialize()}
+          </div>
+          <div tal:define="field form['spd_kd']"  id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-2">
+               ${structure:field.serialize()}
+                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                   tal:repeat="error field.error.messages()">
+                   ${error}</p>
+            </div>
+          </div>
+
+          <div class="col-md-5" tal:define="field form['spd_nm']" id="item-${field.oid}">
+               ${structure:field.serialize()}
+                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                   tal:repeat="error field.error.messages()">
+                   ${error}</p>
+          </div>
+          <script>
+               $('#spd_kd').typeahead({
+                    "hint"     : true,
+                    "highlight": true,
+                    "minLength": 1,
+                    "remote"   : "/ap-spd/act/headofkode1?term=%QUERY",
+                  },
+                  {
+                  "name"      : 'spd_kd',
+                  "displayKey": 'value',
+                });
+                $('#spd_nm').typeahead({
+                    "hint"     : true,
+                    "highlight": true,
+                    "minLength": 1,
+                    "remote"   : "/ap-spd/act/headofnama1?term=%QUERY",
+                  },
+                  {
+                    "name"      : 'spd_nm',
+                    "displayKey": 'value',
+                  });
+                  
+              $('#spd_kd').bind('typeahead:selected', function(obj, datum, name) {      
+                    $('#ap_spd_id').val(datum.id);
+                    $('#spd_nm').val(datum.nama);
+                    //$('#spd_kd').val(datum.kode);
+              });
+              $('#spd_nm').bind('typeahead:selected', function(obj, datum, name) {      
+                    $('#ap_spd_id').val(datum.id);
+                    //$('#spd_nm').val(datum.nama);
+                    $('#spd_kd').val(datum.kode);
+              });
+              $("#spd_nm").attr('readonly',true);
+          </script>
+        </div>
+
         <!--NO Urut-------------------------------------------------------------------->
         <div class="form-group"> 
 
@@ -62,8 +124,8 @@
                  ${error}</p>
             </div>
           </div>
-          <!--Jenis-------------------------------------------------------------------->
-          <div tal:define="field form['jenis']" id="item-${field.oid}">
+
+          <div tal:define="field form['kode']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
             <div class="col-md-2">
@@ -73,9 +135,20 @@
                  ${error}</p>
             </div>
           </div>
+
+          <!--Jenis-------------------------------------------------------------------->
+          <div tal:define="field form['jenis']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-1">
+               ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
+          </div>
           
           <!--Tanggals-------------------------------------------------------------------->
-
           <div tal:define="field form['tanggal']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
@@ -85,24 +158,15 @@
                  tal:repeat="error field.error.messages()">
                  ${error}</p>
             </div>
-          </div>
-          <div tal:define="field form['ap_spd_id']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
-                    ${field.title}</label>
-            <div class="col-md-2">
-               ${structure:field.serialize()}
-              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                 tal:repeat="error field.error.messages()">
-                 ${error}</p>
-            </div>
-          </div>          
+          </div>      
         </div>
+
         <!--Uraian-------------------------------------------------------------------->
         <div class="form-group"> 
           <div tal:define="field form['nama']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
-            <div class="col-md-11">
+            <div class="col-md-10">
                ${structure:field.serialize()}
               <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                  tal:repeat="error field.error.messages()">
@@ -110,6 +174,7 @@
             </div>
           </div>
         </div>
+
         <!---ap_nama------------------------------------------------------------------->
         <div class="form-group"> 
           <div tal:define="field form['ap_nama']" id="item-${field.oid}">
@@ -136,6 +201,7 @@
               </div>
             </div>
           </div>
+
           <!---ap_nip------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['ap_nip']" id="item-${field.oid}">
@@ -150,7 +216,7 @@
             </div>
           </div>
         </div>
-        
+
         <!----ap_bank------------------------------------------------------------------>
         <div class="form-group"> 
           <div tal:define="field form['ap_bank']" id="item-${field.oid}">
@@ -163,6 +229,7 @@
                  ${error}</p>
             </div>
           </div>
+
           <!---ap_rekening------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['ap_rekening']" id="item-${field.oid}">
@@ -176,6 +243,7 @@
               </div>
             </div>
           </div>
+
           <!---nominal------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['nominal']" id="item-${field.oid}">
@@ -191,9 +259,11 @@
           </div>        
         </div>        
 
-
-        <!---ttd_nip------------------------------------------------------------------->
+        <!--nip------------------------------------------------------------------------>
         <div class="form-group"> 
+          <div tal:define="field form['ttd_uid']" style="display: none;">
+            ${structure:field.serialize()}
+          </div>
           <div tal:define="field form['ttd_nip']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
@@ -204,7 +274,8 @@
                  ${error}</p>
             </div>
           </div>
-          <!----ttd_nama------------------------------------------------------------------>
+
+          <!---ttd_nama------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['ttd_nama']" id="item-${field.oid}">
               <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
@@ -217,6 +288,7 @@
               </div>
             </div>
           </div>
+
           <!---ttd_jab------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['ttd_jab']" id="item-${field.oid}">
@@ -230,7 +302,77 @@
               </div>
             </div>
           </div>
-        </div>
+           <script>
+           $('#ttd_uid').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofkode4?term=%QUERY",
+            },
+            {
+            "name"      : 'ttd_uid',
+            "displayKey": 'value',
+          });
+          $('#ttd_nip').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofnip4?term=%QUERY",
+            },
+            {
+              "name"      : 'ttd_nip',
+              "displayKey": 'value',
+            });
+          $('#ttd_nama').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofnama4?term=%QUERY",
+            },
+            {
+              "name"      : 'ttd_nama',
+              "displayKey": 'value',
+            });
+          $('#ttd_nip').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofnip4?term=%QUERY",
+            },
+            {
+              "name"      : 'ttd_nip',
+              "displayKey": 'value',
+            });
+        
+        $('#ttd_uid').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#ttd_nama').val(datum.nama);
+              $('#ttd_nip').val(datum.nip);
+              $('#pejabat_id').val(datum.id);
+              $('#ttd_jab').val(datum.jab);
+        });
+        $('#ttd_nama').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#ttd_uid').val(datum.kode);
+              $('#ttd_nip').val(datum.nip);
+              $('#pejabat_id').val(datum.id);
+              $('#ttd_jab').val(datum.jab);
+        });
+        $('#ttd_nip').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#ttd_nama').val(datum.nama);
+              $('#ttd_uid').val(datum.kode);
+              $('#pejabat_id').val(datum.id);
+              $('#ttd_jab').val(datum.jab);
+        });
+        $('#ttd_jab').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#ttd_nama').val(datum.nama);
+              $('#ttd_uid').val(datum.kode);
+              $('#pejabat_id').val(datum.id);
+              $('#ttd_nip').val(datum.nip);
+        });
+        $("#ttd_jab").attr('readonly',true);
+        $("#ttd_nip").attr('readonly',true);
+        </script>
+        </div>    
+
         <!---ap_pemilik------------------------------------------------------------------->
         <div class="form-group"> 
           <div tal:define="field form['ap_pemilik']" id="item-${field.oid}">
@@ -243,6 +385,7 @@
                  ${error}</p>
             </div>
           </div>
+
           <!---ap_bentuk------------------------------------------------------------------->
           <div class="col-md-2"> 
             <div tal:define="field form['ap_bentuk']" id="item-${field.oid}">
@@ -256,6 +399,7 @@
               </div>
             </div>
           </div>
+
           <!---ap_alamat------------------------------------------------------------------->
           <div class="col-md-6"> 
             <div tal:define="field form['ap_alamat']" id="item-${field.oid}">
@@ -270,8 +414,7 @@
             </div>
           </div>
       </div>
-        
-        
+
         <!---ap_kontrak------------------------------------------------------------------->
         <div class="form-group"> 
           <div tal:define="field form['ap_kontrak']" id="item-${field.oid}">
@@ -284,7 +427,7 @@
                  ${error}</p>
             </div>
           </div>
-          
+
           <!---ap_tgl_kontrak------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['ap_tgl_kontrak']" id="item-${field.oid}">
@@ -298,6 +441,7 @@
               </div>
             </div>
           </div>
+
           <!---ap_waktu------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['ap_waktu']" id="item-${field.oid}">
@@ -312,6 +456,7 @@
             </div>
           </div>
         </div>
+
         <!-----ap_kegiatankd----------------------------------------------------------------->
         <div class="form-group"> 
           <div tal:define="field form['ap_kegiatankd']" id="item-${field.oid}">
@@ -324,6 +469,7 @@
                  ${error}</p>
             </div>
           </div>
+
           <!---ap_uraian------------------------------------------------------------------->
           <div class="col-md-8"> 
             <div tal:define="field form['ap_uraian']" id="item-${field.oid}">
@@ -341,6 +487,9 @@
 
         <!----barang_nip------------------------------------------------------------------>
         <div class="form-group"> 
+          <div tal:define="field form['barang_uid']" style="display: none;">
+            ${structure:field.serialize()}
+          </div>
           <div tal:define="field form['barang_nip']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
@@ -351,7 +500,8 @@
                  ${error}</p>
             </div>
           </div>
-          <!---barang_nama------------------------------------------------------------------->
+
+          <!---ttd_nama------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['barang_nama']" id="item-${field.oid}">
               <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
@@ -364,7 +514,8 @@
               </div>
             </div>
           </div>
-          <!-----barang_jab----------------------------------------------------------------->
+
+          <!---ttd_jab------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['barang_jab']" id="item-${field.oid}">
               <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
@@ -377,9 +528,82 @@
               </div>
             </div>
           </div>
-        </div>
+           <script>
+           $('#barang_uid').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofkode4?term=%QUERY",
+            },
+            {
+            "name"      : 'barang_uid',
+            "displayKey": 'value',
+          });
+          $('#barang_nip').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofnip4?term=%QUERY",
+            },
+            {
+              "name"      : 'barang_nip',
+              "displayKey": 'value',
+            });
+          $('#barang_nama').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofnama4?term=%QUERY",
+            },
+            {
+              "name"      : 'barang_nama',
+              "displayKey": 'value',
+            });
+          $('#barang_nip').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofnip4?term=%QUERY",
+            },
+            {
+              "name"      : 'barang_nip',
+              "displayKey": 'value',
+            });
+        
+        $('#barang_uid').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#barang_nama').val(datum.nama);
+              $('#barang_nip').val(datum.nip);
+              $('#pejabat_id').val(datum.id);
+              $('#barang_jab').val(datum.jab);
+        });
+        $('#barang_nama').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#barang_uid').val(datum.kode);
+              $('#barang_nip').val(datum.nip);
+              $('#pejabat_id').val(datum.id);
+              $('#barang_jab').val(datum.jab);
+        });
+        $('#barang_nip').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#barang_nama').val(datum.nama);
+              $('#barang_uid').val(datum.kode);
+              $('#pejabat_id').val(datum.id);
+              $('#barang_jab').val(datum.jab);
+        });
+        $('#barang_jab').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#barang_nama').val(datum.nama);
+              $('#barang_uid').val(datum.kode);
+              $('#pejabat_id').val(datum.id);
+              $('#barang_nip').val(datum.nip);
+        });
+        $("#barang_jab").attr('readonly',true);
+        $("#barang_nip").attr('readonly',true);
+        </script>
+        </div>    
+
         <!--kasi_nip-------------------------------------------------------------------->
         <div class="form-group"> 
+          <div tal:define="field form['kasi_uid']" style="display: none;">
+            ${structure:field.serialize()}
+          </div>
           <div tal:define="field form['kasi_nip']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
@@ -391,7 +615,7 @@
             </div>
           </div>
 
-          <!---kasi_nama------------------------------------------------------------------->
+          <!---ttd_nama------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['kasi_nama']" id="item-${field.oid}">
               <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
@@ -404,7 +628,8 @@
               </div>
             </div>
           </div>
-          <!---kasi_jab------------------------------------------------------------------->
+
+          <!---ttd_jab------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['kasi_jab']" id="item-${field.oid}">
               <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
@@ -417,10 +642,82 @@
               </div>
             </div>
           </div>
-        </div>
+           <script>
+           $('#kasi_uid').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofkode4?term=%QUERY",
+            },
+            {
+            "name"      : 'kasi_uid',
+            "displayKey": 'value',
+          });
+          $('#kasi_nip').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofnip4?term=%QUERY",
+            },
+            {
+              "name"      : 'kasi_nip',
+              "displayKey": 'value',
+            });
+          $('#kasi_nama').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofnama4?term=%QUERY",
+            },
+            {
+              "name"      : 'kasi_nama',
+              "displayKey": 'value',
+            });
+          $('#kasi_nip').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofnip4?term=%QUERY",
+            },
+            {
+              "name"      : 'kasi_nip',
+              "displayKey": 'value',
+            });
+        
+        $('#kasi_uid').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#kasi_nama').val(datum.nama);
+              $('#kasi_nip').val(datum.nip);
+              $('#pejabat_id').val(datum.id);
+              $('#kasi_jab').val(datum.jab);
+        });
+        $('#kasi_nama').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#kasi_uid').val(datum.kode);
+              $('#kasi_nip').val(datum.nip);
+              $('#pejabat_id').val(datum.id);
+              $('#kasi_jab').val(datum.jab);
+        });
+        $('#kasi_nip').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#kasi_nama').val(datum.nama);
+              $('#kasi_uid').val(datum.kode);
+              $('#pejabat_id').val(datum.id);
+              $('#kasi_jab').val(datum.jab);
+        });
+        $('#kasi_jab').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#kasi_nama').val(datum.nama);
+              $('#kasi_uid').val(datum.kode);
+              $('#pejabat_id').val(datum.id);
+              $('#kasi_nip').val(datum.nip);
+        });
+        $("#kasi_jab").attr('readonly',true);
+        $("#kasi_nip").attr('readonly',true);
+        </script>
+        </div>    
 
         <!--pptk_nip-------------------------------------------------------------------->
         <div class="form-group"> 
+          <div tal:define="field form['pptk_uid']" style="display: none;">
+            ${structure:field.serialize()}
+          </div>
           <div tal:define="field form['pptk_nip']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
@@ -431,8 +728,8 @@
                  ${error}</p>
             </div>
           </div>
-                
-          <!---pptk_nama------------------------------------------------------------------->
+
+          <!---ttd_nama------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['pptk_nama']" id="item-${field.oid}">
               <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
@@ -445,12 +742,64 @@
               </div>
             </div>
           </div>
-          <!---pptk_nama------------------------------------------------------------------->
+           <script>
+           $('#pptk_uid').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofkode5?term=%QUERY",
+            },
+            {
+            "name"      : 'pptk_uid',
+            "displayKey": 'value',
+          });
+          $('#pptk_nip').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofnip5?term=%QUERY",
+            },
+            {
+              "name"      : 'pptk_nip',
+              "displayKey": 'value',
+            });
+          $('#pptk_nama').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofnama5?term=%QUERY",
+            },
+            {
+              "name"      : 'pptk_nama',
+              "displayKey": 'value',
+            });
+        
+        $('#pptk_uid').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#pptk_nama').val(datum.nama);
+              $('#pptk_nip').val(datum.nip);
+              $('#pejabat_id').val(datum.id);
+              $('#pptk_jab').val(datum.jab);
+        });
+        $('#pptk_nama').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#pptk_uid').val(datum.kode);
+              $('#pptk_nip').val(datum.nip);
+              $('#pejabat_id').val(datum.id);
+              $('#pptk_jab').val(datum.jab);
+        });
+        $('#pptk_nip').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#pptk_nama').val(datum.nama);
+              $('#pptk_uid').val(datum.kode);
+              $('#pejabat_id').val(datum.id);
+              $('#pptk_jab').val(datum.jab);
+        });
+        $("#pptk_nip").attr('readonly',true);
+        </script>
           <div class="col-md-4"> 
             <button type="submit" class="btn btn-primary" id="simpan" name="simpan" >Simpan</button>
             <button type="submit" class="btn btn-danger" id="batal" name="batal">Batal</button>
+            <button type="submit" class="btn btn-warning" id="tutup" name="tutup">Tutup</button>
           </div>
-        </div>        
+        </div>         
       </form>
     </div>  
   </div>  
@@ -458,139 +807,128 @@
         <table class="table table-bordered table-hover table-condensed" id="table1">
           <thead>
               <tr>
-                  <th>Index</th>
-                  <th>No</th>
-                  <th>Uraian</th>
-                  <th>Jumlah</th>
-                  <th>PPn</th>
-                  <th>PPh</th>
+                <th>Index</th>
+                <th>No. Tagihan</th>
+                <th>No. Tagihan</th>
+                <th>Jenis</th>
+                <th>Tanggal</th>
+                <th>Uraian</th>
+                <th>Nilai</th>
               </tr>
           </thead>
           <tbody>
           </tbody>
       </table>
       </div>
-      <div class="row">
-          <form method="post" id="detail" accept-charset="utf-8" id="myform" class="form-horizontal" enctype="multipart/form-data">
-            <fieldset class="deformFormFieldset">
-              <!--REKENING------------------------------------------------------------->
-              <input id="ap_spp_item_id" type="hidden" value="" name="ap_spp_item_id">
-              <input id="ap_invoice_id" type="hidden" value="" name="ap_invoice_id">
-              <div class="form-group">
-                <label for="item_nm" class="control-label col-md-1" id="req-item_nm">
-                        Item </label>
-                <div class="col-md-4">
-                   <input id="item_nm" class=" form-control " type="text" value="" name="item_nm">
-                </div>
-                <div class="col-md-3">
-                    <label for="amount" class="control-label col-md-3" id="req-amount">
-                           Harga</label>
-                    <div class="col-md-9">
-                       <input id="amount" class=" form-control " type="text" value="0" name="amount"  readonly>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <label for="ppn" class="control-label col-md-2" id="req-ppn">
-                             PPn/PPh</label>
-                    <div class="col-md-4">
-                       <input id="ppn" class=" form-control " type="text" value="0" name="ppn" readonly>
-                    </div>
-                    <div class="col-md-4">
-                       <input id="pph" class=" form-control " type="text" value="0" name="pph" readonly>
-                    </div>
-                      <button id="rekening_add" name="baru" type="button" class="btn btn-primary "
-                            value="baru">Baru</button>
-                </div>
-                <!--Button----------------------------------------------------------->
-              </div>
-        <script>
-          $('#rekening_add').click(function () {
-                $('#ap_spp_item_id').val('');
-                $('#detail').submit();
-           })
-          $('#item_nm').typeahead({
-              "hint": true,
-              "highlight": true,
-              "minLength": 1,
-              "remote": "/ap-invoice-skpd/act/headofnama?term=%QUERY", 
-          },
-          {
-            "name": 'item_nm',
-            "displayKey": 'value',
-          }); 
+      <div  class="panel panel-default">
+          <div class="panel-heading">
+              <h5 class="panel-title">Tambah Tagihan / Utang</h5>
+          </div>
+      <div class="panel-body">
+       <form method="post" id="detail" accept-charset="utf-8" id="myform" class="form-horizontal" enctype="multipart/form-data">
+        <fieldset class="deformFormFieldset">
+              <!--APIncoice------------------------------------------------------------->
+          <input id="ap_spp_item_id" type="hidden" value="" name="ap_spp_item_id">
+          <input id="ap_invoice_id" type="hidden" value="" name="ap_invoice_id">
+          <div class="form-group">
+            <label for="kode1" class="control-label col-md-1" id="req-kode1">
+                    Tagihan </label>
+            <div class="col-md-2">
+               <input id="kode1" class=" form-control " type="text" value="" name="kode1">
+            </div>
+            <div class="col-md-5">
+               <input id="nama1" class=" form-control " readonly type="text" value="" name="nama1">
+            </div>
+            <div class="col-md-2">
+               <input id="amount1" class=" form-control " readonly type="text" value="0" name="amount1">
+            </div>
+            <!--Button----------------------------------------------------------->
+            <div class="col-md-2">
+                <button id="rekening_add" name="baru" type="button" class="btn btn-primary "
+                    value="baru">Tambah</button>
+            </div> 
+          </div>
+          <script>
+            $('#rekening_add').click(function () {
+                  $('#ap_spp_item_id').val('');
+                  $('#detail').submit();
+             })
+            $('#kode1').typeahead({
+                "hint"     : true,
+                "highlight": true,
+                "minLength": 1,
+                "remote"   : "/ap-invoice-skpd/act/headofkode1?term=%QUERY", 
+            },{
+               "name"      : 'kode1',
+               "displayKey": 'value',
+            });           
           
-        
-          $('#item_nm').bind('typeahead:selected', function(obj, datum, name) {  
-                $('#ap_invoice_id').val(datum.id);
-                $('#amount').val(formatNumber(datum.amount));
-                $('#ppn').val(formatNumber(datum.pph));
-                $('#pph').val(formatNumber(datum.pph));
-                
-          });
-            
-          $( "#detail" ).submit(function( event ) {
-            var ap_spp_id;
-            var is_success;
-            is_success = true;
-            ap_spp_id = $('#id').val();
-            if (!ap_spp_id) {
-                is_success = false;
-                $("#errors").css('display', 'inline', 'important');
-                $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + 'Simpan Dulu Headernya');
-            }
-
-            if (is_success){
-              $.ajax({
-                type: "POST",
-                url: "/ap-spp/item/"+ap_spp_id+"/add",
-                data: $('#detail').serialize(),
-                success: function (html) {
-                  if (html.success == true) {
-                    $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                    $('#item_nm').val('');
-                    $('#amount').val('');
-                    $('#ppn').val('');
-                    $('#pph').val('');
-                    oTable.fnReloadAjax(oTableUrl);
-                  } else {
-                    $("#errors").css('display', 'inline', 'important');
-                    $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
-                  }
-                },
-                beforeSend: function () {
+            $('#kode1').bind('typeahead:selected', function(obj, datum, name) {  
+                  $('#ap_invoice_id').val(datum.id);
+                  $('#nama1').val(datum.nama);
+                  $('#amount1').val(datum.amount);                  
+            });
+              
+            $( "#detail" ).submit(function( event ) {
+              var ap_spp_id;
+              var is_success;
+              is_success = true;
+              ap_spp_id = $('#id').val();
+              if (!ap_spp_id) {
+                  is_success = false;
                   $("#errors").css('display', 'inline', 'important');
-                  $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
-                }
-              });
-            }
-            event.preventDefault();
-          });
-        </script>
+                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + 'Simpan Dulu Headernya');
+              }
+          
+              if (is_success){
+                $.ajax({
+                  type: "POST",
+                  url: "/ap-spp/item/"+ap_spp_id+"/add",
+                  data: $('#detail').serialize(),
+                  success: function (html) {
+                    if (html.success == true) {
+                      $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                      $('#jml_total').val(formatNumber(html.jml_total));
+                      oTable.fnReloadAjax(oTableUrl);
+                    } else {
+                      $("#errors").css('display', 'inline', 'important');
+                      $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                    }
+                  },
+                  beforeSend: function () {
+                    $("#errors").css('display', 'inline', 'important');
+                    $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+                  }
+                });
+              }
+              event.preventDefault();
+            });
+          </script> 
+        </fieldset>
+       </form>
+      </div>       
+     </div> <!--panel-body-->
 
-            </fieldset>
-          </form>  
-      </div> <!--panel-body-->
-    
-  
     <script>
       var mID;
       var oTable;
       var iPos;
-      var ap_invoice_id = $('#id').val();
-      var oTableUrl = "/ap-spp/item/"+ap_invoice_id+"/act/grid";
+      var ap_spp_id = $('#id').val();
+      var oTableUrl = "/ap-spp/item/"+ap_spp_id+"/act/grid";
       var tb_array = [
           '<div class="btn-group pull-left">',
-          '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',
-          '	<button id="btn_print" class="btn btn btn-primary" type="button">Print</button>',
-          ' <button id="btn_close" class="btn btn-warning" type="button" >Tutup</button>',
+          '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
+          '	<button id="btn_print"  class="btn btn btn-primary" type="button">Print</button>',
+          ' <button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
           '	&nbsp;',
           '</div>',
       ];
 
       var tb = tb_array.join(' ');
-        function formatNumber(n) {
-                 return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-                 }
+
+      function formatNumber(n) {
+         return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      }
 
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
@@ -607,23 +945,31 @@
             "sPaginationType": "full_numbers",
 
             "lengthMenu": [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
+                [5, 10, 15, 25, 50, -1],
+                [5, 10, 15, 25, 50, "All"]
             ],
             "aoColumnDefs": [{
                 "bSearchable": false,
                 "bVisible"   : false,
-                "aTargets"   : [0,6]
-            }],
+                "aTargets"   : [0,1]
+            },{
+                "bSearchable": true,
+                "bSortable"  : false,
+                "aTargets"   : [2,5]
+            },{
+                "bSearchable": false,
+                "bSortable"  : false,
+                "aTargets"   : [3,4,6]
+            }            
+            ],
             "aoColumns": [
                 null, 
-                {"sWidth": "60px"}, 
-                null, 
-                {"sWidth": "100px", "sClass"   : "right"},
-                {"sWidth": "100px","sClass"   : "right"},
-                {"sWidth": "100px","sClass"   : "right"},
-                null,
-                
+                {"sWidth": "50px"}, 
+                {"sWidth": "50px"},
+                {"sWidth": "30px"}, 
+                {"sWidth": "30px"}, 
+                {"sWidth": "120px"},
+                {"sWidth": "50px", "sClass": "right"},
             ],
             "fnRowCallback": function (nRow, aData, iDisplayIndex) {
                 $(nRow).on("click", function (event) {
@@ -634,6 +980,11 @@
 
                         var data = oTable.fnGetData(this);
                         mID = data[0];
+                        $("#ap_spp_item_id").val(data[0]);
+                        $("#ap_invoice_id").val(data[1]);
+                        $("#kode1").val(data[2]);
+                        $("#nama1").val(data[5]);
+                        $("#amount1").val(data[6]);                        
                         oTable.$('tr.row_selected').removeClass('row_selected');
                         $(this).addClass('row_selected');
                     }
@@ -656,7 +1007,6 @@
         });
         /**********************************************************************/
         $('#btn_delete').click(function () {
-            
             if (mID) {
               if (confirm('Yakin dihapus?')==true){
                 $.ajax({
@@ -681,20 +1031,17 @@
               }
             }
         });
-        
         $('#btn_print').click(function () {
-            alert('not implemented');
+            alert('Masih Proses Bung!');
         });
-
         $("#btn_close").click(function () {
             window.location = '/ap-spp';
             return false;
         });
-
-        
+        $("#jml_total").attr('readonly',true);
+        jml_total=$("#jml_total").val();
+        $("#jml_total").val(formatNumber(jml_total));
      });
     </script>
-  
   </div>
-
 </html>

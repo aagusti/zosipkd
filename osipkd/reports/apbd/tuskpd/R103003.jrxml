@@ -40,12 +40,6 @@
 	<field name="jenis" class="java.lang.String">
 		<fieldDescription><![CDATA[jenis]]></fieldDescription>
 	</field>
-	<field name="bank_nama" class="java.lang.String">
-		<fieldDescription><![CDATA[bank_nama]]></fieldDescription>
-	</field>
-	<field name="bank_account" class="java.lang.String">
-		<fieldDescription><![CDATA[bank_account]]></fieldDescription>
-	</field>
 	<field name="ap_nama" class="java.lang.String">
 		<fieldDescription><![CDATA[ap_nama]]></fieldDescription>
 	</field>
@@ -91,8 +85,8 @@
 	<field name="potongan" class="java.lang.String">
 		<fieldDescription><![CDATA[potongan]]></fieldDescription>
 	</field>
-	<field name="spd_id" class="java.lang.String">
-		<fieldDescription><![CDATA[spd_id]]></fieldDescription>
+	<field name="ap_spd_id" class="java.lang.String">
+		<fieldDescription><![CDATA[ap_spd_id]]></fieldDescription>
 	</field>
 	<variable name="nilai" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{nilai})]]></variableExpression>

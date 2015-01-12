@@ -25,6 +25,11 @@
         
         $('#div_skpd').hide();
         $('input[name="jenis"]').prop('checked', false);
+
+        $("#btn_close").click(function () {
+            window.location = '/anggaran';
+            return false;
+        });
       });
     </script>
   <form id="header" method="POST" enctype="multipart/form-data" accept-charset="utf-8" 
@@ -186,10 +191,12 @@
                     Lampiran II Rincian APBD
                     </label>
                 </div>
-                
-                <div class="col-md-2">
+                <br>
+                <div class="col-md-8">
                       <button id="btn_cetak" name="btn_cetak" type="button" class="btn btn-primary "
                             value="cetak">Cetak Laporan</button>
+                      <button id="btn_close" name="btn_close" type="button" class="btn btn-warning"
+                            value="btn_close">Tutup</button>
                 </div>          
             </div>
         </div>

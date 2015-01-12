@@ -18,9 +18,7 @@ from osipkd.views.base_view import BaseViews
 SESS_ADD_FAILED = 'Tambah ar-invoice-skpd-item gagal'
 SESS_EDIT_FAILED = 'Edit ar-invoice-skpd-item gagal'
 
-class view_ar_invoice_skpd_item(BaseViews):
-
-        
+class view_ar_invoice_skpd_item(BaseViews):     
     ##########                    
     # Action #
     ##########    
@@ -47,6 +45,7 @@ class view_ar_invoice_skpd_item(BaseViews):
                 columns.append(ColumnDT('vol_2'))
                 columns.append(ColumnDT('harga'))
                 columns.append(ColumnDT('kegiatanitems.nama'))
+                columns.append(ColumnDT('kegiatan_item_id'))
                 query = DBSession.query(ARInvoiceItem).\
                           filter(ARInvoiceItem.ar_invoice_id==ar_invoice_id)
                 rowTable = DataTables(req, ARInvoiceItem, query, columns)
@@ -98,7 +97,8 @@ def view_add(request):
     #try:
     DBSession.add(row)
     DBSession.flush()
-    return {"success": True, 'id': row.id, "msg":'Success Tambah Item Invoice'}
+    nilai = "%d" % ARInvoice.get_nilai(row.ar_invoice_id) 
+    return {"success": True, 'id': row.id, "msg":'Success Tambah Item Invoice', 'jml_total':nilai}
     #except:
     #return {'success':False, 'msg':'Gagal Tambah Item Invoice'}
 
@@ -107,14 +107,15 @@ def view_add(request):
 # Edit #
 ########
 def query_id(request):
-    return DBSession.query(ARInvoice).filter(ARInvoice.id==request.matchdict['id'])
+    return DBSession.query(ARInvoiceItem).filter(ARInvoiceItem.id==request.matchdict['id'],
+                                                 ARInvoiceItem.ar_invoice_id==request.matchdict['ar_invoice_id'])
     
 def id_not_found(request):    
     msg = 'User ID %s not found.' % request.matchdict['id']
     request.session.flash(msg, 'error')
     return route_list(request)
 
-@view_config(route_name='ar-invoice-skpd-item-edit', renderer='templates/ar-invoice-skpd-item/add.pt',
+@view_config(route_name='ar-invoice-skpd-item-edit', renderer='json',
              permission='edit')
 def view_edit(request):
     row = query_id(request).first()
@@ -143,21 +144,15 @@ def view_edit(request):
 ##########
 # Delete #
 ##########    
-@view_config(route_name='ar-invoice-skpd-item-delete', renderer='templates/ar-invoice-skpd-item/delete.pt',
+@view_config(route_name='ar-invoice-skpd-item-delete', renderer='json',
              permission='delete')
 def view_delete(request):
     q = query_id(request)
     row = q.first()
     if not row:
-        return id_not_found(request)
-    form = Form(colander.Schema(), buttons=('hapus','cancel'))
-    values= {}
-    if request.POST:
-        if 'hapus' in request.POST:
-            msg = '%s Kode %s  No. %s %s sudah dihapus.' % (request.title, row.kode, row.no_urut, row.nama)
-            DBSession.query(ARInvoice).filter(ARInvoice.id==request.matchdict['id']).delete()
-            DBSession.flush()
-            request.session.flash(msg)
-        return route_list(request)
-    return dict(row=row,
-                 form=form.render())
+        return {'success':False, "msg":self.id_not_found()}
+
+    msg = 'Data sudah dihapus'
+    query_id(request).delete()
+    DBSession.flush()
+    return {'success':True, "msg":msg}
