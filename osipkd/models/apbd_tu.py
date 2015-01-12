@@ -174,8 +174,8 @@ class SpmPotongan(DefaultModel,Base):
     ap_spm_id      = Column(BigInteger,   ForeignKey("apbd.ap_spms.id"), nullable=False)
     no_urut        = Column(SmallInteger, nullable=False)
     rekening_id    = Column(Integer, ForeignKey("admin.rekenings.id"), nullable=False)
-    spms           = relationship("Spm", backref=backref("spmpotongans")
-    rekenings      = relationship("Rekening", backref=backref("spmpotongans")
+    spms           = relationship("Spm", backref=backref("spmpotongans"))
+    rekenings      = relationship("Rekening", backref=backref("spmpotongans"))
     @classmethod
     def max_no_urut(cls, spm_id):
         return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
@@ -424,9 +424,7 @@ class StsItem(DefaultModel, Base):
     __tablename__      = 'ar_sts_items'
     __table_args__     = {'extend_existing':True,'schema' :'apbd'}
 
-    sts                = relationship("Sts",       backref="sts_items")
-    arinvoices         = relationship("ARInvoice", backref="sts_items")
-
+    sts                = relationship("Sts",       backref=backref("sts_items"))
     ar_sts_id          = Column(BigInteger, ForeignKey("apbd.ar_sts.id"),        nullable=False)
-    kegiatan_item_id   = Column(BigInteger, ForeignKey("apbd.kegiatan_item.id"), nullable=False)
+    kegiatan_item_id   = Column(BigInteger, ForeignKey("apbd.kegiatan_items.id"), nullable=False)
     amount             = Column(BigInteger)

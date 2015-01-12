@@ -10,7 +10,8 @@ from sqlalchemy import (
     String,
     UniqueConstraint,
     ForeignKey,
-    func
+    func,
+    Float
     )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.exc import NoResultFound
@@ -58,12 +59,13 @@ class Fungsi(NamaModel, Base):
     __tablename__  = 'fungsis'
     __table_args__ = {'extend_existing':True,'schema' : 'apbd'}
 
-class FungsiUrusan(NamaModel, Base):
+class FungsiUrusan(DefaultModel, Base):
     __tablename__  = 'fungsi_urusans'
     __table_args__ = {'extend_existing':True,'schema' : 'apbd'}
     urusan_id = Column(Integer, ForeignKey("admin.urusans.id"))
     fungsi_id = Column(Integer, ForeignKey("apbd.fungsis.id"))
-
+    nama      = Column(String(128))
+    
 class Pegawai(NamaModel, Base):
     __tablename__  = 'pegawais'
     __table_args__ = {'extend_existing':True,'schema' : 'apbd'}
@@ -139,6 +141,7 @@ class Program(NamaModel, Base):
 class Kegiatan(NamaModel, Base):
     __tablename__  = 'kegiatans'
     __table_args__ = {'extend_existing':True,'schema' : 'apbd'}
+    nama       = Column(String(256))
     programs   = relationship("Program", backref="kegiatans")
     tmt        = Column(Integer)
     locked     = Column(Integer)
@@ -265,27 +268,27 @@ class KegiatanItem(NamaModel, Base):
     no_urut         = Column(Integer , nullable=False)
     header_id       = Column(BigInteger , nullable=True)
 
-    vol_1_1 = Column(BigInteger, nullable=False, default=1)
+    vol_1_1 = Column(Float, nullable=False, default=1)
     sat_1_1 = Column(String(25))
-    vol_1_2 = Column(BigInteger, nullable=False, default=1)
+    vol_1_2 = Column(Float, nullable=False, default=1)
     sat_1_2 = Column(String(25))
     hsat_1  = Column(BigInteger, nullable=False, default=0)
 
-    vol_2_1 = Column(BigInteger, nullable=False, default=1)
+    vol_2_1 = Column(Float, nullable=False, default=1)
     sat_2_1 = Column(String(25))
-    vol_2_2 = Column(BigInteger, nullable=False, default=1)
+    vol_2_2 = Column(Float, nullable=False, default=1)
     sat_2_2 = Column(String(25))
     hsat_2  = Column(BigInteger, nullable=False, default=0)
 
-    vol_3_1 = Column(BigInteger, nullable=False, default=1)
+    vol_3_1 = Column(Float, nullable=False, default=1)
     sat_3_1 = Column(String(25))
-    vol_3_2 = Column(BigInteger, nullable=False, default=1)
+    vol_3_2 = Column(Float, nullable=False, default=1)
     sat_3_2 = Column(String(25))
     hsat_3 = Column(BigInteger,  nullable=False, default=0)
 
-    vol_4_1 = Column(BigInteger, nullable=False, default=1)
+    vol_4_1 = Column(Float, nullable=False, default=1)
     sat_4_1 = Column(String(25))
-    vol_4_2 = Column(BigInteger, nullable=False, default=1)
+    vol_4_2 = Column(Float, nullable=False, default=1)
     sat_4_2 = Column(String(25))
     hsat_4 = Column(BigInteger, nullable=False, default=0)
 

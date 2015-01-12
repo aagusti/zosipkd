@@ -19,7 +19,7 @@ from sqlalchemy.orm import (
     scoped_session,
     sessionmaker,
     relationship,backref    )
-from ..models import Base, DBSession, CommonModel
+from ..models import Base, DBSession, CommonModel, DefaultModel
 
 from base_model import NamaModel
 
@@ -135,6 +135,7 @@ class Rekening(NamaModel, Base):
                       {'extend_existing':True, 
                       'schema' : 'admin',})
     tahun = Column(Integer)
+    nama  = Column(String(256))
     level_id  = Column(SmallInteger, default=1)
     parent_id  = Column(BigInteger, ForeignKey('admin.rekenings.id'))
     disabled = Column(SmallInteger, default=0)
@@ -145,10 +146,10 @@ class Rekening(NamaModel, Base):
     def get_next_level(cls,id):
         return cls.query_id(id).first().level_id+1
         
-class DasarHukum(NamaModel, Base):
+class DasarHukum(DefaultModel, Base):
     __tablename__  = 'dasar_hukums'
     __table_args__ = {'extend_existing':True,'schema' : 'admin'}
     rekenings   = relationship("Rekening", backref="dasar_hukums")
     no_urut     = Column(Integer)
     rekening_id = Column(Integer, ForeignKey("admin.rekenings.id"))        
-    
+    nama        = Column(String(256))
