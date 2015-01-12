@@ -8,7 +8,7 @@ from pyramid.httpexceptions import ( HTTPFound, )
 import colander
 from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
-from osipkd.models.apbd import Jurnal, JurnalItem
+from osipkd.models.apbd_tu import AkJurnal, AkJurnalItem
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -102,7 +102,7 @@ class EditSchema(AddSchema):
             widget=widget.HiddenWidget(readonly=True),
             oid="id")
             
-class view_ak_jurnal(BaseViews):
+class view_ak_jurnal_skpd(BaseViews):
     ########                    
     # List #
     ########    
@@ -134,16 +134,16 @@ class view_ak_jurnal(BaseViews):
             columns.append(ColumnDT('amount',  filter=self._number_format))
             columns.append(ColumnDT('posted'))
             
-            query = DBSession.query(Jurnal.id, Jurnal.tanggal, Jurnal.kode, 
-                      Jurnal.nama, Jurnal.posted,
-                      func.div(func.coalesce(func.sum(JurnalItem.amount),0),2).label('amount')).\
-                    outerjoin(JurnalItem).\
-                    group_by(Jurnal.id, Jurnal.tanggal, Jurnal.kode, 
-                             Jurnal.nama, ).\
-                    filter(Jurnal.tahun_id == ses['tahun'],
-                           Jurnal.unit_id == ses['unit_id'],)
+            query = DBSession.query(AkJurnal.id, AkJurnal.tanggal, AkJurnal.kode, 
+                      AkJurnal.nama, AkJurnal.posted,
+                      func.div(func.coalesce(func.sum(AkJurnalItem.amount),0),2).label('amount')).\
+                    outerjoin(AkJurnalItem).\
+                    group_by(AkJurnal.id, AkJurnal.tanggal, AkJurnal.kode, 
+                             AkJurnal.nama, ).\
+                    filter(AkJurnal.tahun_id == ses['tahun'],
+                           AkJurnal.unit_id == ses['unit_id'],)
                       
-            rowTable = DataTables(req, Jurnal, query, columns)
+            rowTable = DataTables(req, AkJurnal, query, columns)
             return rowTable.output_result()
         
     #######    
@@ -152,7 +152,7 @@ class view_ak_jurnal(BaseViews):
     def form_validator(self, form, value):
         if 'id' in form.request.matchdict:
             uid = form.request.matchdict['id']
-            q = DBSession.query(Jurnal).filter_by(id=uid)
+            q = DBSession.query(AkJurnal).filter_by(id=uid)
             row = q.first()
         else:
             row = None
@@ -167,7 +167,7 @@ class view_ak_jurnal(BaseViews):
         
     def save(self, values, user, row=None):
         if not row:
-            row = Jurnal()
+            row = AkJurnal()
             row.created = datetime.now()
             row.create_uid = user.id
         row.from_dict(values)
@@ -205,7 +205,7 @@ class view_ak_jurnal(BaseViews):
         
     @view_config(route_name='ak-jurnal-skpd-add', renderer='templates/ak-jurnal-skpd/add.pt',
                  permission='add')
-    def view_ak_jurnal_add(self):
+    def view_ak_jurnal_skpd_add(self):
         req = self.request
         ses = self.session
         form = self.get_form(AddSchema)
@@ -233,7 +233,7 @@ class view_ak_jurnal(BaseViews):
     # Edit #
     ########
     def query_id(self):
-        return DBSession.query(Jurnal).filter_by(id=self.request.matchdict['id'])
+        return DBSession.query(AkJurnal).filter_by(id=self.request.matchdict['id'])
         
     def id_not_found(self):    
         msg = 'Jurnal ID %s Tidak Ditemukan.' % self.request.matchdict['id']
