@@ -100,6 +100,30 @@ class view_ak_jurnal(BaseViews):
                 r.append(d)    
             return r            
         
+        elif url_dict['act']=='headofkode1':
+            term = 'term' in params and params['term'] or ''
+            kegiatan_sub = 'kegiatan_sub_id' in params and params['kegiatan_sub_id'] or 0
+            q = DBSession.query(KegiatanItem.id, KegiatanSub.kode.label('kode1'),KegiatanSub.nama.label('nama1')
+                                )\
+                                .join(KegiatanSub)\
+                                .filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                                        #KegiatanSub.id==kegiatan_sub,
+                                        KegiatanSub.unit_id == ses['unit_id'],
+                                        KegiatanSub.tahun_id == ses['tahun'],
+                                        KegiatanSub.kode.ilike('%%%s%%' % term))
+            rows = q.all()                               
+            r = []
+            for k in rows:
+                d={}
+                d['id']      = k[0]
+                d['value']   = k[1]
+                d['kode']    = k[1]
+                d['nama']    = k[2]
+                #d['amount']  = k[3]
+                r.append(d)
+            print '---****----',r              
+            return r            
+        
     ###############                    
     # Tambah  Data#
     ###############    
