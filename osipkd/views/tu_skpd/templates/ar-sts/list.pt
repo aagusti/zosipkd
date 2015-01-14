@@ -131,7 +131,7 @@
         <tr>
             <th>Index</th>
             <th>No. STS</th>
-            <th>Tgl. Terima</th>
+            <th>Tgl. STS</th>
             <th>Tgl. Validasi</th>
             <th>Jenis</th>
             <th>Uraian</th>
@@ -196,17 +196,17 @@
             }],
             "aoColumns": [
                 null, {
-                    "sWidth": "70px"
+                    "sWidth": "60px"
                 }, {
-                    "sWidth": "40px",
+                    "sWidth": "30px",
                 }, {
-                    "sWidth": "40px",
+                    "sWidth": "30px",
                 }, {
-                    "sWidth": "90px",
+                    "sWidth": "10px",
                 }, {
-                    "sWidth": "90px",
+                    "sWidth": "100px",
                 }, {
-                    "sWidth": "120px",
+                    "sWidth": "100px",
                 }, {
                     "sWidth": "60px",
                 }

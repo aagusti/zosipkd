@@ -38,12 +38,12 @@ class AddSchema(colander.Schema):
                     
     kegiatan_nm_widget = widget.AutocompleteInputWidget(
             size=60,
-            values = '/ag-kegiatan-sub/act/headofnama',
+            values = '/ag-kegiatan-sub/act/headofnama1',
             min_length=1)
   
     kegiatan_kd_widget = widget.AutocompleteInputWidget(
             size=60,
-            values = '/ag-kegiatan-sub/act/headofkode',
+            values = '/ag-kegiatan-sub/act/headofkode1',
             min_length=1)
 
     tahun_id         = colander.SchemaNode(
@@ -95,7 +95,7 @@ class AddSchema(colander.Schema):
                     colander.String(),
                     validator=colander.Length(max=32),
                     widget=widget.SelectWidget(values=JENIS_ID)) 
-                    # deferred_source_type)
+                    
     nominal         = colander.SchemaNode(
                           colander.String(),
                           default = 0,
@@ -133,7 +133,7 @@ class AddSchema(colander.Schema):
                           )
     tgl_sts       = colander.SchemaNode(
                           colander.Date(),
-                          title="Tgl.Terima")
+                          title="Tgl.STS")
     tgl_validasi     = colander.SchemaNode(
                           colander.Date(),
                           title="Validasi")
@@ -172,11 +172,11 @@ class view_ar_sts(BaseViews):
             columns = []
             columns.append(ColumnDT('id'))
             columns.append(ColumnDT('kode'))
-            columns.append(ColumnDT('tgl_terima', filter=self._DTstrftime))
+            columns.append(ColumnDT('tgl_sts', filter=self._DTstrftime))
             columns.append(ColumnDT('tgl_validasi', filter=self._DTstrftime))
             columns.append(ColumnDT('jenis'))
             columns.append(ColumnDT('nama'))
-            columns.append(ColumnDT('kegiatan_subs.nama'))
+            columns.append(ColumnDT('kegiatansubs.nama'))
             columns.append(ColumnDT('nominal'))
             
             query = DBSession.query(Sts).filter(
@@ -208,18 +208,20 @@ class view_ar_sts(BaseViews):
     def save(self, values, user, row=None):
         if not row:
             row = Sts()
-            row.created = datetime.now()
-            row.create_uid = user.id
+        row.created = datetime.now()
+        row.create_uid = user.id
         row.from_dict(values)
         row.updated = datetime.now()
         row.update_uid = user.id
-        tanggal    = datetime.strptime(values['tanggal'], '%Y-%m-%d')
-        row.tahun  = tanggal.year
-        row.bulan  = tanggal.month
-        row.hari   = tanggal.day
-        row.minggu = tanggal.isocalendar()[1]
-        row.disable   = 'disable' in values and values['disable'] and 1 or 0
-        row.is_kota   = 'is_kota' in values and values['is_kota'] and 1 or 0
+        if not row.no_urut:
+           row.no_urut = Sts.max_no_urut(row.tahun_id,row.unit_id)+1;
+        #tanggal    = datetime.strptime(values['tanggal'], '%Y-%m-%d')
+        #row.tahun  = tanggal.year
+        #row.bulan  = tanggal.month
+        #row.hari   = tanggal.day
+        #row.minggu = tanggal.isocalendar()[1]
+        #row.disable   = 'disable' in values and values['disable'] and 1 or 0
+        #row.is_kota   = 'is_kota' in values and values['is_kota'] and 1 or 0
         DBSession.add(row)
         DBSession.flush()
         return row
@@ -283,21 +285,21 @@ class view_ar_sts(BaseViews):
         if not row:
             return id_not_found(request)
         #values = row.to_dict()
-        rowd={}
-        rowd['id']          = row.id
-        rowd['unit_id']     = row.unit_id
-        rowd['unit_nm']     = row.units.nama
-        rowd['unit_kd']     = row.units.kode
-        rowd['kegiatan_sub_id'] =row.kegiatan_sub_id
-        rowd['kegiatan_sub_kd'] ="".join([row.kegiatan_subs.kegiatans.kode,'-',str(row.kegiatan_subs.no_urut)])
-        rowd['kegiatan_sub_nm'] =row.kegiatan_subs.nama
-        rowd['kode']        = row.kode
-        rowd['nama']        = row.nama
-        rowd['disabled']    = row.disabled
-        rowd['jenis_id']    = row.jenis_id
+        #rowd={}
+        #rowd['id']          = row.id
+        #rowd['unit_id']     = row.unit_id
+        #rowd['unit_nm']     = row.units.nama
+        #rowd['unit_kd']     = row.units.kode
+        #rowd['kegiatan_sub_id'] =row.kegiatansubs.id
+        #rowd['kegiatan_sub_kd'] =row.kegiatansubs.kode
+        #rowd['kegiatan_sub_nm'] =row.kegiatansubs.nama
+        #rowd['kode']        = row.kode
+        #rowd['nama']        = row.nama
+        #rowd['disabled']    = row.disabled
+        #rowd['jenis_id']    = row.jenis_id
         
         form = self.get_form(EditSchema)
-        form.set_appstruct(rowd)
+        #form.set_appstruct(rowd)
         if request.POST:
             if 'simpan' in request.POST:
                 controls = request.POST.items()
@@ -313,6 +315,11 @@ class view_ar_sts(BaseViews):
             return self.route_list()
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
+            return dict(form=form)
+        values = row.to_dict()
+        values['kegiatan_nm']=row.kegiatansubs.nama
+        values['kegiatan_kd']=row.kegiatansubs.kode
+        form.set_appstruct(values) 
         return dict(form=form)
 
     ##########

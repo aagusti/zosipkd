@@ -3,7 +3,7 @@
     <script type='text/javascript'>
         $(document).ready(function () {
             $("#btn_close").click(function () {
-                window.location = '/tu-skpd';
+                window.location = '/ar-sts';
                 return false;
             });
         });
@@ -66,7 +66,8 @@
                tal:repeat="error field.error.messages()">
                ${error}</p>
           </div>
-        </div>   
+        </div>
+        
         <div class="col-md-8" tal:define="field form['kegiatan_nm']" id="item-${field.oid}">
           ${structure:field.serialize()}
           <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
@@ -74,42 +75,51 @@
              ${error}</p>
         </div>
         <script>
-           $('#kegiatan_kd').typeahead({
+            $('#kegiatan_kd').typeahead({
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
               "remote"   : "/ag-kegiatan-sub/act/headofkode1?term=%QUERY",
-            },
-            {
-            "name"      : 'kegiatan_kd',
-            "displayKey": 'value',
-          });
-          $('#kegiatan_nm').typeahead({
+            },{
+             "name"      : 'kegiatan_kd',
+             "displayKey": 'value',
+            });
+            $('#kegiatan_nm').typeahead({
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
               "remote"   : "/ag-kegiatan-sub/act/headofnama1?term=%QUERY",
-            },
-            {
-              "name"      : 'kegiatan_nm',
-              "displayKey": 'value',
+            },{
+             "name"      : 'kegiatan_nm',
+             "displayKey": 'value',
             });
 
         
-            $('#kegiatan_kd').bind('typeahead:selected', function(obj, datum, name) {  
-                  $('#kegiatan_nm').val(datum.nama);
-                  $('#kegiatan_sub_id').val(datum.id);
-            });
-            $('#kegiatan_nm').bind('typeahead:selected', function(obj, datum, name) {  
-                  $('#kegiatan_kd').val(datum.kode);
-                  $('#kegiatan_sub_id').val(datum.id);
-            });
+        $('#kegiatan_kd').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#kegiatan_nm').val(datum.nama);
+              $('#kegiatan_sub_id').val(datum.id);
+        });
+        $('#kegiatan_nm').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#kegiatan_kd').val(datum.kode);
+              $('#kegiatan_sub_id').val(datum.id);
+        });
+        
         </script>
       </div>
-      <!--Uraian-------------------------------------------------------------------->
+      <!--Kode-------------------------------------------------------------------->
       <div class="form-group"> 
         <div tal:define="field form['kode']" id="item-${field.oid}">
           <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                  ${field.title}</label>
+          <div class="col-md-2">
+             ${structure:field.serialize()}
+            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+               tal:repeat="error field.error.messages()">
+               ${error}</p>
+          </div>
+        </div>
+        <div tal:define="field form['jenis']" id="item-${field.oid}">
+          <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                   ${field.title}</label>
           <div class="col-md-2">
              ${structure:field.serialize()}
@@ -128,16 +138,6 @@
              tal:repeat="error field.error.messages()">
              ${error}</p>
         </div>
-        <div tal:define="field form['tgl_validasi']" id="item-${field.oid}">
-          <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
-                  ${field.title}</label>
-          <div class="col-md-2">
-             ${structure:field.serialize()}
-            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-               tal:repeat="error field.error.messages()">
-               ${error}</p>
-          </div>
-        </div>
       </div>
  
       <!--Uraian--------------------------------------------------------------------> 
@@ -152,12 +152,8 @@
                ${error}</p>
           </div>
         </div>
-      </div>
-      
-      <!--TTD-------------------------------------------------------------------->
-      <div class="form-group"> 
-        <div tal:define="field form['ttd_uid']" id="item-${field.oid}">
-          <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+        <div tal:define="field form['tgl_validasi']" id="item-${field.oid}">
+          <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                   ${field.title}</label>
           <div class="col-md-2">
              ${structure:field.serialize()}
@@ -166,46 +162,111 @@
                ${error}</p>
           </div>
         </div>
-        <div class="col-md-4" tal:define="field form['ttd_nama']" id="item-${field.oid}">
-          ${structure:field.serialize()}
-          <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-             tal:repeat="error field.error.messages()">
-             ${error}</p>
-        </div>
-        <script>
-           $('#bendahara_uid').typeahead({
+      </div>
+      
+      <!--TTD------------------------------------------------------------------------>
+        <div class="form-group"> 
+          <div tal:define="field form['ttd_uid']" style="display: none;">
+            ${structure:field.serialize()}
+          </div>
+          <div tal:define="field form['ttd_nip']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-3">
+               ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
+          </div>
+
+          <!---ttd_nama-------------------------------------------------------------------> 
+            <div tal:define="field form['ttd_nama']" id="item-${field.oid}">
+              <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                      ${field.title}</label>
+              <div class="col-md-3">
+                 ${structure:field.serialize()}
+                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                   tal:repeat="error field.error.messages()">
+                   ${error}</p>
+              </div>
+            </div>
+
+          <!---ttd_jab------------------------------------------------------------------->
+          
+          <div tal:define="field form['ttd_jab']" style="display: none;">
+            ${structure:field.serialize()}
+          </div>
+           <script>
+           $('#ttd_uid').typeahead({
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
-              "remote"   : "/pejabat/act/headofkode1?term=%QUERY",
+              "remote"   : "/pejabat/act/headofkode4?term=%QUERY",
             },
             {
             "name"      : 'ttd_uid',
             "displayKey": 'value',
           });
-          $('#bendahara_nm').typeahead({
+          $('#ttd_nip').typeahead({
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
-              "remote"   : "/pejabat/act/headofnama1?term=%QUERY",
+              "remote"   : "/pejabat/act/headofnip4?term=%QUERY",
+            },
+            {
+              "name"      : 'ttd_nip',
+              "displayKey": 'value',
+            });
+          $('#ttd_nama').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofnama4?term=%QUERY",
             },
             {
               "name"      : 'ttd_nama',
               "displayKey": 'value',
             });
-
+          $('#ttd_nip').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/pejabat/act/headofnip4?term=%QUERY",
+            },
+            {
+              "name"      : 'ttd_nip',
+              "displayKey": 'value',
+            });
         
         $('#ttd_uid').bind('typeahead:selected', function(obj, datum, name) {  
               $('#ttd_nama').val(datum.nama);
+              $('#ttd_nip').val(datum.nip);
               $('#pejabat_id').val(datum.id);
+              $('#ttd_jab').val(datum.jab);
         });
-        $('#ttd_nm').bind('typeahead:selected', function(obj, datum, name) {  
+        $('#ttd_nama').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#ttd_uid').val(datum.kode);
+              $('#ttd_nip').val(datum.nip);
+              $('#pejabat_id').val(datum.id);
+              $('#ttd_jab').val(datum.jab);
+        });
+        $('#ttd_nip').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#ttd_nama').val(datum.nama);
               $('#ttd_uid').val(datum.kode);
               $('#pejabat_id').val(datum.id);
+              $('#ttd_jab').val(datum.jab);
         });
-        $("#ttd_uid").attr('readonly',true);
+        $('#ttd_jab').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#ttd_nama').val(datum.nama);
+              $('#ttd_uid').val(datum.kode);
+              $('#pejabat_id').val(datum.id);
+              $('#ttd_nip').val(datum.nip);
+        });
+        $("#ttd_jab").attr('readonly',true);
+        $("#ttd_nip").attr('readonly',true);
         </script>
-      </div>
+        </div>
  
       <!--Bank--------------------------------------------------------------------> 
       <div class="form-group"> 
@@ -256,11 +317,13 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Kegiatan Item</th>
                 <th>Kegiatan</th>
                 <th>No</th>
                 <th>Rekening</th>
                 <th>Uraian</th>
                 <th>Nilai</th>
+                <th>nama</th>
             </tr>
         </thead>
         <tbody>
@@ -269,141 +332,98 @@
   </div>
   <div  class="panel panel-default">
     <div class="panel-heading">
-        <h5 class="panel-title">Item STS</h5>
+        <h5 class="panel-title">Tambah Kegiatan</h5>
     </div>
-  <div class="panel-body">
+    <div class="panel-body">
       <form method="post" id="detail" accept-charset="utf-8" id="myform" class="form-horizontal" enctype="multipart/form-data">
         <fieldset class="deformFormFieldset">
-          <!--REKENING------------------------------------------------------------->
-          <input id="ar_sts_id" type="hidden" value="" name="ar_sts_id">
-          <input id="kegiatan_item_id" type="hidden" value="" name="kegiatan_item_id">
-          
-      <div class="form-group"><!--Kegiatan-->
-        <div class="col-md-3" id="item-kegiatan_sub_kd">
-          <label for="kegiatan_sub_kd" class="control-label col-md-3" id="req-kegiatan_sub_kd">
-                  Kegiatan</label>
-          <div class="col-md-9">
-                 <input id="kegiatan_sub_kd" class=" form-control " type="text" value="" name="kegiatan_sub_kd">
-          </div>
-        </div>
-        <div class="col-md-5" id="item-kegiatan_sub_nm">
-             <input id="kegiatan_sub_nm" class=" form-control " type="text" value="" name="kegiatan_sub_nm">
-        </div>      
-        <div class="col-md-3">
-          <div class="form-group" id="item-amount-item">
-            <label for="amount" class="control-label col-md-2" id="req-amount-item" style="text-align:left;!important;">
-                    Nilai</label>
-            <div class="col-md-10">
-               <input id="amount" class=" form-control " type="text" value="0" name="amount">
-            </div>
-          </div>
-        </div>
-        <script>
-            $('#kegiatan_sub_kd').typeahead({
-                "hint": true,
-                "highlight": true,
-                "minLength": 1,
-                "remote": "/ag-kegiatan-sub/act/headofkode?term=%QUERY", 
-            },
-            {
-              "name": 'kegiatan_sub_kd',
-              "displayKey": 'value',
-            }); 
-                    
-            $('#kegiatan_sub_nm').typeahead({
-                "hint": true,
-                "highlight": true,
-                "minLength": 1,
-                "remote": "/ag-kegiatan-sub/act/headofnama?term=%QUERY", 
-            },
-            {
-              "name": 'kegiatan_sub_nm',
-              "displayKey": 'value',
-            });         
-            $('#kegiatan_sub_kd').bind('typeahead:selected', function(obj, datum, name) {      
-                  $('#kegiatan_sub_id').val(datum.id);
-                  $('#kegiatan_sub_nm').val(datum.nama);
-            });
-            $('#kegiatan_sub_nm').bind('typeahead:selected', function(obj, datum, name) {      
-                  $('#kegiatan_sub_id').val(datum.id);
-                  $('#kegiatan_sub_kd').val(datum.kode);
-            });
-        </script>
-      </div>          
-          <div class="form-group">
-            <!--Button----------------------------------------------------------->
-            <div class="col-md-3">
-                  <button id="rekening_add" name="baru" type="button" class="btn btn-primary "
-                        value="baru">Baru</button>
-                  <button id="rekening_save" name="simpan" type="submit" class="btn btn-primary "
+          <!--Piutang------------------------------------------------------------->
+          <input id="ar_sts_item_id" type="hidden" value="" name="ar_sts_item_id">
+          <input id="kegiatan_item_id" type="text" value="" name="kegiatan_item_id">
+              <div class="form-group">
+                <label for="kode1" class="control-label col-md-1" id="req-kode1">
+                    Kegiatan </label>
+                <div class="col-md-2">
+                   <input id="kode1" class=" form-control " type="text" value="" name="kode1">
+                </div>
+                <div class="col-md-5">
+                   <input id="nama1" class=" form-control " readonly type="text" value="" name="nama1">
+                </div>
+                <div class="col-md-2">
+                   <input id="amount" class=" form-control " type="text" value="0" name="amount">
+                </div>
+                <!--Button----------------------------------------------------------->
+                <div class="col-md-2">
+                    <button id="rekening_add" name="baru" type="button" class="btn btn-primary "
+                        value="baru">Tambah</button>
+                    <button id="rekening_save" name="simpan" type="submit" class="btn btn-primary "
                         value="simpan">Update</button>
-                  <button id="rekening_cancel" name="batal" type="reset" class="btn btn-danger "
+                    <button id="rekening_cancel" name="batal" type="reset" class="btn btn-danger "
                         value="batal">Batal</button>
-            </div>
-          </div>            
+                </div> 
+              </div>
           <script>
-           
           $('#rekening_add').click(function () {
-                $('#ar_invoice_item_id').val('');
-                $('#detail').submit();
-           })
-          $('#item_nm').typeahead({
-              "hint"     : true,
-              "highlight": true,
-              "minLength": 1,
-              "remote"   : "/ag-kegiatan-item/act/headofnama?kegiatan_sub_id="+$("#kegiatan_sub_id").val()+"&term=%QUERY", 
-          },{
-             "name"      : 'item_nm',
-             "displayKey": 'value',
-          }); 
-        
-          $('#item_nm').bind('typeahead:selected', function(obj, datum, name) {  
-                $('#kegiatan_item_id').val(datum.id);
-                $('#nama').val(datum.nama);
-          });
-            
-          $( "#detail" ).submit(function( event ) {
-            var ar_invoice_id;
-            var is_success;
-            is_success = true;
-            ar_invoice_id = $('#id').val();
-            if (!ar_invoice_id) {
-                is_success = false;
-                $("#errors").css('display', 'inline', 'important');
-                $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + 'Simpan Dulu Headernya');
-            }
-
-            if (is_success){
-              $.ajax({
-                type: "POST",
-                url : "/ar-invoice-skpd/item/"+ar_invoice_id+"/add",
-                data: $('#detail').serialize(),
-                success: function (html) {
-                  if (html.success == true) {
-                    $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                    $('#nilai').val('');
-                    $('#no_urut').val('');
-                    $('#jml_total').val(formatNumber(html.jml_total)); 
-                    oTable.fnReloadAjax(oTableUrl);
-                  } else {
-                    $("#errors").css('display', 'inline', 'important');
-                    $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
-                  }
-                },
-                beforeSend: function () {
+                  $('#ar_sts_item_id').val('');
+                  $('#detail').submit();
+             })
+            $('#kode1').typeahead({
+                "hint"     : true,
+                "highlight": true,
+                "minLength": 1,
+                "remote"   : "/ag-kegiatan-item/act/headofkode1?kegiatan_sub_id="+$("#kegiatan_sub_id").val()+"&term=%QUERY", 
+            },{
+               "name"      : 'kode1',
+               "displayKey": 'value',
+            });           
+          
+            $('#kode1').bind('typeahead:selected', function(obj, datum, name) {  
+                  $('#kegiatan_item_id').val(datum.id);
+                  $('#nama1').val(datum.nama);
+                  //$('#amount1').val(datum.amount);                  
+            });
+              
+            $( "#detail" ).submit(function( event ) {
+              var ar_sts_id;
+              var is_success;
+              is_success = true;
+              ar_sts_id = $('#id').val();
+              if (!ar_sts_id) {
+                  is_success = false;
                   $("#errors").css('display', 'inline', 'important');
-                  $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
-                }
-              });
-            }
-            event.preventDefault();
-          });
+                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + 'Simpan Dulu Headernya');
+              }
+          
+              if (is_success){
+                $.ajax({
+                  type: "POST",
+                  url: "/ar-sts/item/"+ar_sts_id+"/add",
+                  data: $('#detail').serialize(),
+                  success: function (html) {
+                    if (html.success == true) {
+                      $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                      $('#jml_total').val(formatNumber(html.jml_total));
+                      oTable.fnReloadAjax(oTableUrl);
+                    } else {
+                      $("#errors").css('display', 'inline', 'important');
+                      $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                    }
+                  },
+                  beforeSend: function () {
+                    $("#errors").css('display', 'inline', 'important');
+                    $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+                  }
+                });
+              }
+              event.preventDefault();
+            });
           </script>
         </fieldset>
       </form>  
     </div> <!--panel-body-->     
   </div>
-    <script>
+  
+  <script>
       var mID;
       var oTable;
       var iPos;
@@ -431,7 +451,7 @@
             "bScrollCollapse": true,
             "bSort"          : true,
             "bInfo"          : false,
-            "bFilter"        : true,
+            "bFilter"        : false,
             "bAutoWidth"     : false,
             "bPaginate"      : true,
             "sPaginationType": "full_numbers",
@@ -440,20 +460,36 @@
                 [5, 10, 15, 50, -1],
                 [5, 10, 15, 50, "All"]
             ],
-            "aoColumnDefs": [{
-                            "bSearchable": false,
-                            "bVisible": false,
-                            "aTargets": [0,6]
-                        }],
-              "aoColumns": [
-                  null,
-                  {"width": "65px"},
-                  {"width": "35"},
-                  {"width": "85px"},
-                  {"width": "85px"},
-                  {"width": "100px", "sClass":"right"},
-                  null,
-              ],
+            "aoColumnDefs": [
+            {
+                "bSearchable": false,
+                "bVisible"   : false,
+                "aTargets"   : [0,1,7]
+            },{
+                "bSearchable": false,
+                "bSortable"  : false,
+                "aTargets"   : [3,4,6]
+            },{
+                "bSearchable": true,
+                "bSortable"  : false,
+                "aTargets"   : [2,5]
+            },{ 
+                "sClass"     : "right",
+                "aTargets"   : [6],
+                "mRender"    : function (data, type, full) {
+                               return formatNumber(data);}
+            }
+            ],
+            "aoColumns": [
+                null, 
+                {"sWidth": "50px"}, 
+                {"sWidth": "60px"}, 
+                {"sWidth": "30px"}, 
+                {"sWidth": "60px"},
+                {"sWidth": "100px"},
+                {"sWidth": "50px", "sClass": "right"},
+                {"sWidth": "50px"},
+            ],
             "fnRowCallback": function (nRow, aData, iDisplayIndex) {
                 $(nRow).on("click", function (event) {
                     if ($(this).hasClass('row_selected')) {
@@ -465,8 +501,10 @@
                         mID = data[0];
 
                         $("#ar_sts_item_id").val(data[0]);
-                        $("#nilai").val(data[5]);
-                        $("#kegiatan_item_id").val(data[6]);
+                        $("#kegiatan_item_id").val(data[1]);
+                        $("#kode1").val(data[2]);
+                        $("#nama1").val(data[7]);
+                        $("#amount").val(data[6]);    
 
                         oTable.$('tr.row_selected').removeClass('row_selected');
                         $(this).addClass('row_selected');
@@ -495,7 +533,7 @@
               if (confirm('Yakin dihapus?')==true){
                 $.ajax({
                 type: "POST",
-                url: "/ar-invoice-skpd/item/"+$("#id").val()+"/"+mID+"/delete",
+                url: "/ar-sts/item/"+$("#id").val()+"/"+mID+"/delete",
                 success: function (html) {
                   if (html.success == true) {
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
@@ -526,7 +564,6 @@
         });
 
         $("#jml_total").attr('readonly',true);
-        $("#kegiatan_nm").attr('readonly',true);
         jml_total=$("#jml_total").val();
         $("#jml_total").val(formatNumber(jml_total));
      });
