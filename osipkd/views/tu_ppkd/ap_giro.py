@@ -49,10 +49,8 @@ class view_ap_giro_ppkd(BaseViews):
                 columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('nominal'))
                 query = DBSession.query(Giro
-                        ).join(Sp2d
                         ).filter(Giro.tahun_id==ses['tahun'],
                                  Giro.unit_id==ses['unit_id'] ,
-                                 Giro.ap_sp2d_id==Sp2d.id,
                         ).order_by(Giro.kode.asc())
                            
                 rowTable = DataTables(req, Giro, query, columns)
@@ -157,8 +155,8 @@ class view_ap_giro_ppkd(BaseViews):
             del request.session[SESS_EDIT_FAILED]
             return dict(form=form)
         values = row.to_dict() #dict(zip(row.keys(), row))
-        values['sp2d_nm']=row.sp2ds.nama
-        values['sp2d_kd']=row.sp2ds.kode
+        #values['sp2d_nm']=row.sp2ds.nama
+        #values['sp2d_kd']=row.sp2ds.kode
         form.set_appstruct(values) 
         return dict(form=form)
 
@@ -193,17 +191,6 @@ class AddSchema(colander.Schema):
                           colander.Integer(),
                           title="Tahun",
                           oid = "tahun_id")
-    ap_sp2d_id       = colander.SchemaNode(
-                          colander.Integer(),
-                          title="Sp2d",
-                          oid = "ap_sp2d_id")
-    sp2d_kd          = colander.SchemaNode(
-                          colander.String(),
-                          oid='sp2d_kd',
-                          title="SP2D")
-    sp2d_nm          = colander.SchemaNode(
-                          colander.String(),
-                          oid='sp2d_nm')
     kode       = colander.SchemaNode(
                           colander.String(),
                           title="No. Giro")
