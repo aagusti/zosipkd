@@ -164,6 +164,44 @@ class view_kegiatan_sub(BaseViews):
                 r.append(d)    
             return r
             
+        elif url_dict['act']=='headofkode1':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(KegiatanSub.id, KegiatanSub.kode, KegiatanSub.no_urut,
+                                KegiatanSub.nama
+                      ).join(Kegiatan).filter(KegiatanSub.unit_id == ses['unit_id'],
+                           KegiatanSub.tahun_id==ses['tahun'],
+                           KegiatanSub.kode.ilike('%s%%' % term))
+                           
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[1]
+                d['kode']        = k[1]
+                d['nama']        = k[3]
+                r.append(d)
+            print '****----****',r                
+            return r
+
+        elif url_dict['act']=='headofnama1':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(KegiatanSub.id, KegiatanSub.kode, KegiatanSub.no_urut,
+                                KegiatanSub.nama).join(Kegiatan).filter(
+                      KegiatanSub.unit_id == ses['unit_id'],
+                      KegiatanSub.tahun_id==ses['tahun'],
+                      KegiatanSub.nama.ilike('%s%%' % term))
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[3]
+                d['kode']        = k[1]
+                d['nama']        = k[3]
+                r.append(d)    
+            return r
+            
     ###############                    
     # Tambah  Data#
     ###############    
