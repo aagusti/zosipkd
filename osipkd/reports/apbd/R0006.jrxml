@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="118"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -17,11 +17,11 @@
 	<field name="nama" class="java.lang.String">
 		<fieldDescription><![CDATA[nama]]></fieldDescription>
 	</field>
-	<field name="programkd" class="java.lang.String">
-		<fieldDescription><![CDATA[programkd]]></fieldDescription>
+	<field name="kegiatankd" class="java.lang.String">
+		<fieldDescription><![CDATA[kegiatankd]]></fieldDescription>
 	</field>
-	<field name="programnm" class="java.lang.String">
-		<fieldDescription><![CDATA[programnm]]></fieldDescription>
+	<field name="kegiatannm" class="java.lang.String">
+		<fieldDescription><![CDATA[kegiatannm]]></fieldDescription>
 	</field>
 	<field name="customer" class="java.lang.String">
 		<fieldDescription><![CDATA[customer]]></fieldDescription>
@@ -72,7 +72,7 @@
 				<textElement textAlignment="Center">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[DAFTAR PROGRAM PEMERINTAH DAERAH]]></text>
+				<text><![CDATA[DAFTAR KEGIATAN PEMERINTAH DAERAH]]></text>
 			</staticText>
 		</band>
 	</title>
@@ -120,7 +120,7 @@
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{programkd}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{kegiatankd}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="62" y="0" width="433" height="12"/>
@@ -131,7 +131,7 @@
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{programnm}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{kegiatannm}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
