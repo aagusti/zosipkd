@@ -267,3 +267,9 @@ ar-report-skpd	0	2014-12-24 03:04:42.837591	1	Laporan Pendapatan	/ar-report-skpd
 ar-report-skpd-act	0	2014-12-24 03:04:42.837591	1	Report AR SKPD Act	/ar-report-skpd/act/{act}	read
 ap-report-skpd	0	2014-12-24 03:04:42.837591	1	Laporan Belanja	/ap-report-skpd	read
 ap-report-skpd-act	0	2014-12-24 03:04:42.837591	1	Report AP SKPD Act	/ap-report-skpd/act/{act}	read
+ag-indikator	0	2014-12-24 03:04:42.837591		1	Indikator Kegiatan	/ag-indikator/{kegiatan_sub_id}	view
+ag-indikator-act	0	2014-12-24 03:04:42.837591	1	Indikator Kegiatan Act	/ag-indikator/act/{act}	read
+ag-indikator-add	0	2014-12-24 03:04:42.837591	1	Tambah Indikator Kegiatan	/ag-indikator/{kegiatan_sub_id}/add	add
+ag-indikator-edit	0	2014-12-24 03:04:42.837591	1	Edit Indikator Kegiatan	/ag-indikator/{kegiatan_sub_id}/{id}/edit	edit
+ag-indikator-delete	0	2014-12-24 03:04:42.837591	1	Hapus Indikator Kegiatan	/ag-indikator/{kegiatan_sub_id}/{id}/delete	delete
+ag-indikator-add-fast	0	2014-12-24 03:04:42.837591	1	Tambah Indikator Kegiatan	/ag-indikator/add/fast	add
