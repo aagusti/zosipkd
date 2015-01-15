@@ -7,7 +7,8 @@ from sqlalchemy import (
     DateTime,
     func,
     String,
-    ForeignKey
+    ForeignKey,
+    SmallInteger
     )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.exc import NoResultFound
@@ -26,6 +27,7 @@ from ziggurat_foundations.models import GroupResourcePermissionMixin, ResourceMi
 from ziggurat_foundations.models import UserPermissionMixin, UserResourcePermissionMixin
 from ziggurat_foundations.models import ExternalIdentityMixin
 from ziggurat_foundations import ziggurat_model_init
+
 from pyramid.security import (
     Allow,
     Authenticated,
@@ -195,7 +197,7 @@ class User(UserMixin, BaseModel, CommonModel, Base):
         if identity.find('@') > -1:
             return cls.get_by_email(identity)
         return cls.get_by_name(identity)        
-            
+        
 class GroupRoutePermission(Base, CommonModel):
     __tablename__  = 'groups_routes_permissions'
     __table_args__ = {'extend_existing':True,}    
@@ -204,38 +206,38 @@ class GroupRoutePermission(Base, CommonModel):
     routes = relationship("Route", backref=backref('routepermission'))
     groups = relationship("Group",backref= backref('grouppermission'))
     
-    
-    
 class ExternalIdentity(ExternalIdentityMixin, Base):
     pass
 
-class AkarFactory(object):
-    def __init__(self, request):
-        self.__acl__ = [(Allow, 'Admin', ALL_PERMISSIONS), 
-                        (Allow, Authenticated, 'view'),]
+class Route(Base, DefaultModel):
+    __tablename__  = 'routes'
+    __table_args__ = {'extend_existing':True}
+    kode      = Column(String(256))
+    nama      = Column(String(256))
+    path      = Column(String(256), nullable=False)
+    factory   = Column(String(256))
+    perm_name = Column(String(16))
+    disabled = Column(SmallInteger, nullable=False, default=0)
+    created  = Column(DateTime, nullable=False, default=datetime.now)
+    updated  = Column(DateTime)
+    create_uid  = Column(Integer, nullable=False, default=1)
+    update_uid  = Column(Integer)
         
-        for x, y in group_app_permissions:
-            self.__acl__.append((Allow, x, y))
             
 class RootFactory(object):
     def __init__(self, request):
+        self.request = request
         self.__acl__ = [(Allow, 'Admin', ALL_PERMISSIONS), 
                         (Allow, Authenticated, 'view'),]
-
-class ResourceFactory(RootFactory):
-    def __init__(self, request):
-        super( ResourceFactory, self ).__init__(request)
-        route = request.matched_route
-        rname = route.name
-       
-        #self.resource = Resource.by_resource_name(rname)
-        if not self.resource:
-            request.session.flash('Anda tidak punya hak akses','error')
-            raise HTTPNotFound()
-        if self.resource and request.user:
-            self.__acl__ = self.resource.__acl__
-            for perm_user, perm_name in self.resource.perms_for_user(request.user):
-                self.__acl__.append((Allow, perm_user, perm_name,))
+        if self.request.user and self.request.matched_route:
+            rows = DBSession.query(Group.group_name, Route.perm_name).\
+               join(UserGroup).join(GroupRoutePermission).join(Route).\
+               filter(UserGroup.user_id==self.request.user.id,
+                   Route.kode==self.request.matched_route.name).all()
+            if rows:
+                for r in rows:
+                    self.__acl__.append((Allow, ''.join(['g:',r.group_name]), r.perm_name))
+        
 
                 
 def init_model():

@@ -22,10 +22,8 @@ from .models import (
     DBSession,
     Base,
     init_model,
+    Route
     )
-from .models.base_model import (
-    Route)
-    
 from .tools import DefaultTimeZone, get_months
 
 

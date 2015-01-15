@@ -9,6 +9,8 @@
                 <th>Route ID</th>
                 <th>Group Nama</th>
                 <th>Route Nama</th>
+                <th>Path</th>
+                
             </tr>
         </thead>
         <tbody>
@@ -44,11 +46,13 @@
           ],
           "aoColumnDefs": [{
                         "bSearchable": false,
-                        "aTargets": [0]
+                        "bVisible": false,
+                        "aTargets": [0,1]
                     }],
           "aoColumns": [
               {"width": "100px"},
               {"width": "100px"},
+              null,
               null,
               null
           ]

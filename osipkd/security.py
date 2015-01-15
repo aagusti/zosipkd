@@ -17,7 +17,6 @@ def group_finder(login, request):
     for group_id in UserGroup.get_by_user(u):
         group = DBSession.query(Group).get(group_id)
         r.append('g:%s' % group.group_name)
-    print r
     return r
         
 def get_user(request):

@@ -17,9 +17,7 @@ from deform import (
     )
 from osipkd.models import (
     DBSession,
-    
-    )
-from osipkd.models.base_model import Route
+    Route)
 
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -105,7 +103,7 @@ class view_routes(BaseViews):
                       ).filter(
                       Route.nama.ilike('%%%s%%' % term),
                       Route.perm_name != None).\
-                      order_by(Route.path).all()
+                      order_by(Route.nama).all()
             r = []
             for k in rows:
                 d={}

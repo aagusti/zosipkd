@@ -76,11 +76,9 @@ def usr_group_act(request):
         columns.append(ColumnDT('nama'))
         query = DBSession.query(User.id, User.user_name, User.email, User.status,
                                 User.last_login_date, User.registered_date,
-                                Unit.nama).filter(
-                                    User.id==UserUnit.user_id,
-                                    Unit.id==UserUnit.unit_id,
-                                    UserGroup.user_id==User.id,
-                                    UserGroup.group_id==gid)
+                                Unit.nama).\
+                  outerjoin(UserUnit).outerjoin(Unit).join(UserGroup).\
+                  filter(UserGroup.group_id==gid)
         
         rowTable = DataTables(req, User, query, columns)
         return rowTable.output_result()

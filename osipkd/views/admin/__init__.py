@@ -8,7 +8,7 @@ from osipkd.models.base_model import App
 ########
 # APP Home #
 ########
-@view_config(route_name='admin', renderer='templates/home.pt', permission='view')
+@view_config(route_name='admin', renderer='templates/home.pt', permission='read')
 def view_app(request):
     return dict(project='o-SIPKD')
         

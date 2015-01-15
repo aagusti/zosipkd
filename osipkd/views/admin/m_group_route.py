@@ -17,8 +17,7 @@ from deform import (
     )
 from osipkd.models import (DBSession,)
 
-from osipkd.models import GroupRoutePermission, Group
-from osipkd.models.base_model import Route
+from osipkd.models import GroupRoutePermission, Group, Route
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
     
@@ -33,15 +32,16 @@ class AddSchema(colander.Schema):
     group_widget = widget.AutocompleteInputWidget(
             size=60,
             values = '/group/act/headofnama',
-            min_length=1)
+            min_length=3)
 
     route_widget = widget.AutocompleteInputWidget(
             size=60,
             values = '/routes/act/headof',
-            min_length=1)
+            min_length=3)
 
     group_id  = colander.SchemaNode(
                     colander.Integer(),
+                    widget = widget.HiddenWidget(),
                     oid = 'group_id')
     group_nm  = colander.SchemaNode(
                     colander.String(),
@@ -49,6 +49,7 @@ class AddSchema(colander.Schema):
                     oid = 'group_nm')
     route_id  = colander.SchemaNode(
                     colander.Integer(),
+                    widget = widget.HiddenWidget(),
                     oid = 'route_id')
     route_nm  = colander.SchemaNode(
                     colander.String(),
@@ -87,9 +88,8 @@ class view_routes(BaseViews):
             columns.append(ColumnDT('route_id'))
             columns.append(ColumnDT('groups.group_name'))
             columns.append(ColumnDT('routes.nama'))
-            
+            columns.append(ColumnDT('routes.path'))
             query = DBSession.query(GroupRoutePermission).join(Group).join(Route)
-            
             rowTable = DataTables(req, GroupRoutePermission, query, columns)
             return rowTable.output_result()
             
