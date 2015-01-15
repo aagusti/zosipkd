@@ -131,11 +131,10 @@
         <tr>
             <th>Index</th>
             <th>No. STS</th>
-            <th>Tgl. Terima</th>
+            <th>Tgl. STS</th>
             <th>Tgl. Validasi</th>
             <th>Jenis</th>
             <th>Uraian</th>
-            <th>Kegiatan</th>
             <th>Nilai</th>
         </tr>
       </thead>
@@ -186,25 +185,23 @@
                "aTargets"   : [0]
             },{
                "sClass"     : "right",
-               "aTargets"   : [7],
+               "aTargets"   : [6],
                "mRender"    : function (data, type, full) {
                               return formatNumber(data);}
             },{
                "bSearchable": true,
                "bSortable"  : false,
-               "aTargets"   : [2,3,4,5,6,7]
+               "aTargets"   : [2,3,4,5,6]
             }],
             "aoColumns": [
                 null, {
-                    "sWidth": "70px"
+                    "sWidth": "60px"
                 }, {
-                    "sWidth": "40px",
+                    "sWidth": "30px",
                 }, {
-                    "sWidth": "40px",
+                    "sWidth": "30px",
                 }, {
-                    "sWidth": "90px",
-                }, {
-                    "sWidth": "90px",
+                    "sWidth": "10px",
                 }, {
                     "sWidth": "120px",
                 }, {

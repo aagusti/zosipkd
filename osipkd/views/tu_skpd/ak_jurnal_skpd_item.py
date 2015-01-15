@@ -9,6 +9,8 @@ import colander
 from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_tu import AkJurnal, AkJurnalItem
+from osipkd.models.pemda_model import Rekening
+from osipkd.models.apbd_anggaran import KegiatanSub
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -39,10 +41,12 @@ class view_ak_jurnal_skpd_item(BaseViews):
         req = self.request
         params = req.params
         url_dict = req.matchdict
+        pk_id = 'id' in params and params['id'] and int(params['id']) or 0
         if url_dict['act']=='grid':
+            ak_jurnal_id = url_dict['ak_jurnal_id'].isdigit() and url_dict['ak_jurnal_id'] or 0
             columns = []
             columns.append(ColumnDT('id'))
-            columns.append(ColumnDT('kegiatan_subs.kegiatans.kode'))
+            columns.append(ColumnDT('kegiatan_subs.kode'))
             columns.append(ColumnDT('kegiatan_subs.no_urut'))
             columns.append(ColumnDT('rekenings.kode'))
             columns.append(ColumnDT('rekenings.nama'))
@@ -53,7 +57,8 @@ class view_ak_jurnal_skpd_item(BaseViews):
             columns.append(ColumnDT('kegiatan_subs.id'))
             columns.append(ColumnDT('rekening_id'))
             
-            query = DBSession.query(AkJurnalItem)
+            query = DBSession.query(AkJurnalItem).\
+                  filter(AkJurnalItem.ak_jurnal_id==ak_jurnal_id)
             rowTable = DataTables(req, AkJurnalItem, query, columns)
             return rowTable.output_result()
         
@@ -68,21 +73,21 @@ class view_ak_jurnal_skpd_item(BaseViews):
         params = req.params
         url_dict = req.matchdict
         kegiatan_sub_id = 'kegiatan_sub_id' in params and params['kegiatan_sub_id'] or None
-        rekening_id     = 'rekening_id' in params and params['rekening_id'] or None
-        jurnal_item_id  = 'jurnal_item_id' in params and params['jurnal_item_id'] or None
-        ak_jurnal_id    = 'ak_jurnal_id' in params and params['ak_jurnal_id'] or None
+        rekening_id     = 'rekening_id'     in params and params['rekening_id'] or None
+        jurnal_item_id  = 'jurnal_item_id'  in params and params['jurnal_item_id'] or None
+        ak_jurnal_id    = 'ak_jurnal_id'    in params and params['ak_jurnal_id'] or None
         
         if not jurnal_item_id:
             row = AkJurnalItem()
             row_dict = {}
-            row_dict['created'] = datetime.now()
-            row_dict['create_uid'] = req.user.id
-            row_dict['ak_jurnal_id']     = 'ak_jurnal_id' in params and params['ak_jurnal_id'].replace('.', '') or 0
+            row_dict['created']      = datetime.now()
+            row_dict['create_uid']   = req.user.id
+            row_dict['ak_jurnal_id'] = 'ak_jurnal_id' in params and params['ak_jurnal_id'].replace('.', '') or 0
         else:
             row = DBSession.query(AkJurnalItem).filter(AkJurnalItem.id==jurnal_item_id).first()
             if not row:
                 return {'success':False, 'msg':'Data Tidak Ditemukan'}
-            row.updated = datetime.now()
+            row.updated    = datetime.now()
             row.update_uid = req.user.id
             row_dict = row.to_dict()
             

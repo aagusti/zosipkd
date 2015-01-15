@@ -13,15 +13,10 @@ from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
 
-SESS_ADD_FAILED = 'Tambah ag-pendapatan gagal'
-SESS_EDIT_FAILED = 'Edit ag-pendapatan gagal'
+SESS_ADD_FAILED = 'Tambah ag-penerimaan gagal'
+SESS_EDIT_FAILED = 'Edit ag-penerimaan gagal' 
 
-def deferred_jv_type(node, kw):
-    values = kw.get('jv_type', [])
-    return widget.SelectWidget(values=values)
-    
-
-class view_ak_jurnal(BaseViews):
+class view_ag_penerimaan(BaseViews):
     ########                    
     # List #
     ########    

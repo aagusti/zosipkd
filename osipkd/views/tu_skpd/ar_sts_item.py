@@ -9,8 +9,8 @@ import colander
 from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
-from osipkd.models.pemda_model import Unit
-from osipkd.models.apbd_tu import Sts, StsItem 
+from osipkd.models.pemda_model import Unit, Rekening
+from osipkd.models.apbd_tu import Sts, StsItem
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -37,15 +37,37 @@ class view_ar_sts_item(BaseViews):
                 ar_sts_id = url_dict['ar_sts_id'].isdigit() and url_dict['ar_sts_id'] or 0
                 columns = []
                 columns.append(ColumnDT('id'))
-                columns.append(ColumnDT('kegiatan_subs.kegiatans.kode'))
-                columns.append(ColumnDT('kegiatan_subs.no_urut'))
-                columns.append(ColumnDT('rekenings.kode'))
-                columns.append(ColumnDT('rekenings.nama'))
-                columns.append(ColumnDT('amount',  filter=self._number_format))
                 columns.append(ColumnDT('kegiatan_item_id'))
+                columns.append(ColumnDT('kode1'))
+                columns.append(ColumnDT('no_urut1'))
+                columns.append(ColumnDT('kode_rek'))
+                columns.append(ColumnDT('nama_rek'))
+                columns.append(ColumnDT('amount',  filter=self._number_format))
+                columns.append(ColumnDT('nama'))
 
-                query = DBSession.query(StsItem).\
-                          filter(StsItem.ar_sts_id==ar_sts_id)
+                query = DBSession.query(StsItem.id,
+                                        StsItem.kegiatan_item_id,
+                                        Kegiatan.kode.label('kode1'),
+                                        KegiatanSub.no_urut.label('no_urut1'),
+                                        Rekening.kode.label('kode_rek'),
+                                        Rekening.nama.label('nama_rek'),
+                                        StsItem.amount.label('amount'),
+                                        KegiatanSub.nama.label('nama'),
+                          ).join(KegiatanItem
+                          ).outerjoin(KegiatanSub, Rekening, Kegiatan
+                          ).filter(StsItem.ar_sts_id==ar_sts_id,
+                                   StsItem.kegiatan_item_id==KegiatanItem.id,
+                                   KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                                   KegiatanItem.rekening_id==Rekening.id,
+                                   KegiatanSub.kegiatan_id==Kegiatan.id,
+                          ).group_by(StsItem.id,
+                                     StsItem.kegiatan_item_id,
+                                     Kegiatan.kode.label('kode1'),
+                                     KegiatanSub.no_urut.label('no_urut1'),
+                                     Rekening.kode.label('kode_rek'),
+                                     Rekening.nama.label('nama_rek'),
+                                     StsItem.amount.label('amount'),
+                                     KegiatanSub.nama.label('nama'))
                 rowTable = DataTables(req, StsItem, query, columns)
                 return rowTable.output_result()
 #######    
@@ -81,15 +103,15 @@ def view_add(request):
     else:
         row = StsItem()
             
-    row.ar_sts_id    = ar_sts_id
+    row.ar_sts_id        = ar_sts_id
     row.kegiatan_item_id = controls['kegiatan_item_id']
-    row.amount            = controls['amount'].replace('.','')
+    row.amount           = controls['amount'].replace('.','')
     
     #try:
     DBSession.add(row)
     DBSession.flush()
     nilai = "%d" % Sts.get_nilai(row.ar_sts_id) 
-    return {"success": True, 'id': row.id, "msg":'Success Tambah Item Sts', 'jml_total':nilai}
+    return {"success": True, 'id': row.id, "msg":'Success Tambah Item STS', 'jml_total':nilai}
     #except:
     #return {'success':False, 'msg':'Gagal Tambah Item Invoice'}
 
@@ -127,8 +149,8 @@ def view_edit(request):
         del request.session[SESS_EDIT_FAILED]
         return dict(form=form)
     values = row.to_dict() #dict(zip(row.keys(), row))
-    values['kegiatan_nm']=row.kegiatan_subs.nama
-    values['kegiatan_kd']=row.kegiatan_subs.kode
+    #values['kegiatan_nm']=row.kegiatan_subs.nama
+    #values['kegiatan_kd']=row.kegiatan_subs.kode
     form.set_appstruct(values) 
     return dict(form=form)
 

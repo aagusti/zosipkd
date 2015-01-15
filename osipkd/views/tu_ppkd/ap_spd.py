@@ -29,6 +29,14 @@ TRW = (
     (4, 'IV'),
     )
 
+def deferred_is_bl(node, kw):
+    values = kw.get('is_bl', [])
+    return widget.SelectWidget(values=values)
+    
+IS_BL = (
+    (0, 'BTL'),
+    (1, 'BL'))    
+    
 class view_ap_spd_ppkd(BaseViews):
 
     @view_config(route_name="ap-spd", renderer="templates/ap-spd/list.pt")
@@ -118,6 +126,7 @@ class view_ap_spd_ppkd(BaseViews):
                     
     def get_form(self, class_form):
         schema = class_form(validator=self.form_validator)
+        schema = schema.bind(is_bl=IS_BL)
         schema.request = self.request
         return Form(schema, buttons=('simpan','batal'))
         
@@ -225,7 +234,7 @@ class view_ap_spd_ppkd(BaseViews):
         values= {}
         if request.POST:
             if 'hapus' in request.POST:
-                msg = '%s Kode %s  No. %s %s sudah dihapus.' % (request.title, row.kode, row.no_urut, row.nama)
+                msg = '%s Kode %s  %s sudah dihapus.' % (request.title, row.kode, row.nama)
                 DBSession.query(Spd).filter(Spd.id==request.matchdict['id']).delete()
                 DBSession.flush()
                 request.session.flash(msg)
@@ -258,8 +267,10 @@ class AddSchema(colander.Schema):
                           widget=widget.SelectWidget(values=TRW))
     is_bl            = colander.SchemaNode(
                           colander.Integer(),
-                          title="is BL",
-                          oid = "is_bl")
+                          title="Belanja",
+                          oid = "is_bl",
+                          #validator=colander.Length(max=32),
+                          widget=widget.SelectWidget(values=IS_BL))
 
 class EditSchema(AddSchema):
     id             = colander.SchemaNode(

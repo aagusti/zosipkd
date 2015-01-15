@@ -1,6 +1,10 @@
 <html metal:use-macro="load: ../base.pt">
 <div metal:fill-slot="content">
-  <h4>${request.title}</h4>
+  <div  class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">${request.title}</h3>
+    </div>
+    <div class="panel-body">
   <!--FORM HEADER-->
   <form id="header" method="POST" enctype="multipart/form-data" accept-charset="utf-8" 
         class="form-horizontal">
@@ -47,10 +51,10 @@
       
       <!--Tanggal/JV Type-->
       <div class="form-group">
-        <div class="col-md-4" tal:define="field form['tanggal']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
+        <div tal:define="field form['tanggal']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
-            <div class="col-md-8">
+            <div class="col-md-2">
                ${structure:field.serialize()}
                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                    tal:repeat="error field.error.messages()">
@@ -70,27 +74,27 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <div class="form-group" tal:define="field form['is_skpd']" id="item-${field.oid}">
-            <div class="col-md-1">
+            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}" style="text-align:left;!important;">
+                    ${field.title}</label>
+            <div class="col-md-5">
                ${structure:field.serialize()}
                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                    tal:repeat="error field.error.messages()">
                    ${error}</p>
             </div>
-            <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}" style="text-align:left;!important;">
-                    ${field.title}</label>
           </div>
         </div>      
       </div>
       <!--Jurnal Kode-->
       <div class="form-group">
         
-        <div class="col-md-4" tal:define="field form['kode']" >
+        <div tal:define="field form['kode']" >
           <div id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
-            <div class="col-md-8">
+            <div class="col-md-2">
                ${structure:field.serialize()}
               <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                  tal:repeat="error field.error.messages()">
@@ -105,35 +109,32 @@
                tal:repeat="error field.error.messages()">
                ${error}</p>
         </div>
-
-   
       </div>
 
       <!--REFERECE-->
       <div class="form-group">
-        <div class="col-md-4" tal:define="field form['source_no']" id="item-${field.oid}">
-          <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
+        <div tal:define="field form['source_no']" id="item-${field.oid}">
+          <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                   ${field.title}</label>
-          <div class="col-md-8">
+          <div class="col-md-2">
              ${structure:field.serialize()}
             <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                tal:repeat="error field.error.messages()">
                ${error}</p>
           </div>
-          
         </div>
         
         <div class="col-md-3" tal:define="field form['tgl_source']" >
             <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}" style="text-align:left;!important;">
                     ${field.title}</label>
-            <div class="col-md-10">
+            <div class="col-md-9">
              ${structure:field.serialize()}
             </div>
             <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                tal:repeat="error field.error.messages()">
                ${error}</p>
         </div>
-        <div class="col-md-5" tal:define="field form['source']" >
+        <div class="col-md-2" tal:define="field form['source']" >
            ${structure:field.serialize()}
             <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                tal:repeat="error field.error.messages()">
@@ -143,34 +144,30 @@
         
       </div>
       <!--CATATAN-->
-      <div class="form-group" tal:define="field form['notes']">
-          <div id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
-                    ${field.title}</label>
-            <div class="col-md-10">
-               ${structure:field.serialize()}
-              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                 tal:repeat="error field.error.messages()">
-                 ${error}</p>
-            </div>
+      <div class="form-group">
+        <div tal:define="field form['notes']" id="item-${field.oid}">
+          <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                  ${field.title}</label>
+          <div class="col-md-5">
+             ${structure:field.serialize()}
+            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+               tal:repeat="error field.error.messages()">
+               ${error}</p>
           </div>
-      </div>
-      <!--BUTTON-->
-      <div class="col-md-offset-2">
-        <div class="form-group">
-            <button id="deformsave" name="simpan" type="submit" class="btn btn-primary "
-                  value="simpan">Simpan</button>
-            <button id="deformcancel" name="batal" type="submit" class="btn btn-default "
-                  value="batal">Batal</button>
-        
         </div>
-      </div>
+        <!--BUTTON-->
+        <div class="col-md-3">
+          <button type="submit" class="btn btn-primary" id="simpan" name="simpan">Simpan</button>
+          <button type="submit" class="btn btn-danger"  id="batal"  name="batal">Batal</button>
+        </div>
+       </div> 
     </fieldset>
   </form>
+    </div>
+   </div>
   
   <!-- GRID ITEM -->
   <div class="row">
-    <h4>Jurnal Item</h4>
     <table id="table1" class="table table-bordered table-hover table-condensed">
         <thead>
             <tr>
@@ -187,13 +184,17 @@
     </table>
   </div>
   <!--form ITEM-->
-  <div class="row">
+  <div  class="panel panel-default">
+    <div class="panel-heading">
+        <h5 class="panel-title">Item Jurnal SKPD</h5>
+    </div>
+  <div class="panel-body">
     <form id="detail" method="POST" enctype="multipart/form-data" accept-charset="utf-8" 
       class="form-horizontal" name="detail">
-      <input id="jurnal_item_id" type="hidden" value="" name="jurnal_item_id">
+      <input id="jurnal_item_id"  type="hidden" value="" name="jurnal_item_id">
       <input id="kegiatan_sub_id" type="hidden" value="" name="kegiatan_sub_id">
-      <input id="ak_jurnal_id" type="hidden" value="" name="ak_jurnal_id">
-      <input id="rekening_id" type="hidden" value="" name="rekening_id">
+      <input id="ak_jurnal_id"    type="hidden" value="" name="ak_jurnal_id">
+      <input id="rekening_id"     type="hidden" value="" name="rekening_id">
       
       <div class="form-group"><!--Kegiatan-->
         <div class="col-md-3" id="item-kegiatan_sub_kd">
@@ -208,25 +209,23 @@
         </div>      
         <script>
             $('#kegiatan_sub_kd').typeahead({
-                "hint": true,
+                "hint"     : true,
                 "highlight": true,
                 "minLength": 1,
-                "remote": "/ag-kegiatan-sub/act/headofkode?term=%QUERY", 
-            },
-            {
-              "name": 'kegiatan_sub_kd',
-              "displayKey": 'value',
+                "remote"   : "/ag-kegiatan-sub/act/headofkode1?term=%QUERY", 
+            },{
+               "name"      : 'kegiatan_sub_kd',
+               "displayKey": 'value',
             }); 
                     
             $('#kegiatan_sub_nm').typeahead({
-                "hint": true,
+                "hint"     : true,
                 "highlight": true,
                 "minLength": 1,
-                "remote": "/ag-kegiatan-sub/act/headofnama?term=%QUERY", 
-            },
-            {
-              "name": 'kegiatan_sub_nm',
-              "displayKey": 'value',
+                "remote"   : "/ag-kegiatan-sub/act/headofnama1?term=%QUERY", 
+            },{
+               "name"      : 'kegiatan_sub_nm',
+               "displayKey": 'value',
             });         
             $('#kegiatan_sub_kd').bind('typeahead:selected', function(obj, datum, name) {      
                   $('#kegiatan_sub_id').val(datum.id);
@@ -266,35 +265,36 @@
           </div>
         </div>
         <script>
+          var kegiatan_sub_id ;
+          kegiatan_sub_id = $('#kegiatan_sub_id').val();
+          
           $('#rekening_kd').bind('typeahead:selected', function(obj, datum, name) {  
-                  $('#rekening_nm').val(datum.nama);
-                  $('#rekening_id').val(datum.id);
+                $('#rekening_nm').val(datum.nama);
+                $('#rekening_id').val(datum.id);
             });
 
           $('#rekening_nm').bind('typeahead:selected', function(obj, datum, name) {      
                 $('#rekening_kd').val(datum.kode);
                 $('#rekening_id').val(datum.id);
           });
-    
+
           $('#rekening_nm').typeahead({
-              "hint": true,
+              "hint"     : true,
               "highlight": true,
               "minLength": 1,
-              "remote": "/rekening/act/headofnama?term=%QUERY", 
-          },
-          {
-            "name": 'rekening_nm',
-            "displayKey": 'value',
+              "remote"   : "/rekening/act/headofnama10?kegiatan_sub_id="+kegiatan_sub_id+"&term=%QUERY", 
+          },{
+             "name"      : 'rekening_nm',
+             "displayKey": 'value',
           }); 
           $('#rekening_kd').typeahead({
-              "hint": true,
+              "hint"     : true,
               "highlight": true,
               "minLength": 1,
-              "remote": "/rekening/act/headofkode?term=%QUERY", 
-          },
-          {
-            "name": 'rekening_kd',
-            "displayKey": 'value',
+              "remote"   : "/rekening/act/headofkode10?kegiatan_sub_id="+kegiatan_sub_id+"&term=%QUERY", 
+          },{
+             "name"      : 'rekening_kd',
+             "displayKey": 'value',
           });                     
           
         </script>
@@ -303,25 +303,20 @@
 
       <!--Referensi-------------------------------------------------------------->  
       <div class="form-group">
-        <div class="col-md-10">
-          <div id="item-notes">
-            <label for="notes" class="control-label col-md-1" id="req-notes">
-                    Catatan</label>
-            <div class="col-md-11">
-               <input id="notes" class=" form-control " type="text" value="" name="notes">
-            </div>
-          </div>
+        <label for="notes" class="control-label col-md-1" id="req-notes">
+                 Notes</label>
+        <div class="col-md-7">
+           <input id="notes" class=" form-control " type="text" value="" name="notes">
         </div>
         
         <!--Button-------------------------------------------------------------->    
-        <div class="col-md-2">
-          <div class="form-group">
+        <div class="col-md-3">
             <button id="item-baru" name="baru" type="button" class="btn btn-primary "
-                  value="simpan">Baru</button>
+                  value="simpan">Tambah</button>
             <button id="item-save" name="simpan" type="submit" class="btn btn-primary "
-                  value="simpan">Simpan</button>
-          </div>
+                  value="simpan">Update</button>
         </div>
+      </div>
         <script>
           $('#item-baru').click(function () {
                 $('#jurnal_item_id').val('');
@@ -338,23 +333,23 @@
             ak_jurnal_id = $('#id').val();
             is_success = true;
             kegiatan_sub_id = $('#kegiatan_sub_id').val();
-            rekening_id = $('#rekening_id').val();
+            rekening_id     = $('#rekening_id').val();
             /*********************************************************************
             Cek header
             *********************************************************************/
-            if (! ak_jurnal_id || ak_jurnal_id=='undefined'){
+            if (! ak_jurnal_id){
                 $("#errors").css('display', 'inline', 'important');
                 $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + 'Jurnal Belum Disimpan');
                 is_success = false;
             }
             
-            if (!kegiatan_sub_id && is_success){
+            if (!kegiatan_sub_id){
                 $("#errors").css('display', 'inline', 'important');
                 $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + 'Isi dulu kegiatan');
                 is_success = false;
             }
 
-            if (!rekening_id && is_success){
+            if (!rekening_id){
                 $("#errors").css('display', 'inline', 'important');
                 $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + 'Isi dulu rekening');
                 is_success = false;
@@ -364,7 +359,7 @@
               $('#ak_jurnal_id').val(ak_jurnal_id)
               $.ajax({
                 type: "POST",
-                url: "/ak-jurnal-skpd-item/add",
+                url: "/ak-jurnal-skpd/item/"+ak_jurnal_id+"/add",
                 data: $('#detail').serialize(),
                 success: function (html) {
                   if (html.success == true) {
@@ -395,32 +390,31 @@
           });
           
         </script>
-      </div>
     </form>
   </div>    
 </div>
 
 
 <!--javaSCRIPT-->
-<div metal:fill-slot="scripts">
     <script>
       var mID;
       var mThn;
       var oTable;
       var iPos;
-      var oTableUrl = "/ak-jurnal-skpd-item/act/grid?ak_jurnal_id="+$("#id").val();  
+      var ak_jurnal_id = $('#id').val();
+      var oTableUrl = "/ak-jurnal-skpd/item/"+ak_jurnal_id+"/act/grid";
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
-          "sDom": '<"toolbar">lfrtip',
-          "sAjaxSource": oTableUrl,
-          "bServerSide": true,
-          "bProcessing": true,
+          "sDom"           : '<"toolbar">lfrtip',
+          "sAjaxSource"    : oTableUrl,
+          "bServerSide"    : true,
+          "bProcessing"    : true,
           "bScrollCollapse": true,
-          "bSort": true,
-          "bInfo": false,
-          "bFilter": true,
-          "bAutoWidth": false,
-          "bPaginate": true,
+          "bSort"          : true,
+          "bInfo"          : false,
+          "bFilter"        : true,
+          "bAutoWidth"     : false,
+          "bPaginate"      : true,
           "sPaginationType": "full_numbers",
           
           "lengthMenu": [
@@ -429,16 +423,16 @@
           ],
           "aoColumnDefs": [{
                         "bSearchable": false,
-                        "bVisible": false,
-                        "aTargets": [0,6,7,8,9,10]
-                    }],
+                        "bVisible"   : false,
+                        "aTargets"   : [0,6,7,8,9,10]
+          }],
           "aoColumns": [
               null,
-              {"width": "65px"},
-              {"width": "35"},
-              {"width": "85px"},
-              null,
-              {"width": "100px", "sClass":"right"},
+              {"width": "40px"},
+              {"width": "20px"},
+              {"width": "40px"},
+              {"width": "140px"},
+              {"width": "60px", "sClass":"right"},
               null,
               null,
               null,
@@ -449,11 +443,11 @@
           
         var tb_array = [
           '<div class="btn pull-left">',
-          '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',
-          '	<button id="btn_close" class="btn btn btn-warning" type="button">Tutup</button>',
+          '	<button id="btn_delete"  class="btn btn btn-danger"  type="button">Hapus</button>',
+          '	<button id="btn_close"   class="btn btn btn-warning" type="button">Tutup</button>',
           '	<!--button id="btn_edit" class="btn btn btn-primary" type="button">Edit</button-->',
-          '	<!--button id="btn_pdf" class="btn btn btn-warning" type="button">PDF</button-->',
-          '	<!--button id="btn_csv" class="btn btn btn-default" type="button">CSV</button-->',
+          '	<!--button id="btn_pdf"  class="btn btn btn-warning" type="button">PDF</button-->',
+          '	<!--button id="btn_csv"  class="btn btn btn-default" type="button">CSV</button-->',
           '	&nbsp;',
           '</div>',
         ];
@@ -473,7 +467,7 @@
                 mID = aData[0];
                 $("#jurnal_item_id").val(mID);
                 $("#kegiatan_sub_id").val();
-                $("#kegiatan_sub_kd").val(aData[1]+'-'+aData[2]);
+                $("#kegiatan_sub_kd").val(aData[1]);
                 $("#rekening_kd").val(aData[3]);
                 $("#rekening_nm").val(aData[4]);
                 $("#amount").val(aData[5]);
@@ -491,11 +485,11 @@
             window.location = '/ak-jurnal-skpd';
         });
         $('#btn_add').click(function () {
-            window.location = '/ak-jurnal-skpd-item/add';
+            window.location = '/ak-jurnal-skpd/item/add';
         });
 
         $('#btn_edit').click(function () {
-            if (mID) window.location = '/ak-jurnal-skpd-item/'+mID+'/edit';
+            if (mID) window.location = '/ak-jurnal-skpd/item/'+mID+'/edit';
             else alert('Pilih Baris yang akan di edit');
         });
 
@@ -505,10 +499,21 @@
               if (confirm('Yakin di hapus?')==true){
                 $.ajax({
                   type: "POST",
-                  url: "/ak-jurnal-skpd-item/"+mID+"/delete",
+                  url: "/ak-jurnal-skpd/item/"+$("#id").val()+"/"+mID+"/delete",
                   success: function (html) {
                     if (html.success == true) {
                       $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                      $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                      $('#ak_jurnal_id').val('');
+                      $('#kegiatan_sub_id').val('');
+                      $('#kegiatan_sub_kd').val('');
+                      $('#kegiatan_sub_nm').val('');
+                      $('#rekening_id').val('');
+                      $('#rekening_kd').val('');
+                      $('#rekening_nm').val('');
+                      $('#amount').val(0);
+                      $('#notes').val('');
+                      oTable.fnReloadAjax(oTableUrl);
                       oTable.fnReloadAjax(oTableUrl);
                     } else {
                       $("#errors").css('display', 'inline', 'important');
@@ -524,8 +529,6 @@
               else alert('Pilih Baris yang akan di hapus');
         });        
         })
-    </script>
-    
-      
-</div>      
+    </script>     
+  </div>      
 </html>

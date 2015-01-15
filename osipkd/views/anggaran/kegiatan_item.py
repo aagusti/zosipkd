@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func, or_
+from sqlalchemy import not_, func, or_, cast, BigInteger
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
@@ -78,7 +78,7 @@ class view_ak_jurnal(BaseViews):
             kegiatan_sub_id =  'kegiatan_sub_id' in params and params['kegiatan_sub_id'] or 0
             q = DBSession.query(KegiatanItem.id, Rekening.kode, 
                                 KegiatanItem.nama, 
-                                (KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2).label('anggaran')
+                                cast(KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2,BigInteger).label('amount')
                                 )\
                          .join(Rekening)\
                          .join(KegiatanSub)\
@@ -98,6 +98,35 @@ class view_ak_jurnal(BaseViews):
                 d['amount']      = k[3]
                 
                 r.append(d)    
+            return r            
+        
+        elif url_dict['act']=='headofkode1':
+            term = 'term' in params and params['term'] or ''
+            kegiatan_sub = 'kegiatan_sub_id' in params and params['kegiatan_sub_id'] or 0
+            q = DBSession.query(KegiatanItem.id, Rekening.kode.label('kode1'),Rekening.nama.label('nama1')
+                                )\
+                                .join(KegiatanSub, Rekening)\
+                                .outerjoin(Kegiatan)\
+                                .filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                                        #KegiatanSub.id==kegiatan_sub,
+                                        KegiatanSub.unit_id == ses['unit_id'],
+                                        KegiatanSub.tahun_id == ses['tahun'],
+                                        KegiatanSub.kegiatan_id==Kegiatan.id,
+                                        KegiatanItem.rekening_id==Rekening.id,
+                                        Kegiatan.kode=='0.00.00.10', 
+                                        Rekening.kode.ilike('%%%s%%' % term))\
+                      
+            rows = q.all()                               
+            r = []
+            for k in rows:
+                d={}
+                d['id']      = k[0]
+                d['value']   = k[1]
+                d['kode']    = k[1]
+                d['nama']    = k[2]
+                #d['amount']  = k[3]
+                r.append(d)
+            print '---****----',r              
             return r            
         
     ###############                    
@@ -187,6 +216,7 @@ class AddSchema(colander.Schema):
     no_urut          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          title="No.Urut",
                           )
     header_id        = colander.SchemaNode(
                           colander.String(),
@@ -196,83 +226,103 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           missing=colander.drop,
                           default=1,
+                          title="Volume 1"
                           )
     sat_1_1          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          title="Satuan 2"
                           )
     vol_1_2          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=1,)
+                          default=1,
+                          title="Volume 2")
     sat_1_2          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          title="Satuan 2"
                           )
     hsat_1           = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=0)
+                          default=0,
+                          title="Harga")
     vol_2_1          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=1,)
+                          default=1,
+                          title="Volume 1")
     sat_2_1          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          title="Satuan 1"
                           )
     vol_2_2          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=1,)
+                          default=1,
+                          title="Volume 2")
     sat_2_2          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          title="Satuan 2"
                           )
     hsat_2           = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=0)
+                          default=0,
+                          title="Harga")
     vol_3_1          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=1,)
+                          default=1,
+                          title="Volume 1")
     sat_3_1          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          title="Satuan 1"
                           )
     vol_3_2          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=1,)
+                          default=1,
+                          title="Volume 2")
     sat_3_2          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          title="Satuan 2"
                           )
     hsat_3           = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=0)
+                          default=0,
+                          title="Harga")
     vol_4_1          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=1)
+                          default=1,
+                          title="Volume 1")
     sat_4_1          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          title="Satuan 1"
                           )
     vol_4_2          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=1,)
+                          default=1,
+                          title="Volume 2")
     sat_4_2          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          title="Satuan 2"
                           )
     hsat_4           = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=0)
+                          default=0,
+                          title="Harga")
     pelaksana        = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
@@ -288,51 +338,63 @@ class AddSchema(colander.Schema):
     bln01            = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=0)
+                          default=0,
+                          title="Jan")
     bln02            = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=0)
+                          default=0,
+                          title="Feb")
     bln03            = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=0)
+                          default=0,
+                          title="Mar")
     bln04            = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=0)
+                          default=0,
+                          title="Apr")
     bln05            = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=0)
+                          default=0,
+                          title="Mei")
     bln06            = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=0)
+                          default=0,
+                          title="Jun")
     bln07            = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=0)
+                          default=0,
+                          title="Jul")
     bln08            = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=0)
+                          default=0,
+                          title="Agt")
     bln09            = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=0)
+                          default=0,
+                          title="Sep")
     bln10            = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=0)
+                          default=0,
+                          title="Okt")
     bln11            = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=0)
+                          default=0,
+                          title="Nov")
     bln12            = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          default=0)
+                          default=0,
+                          title="Des")
     ssh_id           = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
@@ -386,9 +448,7 @@ def save(values, request, row=None):
     row.from_dict(values)
     if not row.no_urut:
           row.no_urut = KegiatanItem.max_no_urut(values['kegiatan_sub_id'],values['rekening_id'])+1;
-          
 
-            
     DBSession.add(row)
     DBSession.flush()
     return row
@@ -413,7 +473,7 @@ def view_add(request):
     form = get_form(request, AddSchema)
     kegiatan_sub_id = request.matchdict['kegiatan_sub_id']
     ses = request.session
-    rows = KegiatanSub.query_id(kegiatan_sub_id).filter(KegiatanSub.unit_id==ses['unit_id']).first()
+    rows = KegiatanSub.query_id(kegiatan_sub_id).filter(KegiatanSub.unit_id == ses['unit_id']).first()
     if request.POST:
         if 'simpan' in request.POST:
             controls = request.POST.items()
@@ -484,18 +544,12 @@ def view_delete(request):
     q = query_id(request)
     row = q.first()
     if not row:
-        return id_not_found(request)
-    form = Form(colander.Schema(), buttons=('hapus','cancel'))
-    values= {}
-    if request.POST:
-        if 'hapus' in request.POST:
-            msg = '%s Kode %s  No. %s %s sudah dihapus.' % (request.title, row.kode, row.no_urut, row.nama)
-            DBSession.query(KegiatanItem).filter(KegiatanItem.id==request.matchdict['id']).delete()
-            DBSession.flush()
-            request.session.flash(msg)
-        return route_list(request)
-    return dict(row=row,
-                 form=form.render())
+        return {'success':False, "msg":self.id_not_found()}
+
+    msg = 'Data sudah dihapus'
+    query_id(request).delete()
+    DBSession.flush()
+    return {'success':True, "msg":msg}
 
             
                         

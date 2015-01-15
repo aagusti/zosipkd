@@ -30,21 +30,41 @@ class view_ap_spd_item(BaseViews):
         params = req.params
         url_dict = req.matchdict
         if url_dict['act']=='grid':
+            pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             if url_dict['act']=='grid':
                 # defining columns
                 ap_spd_id = url_dict['ap_spd_id'].isdigit() and url_dict['ap_spd_id'] or 0
                 columns = []
                 columns.append(ColumnDT('id'))
-                columns.append(ColumnDT('kegiatansubs.kode'))
-                columns.append(ColumnDT('kegiatansubs.nama'))
-                columns.append(ColumnDT('anggaran'))
-                columns.append(ColumnDT('lalu'))
-                columns.append(ColumnDT('nominal'))
-                columns.append(ColumnDT('nominal'))
-                columns.append(ColumnDT('nominal'))
+                columns.append(ColumnDT('kode'))
+                columns.append(ColumnDT('nama'))
+                columns.append(ColumnDT('anggaran',filter=self._number_format))
+                columns.append(ColumnDT('lalu',filter=self._number_format))
+                columns.append(ColumnDT('nominal',filter=self._number_format))
+                columns.append(ColumnDT('jumlah',filter=self._number_format))
+                columns.append(ColumnDT('sisa',filter=self._number_format))
                 
-                query = DBSession.query(SpdItem
-                        ).filter(SpdItem.id==ap_spd_id,
+                query = DBSession.query(SpdItem.id,
+                                        Kegiatan.kode.label('kode'),
+                                        KegiatanSub.nama.label('nama'),
+                                        SpdItem.anggaran,
+                                        SpdItem.lalu,
+                                        SpdItem.nominal,
+                                        func.sum(SpdItem.nominal+SpdItem.lalu).label('jumlah'),
+                                        func.sum(SpdItem.anggaran-SpdItem.nominal+SpdItem.lalu).label('sisa'),
+                        ).join(Spd, KegiatanSub, Kegiatan
+                        ).filter(SpdItem.ap_spd_id==Spd.id,
+                                 SpdItem.ap_spd_id==ap_spd_id,
+                                 SpdItem.kegiatan_sub_id==KegiatanSub.id,
+                                 KegiatanSub.kegiatan_id==Kegiatan.id,
+                        ).group_by(SpdItem.id,
+                                   Kegiatan.kode.label('kode'),
+                                   KegiatanSub.nama.label('nama'),
+                                   SpdItem.anggaran,
+                                   SpdItem.lalu,
+                                   SpdItem.nominal,
+                                   SpdItem.nominal,
+                                   SpdItem.nominal,
                         )
                 rowTable = DataTables(req, SpdItem, query, columns)
                 return rowTable.output_result()
@@ -61,10 +81,11 @@ class view_ap_spd_item(BaseViews):
         ap_spd_id = 'ap_spd_id' in url_dict and url_dict['ap_spd_id'] or 0
         controls = dict(req.POST.items())
         
-        kegiatan_sub_id = 'kegiatan_sub_id' in controls and controls['kegiatan_sub_id'] or None
-        if not kegiatan_sub_id:
-            return {"success": False, 'msg':'Kegiatan belum dipilih'}
-            
+        #kegiatan_sub_id = 'kegiatan_sub_id' in controls and controls['kegiatan_sub_id'] or None
+        #if not kegiatan_sub_id:
+        #    return {"success": False, 'msg':'Kegiatan belum dipilih'}
+          
+        ap_spd_item_id = 'ap_spd_item_id' in controls and controls['ap_spd_item_id'] or 0        
         #Cek dulu ada penyusup gak dengan mengecek sessionnya
         ap_spd = DBSession.query(Spd)\
                       .filter(Spd.unit_id==ses['unit_id'],
@@ -73,19 +94,36 @@ class view_ap_spd_item(BaseViews):
             return {"success": False, 'msg':'SPD tidak ditemukan'}
         
         #Cek lagi ditakutkan skpd ada yang iseng inject script
-        row = SpdItem()
-        row.kegiatan_sub_id = kegiatan_sub_id
-        row.ap_spd_id       = ap_spp_id
-        try:
-          DBSession.add(row)
-          DBSession.flush()
+        
+        if ap_spd_item_id:
+            row = DBSession.query(SpdItem)\
+                      .join(Spd)\
+                      .filter(SpdItem.id==ap_spd_item_id,
+                              Spd.unit_id==ses['unit_id'],
+                              SpdItem.ap_spd_id==ap_spd_id).first()
+            if not row:
+                return {"success": False, 'msg':'Invoice tidak ditemukan'}
+        else:
+            row = SpdItem()
+        
+        #row = SpdItem()
+        row.ap_spd_id       = ap_spd_id
+        row.kegiatan_sub_id = controls['kegiatan_sub_id']
+        row.anggaran = controls['anggaran'].replace('.','')
+        row.lalu     = controls['lalu'].replace('.','')
+        row.nominal  = controls['nominal'].replace('.','')
+
+        #try:
+        DBSession.add(row)
+        DBSession.flush()
+        return {"success": True, 'id': row.id, "msg":'Success Tambah SPD'}
           #row = DBSession.query(KegiatanSub).filter_by(id=ap_kegiatan_id).first()
-          row.posted=1
-          DBSession.add(row)
-          DBSession.flush()
-          return {"success": True, "msg":'Success Tambah Item SPD'}
-        except:
-            return {'success':False, 'msg':'Gagal Tambah Item SPD'}
+          #row.posted=1
+          #DBSession.add(row)
+          #DBSession.flush()
+          #return {"success": True, "msg":'Success Tambah Item SPD'}
+        #except:
+        #    return {'success':False, 'msg':'Gagal Tambah Item SPD'}
 
 
     ########
@@ -93,8 +131,7 @@ class view_ap_spd_item(BaseViews):
     ########
     def query_id(self):
         return DBSession.query(SpdItem).join(Spd)\
-                        .filter(SpdItem.id==self.request.matchdict['id'],
-                                SpdItem.kegiatan_sub_id==self.request.matchdict['kegiatan_sub_id'],
+                        .filter(SpdItem.id==self.request.matchdict['id']
                                 )
     def id_not_found(self):    
         msg = 'Item ID %s not found.' % request.matchdict['id']
@@ -106,16 +143,13 @@ class view_ap_spd_item(BaseViews):
     @view_config(route_name='ap-spd-item-delete', renderer='json',
                  permission='delete')
     def view_delete(self):
-        q = self.query_id().filter(Spd.unit_id==self.session['unit_id'])
+        request = self.request
+        ses = self.session
+        q = self.query_id().join(Spd).filter(Spd.unit_id==ses['unit_id'])
         row = q.first()
         if not row:
-            return {'success':False, "msg":self.id_not_found()}
-        kegiatan_sub_id = row.kegiatan_sub_id
-        msg = 'Data sudah dihapus'
-        self.query_id().delete()
+            return self.id_not_found()
+        q = self.query_id()
+        q.delete()
         DBSession.flush()
-        #row = DBSession.query(APInvoice).filter_by(id=ap_invoice_id).first()
-        row.posted=0
-        DBSession.add(row)
-        DBSession.flush()        
-        return {'success':True, "msg":msg}
+        return {'success': True, 'msg':'Sukses Hapus Data'}

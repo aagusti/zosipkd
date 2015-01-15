@@ -83,7 +83,7 @@ class Pejabat(DefaultModel, Base):
     pegawais   = relationship("Pegawai", backref=backref('pejabats'))
     jabatan_id = Column(Integer, ForeignKey("apbd.jabatans.id"))
     jabatans   = relationship("Jabatan", backref=backref('pejabats'))
-    uraian     = Column(String(25))
+    uraian     = Column(String(200))
     mulai      = Column(Date)
     selesai    = Column(Date)
 
@@ -229,7 +229,7 @@ class KegiatanIndikator(NamaModel, Base):
     __tablename__  ='kegiatan_indikators'
     __table_args__ = {'extend_existing':True,'schema' :'apbd'}
 
-    kegitan_sub_id = Column(BigInteger, ForeignKey("apbd.kegiatan_subs.id"), nullable=False)
+    kegiatan_sub_id = Column(BigInteger, ForeignKey("apbd.kegiatan_subs.id"), nullable=False)
     tipe           = Column(SmallInteger, nullable=False)
     no_urut        = Column(SmallInteger, nullable=False)
 
@@ -249,7 +249,12 @@ class KegiatanIndikator(NamaModel, Base):
     volume_4       = Column(BigInteger,  nullable=False)
     satuan_4       = Column(String(255), nullable=False)
 
-
+    @classmethod
+    def max_no_urut(cls,kegiatan_sub_id):
+          return DBSession.query(func.max(cls.no_urut).label('m')).filter(
+                   cls.kegiatan_sub_id== kegiatan_sub_id).scalar() or 0
+                   
+                   
 ############################################
 ###  ITEM KEGIATAN    ###
 ###  KegiatanItem  ###

@@ -250,6 +250,7 @@
         <div class="col-md-3">
           <button type="submit" class="btn btn-primary" id="simpan" name="simpan" >Simpan</button>
           <button type="submit" class="btn btn-danger"  id="batal"  name="batal">Batal</button>
+          <button type="submit" class="btn btn-warning" id="tutup" name="tutup">Tutup</button>
         </div>
       </div>
       </form>
@@ -310,7 +311,7 @@
             </div>
             
             <div class="col-md-2">
-                <label for="harga" class="control-label col-md-3" id="req-amount">
+                <label for="harga" class="control-label col-md-3" id="req-harga">
                        Harga</label>
                 <div class="col-md-9">
                    <input id="harga" class=" form-control " type="text" value="0" name="harga">
@@ -329,7 +330,7 @@
                   <label for="ppn" class="control-label col-md-3" id="req-ppn">
                            PPn</label>
                   <div class="col-md-9">
-                     <input id="ppn" class=" form-control " type="text" value="" name="ppn">
+                     <input id="ppn" class=" form-control " type="text" value="0" name="ppn">
                   </div>
               </div>
               
@@ -337,7 +338,7 @@
                   <label for="pph" class="control-label col-md-3" id="req-pph">
                            PPh</label>
                   <div class="col-md-9">
-                     <input id="pph" class=" form-control " type="text" value="" name="pph">
+                     <input id="pph" class=" form-control " type="text" value="0" name="pph">
                   </div>
               </div>
             <!--Button----------------------------------------------------------->
@@ -352,7 +353,6 @@
             </div> 
           </div>            
         <script>
-           
           $('#rekening_add').click(function () {
                 $('#ap_invoice_item_id').val('');
                 $('#detail').submit();
@@ -423,8 +423,8 @@
       var tb_array = [
           '<div class="btn-group pull-left">',
           '<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
-          '<button id="btn_print"  class="btn btn btn-primary" type="button">Print</button>',
-          '<button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
+          '<!--button id="btn_print"  class="btn btn btn-primary" type="button">Print</button-->',
+          '<!--button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button-->',
           '&nbsp;',
           '</div>',
       ];

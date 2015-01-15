@@ -44,25 +44,23 @@
       <script>
 
         $('#unit_kd').typeahead({
-            "hint": true,
+            "hint"     : true,
             "highlight": true,
             "minLength": 1,
-            "remote": "/unit/act/headofkode?term=%QUERY", 
-        },
-        {
-          "name": 'unit_kd',
-          "displayKey": 'value',
+            "remote"   : "/unit/act/headofkode?term=%QUERY", 
+        },{
+           "name"      : 'unit_kd',
+           "displayKey": 'value',
         }); 
                 
         $('#unit_nm').typeahead({
-            "hint": true,
+            "hint"     : true,
             "highlight": true,
             "minLength": 1,
-            "remote": "/unit/act/headofnama?term=%QUERY", 
-        },
-        {
-          "name": 'unit_nm',
-          "displayKey": 'value',
+            "remote"   : "/unit/act/headofnama?term=%QUERY", 
+        },{
+           "name"      : 'unit_nm',
+           "displayKey": 'value',
         }); 
         
         function reload_kegiatan(){
@@ -91,7 +89,7 @@
         function change_unit(){
             $.ajax({
               type: "POST",
-              url: "/unit/act/changeid",
+              url : "/unit/act/changeid",
               data: "unit_id="+$('#unit_id').val(),
               success: function (html) {
                 if (html.success == true) {
@@ -154,13 +152,13 @@
       var oTableUrl = "/ag-bl/act/grid";
       var tb_array = [
           '<div class="btn-group pull-left">',
-          '	<button id="btn_tambah" class="btn btn btn-primary" type="button">Tambah</button>',
-          '	<button id="btn_edit" class="btn btn btn-primary" type="button">Edit</button>',
-          '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',
-          '	<button id="btn_print" class="btn btn btn-primary" type="button">Cetak</button>',
-          '	<button id="btn_item" class="btn btn btn-success" type="button">Item</button>',
+          '	<button id="btn_tambah"    class="btn btn btn-primary" type="button">Tambah</button>',
+          '	<button id="btn_edit"      class="btn btn btn-primary" type="button">Edit</button>',
+          '	<button id="btn_delete"    class="btn btn btn-danger"  type="button">Hapus</button>',
+          '	<button id="btn_print"     class="btn btn btn-primary" type="button">Cetak</button>',
+          '	<button id="btn_item"      class="btn btn btn-success" type="button">Item</button>',
           '	<button id="btn_indikator" class="btn btn btn-primary" type="button">Indikator</button>',
-          ' <button id="btn_close" class="btn btn-warning" type="button" >Tutup</button>',
+          ' <button id="btn_close"     class="btn btn-warning"     type="button" >Tutup</button>',
           '	&nbsp;',
           '</div>',
       ];
@@ -302,6 +300,5 @@
         
      });
     </script>
-    
   </div> <!--End Metal-->
 </html>

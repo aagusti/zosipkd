@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="118"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -14,14 +14,14 @@
 	<field name="kode" class="java.lang.String">
 		<fieldDescription><![CDATA[kode]]></fieldDescription>
 	</field>
-	<field name="uraian" class="java.lang.String">
-		<fieldDescription><![CDATA[uraian]]></fieldDescription>
+	<field name="nama" class="java.lang.String">
+		<fieldDescription><![CDATA[nama]]></fieldDescription>
 	</field>
-	<field name="kegiatankd" class="java.lang.String">
-		<fieldDescription><![CDATA[kegiatankd]]></fieldDescription>
+	<field name="programkd" class="java.lang.String">
+		<fieldDescription><![CDATA[programkd]]></fieldDescription>
 	</field>
-	<field name="kegiatannm" class="java.lang.String">
-		<fieldDescription><![CDATA[kegiatannm]]></fieldDescription>
+	<field name="programnm" class="java.lang.String">
+		<fieldDescription><![CDATA[programnm]]></fieldDescription>
 	</field>
 	<field name="customer" class="java.lang.String">
 		<fieldDescription><![CDATA[customer]]></fieldDescription>
@@ -30,8 +30,8 @@
 		<groupExpression><![CDATA[$F{kode}]]></groupExpression>
 		<groupHeader>
 			<band height="12">
-				<textField isBlankWhenNull="true">
-					<reportElement x="62" y="0" width="433" height="12"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="62" y="0" width="433" height="12"/>
 					<box leftPadding="3">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -39,7 +39,7 @@
 					<textElement>
 						<font size="8" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{uraian}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{nama}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="0" y="0" width="62" height="12"/>
@@ -72,7 +72,7 @@
 				<textElement textAlignment="Center">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[DAFTAR PROGRAM DAN KEGIATAN PEMERINTAH DAERAH]]></text>
+				<text><![CDATA[DAFTAR PROGRAM PEMERINTAH DAERAH]]></text>
 			</staticText>
 		</band>
 	</title>
@@ -120,9 +120,9 @@
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{kode}+'.'+$F{kegiatankd}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{programkd}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="62" y="0" width="433" height="12"/>
 				<box leftPadding="8">
 					<leftPen lineWidth="0.25"/>
@@ -131,7 +131,7 @@
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{kegiatannm}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{programnm}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

@@ -25,7 +25,15 @@ JV_TYPE = (
     (2, 'LO'),
     (3, 'Jurnal Umum'),
     )
-
+    
+def deferred_is_skpd(node, kw):
+    values = kw.get('is_skpd', [])
+    return widget.SelectWidget(values=values)
+    
+IS_SKPD = (
+    (0, 'PPKD'),
+    (1, 'SKPD'))      
+    
 class AddSchema(colander.Schema):
     unit_kd_widget = widget.AutocompleteInputWidget(
             values = '/unit/act/headofkode',
@@ -59,10 +67,12 @@ class AddSchema(colander.Schema):
                     widget = unit_nm_widget)
     kode        = colander.SchemaNode(
                     colander.String(),
+                    title="No. Jurnal"
                     )
                     
     nama        = colander.SchemaNode(
                     colander.String(),
+                    title="Uraian"
                     )
     tanggal     = colander.SchemaNode(
                   colander.Date(),
@@ -92,7 +102,10 @@ class AddSchema(colander.Schema):
                     missing = colander.drop
                     )
     is_skpd     = colander.SchemaNode(
-                    colander.Boolean()
+                    colander.Integer(),
+                    title="Jurnal",
+                    oid = "is_skpd",
+                    widget=widget.SelectWidget(values=IS_SKPD)
                   )
                     
                     
@@ -159,7 +172,7 @@ class view_ak_jurnal_skpd(BaseViews):
                 
     def get_form(self, class_form, row=None):
         schema = class_form(validator=self.form_validator)
-        schema = schema.bind(ap_type=JV_TYPE)
+        schema = schema.bind(jv_type=JV_TYPE, is_skpd=IS_SKPD)
         schema.request = self.request
         if row:
           schema.deserialize(row)
@@ -179,7 +192,7 @@ class view_ak_jurnal_skpd(BaseViews):
         row.updated = datetime.now()
         row.update_uid = user.id
         row.disable   = 'disable' in values and values['disable'] and 1 or 0
-        row.is_skpd   = 'is_skpd' in values and values['is_skpd'] and 1 or 0
+        #row.is_skpd   = 'is_skpd' in values and values['is_skpd'] and 1 or 0
         row.posted    = 'posted' in values and values['posted'] and 1 or 0
         DBSession.add(row)
         DBSession.flush()
@@ -192,11 +205,11 @@ class view_ak_jurnal_skpd(BaseViews):
         self.request.session.flash('Jurnal sudah disimpan.')
         return row
             
-    def route_list(self, id):
-        if id:
-            return HTTPFound(location=self.request.route_url('ak-jurnal-skpd-edit', id=id) )
-        else:
-            return HTTPFound(location=self.request.route_url('ak-jurnal-skpd', id=id) )
+    def route_list(self):#, id):
+        #if id:
+            #return HTTPFound(location=self.request.route_url('ak-jurnal-skpd-edit', id=id) )
+        #else:
+            return HTTPFound(location=self.request.route_url('ak-jurnal-skpd'))#, id=id) )
         
     def session_failed(self, session_name):
         #r = dict(form=self.session[session_name])
@@ -219,8 +232,8 @@ class view_ak_jurnal_skpd(BaseViews):
                     #form.set_appstruct(rowd)
                     return dict(form=form)
                     #return HTTPFound(location=req.route_url('ak-jurnal-add'))
-                id = self.save_request(dict(controls)).id
-            return self.route_list(id)
+                id = self.save_request(dict(controls))#.id
+            return self.route_list()#id)
             
         elif SESS_ADD_FAILED in req.session:
             return dict(form=form)
@@ -261,6 +274,7 @@ class view_ak_jurnal_skpd(BaseViews):
         rowd['tanggal']       = row.tanggal
         rowd['jv_type']       = row.jv_type
         rowd['disabled']      = row.disabled
+        rowd['notes']         = row.notes
         
         form = self.get_form(EditSchema)
         form.set_appstruct(rowd)
@@ -275,8 +289,9 @@ class view_ak_jurnal_skpd(BaseViews):
                     #request.session[SESS_EDIT_FAILED] = e.render()               
                     #return HTTPFound(location=request.route_url('ak-jurnal-edit',
                     #                  id=row.id))
-                id = self.save_request(dict(controls)).id
-            return self.route_list(id)
+                #id = self.save_request(dict(controls))#.id
+                self.save_request(dict(controls),row)#.id
+            return self.route_list()#id)
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
         return dict(form=form)
