@@ -12,7 +12,7 @@ from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
 from deform import (Form, widget, ValidationFailure, )
-from osipkd.models import DBSession
+from osipkd.models import DBSession, User, Group
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
     
 from datatables import ColumnDT, DataTables
@@ -114,8 +114,8 @@ class ViewAnggaranLap(BaseViews):
             response.write(pdf)
             return response
         elif url_dict['act']=='r003' :
-            query = DBSession.query(Program.kode, Program.nama, Kegiatan.kode.label("kegiatankd"), Kegiatan.nama.label("kegiatannm")).\
-                    filter(Kegiatan.program_id==Program.id).order_by(Program.kode,Kegiatan.kode).all()
+            query = DBSession.query(Urusan.kode, Urusan.nama, Program.kode.label("programkd"), Program.nama.label("programnm")).\
+                    filter(Urusan.id==Program.urusan_id).order_by(Urusan.kode,Program.kode).all()
             generator = r003Generator()
             pdf = generator.generate(query)
             response=req.response
@@ -144,6 +144,35 @@ class ViewAnggaranLap(BaseViews):
         elif url_dict['act']=='r005' :
             query = DBSession.query(Pegawai.kode, Pegawai.nama).order_by(Pegawai.kode).all()
             generator = r005Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+        elif url_dict['act']=='r006' :
+            query = DBSession.query(Program.kode, Program.nama, Kegiatan.kode.label("kegiatankd"), Kegiatan.nama.label("kegiatannm")).\
+                    filter(Program.id==Kegiatan.program_id).order_by(Program.kode,Kegiatan.kode).all()
+            generator = r006Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+        elif url_dict['act']=='r007' :
+            query = DBSession.query(User.user_name.label('username'), User.email, User.status, User.last_login_date.label('last_login'), User.registered_date).\
+                    order_by(User.user_name).all()
+            generator = r007Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+        elif url_dict['act']=='r008' :
+            query = DBSession.query(Group.group_name.label('kode'), Group.description.label('nama')).order_by(Group.group_name).all()
+            generator = r008Generator()
             pdf = generator.generate(query)
             response=req.response
             response.content_type="application/pdf"
@@ -182,7 +211,25 @@ class ViewAnggaranLap(BaseViews):
         elif url_dict['act']=='r012' :
             query = DBSession.query(Tahun.tahun, Tahun.status_apbd, Tahun.tanggal_1, Tahun.tanggal_2, Tahun.tanggal_3, Tahun.tanggal_4
                   ).order_by(Tahun.tahun).all()
-            generator = r011Generator()
+            generator = r012Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+        elif url_dict['act']=='r013' :
+            query = DBSession.query(App.kode,App.nama,App.disabled,App.tahun).order_by(App.kode).all()
+            generator = r013Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+        elif url_dict['act']=='r014' :
+            query = DBSession.query(Route.kode,Route.nama,Route.path,Route.perm_name,Route.disabled).order_by(Route.kode).all()
+            generator = r014Generator()
             pdf = generator.generate(query)
             response=req.response
             response.content_type="application/pdf"
@@ -2112,12 +2159,12 @@ class r003Generator(JasperGenerator):
 
     def generate_xml(self, tobegreeted):
         xml_a  =  ET.SubElement(self.root, 'master')
-        for kode, uraian, kegiatankd, kegiatannm in tobegreeted:
+        for kode, nama, programkd, programnm in tobegreeted:
             xml_greeting  =  ET.SubElement(xml_a, 'program')
             ET.SubElement(xml_greeting, "kode").text = unicode(kode)
-            ET.SubElement(xml_greeting, "uraian").text = unicode(uraian)
-            ET.SubElement(xml_greeting, "kegiatankd").text = unicode(kegiatankd)
-            ET.SubElement(xml_greeting, "kegiatannm").text = unicode(kegiatannm)
+            ET.SubElement(xml_greeting, "nama").text = unicode(nama)
+            ET.SubElement(xml_greeting, "programkd").text = unicode(programkd)
+            ET.SubElement(xml_greeting, "programnm").text = unicode(programnm)
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
 
@@ -2171,6 +2218,59 @@ class r005Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
         
+class r006Generator(JasperGenerator):
+    def __init__(self):
+        super(r006Generator, self).__init__()
+        self.reportname = get_rpath('apbd/R0006.jrxml')
+        self.xpath = '/apbd/master/program'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'master')
+        for kode, nama, kegiatankd, kegiatannm in tobegreeted:
+            xml_greeting  =  ET.SubElement(xml_a, 'program')
+            ET.SubElement(xml_greeting, "kode").text = unicode(kode)
+            ET.SubElement(xml_greeting, "nama").text = unicode(nama)
+            ET.SubElement(xml_greeting, "kegiatankd").text = unicode(kegiatankd)
+            ET.SubElement(xml_greeting, "kegiatannm").text = unicode(kegiatannm)
+            ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root
+
+class r007Generator(JasperGenerator):
+    def __init__(self):
+        super(r007Generator, self).__init__()
+        self.reportname = get_rpath('apbd/R0007.jrxml')
+        self.xpath = '/apbd/master/tahun'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'master')
+        for username, email, status, last_login, registered_date in tobegreeted:
+            xml_greeting  =  ET.SubElement(xml_a, 'tahun')
+            ET.SubElement(xml_greeting, "username").text = unicode(username)
+            ET.SubElement(xml_greeting, "email").text = unicode(email)
+            ET.SubElement(xml_greeting, "status").text = unicode(status)
+            ET.SubElement(xml_greeting, "last_login").text = unicode(last_login)
+            ET.SubElement(xml_greeting, "registered_date").text = unicode(registered_date)
+            ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root
+
+class r008Generator(JasperGenerator):
+    def __init__(self):
+        super(r008Generator, self).__init__()
+        self.reportname = get_rpath('apbd/R0008.jrxml')
+        self.xpath = '/apbd/master/urusan'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'master')
+        for kode, uraian in tobegreeted:
+            xml_greeting  =  ET.SubElement(xml_a, 'urusan')
+            ET.SubElement(xml_greeting, "kode").text = unicode(kode)
+            ET.SubElement(xml_greeting, "uraian").text = unicode(uraian)
+            ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root
+
 class r009Generator(JasperGenerator):
     def __init__(self):
         super(r009Generator, self).__init__()
@@ -2240,6 +2340,43 @@ class r012Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "tanggal_2").text = unicode(tanggal_2)
             ET.SubElement(xml_greeting, "tanggal_3").text = unicode(tanggal_3)
             ET.SubElement(xml_greeting, "tanggal_4").text = unicode(tanggal_4)
+            ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root  
+
+class r013Generator(JasperGenerator):
+    def __init__(self):
+        super(r013Generator, self).__init__()
+        self.reportname = get_rpath('apbd/R0013.jrxml')
+        self.xpath = '/apbd/master/tahun'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'master')
+        for kode, nama, disable, tahun in tobegreeted:
+            xml_greeting  =  ET.SubElement(xml_a, 'tahun')
+            ET.SubElement(xml_greeting, "kode").text = unicode(kode)
+            ET.SubElement(xml_greeting, "nama").text = unicode(nama)
+            ET.SubElement(xml_greeting, "disable").text = unicode(disable)
+            ET.SubElement(xml_greeting, "tahun").text = unicode(tahun)
+            ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root  
+
+class r014Generator(JasperGenerator):
+    def __init__(self):
+        super(r014Generator, self).__init__()
+        self.reportname = get_rpath('apbd/R0014.jrxml')
+        self.xpath = '/apbd/master/tahun'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'master')
+        for kode, nama, path, perm_name, disabled in tobegreeted:
+            xml_greeting  =  ET.SubElement(xml_a, 'tahun')
+            ET.SubElement(xml_greeting, "kode").text = unicode(kode)
+            ET.SubElement(xml_greeting, "nama").text = unicode(nama)
+            ET.SubElement(xml_greeting, "path").text = unicode(path)
+            ET.SubElement(xml_greeting, "perm_name").text = unicode(perm_name)
+            ET.SubElement(xml_greeting, "disabled").text = unicode(disabled)
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root  
 
