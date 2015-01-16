@@ -126,6 +126,282 @@ class view_pejabat(BaseViews):
                 d['nama']        = k[2]
                 r.append(d)
             return r
+   
+        elif url_dict['act']=='headofkode1':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama
+                      ).join(Pegawai,Jabatan).filter(Pejabat.unit_id == ses['unit_id'],
+                           Jabatan.kode.ilike('23%'),
+                           Pegawai.kode.ilike('%s%%' % term))   
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[1]
+                d['kode']        = k[2]
+                d['nama']        = k[3]
+                r.append(d)    
+            return r
+
+        elif url_dict['act']=='headofnama1':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Pejabat.id, Pegawai.kode, Pegawai.nama
+                      ).join(Pegawai,Jabatan).filter(Pejabat.unit_id == ses['unit_id'],
+                           Jabatan.kode.ilike('23%'),
+                           Pegawai.nama.ilike('%%%s%%' % term))
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[2]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)    
+            return r
+
+        elif url_dict['act']=='headofkode2':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama, 
+                      ).join(Pegawai,Jabatan).filter(Pejabat.unit_id == ses['unit_id'],
+                           Jabatan.kode.ilike('23%'),
+                           Pegawai.kode.ilike('%s%%' % term))   
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[1]
+                d['kode']        = k[1]
+                d['nama']        = k[3]
+                d['nip']         = k[2]
+                r.append(d)    
+            return r
+
+        elif url_dict['act']=='headofnip2':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama
+                      ).join(Pegawai,Jabatan).filter(Pejabat.unit_id == ses['unit_id'],
+                           Jabatan.kode.ilike('23%'),
+                           Pegawai.nama.ilike('%s%%' % term))
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[2]
+                d['kode']        = k[1]
+                d['nama']        = k[3]
+                d['nip']         = k[2]
+                r.append(d)    
+            return r
+            
+        elif url_dict['act']=='headofnama2':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama
+                      ).join(Pegawai,Jabatan).filter(Pejabat.unit_id == ses['unit_id'],
+                           Jabatan.kode.ilike('23%'),
+                           Pegawai.nama.ilike('%%%s%%' % term))
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[3]
+                d['kode']        = k[1]
+                d['nama']        = k[3]
+                d['nip']         = k[2]
+                r.append(d)    
+            return r
+
+        elif url_dict['act']=='headofkode3':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama, 
+                      ).join(Pegawai,Jabatan).filter(Pejabat.unit_id == ses['unit_id'],
+                           Jabatan.kode.notlike('23%'),
+                           Pegawai.kode.ilike('%s%%' % term))   
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[1]
+                d['kode']        = k[1]
+                d['nama']        = k[3]
+                d['nip']         = k[2]
+                r.append(d)    
+            return r
+
+        elif url_dict['act']=='headofnip3':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama
+                      ).join(Pegawai,Jabatan).filter(Pejabat.unit_id == ses['unit_id'],
+                           Jabatan.kode.notlike('23%'),
+                           Pegawai.nama.ilike('%s%%' % term))
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[2]
+                d['kode']        = k[1]
+                d['nama']        = k[3]
+                d['nip']         = k[2]
+                r.append(d)    
+            return r
+            
+        elif url_dict['act']=='headofnama3':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama
+                      ).join(Pegawai,Jabatan).filter(Pejabat.unit_id == ses['unit_id'],
+                           Jabatan.kode.notlike('23%'),
+                           Pegawai.nama.ilike('%%%s%%' % term))
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[3]
+                d['kode']        = k[1]
+                d['nama']        = k[3]
+                d['nip']         = k[2]
+                r.append(d)    
+            return r
+            
+        #Pejabat SPP
+
+        elif url_dict['act']=='headofkode4':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama, Jabatan.nama,
+                      ).join(Pegawai,Jabatan).filter(Pejabat.unit_id == ses['unit_id'],
+                           Jabatan.kode.notlike('23%'),
+                           Pegawai.kode.ilike('%s%%' % term))   
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[1]
+                d['kode']        = k[1]
+                d['nama']        = k[3]
+                d['nip']         = k[2]
+                d['jab']         = k[4]
+                r.append(d)    
+            return r
+
+        elif url_dict['act']=='headofjab4':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama, Jabatan.nama,
+                      ).join(Pegawai,Jabatan).filter(Pejabat.unit_id == ses['unit_id'],
+                           Jabatan.kode.notlike('23%'),
+                           Pegawai.nama.ilike('%s%%' % term))
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[4]
+                d['kode']        = k[1]
+                d['nama']        = k[3]
+                d['nip']         = k[2]
+                d['jab']         = k[4]
+                r.append(d)    
+            return r
+            
+        elif url_dict['act']=='headofnama4':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama, Jabatan.nama,
+                      ).join(Pegawai,Jabatan).filter(Pejabat.unit_id == ses['unit_id'],
+                           Jabatan.kode.notlike('23%'),
+                           Pegawai.nama.ilike('%%%s%%' % term))
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[3]
+                d['kode']        = k[1]
+                d['nama']        = k[3]
+                d['nip']         = k[2]
+                d['jab']         = k[4]
+                r.append(d)    
+            return r
+
+        elif url_dict['act']=='headofnip4':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama, Jabatan.nama,
+                      ).join(Pegawai,Jabatan).filter(Pejabat.unit_id == ses['unit_id'],
+                           Jabatan.kode.notlike('23%'),
+                           Pegawai.nama.ilike('%%%s%%' % term))
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[2]
+                d['kode']        = k[1]
+                d['nama']        = k[3]
+                d['nip']         = k[2]
+                d['jab']         = k[4]
+                r.append(d)    
+            return r
+
+        #Pejabat PPTK SPP
+
+        elif url_dict['act']=='headofkode5':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama, 
+                      ).join(Pegawai,Jabatan).filter(Pejabat.unit_id == ses['unit_id'],
+                           Jabatan.kode.ilike('24%'),
+                           Pegawai.kode.ilike('%s%%' % term))   
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[1]
+                d['kode']        = k[1]
+                d['nama']        = k[3]
+                d['nip']         = k[2]
+                r.append(d)    
+            return r
+
+        elif url_dict['act']=='headofnip5':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama
+                      ).join(Pegawai,Jabatan).filter(Pejabat.unit_id == ses['unit_id'],
+                           Jabatan.kode.ilike('24%'),
+                           Pegawai.nama.ilike('%s%%' % term))
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[2]
+                d['kode']        = k[1]
+                d['nama']        = k[3]
+                d['nip']         = k[2]
+                r.append(d)    
+            return r
+            
+        elif url_dict['act']=='headofnama5':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama
+                      ).join(Pegawai,Jabatan).filter(Pejabat.unit_id == ses['unit_id'],
+                           Jabatan.kode.ilike('24%'),
+                           Pegawai.nama.ilike('%%%s%%' % term))
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[3]
+                d['kode']        = k[1]
+                d['nama']        = k[3]
+                d['nip']         = k[2]
+                r.append(d)    
+            return r
             
     #######    
     # Add #
