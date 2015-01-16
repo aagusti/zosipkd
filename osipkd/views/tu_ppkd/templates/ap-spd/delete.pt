@@ -6,7 +6,7 @@
         <h3 class="panel-title">Peringatan</h3>
     </div>
     <div class="panel-body">
-        ${request.title} #${row.kode} ${row.no_urut} ${row.nama} ?
+        ${request.title} #${row.kode} ${row.nama} ?
     </div>
 </div>
 
