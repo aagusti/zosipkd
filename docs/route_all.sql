@@ -273,3 +273,7 @@ ag-indikator-add	0	2014-12-24 03:04:42.837591	1	Tambah Indikator Kegiatan	/ag-in
 ag-indikator-edit	0	2014-12-24 03:04:42.837591	1	Edit Indikator Kegiatan	/ag-indikator/{kegiatan_sub_id}/{id}/edit	edit
 ag-indikator-delete	0	2014-12-24 03:04:42.837591	1	Hapus Indikator Kegiatan	/ag-indikator/{kegiatan_sub_id}/{id}/delete	delete
 ag-indikator-add-fast	0	2014-12-24 03:04:42.837591	1	Tambah Indikator Kegiatan	/ag-indikator/add/fast	add
+ap-spm-potongan-act	0	2014-12-24 03:04:42.837591	1	SPM Potongan Act	/ap-spm-potongan/act/{act}	read
+ap-spm-potongan-add	0	2014-12-24 03:04:42.837591	1	Tambah SPM Potongan	/ap-spm-potongan/{ap_spm_id}/add	add
+ap-spm-potongan-edit	0	2014-12-24 03:04:42.837591	1	Edit SPM Potongan	/ap-spm-potongan/{ap_spm_id}/{id}/edit	edit
+ap-spm-potongan-delete	0	2014-12-24 03:04:42.837591	1	Hapus SPM Potongan	/ap-spm-potongan/{ap_spm_id}/{id}/delete	delete
