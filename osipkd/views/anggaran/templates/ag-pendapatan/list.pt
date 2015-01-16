@@ -44,31 +44,29 @@
       <script>
 
         $('#unit_kd').typeahead({
-            "hint": true,
+            "hint"     : true,
             "highlight": true,
             "minLength": 1,
-            "remote": "/unit/act/headofkode?term=%QUERY", 
-        },
-        {
-          "name": 'unit_kd',
-          "displayKey": 'value',
+            "remote"   : "/unit/act/headofkode?term=%QUERY", 
+        },{
+           "name"      : 'unit_kd',
+           "displayKey": 'value',
         }); 
                 
         $('#unit_nm').typeahead({
-            "hint": true,
+            "hint"     : true,
             "highlight": true,
             "minLength": 1,
-            "remote": "/unit/act/headofnama?term=%QUERY", 
-        },
-        {
-          "name": 'unit_nm',
-          "displayKey": 'value',
+            "remote"   : "/unit/act/headofnama?term=%QUERY", 
+        },{
+           "name"      : 'unit_nm',
+           "displayKey": 'value',
         }); 
         
         function reload_kegiatan(){
             $.ajax({
               type: "POST",
-              url: "/ag-kegiatan-sub/act/reload",
+              url : "/ag-kegiatan-sub/act/reload",
               data: "kegiatan_kd="+$('#kegiatan_kd').val(),
               success: function (html) {
                 if (html.success == true) {
@@ -91,7 +89,7 @@
         function change_unit(){
             $.ajax({
               type: "POST",
-              url: "/unit/act/changeid",
+              url : "/unit/act/changeid",
               data: "unit_id="+$('#unit_id').val(),
               success: function (html) {
                 if (html.success == true) {
@@ -236,31 +234,27 @@
                 $('#kegiatan_item_id').val('');
                 $('#header').submit();
            })
-         
-         
-          $('#rekening_kd').typeahead({
-              "hint": true,
-              "highlight": true,
-              "minLength": 1,
-              "remote": "/rekening/act/headofkode${row.rekeninghead}?term=%QUERY", 
-          },
-          {
-            "name": 'rekening_kd',
-            "displayKey": 'value',
-          }); 
-                  
-          $('#rekening_nm').typeahead({
-              "hint": true,
-              "highlight": true,
-              "minLength": 1,
-              "remote": "/rekening/act/headofnama${row.rekeninghead}?term=%QUERY", 
-          },
-          {
-            "name": 'rekening_nm',
-            "displayKey": 'value',
-          }); 
-          
-        
+
+            $('#rekening_kd').typeahead({
+                "hint"     : true,
+                "highlight": true,
+                "minLength": 1,
+                "remote"   : "/rekening/act/headofkode${row.rekeninghead}?term=%QUERY", 
+            },{
+               "name"      : 'rekening_kd',
+               "displayKey": 'value',
+            }); 
+                    
+            $('#rekening_nm').typeahead({
+                "hint"     : true,
+                "highlight": true,
+                "minLength": 1,
+                "remote"   : "/rekening/act/headofnama${row.rekeninghead}?term=%QUERY", 
+            },{
+               "name"      : 'rekening_nm',
+               "displayKey": 'value',
+            }); 
+
             $('#rekening_kd').bind('typeahead:selected', function(obj, datum, name) {  
                   $('#rekening_nm').val(datum.nama);
                   $('#rekening_id').val(datum.id);
@@ -271,7 +265,6 @@
                   $('#rekening_kd').val(datum.kode);
                   $('#rekening_id').val(datum.id);
                   $('#nama').val(datum.nama);
-                  
             });
             
           $( "#header" ).submit(function( event ) {
@@ -290,7 +283,7 @@
             if (!kegiatan_sub_id && is_success){
                 $.ajax({
                   type: "POST",
-                  url: "/ag-kegiatan-sub/add/fast",
+                  url : "/ag-kegiatan-sub/add/fast",
                   data: "kegiatan_kd="+$('#kegiatan_kd').val(),
                   success: function (html) {
                     if (html.success == true) {
@@ -314,7 +307,7 @@
             if (is_success){
               $.ajax({
                 type: "POST",
-                url: "/ag-kegiatan-item/add/fast",
+                url : "/ag-kegiatan-item/add/fast",
                 data: $('#header').serialize(),
                 success: function (html) {
                   if (html.success == true) {
@@ -340,13 +333,10 @@
               });
             }
             event.preventDefault();
-          });
-        
+          });      
           </script> 
-
         </fieldset>
    </div>
-
   </div>
   
   <div metal:fill-slot="scripts">
@@ -358,16 +348,16 @@
       var oTableUrl = "/ag-kegiatan-item/act/grid?type=4";  
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
-          "sDom": '<"toolbar">lfrtip',
-          "sAjaxSource": oTableUrl,
-          "bServerSide": true,
-          "bProcessing": true,
+          "sDom"           : '<"toolbar">lfrtip',
+          "sAjaxSource"    : oTableUrl,
+          "bServerSide"    : true,
+          "bProcessing"    : true,
           "bScrollCollapse": true,
-          "bSort": true,
-          "bInfo": false,
-          "bFilter": true,
-          "bAutoWidth": false,
-          "bPaginate": true,
+          "bSort"          : true,
+          "bInfo"          : false,
+          "bFilter"        : true,
+          "bAutoWidth"     : false,
+          "bPaginate"      : true,
           "sPaginationType": "full_numbers",
           
           "lengthMenu": [
@@ -375,16 +365,24 @@
               [10, 25, 50, 100]
           ],
           "aoColumnDefs": [{
-                        "bSearchable": false,
-                        "bVisible": false,
-                        "aTargets": [0,5,6]
-                    }],
+              "bSearchable": false,
+              "bVisible"   : false,
+              "aTargets"   : [0,5,6]
+          },{
+              "bSearchable": true,
+              "bSortable"  : false,
+              "aTargets"   : [3]
+          },{
+              "bSearchable": false,
+              "bSortable"  : false,
+              "aTargets"   : [1,2,4]
+          }],
           "aoColumns": [
               null,
               {"width": "150px"},
               {"width": "50px"},
               null,
-               {"width": "150px", "sClass":"right"},
+              {"width": "150px", "sClass":"right"},
               null,
               null,
           ]
@@ -392,11 +390,11 @@
           
         var tb_array = [
           '<div class="btn pull-left">',
-          '	<button id="btn_add" class="btn btn btn-primary" type="button">Tambah</button>',
-          '	<button id="btn_edit" class="btn btn btn-primary" type="button">Edit</button>',
-          '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',
-          '	<button id="btn_pdf" class="btn btn btn-primary" type="button">Cetak</button>',
-          '	<button id="btn_close" class="btn btn btn-warning" type="button">Tutup</button>',
+          '	<button id="btn_add"    class="btn btn btn-primary" type="button">Tambah</button>',
+          '	<button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button>',
+          '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
+          '	<button id="btn_pdf"    class="btn btn btn-primary" type="button">Cetak</button>',
+          '	<button id="btn_close"  class="btn btn btn-warning" type="button">Tutup</button>',
           '	<!--button id="btn_csv" class="btn btn btn-default" type="button">CSV</button-->',
           '	&nbsp;',
           '</div>',
@@ -425,19 +423,69 @@
                 $(this).addClass('row_selected');
         }
         });
-        $('#btn_add').click(function () {
-            window.location = '/ag-kegiatan-item/add';
-        });
+           $('#btn_add').click(function () {           
+            var kegiatan_kd = $('#kegiatan_kd').val();
+            var kegiatan_sub_id = $('#kegiatan_sub_id').val();
+            if ($('#kegiatan_sub_id').val()==''){
+                $.ajax({
+                  type: "POST",
+                  url: "/ag-kegiatan-sub/add/fast",
+                  data: "kegiatan_kd="+$('#kegiatan_kd').val(),
+                  success: function (html) {
+                    if (html.success == true) {
+                      $('#kegiatan_sub_id').val(html.id);
+                    oTableUrl = "/ag-kegiatan-item/act/grid?kegiatan_sub_id="+html.kegiatan_sub_id;  
+                    $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                    } else {
+                      $("#errors").css('display', 'inline', 'important');
+                      $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                      $('#kegiatan_sub_id').val('');
+                      is_success=false;
+                    }
+                  },
+                  beforeSend: function () {
+                    $("#errors").css('display', 'inline', 'important');
+                    $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+                  }
+                });    
+            }else{
+              window.location = '/ag-kegiatan-item/'+$('#kegiatan_sub_id').val()+'/add';
+            }
+
+            })
 
         $('#btn_edit').click(function () {
-            if (mID) window.location = '/ag-kegiatan-item/'+mID+'/edit';
+            //alert(mID);
+            if (mID) window.location = '/ag-kegiatan-item/'+$('#kegiatan_sub_id').val()+'/'+mID+'/edit';
             else alert('Pilih Baris yang akan di edit');
         });
 
         $('#btn_delete').click(function () {
-            if (mID) window.location = '/ag-kegiatan-item/'+mID+'/delete';
-            else alert('Pilih Baris yang akan di hapus');
-        });        
+            if (mID) {
+              if (confirm('Yakin dihapus?')==true){
+                $.ajax({
+                type: "POST",
+                url : "/ag-kegiatan-item/"+$('#kegiatan_sub_id').val()+"/"+mID+"/delete",
+                success: function (html) {
+                  if (html.success == true) {
+                    $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                    oTable.fnReloadAjax("/ag-kegiatan-item/act/grid?type=4");
+                    alert('Silahkan refresh or tekan F5 !!');
+                  } else {
+                    $("#errors").css('display', 'inline', 'important');
+                    $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                  }
+                },
+                beforeSend: function () {
+                  $("#errors").css('display', 'inline', 'important');
+                  $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+                }
+                });
+              } else {
+                  alert('Silahkan pilih data yang akan di hapus');
+              }
+            }
+        });
         
         $('#btn_pdf').click(function () {
             if ($('#kegiatan_kd').val()=='0.00.00.10')
@@ -463,7 +511,6 @@
         });
         
         })
-
     </script>
   </div>
 </html>
