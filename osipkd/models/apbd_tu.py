@@ -127,7 +127,7 @@ class Spp(NamaModel, Base):
                                       SppItem.ap_spp_id==cls.id,
                                       cls.id==p['id']
                                       ).first()
-
+                                      
     @classmethod
     def get_nilai(cls, ap_spp_id):
         return DBSession.query(func.sum(APInvoice.amount).label('amount')
@@ -143,9 +143,8 @@ class SppItem(DefaultModel, Base):
     spps           = relationship("Spp",       backref=backref("spps"))
     apinvoices     = relationship("APInvoice", backref=backref("apinvoices"))
 
-    ap_spp_id      = Column(BigInteger, ForeignKey("apbd.ap_spps.id"),       nullable=False)
-    ap_invoice_id  = Column(BigInteger, ForeignKey("apbd.ap_invoices.id"), nullable=False)
-    
+    ap_spp_id         = Column(BigInteger, ForeignKey("apbd.ap_spps.id"),       nullable=False)
+    ap_invoice_id   = Column(BigInteger, ForeignKey("apbd.ap_invoices.id"), nullable=False)
 
 class Spm(NamaModel, Base):
     __tablename__  = 'ap_spms'
@@ -153,10 +152,10 @@ class Spm(NamaModel, Base):
     
     spps           = relationship("Spp", backref="spms")
                    
-    ap_spp_id      = Column(BigInteger,   ForeignKey("apbd.ap_spps.id"), nullable=False)
+    ap_spp_id         = Column(BigInteger,   ForeignKey("apbd.ap_spps.id"), nullable=False)
     kode           = Column(String(50),   nullable=False)
     nama           = Column(String(250),  nullable=False)
-    tanggal        = Column(BigInteger,   nullable=False) 
+    tanggal        = Column(Date,   nullable=False) 
     ttd_uid        = Column(BigInteger,   nullable=False)
     ttd_nip        = Column(String(50),   nullable=False)
     ttd_nama       = Column(String(64),   nullable=False)
@@ -166,6 +165,7 @@ class Spm(NamaModel, Base):
                    
     posted         = Column(SmallInteger, nullable=False)
     disabled       = Column(SmallInteger, nullable=False, default=1)
+    
     @classmethod
     def max_no_urut(cls, tahun, unit_id):
         return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
@@ -176,20 +176,19 @@ class Spm(NamaModel, Base):
 class SpmPotongan(DefaultModel,Base):
     __tablename__  = 'ap_spm_potongans'
     __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}
+         
+    spms           = relationship("Spm",      backref="spmpotongans")
+    rekenings      = relationship("Rekening", backref="spmpotongans")
     
-                   
-    ap_spm_id      = Column(BigInteger,   ForeignKey("apbd.ap_spms.id"), nullable=False)
+    ap_spm_id      = Column(BigInteger,   ForeignKey("apbd.ap_spms.id"),    nullable=False)
+    rekening_id    = Column(Integer,      ForeignKey("admin.rekenings.id"), nullable=False)
     no_urut        = Column(SmallInteger, nullable=False)
-    rekening_id    = Column(Integer, ForeignKey("admin.rekenings.id"), nullable=False)
-    spms           = relationship("Spm", backref=backref("spmpotongans"))
-    rekenings      = relationship("Rekening", backref=backref("spmpotongans"))
 
     @classmethod
-    def max_no_urut(cls, spm_id):
+    def max_no_urut(cls, ap_spm_id):
         return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
-                .filter(cls.tahun_id==tahun,
-                        cls.unit_id==unit_id
-                ).scalar() or 0
+                .filter(cls.ap_spm_id==ap_spm_id
+                ).scalar() or 0         
     
 class Sp2d(NamaModel, Base):
     __tablename__  = 'ap_sp2ds'
@@ -256,7 +255,7 @@ class APInvoice(NamaModel, Base):
                              ).filter(APInvoiceItem.ap_invoice_id==cls.id,
                                       cls.id==p['id']
                                       ).first()
-  
+ 
     @classmethod
     def get_nilai(cls, ap_invoice_id):
         return DBSession.query(func.sum(APInvoiceItem.amount).label('amount')
@@ -297,12 +296,10 @@ class Giro(NamaModel, Base):
     __tablename__  ='ap_giros'
     __table_args__ = {'extend_existing':True,'schema' :'apbd'}
 
-    #sp2ds    = relationship("Sp2d", backref="giros")
     units    = relationship("Unit", backref="giros")
 
     tahun_id = Column(BigInteger, ForeignKey("apbd.tahuns.id"), nullable=False)
     unit_id  = Column(Integer,    ForeignKey("admin.units.id"),  nullable=False)
-    #ap_sp2d_id  = Column(BigInteger, ForeignKey("apbd.ap_sp2ds.id"),  nullable=False)
     kode     = Column(String(50))
     nama     = Column(String(150))
     tanggal  = Column(Date,         nullable=False)
@@ -365,12 +362,6 @@ class ARInvoice(NamaModel, Base):
                 name = 'arinvoice_ukey')
 
     @classmethod
-    #def get_nilai(cls, p):
-    #    return DBSession.query(func.sum(ARInvoiceItem.nilai).label('nilai')
-    #                         ).join(cls,
-    #                         ).filter(ARInvoiceItem.arinvoice_id==cls.id, 
-    #                                  cls.id==p['id']
-    #                                  ).first()
     def get_nilai(cls, ar_invoice_id):
         return DBSession.query(func.sum(ARInvoiceItem.nilai).label('nilai')
                              ).filter(ARInvoiceItem.ar_invoice_id==ar_invoice_id 
@@ -423,14 +414,12 @@ class ARInvoiceDetail(NamaModel, Base):
 class Sts(NamaModel, Base):
     __tablename__  = 'ar_sts'
     __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}
-
-    units          = relationship("Unit", backref="sts")
-    kegiatansubs   = relationship("KegiatanSub", backref="sts")
-
-    tahun_id       = Column(BigInteger, ForeignKey("apbd.tahuns.id"), nullable=False)
-    unit_id        = Column(Integer,    ForeignKey("admin.units.id"),  nullable=False) 
-    kegiatan_sub_id = Column(BigInteger, ForeignKey("apbd.kegiatan_subs.id"), nullable=False)    
-
+    
+    units          = relationship("Unit",        backref="sts")
+   
+    tahun_id        = Column(BigInteger, ForeignKey("apbd.tahuns.id"),        nullable=False)
+    unit_id         = Column(Integer,    ForeignKey("admin.units.id"),        nullable=False)
+    
     no_urut        = Column(BigInteger, nullable=False)
     kode           = Column(String(64), nullable=False)
     nama           = Column(String(64), nullable=False)
@@ -455,18 +444,17 @@ class Sts(NamaModel, Base):
                 
     @classmethod
     def get_nilai(cls, ar_sts_id):
-        return DBSession.query(func.sum(ARInvoice.nilai).label('nominal')
-                             ).filter(StsItem.ar_sts_id==ar_sts_id,
-                                      StsItem.ar_invoice_id==ARInvoice.id                                     
+        return DBSession.query(func.sum(StsItem.amount).label('nilai')
+                             ).filter(StsItem.ar_sts_id==ar_sts_id 
                                       ).first()   
 
 class StsItem(DefaultModel, Base):
     __tablename__      = 'ar_sts_items'
     __table_args__     = {'extend_existing':True,'schema' :'apbd'}
 
-    sts                = relationship("Sts",       backref=backref("sts_items"))
+    sts                = relationship("Sts",          backref="sts_items")
     kegiatanitems      = relationship("KegiatanItem", backref="sts_items")
-    ar_sts_id          = Column(BigInteger, ForeignKey("apbd.ar_sts.id"),        nullable=False)
+    ar_sts_id          = Column(BigInteger, ForeignKey("apbd.ar_sts.id"),         nullable=False)
     kegiatan_item_id   = Column(BigInteger, ForeignKey("apbd.kegiatan_items.id"), nullable=False)
     amount             = Column(BigInteger)
 
