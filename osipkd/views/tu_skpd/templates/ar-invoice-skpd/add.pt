@@ -78,7 +78,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
-              "remote"   : "/ag-kegiatan-sub/act/headofkode1?term=%QUERY",
+              "remote"   : "/ag-kegiatan-sub/act/headofkode2?term=%QUERY",
             },
             {
             "name"      : 'kegiatan_kd',
@@ -88,7 +88,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
-              "remote"   : "/ag-kegiatan-sub/act/headofnama1?term=%QUERY",
+              "remote"   : "/ag-kegiatan-sub/act/headofnama2?term=%QUERY",
             },
             {
               "name"      : 'kegiatan_nm',
@@ -156,56 +156,62 @@
       
       <!--Bendahara-------------------------------------------------------------------->
       <div class="form-group"> 
-        <div tal:define="field form['bendahara_uid']" id="item-${field.oid}">
-          <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
-                  ${field.title}</label>
-          <div class="col-md-2">
-             ${structure:field.serialize()}
-            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-               tal:repeat="error field.error.messages()">
-               ${error}</p>
+          <div tal:define="field form['bendahara_uid']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-1">
+               ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
           </div>
-        </div>
-        <div class="col-md-4" tal:define="field form['bendahara_nm']" id="item-${field.oid}">
-          ${structure:field.serialize()}
-          <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-             tal:repeat="error field.error.messages()">
-             ${error}</p>
-        </div>
-        <script>
+          <div tal:define="field form['bendahara_nm']" id="item-${field.oid}">
+            <div class="col-md-5">
+               ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
+          </div>
+          <script>
            $('#bendahara_uid').typeahead({
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
-              "remote"   : "/pejabat/act/headofkode1?term=%QUERY",
+              "remote"   : "/pejabat/act/headofkode2?term=%QUERY",
             },
             {
             "name"      : 'bendahara_uid',
             "displayKey": 'value',
           });
+         
           $('#bendahara_nm').typeahead({
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
-              "remote"   : "/pejabat/act/headofnama1?term=%QUERY",
+              "remote"   : "/pejabat/act/headofnama2?term=%QUERY",
             },
             {
               "name"      : 'bendahara_nm',
               "displayKey": 'value',
             });
-
         
         $('#bendahara_uid').bind('typeahead:selected', function(obj, datum, name) {  
               $('#bendahara_nm').val(datum.nama);
+              $('#bendahara_nip').val(datum.nip);
               $('#pejabat_id').val(datum.id);
         });
         $('#bendahara_nm').bind('typeahead:selected', function(obj, datum, name) {  
               $('#bendahara_uid').val(datum.kode);
+              $('#bendahara_nip').val(datum.nip);
               $('#pejabat_id').val(datum.id);
         });
+        
         $("#bendahara_uid").attr('readonly',true);
+
         </script>
-      </div>
+        </div>
  
       <!--Penyetor--------------------------------------------------------------------> 
       <div class="form-group"> 
@@ -245,6 +251,7 @@
         <div class="col-md-3">
           <button type="submit" class="btn btn-primary" id="simpan" name="simpan">Simpan</button>
           <button type="submit" class="btn btn-danger"  id="batal"  name="batal">Batal</button>
+          <button type="submit" class="btn btn-warning" id="tutup" name="tutup">Tutup</button>
         </div>
       </div>
       </form>
@@ -331,6 +338,10 @@
           <script>
            
           $('#rekening_add').click(function () {
+                var ar_invoice_id;
+                ar_invoice_id = $('#id').val();
+                alert(ar_invoice_id);          
+          
                 $('#ar_invoice_item_id').val('');
                 $('#detail').submit();
            })
@@ -399,8 +410,8 @@
       var tb_array = [
           '<div class="btn-group pull-left">',
           '<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
-          '<button id="btn_print"  class="btn btn btn-primary" type="button">Print</button>',
-          '<button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
+          '<!--button id="btn_print"  class="btn btn btn-primary" type="button">Print</button-->',
+          '<!--button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button-->',
           '&nbsp;',
           '</div>',
       ];
@@ -531,7 +542,7 @@
         });
 
         $("#jml_total").attr('readonly',true);
-        $("#kegiatan_nm").attr('readonly',true);
+        $("#kegiatan_kd").attr('readonly',true);
         jml_total=$("#jml_total").val();
         $("#jml_total").val(formatNumber(jml_total));
      });

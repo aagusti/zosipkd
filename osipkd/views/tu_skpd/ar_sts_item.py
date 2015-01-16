@@ -10,7 +10,7 @@ from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
 from osipkd.models.pemda_model import Unit, Rekening
-from osipkd.models.apbd_tu import Sts, StsItem 
+from osipkd.models.apbd_tu import Sts, StsItem
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -47,21 +47,22 @@ class view_ar_sts_item(BaseViews):
 
                 query = DBSession.query(StsItem.id,
                                         StsItem.kegiatan_item_id,
-                                        KegiatanSub.kode.label('kode1'),
+                                        Kegiatan.kode.label('kode1'),
                                         KegiatanSub.no_urut.label('no_urut1'),
                                         Rekening.kode.label('kode_rek'),
                                         Rekening.nama.label('nama_rek'),
                                         StsItem.amount.label('amount'),
                                         KegiatanSub.nama.label('nama'),
                           ).join(KegiatanItem
-                          ).outerjoin(KegiatanSub, Rekening
+                          ).outerjoin(KegiatanSub, Rekening, Kegiatan
                           ).filter(StsItem.ar_sts_id==ar_sts_id,
                                    StsItem.kegiatan_item_id==KegiatanItem.id,
                                    KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
-                                   KegiatanItem.rekening_id==Rekening.id
+                                   KegiatanItem.rekening_id==Rekening.id,
+                                   KegiatanSub.kegiatan_id==Kegiatan.id,
                           ).group_by(StsItem.id,
                                      StsItem.kegiatan_item_id,
-                                     KegiatanSub.kode.label('kode1'),
+                                     Kegiatan.kode.label('kode1'),
                                      KegiatanSub.no_urut.label('no_urut1'),
                                      Rekening.kode.label('kode_rek'),
                                      Rekening.nama.label('nama_rek'),
@@ -110,7 +111,7 @@ def view_add(request):
     DBSession.add(row)
     DBSession.flush()
     nilai = "%d" % Sts.get_nilai(row.ar_sts_id) 
-    return {"success": True, 'id': row.id, "msg":'Success Tambah Item Sts', 'jml_total':nilai}
+    return {"success": True, 'id': row.id, "msg":'Success Tambah Item STS', 'jml_total':nilai}
     #except:
     #return {'success':False, 'msg':'Gagal Tambah Item Invoice'}
 
@@ -136,7 +137,8 @@ def view_edit(request):
     form = get_form(request, EditSchema)
     if request.POST:
         if 'simpan' in request.POST:
-            controls = request.POST.items()  
+            controls = request.POST.items()
+            
             try:
                 c = form.validate(controls)
             except ValidationFailure, e:

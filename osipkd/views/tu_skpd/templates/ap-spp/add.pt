@@ -845,7 +845,11 @@
             <!--Button----------------------------------------------------------->
             <div class="col-md-2">
                 <button id="rekening_add" name="baru" type="button" class="btn btn-primary "
-                    value="baru">Tambah</button>
+                    value="baru">Baru</button>
+                <button id="rekening_save" name="simpan" type="submit" class="btn btn-primary "
+                    value="simpan">Update</button>
+                <button id="rekening_cancel" name="batal" type="reset" class="btn btn-danger "
+                    value="batal">Batal</button>
             </div> 
           </div>
           <script>
@@ -918,8 +922,8 @@
       var tb_array = [
           '<div class="btn-group pull-left">',
           '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
-          '	<button id="btn_print"  class="btn btn btn-primary" type="button">Print</button>',
-          ' <button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
+          '	<!--button id="btn_print"  class="btn btn btn-primary" type="button">Print</button-->',
+          ' <!--button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button-->',
           '	&nbsp;',
           '</div>',
       ];

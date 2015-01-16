@@ -285,6 +285,257 @@
       </form>
     </div>  
   </div>   
-      </div> <!--panel-body-->
 
+    <div class="row">
+      <table class="table table-bordered table-hover table-condensed" id="table1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>SPM ID</th>
+                <th>Rekening ID</th>
+                <th>No. Urut</th>
+                <th>No. SPM</th>
+                <th>Rekening</th>
+                <th>Uraian</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+  </div>
+
+  <div  class="panel panel-default">
+    <div class="panel-heading">
+        <h5 class="panel-title">Tambah Potongan</h5>
+    </div>
+    <div class="panel-body">
+      <form method="post" id="detail" accept-charset="utf-8" id="myform" class="form-horizontal" enctype="multipart/form-data">
+        <fieldset class="deformFormFieldset">
+          <!--Piutang------------------------------------------------------------->
+          <input id="ap_spm_potongan_id" type="hidden" value="" name="ap_spm_potongan_id">
+          <input id="rekening_id" type="hidden" value="" name="rekening_id">
+          <input id="ap_spm_id" type="hidden" value="" name="ap_spm_id">
+          <div class="form-group">
+            <div class="col-md-1">
+               <input id="no_urut" readonly class=" form-control " type="text" value="" name="no_urut">
+            </div>
+            <label for="kode1" class="control-label col-md-1" id="req-kode1">
+                Rekening </label>
+            <div class="col-md-2">
+               <input id="kode1" class=" form-control " type="text" value="" name="kode1">
+            </div>
+            <div class="col-md-5">
+               <input id="nama1" class=" form-control " readonly type="text" value="" name="nama1">
+            </div>
+            <!--Button----------------------------------------------------------->
+            <div class="col-md-3">
+                <button id="rekening_add" name="baru" type="button" class="btn btn-primary "
+                    value="baru">Baru</button>
+                <button id="rekening_save" name="simpan" type="submit" class="btn btn-primary "
+                    value="simpan">Update</button>
+                <button id="rekening_cancel" name="batal" type="reset" class="btn btn-danger "
+                    value="batal">Batal</button>
+            </div> 
+          </div>
+          <script>
+            $('#rekening_add').click(function () {
+                var ap_spm_id;
+                ap_spm_id = $('#id').val();
+                alert(ap_spm_id);
+          
+                $('#ap_spm_potongan_id').val('');
+                $('#detail').submit();
+            })
+
+            $('#kode1').typeahead({
+                "hint"     : true,
+                "highlight": true,
+                "minLength": 1,
+                "remote"   : "/rekening/act/headofkode61?term=%QUERY", 
+            },{
+               "name"      : 'kode1',
+               "displayKey": 'value',
+            });
+
+            $('#kode1').bind('typeahead:selected', function(obj, datum, name) {  
+                  $('#rekening_id').val(datum.id);
+                  $('#nama1').val(datum.nama);
+            });
+
+            $( "#detail" ).submit(function( event ) {
+               var ap_spm_id;
+               var is_success;
+               is_success = true;
+               ap_spm_id = $('#id').val();
+               if (!ap_spm_id) {
+                   is_success = false;
+                   $("#errors").css('display', 'inline', 'important');
+                   $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + 'Simpan Dulu Headernya');
+            }
+          
+              if (is_success){
+                $.ajax({
+                  type: "POST",
+                  url: "/ap-spm/potongan/"+ap_spm_id+"/add",
+                  data: $('#detail').serialize(),
+                  success: function (html) {
+                    if (html.success == true) {
+                      $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                      $('#no_urut').val('');
+                      $('#kode1').val('');
+                      $('#nama1').val('');
+                      //$('#jml_total').val(formatNumber(html.jml_total));
+                      oTable.fnReloadAjax(oTableUrl);
+                    } else {
+                      $("#errors").css('display', 'inline', 'important');
+                      $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                    }
+                  },
+                  beforeSend: function () {
+                    $("#errors").css('display', 'inline', 'important');
+                    $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+                  }
+                });
+              }
+              event.preventDefault();
+            });
+          </script>
+        </fieldset>
+      </form>  
+    </div> <!--panel-body-->     
+  </div>
+
+  <script>
+      var mID;
+      var oTable;
+      var iPos;
+      var ap_spm_id = $('#id').val();
+      var oTableUrl = "/ap-spm/potongan/"+ap_spm_id+"/act/grid";
+      var tb_array = [
+          '<div class="btn-group pull-left">',
+          '<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
+          '<button id="btn_print"  class="btn btn btn-primary" type="button">Print</button>',
+          '<button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
+          '&nbsp;',
+          '</div>',
+      ];
+
+      var tb = tb_array.join(' ');
+        function formatNumber(n) {
+            return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+      $(document).ready(function () {
+        oTable = $('#table1').dataTable({
+            "sAjaxSource"    : oTableUrl,
+            "bServerSide"    : true,
+            "bProcessing"    : true,           
+            "sDom"           : '<"toolbar">lfrtip',
+            "bScrollCollapse": true,
+            "bSort"          : true,
+            "bInfo"          : false,
+            "bFilter"        : false,
+            "bAutoWidth"     : false,
+            "bPaginate"      : true,
+            "sPaginationType": "full_numbers",
+
+            "lengthMenu": [
+                [5, 10, 15, 50, -1],
+                [5, 10, 15, 50, "All"]
+            ],
+            "aoColumnDefs": [
+            {
+                "bSearchable": false,
+                "bVisible"   : false,
+                "aTargets"   : [0,1,2]
+            },{
+                "bSearchable": false,
+                "bSortable"  : false,
+                "aTargets"   : [3,4,5,6]
+            }],
+            "aoColumns": [
+                null, 
+                {"sWidth": "50px"}, 
+                {"sWidth": "50px"},
+                {"sWidth": "20px"}, 
+                {"sWidth": "50px"},
+                {"sWidth": "50px"}, 
+                {"sWidth": "100px"},
+            ],
+            "fnRowCallback": function (nRow, aData, iDisplayIndex) {
+                $(nRow).on("click", function (event) {
+                    if ($(this).hasClass('row_selected')) {
+                        /* mID = '';
+                        $(this).removeClass('row_selected'); */
+                    } else {
+
+                        var data = oTable.fnGetData(this);
+                        mID = data[0];
+                        $("#ap_spm_potongan_id").val(data[0]);
+                        $("#ap_spm_id").val(data[1]);
+                        $("#rekening_id").val(data[2]);
+                        $("#no_urut").val(data[3]);
+                        $("#kode1").val(data[5]);
+                        $("#nama1").val(data[6]);
+                        oTable.$('tr.row_selected').removeClass('row_selected');
+                        $(this).addClass('row_selected');
+                    }
+                })
+            },
+        });
+
+        $("div.toolbar").html(tb);
+
+        $('#table1 tbody').on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
+                mID = ''; ;
+                $(this).removeClass('selected');
+            } else {
+                iPos = oTable.fnGetPosition(this);
+                var aData = oTable.fnGetData(iPos);
+                mID = aData[0];
+                oTable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+        /**********************************************************************/
+        $('#btn_delete').click(function () {
+            if (mID) {
+              if (confirm('Yakin dihapus?')==true){
+                $.ajax({
+                type: "POST",
+                url: "/ap-spm/potongan/"+$("#id").val()+"/"+mID+"/delete",
+                success: function (html) {
+                  if (html.success == true) {
+                    $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                    oTable.fnReloadAjax(oTableUrl);
+                  } else {
+                    $("#errors").css('display', 'inline', 'important');
+                    $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                  }
+                },
+                beforeSend: function () {
+                  $("#errors").css('display', 'inline', 'important');
+                  $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+                }
+                });
+              } else {
+                  alert('Silahkan pilih data yang akan di hapus');
+              }
+            }
+        });
+        
+        $('#btn_print').click(function () {
+            alert('not implemented');
+        });
+
+        $("#btn_close").click(function () {
+            window.location = '/ap-spm';
+            return false;
+        });
+        //$("#jml_total").attr('readonly',true);
+        //jml_total=$("#jml_total").val();
+        //$("#jml_total").val(formatNumber(jml_total));
+     });
+    </script>
+  </div> <!--panel-body-->
 </html>

@@ -25,7 +25,15 @@ JV_TYPE = (
     (2, 'LO'),
     (3, 'Jurnal Umum'),
     )
-
+    
+def deferred_is_skpd(node, kw):
+    values = kw.get('is_skpd', [])
+    return widget.SelectWidget(values=values)
+    
+IS_SKPD = (
+    (0, 'PPKD'),
+    (1, 'SKPD'))      
+    
 class AddSchema(colander.Schema):
     unit_kd_widget = widget.AutocompleteInputWidget(
             values = '/unit/act/headofkode',
@@ -94,7 +102,10 @@ class AddSchema(colander.Schema):
                     missing = colander.drop
                     )
     is_skpd     = colander.SchemaNode(
-                    colander.Boolean()
+                    colander.Integer(),
+                    title="Jurnal",
+                    oid = "is_skpd",
+                    widget=widget.SelectWidget(values=IS_SKPD)
                   )
                     
                     
@@ -161,7 +172,7 @@ class view_ak_jurnal_skpd(BaseViews):
                 
     def get_form(self, class_form, row=None):
         schema = class_form(validator=self.form_validator)
-        schema = schema.bind(jv_type=JV_TYPE)
+        schema = schema.bind(jv_type=JV_TYPE, is_skpd=IS_SKPD)
         schema.request = self.request
         if row:
           schema.deserialize(row)
@@ -181,7 +192,7 @@ class view_ak_jurnal_skpd(BaseViews):
         row.updated = datetime.now()
         row.update_uid = user.id
         row.disable   = 'disable' in values and values['disable'] and 1 or 0
-        row.is_skpd   = 'is_skpd' in values and values['is_skpd'] and 1 or 0
+        #row.is_skpd   = 'is_skpd' in values and values['is_skpd'] and 1 or 0
         row.posted    = 'posted' in values and values['posted'] and 1 or 0
         DBSession.add(row)
         DBSession.flush()

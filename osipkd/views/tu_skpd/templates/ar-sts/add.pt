@@ -52,60 +52,6 @@
         </div>
       </div>
 
-      <!--Kegiatans-------------------------------------------------------------------->
-      <div class="form-group"> 
-        <div tal:define="field form['kegiatan_sub_id']" style="display: none;">
-            ${structure:field.serialize()}
-        </div>
-        <div tal:define="field form['kegiatan_kd']" id="item-${field.oid}">
-          <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
-                  ${field.title}</label>
-          <div class="col-md-2">
-             ${structure:field.serialize()}
-            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-               tal:repeat="error field.error.messages()">
-               ${error}</p>
-          </div>
-        </div>
-        
-        <div class="col-md-8" tal:define="field form['kegiatan_nm']" id="item-${field.oid}">
-          ${structure:field.serialize()}
-          <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-             tal:repeat="error field.error.messages()">
-             ${error}</p>
-        </div>
-        <script>
-            $('#kegiatan_kd').typeahead({
-              "hint"     : true,
-              "highlight": true,
-              "minLength": 1,
-              "remote"   : "/ag-kegiatan-sub/act/headofkode1?term=%QUERY",
-            },{
-             "name"      : 'kegiatan_kd',
-             "displayKey": 'value',
-            });
-            $('#kegiatan_nm').typeahead({
-              "hint"     : true,
-              "highlight": true,
-              "minLength": 1,
-              "remote"   : "/ag-kegiatan-sub/act/headofnama1?term=%QUERY",
-            },{
-             "name"      : 'kegiatan_nm',
-             "displayKey": 'value',
-            });
-
-        
-        $('#kegiatan_kd').bind('typeahead:selected', function(obj, datum, name) {  
-              $('#kegiatan_nm').val(datum.nama);
-              $('#kegiatan_sub_id').val(datum.id);
-        });
-        $('#kegiatan_nm').bind('typeahead:selected', function(obj, datum, name) {  
-              $('#kegiatan_kd').val(datum.kode);
-              $('#kegiatan_sub_id').val(datum.id);
-        });
-        
-        </script>
-      </div>
       <!--Kode-------------------------------------------------------------------->
       <div class="form-group"> 
         <div tal:define="field form['kode']" id="item-${field.oid}">
@@ -332,17 +278,17 @@
   </div>
   <div  class="panel panel-default">
     <div class="panel-heading">
-        <h5 class="panel-title">Tambah Kegiatan</h5>
+        <h5 class="panel-title">Tambah Item</h5>
     </div>
     <div class="panel-body">
       <form method="post" id="detail" accept-charset="utf-8" id="myform" class="form-horizontal" enctype="multipart/form-data">
         <fieldset class="deformFormFieldset">
           <!--Piutang------------------------------------------------------------->
           <input id="ar_sts_item_id" type="hidden" value="" name="ar_sts_item_id">
-          <input id="kegiatan_item_id" type="text" value="" name="kegiatan_item_id">
+          <input id="kegiatan_item_id" type="hidden" value="" name="kegiatan_item_id">
               <div class="form-group">
                 <label for="kode1" class="control-label col-md-1" id="req-kode1">
-                    Kegiatan </label>
+                    Rekening </label>
                 <div class="col-md-2">
                    <input id="kode1" class=" form-control " type="text" value="" name="kode1">
                 </div>
@@ -355,7 +301,7 @@
                 <!--Button----------------------------------------------------------->
                 <div class="col-md-2">
                     <button id="rekening_add" name="baru" type="button" class="btn btn-primary "
-                        value="baru">Tambah</button>
+                        value="baru">Baru</button>
                     <button id="rekening_save" name="simpan" type="submit" class="btn btn-primary "
                         value="simpan">Update</button>
                     <button id="rekening_cancel" name="batal" type="reset" class="btn btn-danger "
@@ -363,15 +309,19 @@
                 </div> 
               </div>
           <script>
-          $('#rekening_add').click(function () {
-                  $('#ar_sts_item_id').val('');
-                  $('#detail').submit();
-             })
+            $('#rekening_add').click(function () {
+                var ar_sts_id;
+                ar_sts_id = $('#id').val();
+                alert(ar_sts_id);          
+          
+                $('#ar_sts_item_id').val('');
+                $('#detail').submit();
+            })
             $('#kode1').typeahead({
                 "hint"     : true,
                 "highlight": true,
                 "minLength": 1,
-                "remote"   : "/ag-kegiatan-item/act/headofkode1?kegiatan_sub_id="+$("#kegiatan_sub_id").val()+"&term=%QUERY", 
+                "remote"   : "/ag-kegiatan-item/act/headofkode1?term=%QUERY", 
             },{
                "name"      : 'kode1',
                "displayKey": 'value',
@@ -384,15 +334,15 @@
             });
               
             $( "#detail" ).submit(function( event ) {
-              var ar_sts_id;
-              var is_success;
-              is_success = true;
-              ar_sts_id = $('#id').val();
-              if (!ar_sts_id) {
-                  is_success = false;
-                  $("#errors").css('display', 'inline', 'important');
-                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + 'Simpan Dulu Headernya');
-              }
+               var ar_sts_id;
+               var is_success;
+               is_success = true;
+               ar_sts_id = $('#id').val();
+               if (!ar_sts_id) {
+                   is_success = false;
+                   $("#errors").css('display', 'inline', 'important');
+                   $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + 'Simpan Dulu Headernya');
+            }
           
               if (is_success){
                 $.ajax({
