@@ -1,15 +1,6 @@
 <html metal:use-macro="load: ../base.pt">
   <div metal:fill-slot="content" class="panel panel-default">
-    <script type='text/javascript'>
-        $(document).ready(function () {
-            
-            $("#btn_close").click(function () {
-                window.location = '/ag-kegiatan-item/'+$('#kegiatan_sub_id').val();
-                return false;
-            });
-        });
-        
-    </script>
+    
     
     <div class="panel-heading">
       ITEM KEGIATAN
@@ -138,26 +129,35 @@
                        ${error}</p>
              </div>
           <script>
+          if ($('#kegiatan_kd').val()=='0.00.00.10-1')
+            var  url = 4;
+          else if ($('#kegiatan_kd').val()=='0.00.00.21-1')
+            var  url = 51;
+          else if ($('#kegiatan_kd').val()=='0.00.00.31-1')
+            var  url = 61;
+          else if ($('#kegiatan_kd').val()=='0.00.00.32-1')
+            var  url = 62;
+          else 
+            var  url = 52;
+                    
           $('#rekening_kd').typeahead({
-              "hint": true,
+              "hint"     : true,
               "highlight": true,
               "minLength": 1,
-              "remote": "/rekening/act/headofkode${rek_head}?term=%QUERY", 
-          },
-          {
-            "name": 'rekening_kd',
-            "displayKey": 'value',
+              "remote"   : "/rekening/act/headofkode"+url+"?term=%QUERY", 
+          },{
+             "name"      : 'rekening_kd',
+             "displayKey": 'value',
           }); 
                   
           $('#rekening_nm').typeahead({
-              "hint": true,
+              "hint"     : true,
               "highlight": true,
               "minLength": 1,
-              "remote": "/rekening/act/headofnama${rek_head}?term=%QUERY", 
-          },
-          {
-            "name": 'rekening_nm',
-            "displayKey": 'value',
+              "remote"   : "/rekening/act/headofnama"+url+"?term=%QUERY", 
+          },{
+             "name"      : 'rekening_nm',
+             "displayKey": 'value',
           }); 
         
             $('#rekening_kd').bind('typeahead:selected', function(obj, datum, name) {  
@@ -170,12 +170,9 @@
                   $('#rekening_kd').val(datum.kode);
                   $('#rekening_id').val(datum.id);
                   $('#nama').val(datum.nama);
-                  
             });
             </script>
           </div>
-          
-
         </fieldset>
    </div>
 
@@ -493,12 +490,33 @@
      </div>
      
       <div class="form-group">
-            <div class="col-sm-3">
-                <button type="submit" class="btn btn-primary" id="simpan" name="simpan">Simpan</button>
-                <button type="submit" class="btn btn-danger" id="batal" name="batal">Batal</button>
-                <button type="button" class="btn btn-warning" id="btn_close">Tutup</button>
-            </div>
+        <div class="col-sm-3">
+          <button type="submit" class="btn btn-primary" id="simpan" name="simpan">Simpan</button>
+          <button type="submit" class="btn btn-danger"  id="batal"  name="batal">Batal</button>
+          <button type="button" class="btn btn-warning" id="btn_close">Tutup</button>
+        </div>
       </div>
+      <script type='text/javascript'>
+        $(document).ready(function () {
+            
+            $("#btn_close").click(function () {
+                if ($('#kegiatan_kd').val()=='0.00.00.10-1')
+                    url = '/ag-pendapatan';
+                else if ($('#kegiatan_kd').val()=='0.00.00.21-1')
+                    url = '/ag-btl';
+                else if ($('#kegiatan_kd').val()=='0.00.00.31-1')
+                    url = '/ag-penerimaan';
+                else if ($('#kegiatan_kd').val()=='0.00.00.32-1')
+                    url = '/ag-pengeluaran';
+                else
+                    url = '/ag-kegiatan-item/'+$('#kegiatan_sub_id').val();
+                    
+                //alert(url);
+                window.location = url;
+                //return false;
+            });
+        });  
+    </script>
       <br>
         <div class="form-group">
               <div tal:define="field form['mulai']">
