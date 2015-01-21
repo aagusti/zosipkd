@@ -2533,7 +2533,7 @@ class r104Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
             ET.SubElement(xml_a, "customer").text = customer
             rows = DBSession.query(KegiatanIndikator)\
-              .filter(KegiatanIndikator.kegitan_sub_id==row.id)\
+              .filter(KegiatanIndikator.kegiatan_sub_id==row.id)\
               .order_by(KegiatanIndikator.tipe,KegiatanIndikator.no_urut)
             for row2 in rows :
                 xml_b = ET.SubElement(xml_a, "indikator")
@@ -2869,7 +2869,7 @@ class r204Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
             ET.SubElement(xml_a, "customer").text = customer
             rows = DBSession.query(KegiatanIndikator)\
-              .filter(KegiatanIndikator.kegitan_sub_id==row.id)\
+              .filter(KegiatanIndikator.kegiatan_sub_id==row.id)\
               .order_by(KegiatanIndikator.tipe,KegiatanIndikator.no_urut)
             for row2 in rows :
                 xml_b = ET.SubElement(xml_a, "indikator")
@@ -3228,7 +3228,7 @@ class r304Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
             ET.SubElement(xml_a, "customer").text = customer
             rows = DBSession.query(KegiatanIndikator)\
-              .filter(KegiatanIndikator.kegitan_sub_id==row.id)\
+              .filter(KegiatanIndikator.kegiatan_sub_id==row.id)\
               .order_by(KegiatanIndikator.tipe,KegiatanIndikator.no_urut)
             for row2 in rows :
                 xml_b = ET.SubElement(xml_a, "indikator")
@@ -3636,7 +3636,7 @@ class r404Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
             ET.SubElement(xml_a, "customer").text = customer
             rows = DBSession.query(KegiatanIndikator)\
-              .filter(KegiatanIndikator.kegitan_sub_id==row.id)\
+              .filter(KegiatanIndikator.kegiatan_sub_id==row.id)\
               .order_by(KegiatanIndikator.tipe,KegiatanIndikator.no_urut)
             for row2 in rows :
                 xml_b = ET.SubElement(xml_a, "indikator")
@@ -3923,7 +3923,7 @@ class r502Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "customer").text = customer
             
             rows = DBSession.query(KegiatanIndikator)\
-              .filter(KegiatanIndikator.kegitan_sub_id==row.kegiatan_sub_id,
+              .filter(KegiatanIndikator.kegiatan_sub_id==row.kegiatan_sub_id,
               KegiatanIndikator.tipe==4)\
               .order_by(KegiatanIndikator.tipe,KegiatanIndikator.no_urut)
             for row2 in rows :
@@ -4128,7 +4128,7 @@ class r522Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "customer").text = customer
             
             rows = DBSession.query(KegiatanIndikator)\
-              .filter(KegiatanIndikator.kegitan_sub_id==row.kegiatan_sub_id,
+              .filter(KegiatanIndikator.kegiatan_sub_id==row.kegiatan_sub_id,
               KegiatanIndikator.tipe==4)\
               .order_by(KegiatanIndikator.tipe,KegiatanIndikator.no_urut)
             for row2 in rows :
@@ -4322,7 +4322,7 @@ class r602Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "customer").text = customer
             
             rows = DBSession.query(KegiatanIndikator)\
-              .filter(KegiatanIndikator.kegitan_sub_id==row.kegiatan_sub_id,
+              .filter(KegiatanIndikator.kegiatan_sub_id==row.kegiatan_sub_id,
               KegiatanIndikator.tipe==4)\
               .order_by(KegiatanIndikator.tipe,KegiatanIndikator.no_urut)
             for row2 in rows :
@@ -4555,7 +4555,7 @@ class r622Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "customer").text = customer
             
             rows = DBSession.query(KegiatanIndikator)\
-              .filter(KegiatanIndikator.kegitan_sub_id==row.kegiatan_sub_id,
+              .filter(KegiatanIndikator.kegiatan_sub_id==row.kegiatan_sub_id,
               KegiatanIndikator.tipe==4)\
               .order_by(KegiatanIndikator.tipe,KegiatanIndikator.no_urut)
             for row2 in rows :
