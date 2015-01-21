@@ -52,6 +52,7 @@ border: 1px solid transparent;
 }
 
 .container {
+    --max-width: 1024px;
 }
 
 .container .info {

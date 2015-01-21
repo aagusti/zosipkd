@@ -141,6 +141,13 @@ def row2dict(row):
 
     return d        
     
+def _upper(chain):
+    ret = chain.upper()
+    if ret:
+        return ret
+    else:
+        return chain
+        
     
 def clean(s):
     r = ''
@@ -150,9 +157,9 @@ def clean(s):
         r += ch
     return r
 
-def xls_reader(filename):    
+def xls_reader(filename, sheet):    
     workbook = xlrd.open_workbook(filename)
-    worksheet = workbook.sheet_by_name('potongan')
+    worksheet = workbook.sheet_by_name(sheet)
     num_rows = worksheet.nrows - 1
     num_cells = worksheet.ncols - 1
     curr_row = -1

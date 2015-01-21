@@ -22,6 +22,8 @@ from ..models.apbd_tu import *
 from ..models.gaji import *
 from ..models.pemda_model import *    
 from ..models.eis import *    
+from ..models.aset_models import *    
+
 import initial_data
 
 

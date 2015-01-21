@@ -2,26 +2,106 @@
   <div metal:fill-slot="content">
     <h4>${request.title}</h4>
     <hr>
+      <div class="row"> 
+        <!-- UNIT -------------------------------------------------------------------->
+        <input type="hidden" class="form-control" id="unit_id" 
+                    value="${request.session.unit_id}" readonly name="unit_id">
+                    
+        <div  id="item-unit_kd">
+          <label for="unit_kd" class="control-label col-md-1" id="req-unit_kd">SKPD</label>
+          <div class="col-md-2">
+           <input type="text" class="form-control typeahead" id="unit_kd" 
+                  name="unit_kd" value="${request.session.unit_kd}">
+          </div>
+        </div>
+        <div class="col-md-6" id="item-unit_nm">
+          <input type="text" class="form-control" id="unit_nm" 
+                 name="unit_nm" value="${request.session.unit_nm}">
+        </div>
+      </div>
+      <script>
+        $('#unit_kd').typeahead({
+            "hint"     : true,
+            "highlight": true,
+            "minLength": 1,
+            "remote"   : "/unit/act/headofkode?term=%QUERY", 
+        },{
+           "name"      : 'unit_kd',
+           "displayKey": 'value',
+        }); 
+                
+        $('#unit_nm').typeahead({
+            "hint"     : true,
+            "highlight": true,
+            "minLength": 1,
+            "remote"   : "/unit/act/headofnama?term=%QUERY", 
+        },{
+           "name"      : 'unit_nm',
+           "displayKey": 'value',
+        }); 
+        function change_unit(){
+            $.ajax({
+              type: "POST",
+              url : "/unit/act/changeid",
+              data: "unit_id="+$('#unit_id').val(),
+              success: function (html) {
+                if (html.success == true) {
+                  $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                  reload_kegiatan();
+                } else {
+                  $("#errors").css('display', 'inline', 'important');
+                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                  $('#unit_kd').val('');
+                  $('#unit_nm').val('');
+                  $('#unit_id').val('');
+                }
+              },
+              beforeSend: function () {
+                $("#errors").css('display', 'inline', 'important');
+                $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+              }
+            });
+        }
+        
+        $('#unit_kd').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#unit_nm').val(datum.nama);
+              $('#unit_id').val(datum.id);
+              change_unit();
+        });
+
+        $('#unit_nm').bind('typeahead:selected', function(obj, datum, name) {      
+              $('#unit_kd').val(datum.kode);
+              $('#unit_id').val(datum.id);
+              change_unit()
+        });
+        
+      </script>
+  <div class="row">      
     <table id="table1" class="table table-bordered table-hover table-condensed">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Kode</th>
-                <th>Nama</th>
-                <th>in-aktif</th>
+                <th>SKPD</th>
+                <th>Kategori</th>
+                <th>Register</th>
+                <th>Tahun</th>
+                <th>Th. Beli</th>
+                <th>Harga</th>
+                <th>Kondisi</th>
             </tr>
         </thead>
         <tbody>
         </tbody>
     </table>
   </div>
+</div>
   <div metal:fill-slot="scripts">
     <script>
       var mID;
       var mThn;
       var oTable;
       var iPos;
-      var oTableUrl = "/urusan/act/grid";
+      var oTableUrl = "/aset/${kib}/grid/act";
       Number.prototype.formatMoney = function(decPlaces, thouSeparator, decSeparator) {
         var n = this,
             decPlaces = isNaN(decPlaces = Math.abs(decPlaces)) ? 2 : decPlaces,
@@ -59,9 +139,13 @@
                     }],
           "aoColumns": [
               null,
+              {"width": "50px"},
               {"width": "120px"},
               null,
-              {"width": "60px", "sClass":"center"},
+              {"width": "100px"},
+              {"width": "100px", "sClass":"center"},
+              {"width": "150px", "sClass":"center"},
+              {"width": "100px", "sClass":"center"},
           ]
         });
           
@@ -97,16 +181,16 @@
         });
         
         $('#btn_add').click(function () {
-            window.location = '/urusan/add';
+            window.location = '/aset/${kib}/add';
         });
 
         $('#btn_edit').click(function () {
-            if (mID) window.location = '/urusan/'+mID+'/edit';
+            if (mID) window.location = '/aset/${kib}/'+mID+'/edit';
             else alert('Pilih Baris yang akan di edit');
         });
 
         $('#btn_delete').click(function () {
-            if (mID) window.location = '/urusan/'+mID+'/delete';
+            if (mID) window.location = '/aset/${kib}/'+mID+'/delete';
             else alert('Pilih Baris yang akan di hapus');
         });
 
@@ -116,7 +200,7 @@
         });
 
         $("#btn_close").click(function () {
-            window.location = '/admin';
+            window.location = '/aset';
             return false;
         });
         })

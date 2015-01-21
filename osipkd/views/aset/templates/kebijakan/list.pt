@@ -6,8 +6,11 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Tahun</th>
                 <th>Kode</th>
                 <th>Nama</th>
+                <th>Masa Guna</th>
+                <th>Minimum</th>
                 <th>in-aktif</th>
             </tr>
         </thead>
@@ -21,7 +24,7 @@
       var mThn;
       var oTable;
       var iPos;
-      var oTableUrl = "/urusan/act/grid";
+      var oTableUrl = "/aset/kebijakan/grid/act";
       Number.prototype.formatMoney = function(decPlaces, thouSeparator, decSeparator) {
         var n = this,
             decPlaces = isNaN(decPlaces = Math.abs(decPlaces)) ? 2 : decPlaces,
@@ -59,8 +62,11 @@
                     }],
           "aoColumns": [
               null,
+              {"width": "50px"},
               {"width": "120px"},
               null,
+              {"width": "100px"},
+              {"width": "100px", "sClass":"center"},
               {"width": "60px", "sClass":"center"},
           ]
         });
@@ -97,16 +103,16 @@
         });
         
         $('#btn_add').click(function () {
-            window.location = '/urusan/add';
+            window.location = '/aset/kebijakan/add';
         });
 
         $('#btn_edit').click(function () {
-            if (mID) window.location = '/urusan/'+mID+'/edit';
+            if (mID) window.location = '/aset/kebijakan/'+mID+'/edit';
             else alert('Pilih Baris yang akan di edit');
         });
 
         $('#btn_delete').click(function () {
-            if (mID) window.location = '/urusan/'+mID+'/delete';
+            if (mID) window.location = '/aset/kebijakan/'+mID+'/delete';
             else alert('Pilih Baris yang akan di hapus');
         });
 
@@ -116,7 +122,7 @@
         });
 
         $("#btn_close").click(function () {
-            window.location = '/admin';
+            window.location = '/aset';
             return false;
         });
         })

@@ -230,6 +230,7 @@ class RootFactory(object):
         self.__acl__ = [(Allow, 'Admin', ALL_PERMISSIONS), 
                         (Allow, Authenticated, 'view'),]
         if self.request.user and self.request.matched_route:
+            
             rows = DBSession.query(Group.group_name, Route.perm_name).\
                join(UserGroup).join(GroupRoutePermission).join(Route).\
                filter(UserGroup.user_id==self.request.user.id,
@@ -237,8 +238,6 @@ class RootFactory(object):
             if rows:
                 for r in rows:
                     self.__acl__.append((Allow, ''.join(['g:',r.group_name]), r.perm_name))
-        
-
                 
 def init_model():
     ziggurat_model_init(User, Group, UserGroup, GroupPermission, UserPermission,

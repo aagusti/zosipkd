@@ -1,16 +1,16 @@
 \COPY routes(kode,disabled,created,create_uid,nama,path,perm_name) FROM stdin
-home	0	2014-12-24 03:04:42.837591	1	Home	/	read
-login	0	2014-12-24 03:04:42.837591	1	Login	/login	read
-logout	0	2014-12-24 03:04:42.837591	1	Logout	/logout	read
-password	0	2014-12-24 03:04:42.837591	1	Change password	/password	read
+home	0	2014-12-24 03:04:42.837591	1	Home	/	view
+login	0	2014-12-24 03:04:42.837591	1	Login	/login	view
+logout	0	2014-12-24 03:04:42.837591	1	Logout	/logout	view
+password	0	2014-12-24 03:04:42.837591	1	Change password	/password	view
 admin	0	2014-12-24 03:04:42.837591	1	Administrator	/admin	read
-apbd-tahun	0	2014-12-24 03:04:42.837591	1	Tahun Anggaran	/apbd-tahun	view
+apbd-tahun	0	2014-12-24 03:04:42.837591	1	Tahun Anggaran	/apbd-tahun	read
 apbd-tahun-act	0	2014-12-24 03:04:42.837591	1	Tahun Anggaran Act	/apbd-tahun/act/{act}	read
 apbd-tahun-add	0	2014-12-24 03:04:42.837591	1	Tambah Tahun Anggaran	/apbd-tahun/add	add
 apbd-tahun-edit	0	2014-12-24 03:04:42.837591	1	Edit Tahun Anggaran	/apbd-tahun/{id}/edit	edit
 apbd-tahun-delete	0	2014-12-24 03:04:42.837591	1	Hapus Tahun Anggaran	/apbd-tahun/{id}/delete	delete
-carousel	0	2014-12-24 03:04:42.837591	1	Carousel	/carousel	read
-carousel-act	0	2014-12-24 03:04:42.837591	1	Carousel	/carousel/act/{act}	read
+carousel	0	2014-12-24 03:04:42.837591	1	Carousel	/carousel	view
+carousel-act	0	2014-12-24 03:04:42.837591	1	Carousel	/carousel/act/{act}	view
 carousel-add	0	2014-12-24 03:04:42.837591	1	Tambah Carousel	/carousel/add	add
 carousel-edit	0	2014-12-24 03:04:42.837591	1	Edit Carousel	/carousel/{id}/edit	edit
 carousel-delete	0	2014-12-24 03:04:42.837591	1	Hapus Carousel	/carousel/{id}/delete	delete
@@ -54,32 +54,32 @@ group-routes-act	0	2014-12-24 03:04:42.837591	1	Group Route Act	/group/routes/ac
 group-routes-add	0	2014-12-24 03:04:42.837591	1	Tambah Group Route	/group/routes/add	add
 group-routes-delete	0	2014-12-24 03:04:42.837591	1	Hapus Group Route	/group/routes/{id}/{id2}/delete	delete
 jabatan	0	2014-12-24 03:04:42.837591	1	Jabatan	/jabatan	read
-jabatan-act	0	2014-12-24 03:04:42.837591	1	Jabatan Act	/jabatan/act/{act}	view
+jabatan-act	0	2014-12-24 03:04:42.837591	1	Jabatan Act	/jabatan/act/{act}	read
 jabatan-add	0	2014-12-24 03:04:42.837591	1	Tambah Jabatan	/jabatan/add	add
 jabatan-edit	0	2014-12-24 03:04:42.837591	1	Edit Jabatan	/jabatan/{id}/edit	edit
 jabatan-delete	0	2014-12-24 03:04:42.837591	1	Hapus Jabatan	/jabatan/{id}/delete	delete
 kegiatan	0	2014-12-24 03:04:42.837591	1	Kegiatan	/kegiatan	read
-kegiatan-act	0	2014-12-24 03:04:42.837591	1	Kegiatan Act	/kegiatan/act/{act}	view
+kegiatan-act	0	2014-12-24 03:04:42.837591	1	Kegiatan Act	/kegiatan/act/{act}	read
 kegiatan-add	0	2014-12-24 03:04:42.837591	1	Tambah Kegiatan	/kegiatan/add	add
 kegiatan-edit	0	2014-12-24 03:04:42.837591	1	Edit Kegiatan	/kegiatan/{id}/edit	edit
 kegiatan-delete	0	2014-12-24 03:04:42.837591	1	Hapus Kegiatan	/kegiatan/{id}/delete	delete
 pegawai	0	2014-12-24 03:04:42.837591	1	Pegawai	/pegawai	read
-pegawai-act	0	2014-12-24 03:04:42.837591	1	Pegawai Act	/pegawai/act/{act}	view
+pegawai-act	0	2014-12-24 03:04:42.837591	1	Pegawai Act	/pegawai/act/{act}	read
 pegawai-add	0	2014-12-24 03:04:42.837591	1	Tambah Pegawai	/pegawai/add	add
 pegawai-edit	0	2014-12-24 03:04:42.837591	1	Edit Pegawai	/pegawai/{id}/edit	edit
 pegawai-delete	0	2014-12-24 03:04:42.837591	1	Hapus Pegawai	/pegawai/{id}/delete	delete
-pejabat	0	2014-12-24 03:04:42.837591	1	Pejabat	/pejabat	view
+pejabat	0	2014-12-24 03:04:42.837591	1	Pejabat	/pejabat	read
 pejabat-act	0	2014-12-24 03:04:42.837591	1	Pejabat Act	/pejabat/act/{act}	read
 pejabat-add	0	2014-12-24 03:04:42.837591	1	Tambah Pejabat	/pejabat/add	add
 pejabat-edit	0	2014-12-24 03:04:42.837591	1	Edit Pejabat	/pejabat/{id}/edit	edit
 pejabat-delete	0	2014-12-24 03:04:42.837591	1	Hapus Pejabat	/pejabat/{id}/delete	delete
 program	0	2014-12-24 03:04:42.837591	1	Program	/program	read
-program-act	0	2014-12-24 03:04:42.837591	1	Program Act	/program/act/{act}	view
+program-act	0	2014-12-24 03:04:42.837591	1	Program Act	/program/act/{act}	read
 program-add	0	2014-12-24 03:04:42.837591	1	Tambah Program	/program/add	add
 program-edit	0	2014-12-24 03:04:42.837591	1	Edit Program	/program/{id}/edit	edit
 program-delete	0	2014-12-24 03:04:42.837591	1	Hapus Program	/program/{id}/delete	delete
 rekening	0	2014-12-24 03:04:42.837591	1	Rekening	/rekening	read
-rekening-act	0	2014-12-24 03:04:42.837591	1	Rekening Act	/rekening/act/{act}	view
+rekening-act	0	2014-12-24 03:04:42.837591	1	Rekening Act	/rekening/act/{act}	read
 rekening-add	0	2014-12-24 03:04:42.837591	1	Tambah Rekening	/rekening/add	add
 rekening-edit	0	2014-12-24 03:04:42.837591	1	Edit Rekening	/rekening/{id}/edit	edit
 rekening-delete	0	2014-12-24 03:04:42.837591	1	Hapus Rekening	/rekening/{id}/delete	delete
@@ -89,7 +89,7 @@ routes-add	0	2014-12-24 03:04:42.837591	1	Tambah Route	/routes/add	add
 routes-edit	0	2014-12-24 03:04:42.837591	1	Edit Route	/routes/{id}/edit	edit
 routes-delete	0	2014-12-24 03:04:42.837591	1	Hapus Route	/routes/{id}/delete	delete
 unit	0	2014-12-24 03:04:42.837591	1	units	/unit	read
-unit-act	0	2014-12-24 03:04:42.837591	1	AdminFactory	/unit/act/{act}	view
+unit-act	0	2014-12-24 03:04:42.837591	1	AdminFactory	/unit/act/{act}	read
 unit-add	0	2014-12-24 03:04:42.837591	1	Tambah unit	/unit/add	add
 unit-edit	0	2014-12-24 03:04:42.837591	1	Edit unit	/unit/{id}/edit	edit
 unit-delete	0	2014-12-24 03:04:42.837591	1	Hapus unit	/unit/{id}/delete	delete
@@ -113,7 +113,7 @@ user-unit-act	0	2014-12-24 03:04:42.837591	1	User Unit Act	/user/unit/act/{act}	
 user-unit-add	0	2014-12-24 03:04:42.837591	1	Tambah User Unit	/user/unit/add	add
 user-unit-edit	0	2014-12-24 03:04:42.837591	1	Edit User Unit	/user/unit/{id}/edit	edit
 user-unit-delete	0	2014-12-24 03:04:42.837591	1	Hapus User Unit	/user/unit/{id}/delete	delete
-skpd	0	2014-12-24 03:04:42.837591	1	Penatausahaan dan Akuntansi SKPD	/skpd	view
+skpd	0	2014-12-24 03:04:42.837591	1	Penatausahaan dan Akuntansi SKPD	/skpd	read
 ak-jurnal	0	2014-12-24 03:04:42.837591	1	Jurnal	/ak-jurnal	read
 ak-jurnal-act	0	2014-12-24 03:04:42.837591	1	ACT Jurnal	/ak-jurnal/act/{act}	read
 ak-jurnal-add	0	2014-12-24 03:04:42.837591	1	Tambah Jurnal	/ak-jurnal/add	add
@@ -138,7 +138,7 @@ ar-payment-item-add	0	2014-12-24 03:04:42.837591	1	Tambah Realisasi/ STS	/ar-pay
 ar-payment-item-edit	0	2014-12-24 03:04:42.837591	1	Edit Realisasi/STS	/ar-payment-item/{id}/edit	edit
 ar-payment-item-delete	0	2014-12-24 03:04:42.837591	1	Hapus Realisasi/STS	/ar-payment-item/{id}/delete	delete
 ar-report-item	0	2014-12-24 03:04:42.837591	1	Laporan Pendapatan	/ar-report-item	read
-anggaran	0	2014-12-24 03:04:42.837591	1	Anggaran	/anggaran	view
+anggaran	0	2014-12-24 03:04:42.837591	1	Anggaran	/anggaran	read
 ag-btl	0	2014-12-24 03:04:42.837591	1	Anggaran Belanja Tidak Langsung	/ag-btl	read
 ag-kegiatan-item	0	2014-12-24 03:04:42.837591	1	Kegiatan Item	/ag-kegiatan-item/{kegiatan_sub_id}	read
 ag-kegiatan-item-act	0	2014-12-24 03:04:42.837591	1	Anggaran Penerimaan Act	/ag-kegiatan-item/act/{act}	read
@@ -146,7 +146,7 @@ ag-kegiatan-item-add-fast	0	2014-12-24 03:04:42.837591	1	Anggaran Penerimaan Act
 ag-kegiatan-item-add	0	2014-12-24 03:04:42.837591	1	Tambah Kegiatan Item	/ag-kegiatan-item/{kegiatan_sub_id}/add	add
 ag-kegiatan-item-edit	0	2014-12-24 03:04:42.837591	1	Edit Kegiatan Item	/ag-kegiatan-item/{kegiatan_sub_id}/{id}/edit	edit
 ag-kegiatan-item-delete	0	2014-12-24 03:04:42.837591	1	Hapus Kegiatan Item	/ag-kegiatan-item/{kegiatan_sub_id}/{id}/delete	delete
-ag-bl	0	2014-12-24 03:04:42.837591	1	Anggaran Belanja  Langsung	/ag-bl	view
+ag-bl	0	2014-12-24 03:04:42.837591	1	Anggaran Belanja  Langsung	/ag-bl	read
 ag-bl-act	0	2014-12-24 03:04:42.837591	1	Anggaran Belanja  Langsung Act	/ag-bl/act/{act}	read
 ag-bl-add	0	2014-12-24 03:04:42.837591	1	Tambah Anggaran Belanja  Langsung	/ag-bl/add	add
 ag-bl-edit	0	2014-12-24 03:04:42.837591	1	Edit Anggaran Belanja  Langsung	/ag-bl/{id}/edit	edit
@@ -170,8 +170,8 @@ anggaran_r500	0	2014-12-24 03:04:42.837591	1	Report Perda	/ag-report/r500	read
 anggaran_r500_act	0	2014-12-24 03:04:42.837591	1	Report Perda Act	/ag-report/r500/act/{act}	read
 anggaran_r600	0	2014-12-24 03:04:42.837591	1	Report Perbup	/ag-report/r600	read
 anggaran_r600_act	0	2014-12-24 03:04:42.837591	1	Report Perbup Act	/ag-report/r600/act/{act}	read
-change-act	0	2014-12-24 03:04:42.837591	1	change	/change/{act}	view
-gaji	0	2014-12-24 03:04:42.837591	1	Gaji	/gaji	view
+change-act	0	2014-12-24 03:04:42.837591	1	change	/change/{act}	read
+gaji	0	2014-12-24 03:04:42.837591	1	Gaji	/gaji	read
 gaji-peg	0	2014-12-24 03:04:42.837591	1	Gaji Pegawai	/gaji-peg	read
 gaji-peg-act	0	2014-12-24 03:04:42.837591	1	Gaji Pegawai Act	/gaji-peg/act/{act}	read
 gaji-peg-csv	0	2014-12-24 03:04:42.837591	1	Gaji Pegawai Act	/gaji-peg/csv	read
@@ -195,12 +195,12 @@ ap-giro-item-act	0	2015-01-07 00:29:49.485249	1	Giro Item Act	/ap-giro/item/{ap_
 ap-giro-item-add	0	2015-01-07 00:29:49.485249	1	Tambah Giro Item	/ap-giro/item/{ap_giro_id}/add	add
 ap-giro-item-edit	0	2015-01-07 00:29:49.485249	1	Edit GIRO Item	/ap-giro/item/{ap_giro_id}/{id}/edit	edit
 ap-giro-item-delete	0	2015-01-07 00:29:49.485249	1	Hapus Giro Item	/ap-giro/item/{ap_giro_id}/{id}/delete	delete
-ap-sp2d	0	2014-12-24 03:04:42.837591	1	SP2D	/ap-sp2d	view
+ap-sp2d	0	2014-12-24 03:04:42.837591	1	SP2D	/ap-sp2d	read
 ap-sp2d-act	0	2014-12-24 03:04:42.837591	1	SP2D Act	/ap-sp2d/act/{act}	read
 ap-sp2d-add	0	2014-12-24 03:04:42.837591	1	Tambah SP2D	/ap-sp2d/add	add
 ap-sp2d-edit	0	2014-12-24 03:04:42.837591	1	Edit SP2D	/ap-sp2d/{id}/edit	edit
 ap-sp2d-delete	0	2014-12-24 03:04:42.837591	1	Hapus SP2D	/ap-sp2d/{id}/delete	delete
-ap-spd	0	2014-12-24 03:04:42.837591	1	SPD	/ap-spd	view
+ap-spd	0	2014-12-24 03:04:42.837591	1	SPD	/ap-spd	read
 ap-spd-act	0	2014-12-24 03:04:42.837591	1	SPD Act	/ap-spd/act/{act}	read
 ap-spd-add	0	2014-12-24 03:04:42.837591	1	Tambah SPD	/ap-spd/add	add
 ap-spd-edit	0	2014-12-24 03:04:42.837591	1	Edit SPD	/ap-spd/{id}/edit	edit
@@ -225,18 +225,18 @@ ak-jurnal-skpd-item-delete	0	2015-01-07 00:29:49.485249	1	Hapus Item Jurnal SKPD
 ap-invoice-skpd	0	2014-12-24 03:04:42.837591	1	Tagihan/Utang	/ap-invoice-skpd	read
 ap-invoice-skpd-act	0	2014-12-24 03:04:42.837591	1	ACT Tagihan/Utang	/ap-invoice-skpd/act/{act}	read
 ap-invoice-skpd-add	0	2014-12-24 03:04:42.837591	1	Tambah Tagihan/Utang	/ap-invoice-skpd/add	read
-ap-invoice-skpd-edit	0	2014-12-24 03:04:42.837591	1	Edit Tagihan/Utang	/ap-invoice-skpd/{id}/edit	view
-ap-invoice-skpd-delete	0	2014-12-24 03:04:42.837591	1	Hapus Tagihan/Utang	/ap-invoice-skpd/{id}/delete	view
+ap-invoice-skpd-edit	0	2014-12-24 03:04:42.837591	1	Edit Tagihan/Utang	/ap-invoice-skpd/{id}/edit	read
+ap-invoice-skpd-delete	0	2014-12-24 03:04:42.837591	1	Hapus Tagihan/Utang	/ap-invoice-skpd/{id}/delete	read
 ap-invoice-skpd-item-act	0	2014-12-24 03:04:42.837591	1	ACT Item AP Invoice	/ap-invoice-skpd/item/{ap_invoice_id}/act/{act}	read
 ap-invoice-skpd-item-add	0	2014-12-24 03:04:42.837591	1	Tambah Item AP Invoice	/ap-invoice-skpd/item/{ap_invoice_id}/add	add
 ap-invoice-skpd-item-edit	0	2015-01-07 00:29:49.485249	1	Edit Tagihan Item	/ap-invoice-skpd/item/{ap_invoice_id}/{id}/edit	edit
 ap-invoice-skpd-item-delete	0	2014-12-24 03:04:42.837591	1	Hapus Item AP Invoice	/ap-invoice-skpd/item/{ap_invoice_id}/{id}/delete	delete
-ap-spm	0	2014-12-24 03:04:42.837591	1	SPM	/ap-spm	view
+ap-spm	0	2014-12-24 03:04:42.837591	1	SPM	/ap-spm	read
 ap-spm-act	0	2014-12-24 03:04:42.837591	1	SPM Act	/ap-spm/act/{act}	read
 ap-spm-add	0	2014-12-24 03:04:42.837591	1	Tambah SPM	/ap-spm/add	add
 ap-spm-edit	0	2014-12-24 03:04:42.837591	1	Edit SPM	/ap-spm/{id}/edit	edit
 ap-spm-delete	0	2014-12-24 03:04:42.837591	1	Hapus SPM	/ap-spm/{id}/delete	delete
-ap-spp	0	2014-12-24 03:04:42.837591	1	SPP	/ap-spp	view
+ap-spp	0	2014-12-24 03:04:42.837591	1	SPP	/ap-spp	read
 ap-spp-act	0	2014-12-24 03:04:42.837591	1	SPP Act	/ap-spp/act/{act}	read
 ap-spp-add	0	2014-12-24 03:04:42.837591	1	Tambah SPP	/ap-spp/add	add
 ap-spp-edit	0	2014-12-24 03:04:42.837591	1	Edit SPP	/ap-spp/{id}/edit	edit
@@ -245,7 +245,7 @@ ap-spp-item-act	0	2014-12-24 03:04:42.837591	1	ACT SPP Item	/ap-spp/item/{ap_spp
 ap-spp-item-add	0	2014-12-24 03:04:42.837591	1	Tambah Item SPP	/ap-spp/item/{ap_spp_id}/add	add
 ap-spp-item-edit	0	2015-01-07 00:29:49.485249	1	Edit SPP Item	/ap-spp/item/{ap_spp_id}/{id}/edit	edit
 ap-spp-item-delete	0	2014-12-24 03:04:42.837591	1	Hapus Item SPP	/ap-spp/item/{ap_spp_id}/{id}/delete	delete
-ar-invoice-skpd	0	2014-12-24 03:04:42.837591	1	Tagihan/Piutang/Ketetapan	/ar-invoice-skpd	view
+ar-invoice-skpd	0	2014-12-24 03:04:42.837591	1	Tagihan/Piutang/Ketetapan	/ar-invoice-skpd	read
 ar-invoice-skpd-act	0	2014-12-24 03:04:42.837591	1	Tagihan/Piutang/Ketetapan Act	/ar-invoice-skpd/act/{act}	read
 ar-invoice-skpd-add	0	2014-12-24 03:04:42.837591	1	Tambah Tagihan/Piutang/Ketetapan	/ar-invoice-skpd/add	add
 ar-invoice-skpd-edit	0	2014-12-24 03:04:42.837591	1	Edit Tagihan/Piutang/Ketetapan	/ar-invoice-skpd/{id}/edit	edit
@@ -254,7 +254,7 @@ ar-invoice-skpd-item-act	0	2015-01-07 00:29:49.485249	1	Piutang Item Act	/ar-inv
 ar-invoice-skpd-item-add	0	2015-01-07 00:29:49.485249	1	Tambah Tagihan/Piutang/Ketetapan Item	/ar-invoice-skpd/item/{ar_invoice_id}/add	add
 ar-invoice-skpd-item-edit	0	2015-01-07 00:29:49.485249	1	Edit Tagihan/Piutang/Ketetapan Item	/ar-invoice-skpd/item/{ar_invoice_id}/{id}/edit	edit
 ar-invoice-skpd-item-delete	0	2015-01-07 00:29:49.485249	1	Hapus Tagihan/Piutang/Ketetapan Item	/ar-invoice-skpd/item/{ar_invoice_id}/{id}/delete	delete
-ar-sts	0	2014-12-24 03:04:42.837591	1	STS	/ar-sts	view
+ar-sts	0	2014-12-24 03:04:42.837591	1	STS	/ar-sts	read
 ar-sts-act	0	2014-12-24 03:04:42.837591	1	STS Act	/ar-sts/act/{act}	read
 ar-sts-add	0	2014-12-24 03:04:42.837591	1	Tambah STS	/ar-sts/add	add
 ar-sts-edit	0	2014-12-24 03:04:42.837591	1	Edit STS	/ar-sts/{id}/edit	edit
@@ -267,7 +267,7 @@ ar-report-skpd	0	2014-12-24 03:04:42.837591	1	Laporan Pendapatan	/ar-report-skpd
 ar-report-skpd-act	0	2014-12-24 03:04:42.837591	1	Report AR SKPD Act	/ar-report-skpd/act/{act}	read
 ap-report-skpd	0	2014-12-24 03:04:42.837591	1	Laporan Belanja	/ap-report-skpd	read
 ap-report-skpd-act	0	2014-12-24 03:04:42.837591	1	Report AP SKPD Act	/ap-report-skpd/act/{act}	read
-ag-indikator	0	2014-12-24 03:04:42.837591		1	Indikator Kegiatan	/ag-indikator/{kegiatan_sub_id}	view
+ag-indikator	0	2014-12-24 03:04:42.837591	1	Indikator Kegiatan	/ag-indikator/{kegiatan_sub_id}	read
 ag-indikator-act	0	2014-12-24 03:04:42.837591	1	Indikator Kegiatan Act	/ag-indikator/act/{act}	read
 ag-indikator-add	0	2014-12-24 03:04:42.837591	1	Tambah Indikator Kegiatan	/ag-indikator/{kegiatan_sub_id}/add	add
 ag-indikator-edit	0	2014-12-24 03:04:42.837591	1	Edit Indikator Kegiatan	/ag-indikator/{kegiatan_sub_id}/{id}/edit	edit
