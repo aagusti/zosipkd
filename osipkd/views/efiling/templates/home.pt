@@ -1,0 +1,67 @@
+<html metal:use-macro="load: base.pt">
+<div metal:fill-slot="content">
+
+<!-- Main component for a primary marketing message or call to action -->
+    <form method="post" accept-charset="utf-8" id="myform" class="form-horizontal" enctype="multipart/form-data">
+      <div class="form-group">
+        <div tal:define="field form['cari']" id="item-${field.oid}">
+          <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                  ${field.title}</label>
+          
+          <div class="col-md-10">
+           <input type="text" class="form-control" id="${field.oid}" 
+                  name="${field.oid}" value="${request.session.unit_kd}" />
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+               tal:repeat="error field.error.messages()">
+               ${error}</p>
+          </div>
+          <div>
+          <div class="col-md-1">
+              <button class="btn btn-default" type="submit" id="cari" name="cari">Cari</button>
+          </div>
+        </div>
+      </div>
+
+      <p>&nbsp;
+      <div class="form-group">
+        <h4>Hasil Pencarian</h4>
+      <hr>
+      </div>
+      <div tal:repeat="row rows" class="form-group">
+        <div class="form-group">
+          <div class="col-md-8">
+            <div class="form-group">
+              <label class="control-label col-md-2" id="req-JUDUL">
+                        Judul :</label>
+                <div class="col-md-10">
+                  ${row.nama}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2" id="req-JUDUL">
+                      Tag :</label>
+              <div class="col-md-10">
+                ${row.tag}
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <a tal:repeat="f row.file" href="/static/efiling/${f.path}">${f.nama}</a>
+          </div>
+        </div>
+        <div class="form-group">
+          <hr>
+        </div>
+      </div>
+      <div class="row">Halaman 
+          <button class="btn btn-default" type="submit" id="prev" value="${page.current-1}" name="prev">Prev</button>
+          <span tal:repeat="p range(page.count)">
+              <button tal:condition="(p+1)!=page.current" class="btn btn-default" type="submit" id="pg-${p+1}" name="page" value="${p+1}">${p+1}</button>
+              <button tal:condition="(p+1)==page.current" class="btn btn-success" type="submit" id="pg-${p+1}" name="page" value="${p+1}">${p+1}</button>
+          </span>
+          <button class="btn btn-default" type="submit" id="cari" name="next" value="${page.current+1}">Next</button></div>
+    </form>
+</div>
+
+
+</html>

@@ -21,7 +21,8 @@
     <link href="/static/datatables/extensions/TableTools/css/dataTables.tableTools.min.css" rel="stylesheet">
     <link href="/static/datatables/media/css/dataTables.bootstrap.css" rel="stylesheet">
     <link href="/static/css/osipkd.css" rel="stylesheet">
-    
+    <link href="/static/datatables/extensions/TableTools/css/dataTables.tableTools.min.css" rel="stylesheet">
+    <link href="/static/datatables/media/css/dataTables.bootstrap.css" rel="stylesheet">    
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
@@ -67,7 +68,7 @@
             <li tal:attributes="class request.path == '/app' and 'active'">
                 <a href="/app"><span class="glyphicon glyphicon-home"></span> Home</a></li>
           </ul-->
-          
+          <div metal:define-slot="nav"></div> 
           <ul class="nav navbar-nav navbar-right">          
             <li tal:attributes="class request.path == '/login' and 'active'">
                 <a href="/login">Login</a></li>
@@ -92,7 +93,7 @@
 
 
         
-    <!--div metaldefine-slot="scripts"></div-->       
+    <div metal:define-slot="scripts"></div>       
   </body>
 </html>
 
