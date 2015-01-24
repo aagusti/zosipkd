@@ -112,6 +112,7 @@ def main(global_config, **settings):
                           
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_static_view('deform_static', 'deform:static')
+    config.add_static_view('static_files', 'static_files', cache_max_age=3600)
     config.add_static_view('js', 'js')
     
     config.add_renderer('csv', '.tools.CSVRenderer')

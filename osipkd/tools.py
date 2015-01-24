@@ -4,6 +4,7 @@ import re
 import csv
 import io
 import csv, codecs, cStringIO
+import uuid
 
 from types import (
     IntType,
@@ -278,5 +279,46 @@ class CSVRenderer(object):
       fcsv.writerows(value.get('rows', []))
 
       return fout.getvalue()    
-      
-      
+
+class SaveFile(object):
+    def __init__(self, dir_path):
+        self.dir_path = dir_path
+
+    # Awalan nama file diacak sedangkan akhirannya tidak berubah
+    def create_fullpath(self, ext=''):
+        return fullpath
+        
+    def save(self, content, filename=None):
+        fullpath = create_fullpath()
+        f = open(fullpath, 'wb')
+        f.write(content)
+        f.close()
+        return fullpath
+def get_random_string():
+    return ''.join(choice(ascii_uppercase + ascii_lowercase + digits) \
+            for _ in range(6))
+        
+def get_ext(filename):
+    return os.path.splitext(filename)[-1]
+    
+class Upload(SaveFile):
+    def __init__(self):
+        settings = get_settings()
+        dir_path = os.path.realpath(settings['static_files'])
+        SaveFile.__init__(self, dir_path)
+        
+    def save(self, file):
+        input_file = file['fp']
+        ext = get_ext(file['filename'])
+        filename = '%s%s' % (uuid.uuid4(),ext)
+        fullpath = os.path.join(self.dir_path, filename)
+        output_file = open(fullpath, 'wb')
+        input_file.seek(0)
+        while True:
+            data = input_file.read(2<<16)
+            if not data:
+                break
+            output_file.write(data)
+        output_file.close()
+        return filename      
+        

@@ -10,6 +10,8 @@ from pyramid.httpexceptions import (
     HTTPFound,
     )
 import colander
+from osipkd.tools import Upload
+
 from deform import (
     Form,
     widget,
@@ -20,7 +22,7 @@ from osipkd.models import (
     DBSession,
     Group
     )
-from osipkd.models.efiling_models import Filing
+from osipkd.models.efiling_models import Filing, FilingFile
 
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -45,11 +47,22 @@ lok_widget = widget.AutocompleteInputWidget(
         size=60,
         values = '/efiling/lokasi/headofnama/act',
         min_length=1)
+class DbUpload(Upload):
+    def __init__(self):
+        settings = get_settings()
+        dir_path = os.path.realpath(settings['static_files'])
+        Upload.__init__(self, dir_path)
         
+    def save(self, request, name, parser):
+        fullpath = Upload.save(self, request, name)
+        return self.dirpath
+
+            
 class UploadSequence(colander.SequenceSchema):
     upload = colander.SchemaNode(
         FileData(),
-        widget=widget.FileUploadWidget(tmpstore)
+        widget=widget.FileUploadWidget(tmpstore),
+        oid = 'fileupload'
         )
                 
 class AddSchema(colander.Schema):
@@ -82,7 +95,7 @@ class AddSchema(colander.Schema):
                     
     disabled = colander.SchemaNode(
                     colander.Boolean())
-    upload = UploadSequence()
+    upload_file = UploadSequence()
     
 class EditSchema(AddSchema):
     id = colander.SchemaNode(colander.String(),
@@ -139,7 +152,7 @@ class view_filing(BaseViews):
           schema.deserialize(row)
         return Form(schema, buttons=('simpan','batal'))
         
-    def save(self, values, user, row=None):
+    def save(self, values, user, row=None, upload_files=None):
         if not row:
             row = Filing()
             row.created = datetime.now()
@@ -148,14 +161,21 @@ class view_filing(BaseViews):
         row.updated = datetime.now()
         row.update_uid = user.id
         row.disabled = 'disabled' in values and values['disabled'] and 1 or 0
+        for u in upload_files:
+            u_file = Upload()
+            path = u_file.save(u)
+            row_file=FilingFile()
+            row_file.nama = u['filename']
+            row_file.path = path
+            row.files.append(row_file)
         DBSession.add(row)
         DBSession.flush()
         return row
         
-    def save_request(self, values, row=None):
+    def save_request(self, values, row=None, upload_files=None):
         if 'id' in self.request.matchdict:
             values['id'] = self.request.matchdict['id']
-        row = self.save(values, self.request.user, row)
+        row = self.save(values, self.request.user, row, upload_files)
         self.request.session.flash('filing sudah disimpan.')
             
     def route_list(self):
@@ -179,12 +199,10 @@ class view_filing(BaseViews):
                     c = form.validate(controls)
                 except ValidationFailure, e:
                     return dict(form=form)
-                    
-                self.save_request(dict(controls))
+                self.save_request(dict(controls),upload_files=c['upload_file'])
             return self.route_list()
         return dict(form=form)
 
-        
     ########
     # Edit #
     ########
@@ -207,22 +225,15 @@ class view_filing(BaseViews):
         if request.POST:
             if 'simpan' in request.POST:
                 controls = request.POST.items()
-                print controls
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    request.session[SESS_EDIT_FAILED] = e.render()               
-                    return HTTPFound(location=request.route_url('filing-edit',
-                                      id=row.id))
-                self.save_request(dict(controls), row)
+                    return dict(form=form)
+                self.save_request(dict(controls), row=row,upload_files=c['upload_file'])
             return self.route_list()
-        elif SESS_EDIT_FAILED in request.session:
-            return self.session_failed(SESS_EDIT_FAILED)
         values = row.to_dict()
         values['kategori_nm']= row.kategoris and row.kategoris.nama or ""
         values['lokasi_nm']= row.lokasis and row.lokasis.nama or ""
-        #for f in row.files:
-        #    values[]
         form.set_appstruct(values)
         return dict(form=form)
 

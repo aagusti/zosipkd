@@ -43,16 +43,19 @@ class efiling(BaseViews):
       page = {}
       rowpage = 1
       cpage = 'page' in req.POST and req.POST['page'] or 1
+      if cpage<1:
+         cpage = 1
       page['current']=int(cpage)
       offset = (page['current']-1) * rowpage
       if 'data' in req.POST:
+          page['row'] = DBSession.query(func.count(Filing.id)).\
+                        filter(or_(Filing.tag.like('%%%s%%' % req.POST['data']),
+                           Filing.nama.like('%%%s%%' % req.POST['data'])),).scalar() or 0
+                           
           rows = DBSession.query(Filing).\
                 filter(or_(Filing.tag.like('%%%s%%' % req.POST['data']),
                            Filing.nama.like('%%%s%%' % req.POST['data'])),).\
                            limit(rowpage).offset(offset)
-          page['row'] = DBSession.query(func.count(Filing.id)).\
-                        filter(or_(Filing.tag.like('%%%s%%' % req.POST['data']),
-                           Filing.nama.like('%%%s%%' % req.POST['data'])),).scalar() or 0
       else:
           rows = DBSession.query(Filing).\
                   limit(rowpage).offset(offset)
