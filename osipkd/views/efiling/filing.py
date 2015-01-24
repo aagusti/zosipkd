@@ -14,6 +14,7 @@ from deform import (
     Form,
     widget,
     ValidationFailure,
+    FileData
     )
 from osipkd.models import (
     DBSession,
@@ -24,6 +25,13 @@ from osipkd.models.efiling_models import Filing
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
     
+class MemoryTmpStore(dict):
+    """ Instances of this class implement the
+    :class:`deform.interfaces.FileUploadTempStore` interface"""
+    def preview_url(self, uid):
+        return None
+
+tmpstore = MemoryTmpStore()
 
 SESS_ADD_FAILED = 'Tambah filing gagal'
 SESS_EDIT_FAILED = 'Edit filing gagal'
@@ -37,6 +45,12 @@ lok_widget = widget.AutocompleteInputWidget(
         size=60,
         values = '/efiling/lokasi/headofnama/act',
         min_length=1)
+        
+class UploadSequence(colander.SequenceSchema):
+    upload = colander.SchemaNode(
+        FileData(),
+        widget=widget.FileUploadWidget(tmpstore)
+        )
                 
 class AddSchema(colander.Schema):
     nama = colander.SchemaNode(
@@ -68,7 +82,8 @@ class AddSchema(colander.Schema):
                     
     disabled = colander.SchemaNode(
                     colander.Boolean())
-                    
+    upload = UploadSequence()
+    
 class EditSchema(AddSchema):
     id = colander.SchemaNode(colander.String(),
             missing=colander.drop,
@@ -104,53 +119,7 @@ class view_filing(BaseViews):
             query = DBSession.query(Filing)
             rowTable = DataTables(req, Filing, query, columns)
             return rowTable.output_result()
-            
-        elif url_dict['act']=='headofkode':
-            term = 'term' in params and params['term'] or '' 
-            prefix = 'prefix' in params and params['prefix'] or '' 
-            q = DBSession.query(Filing.id,Filing.kode,Filing.nama).\
-                    filter(Filing.kode.ilike('%%%s%%' % term)).\
-                    filter(Filing.kode.ilike('%s%%' % prefix)).\
-                    order_by(Filing.kode)
-            rows = q.all()
-            r = []
-            for k in rows:
-                d={}
-                d['id']          = k[0]
-                d['value']       = k[1]
-                d['kode']        = k[1]
-                d['nama']      = k[2]
-                r.append(d)    
-            return r
-            
-        elif url_dict['act']=='headofnama':
-            term = 'term' in params and params['term'] or '' 
-            prefix = 'prefix' in params and params['prefix'] or '' 
-            q = DBSession.query(Filing.id,Filing.kode,Filing.nama).\
-                    filter(Filing.nama.ilike('%%%s%%' % term)).\
-                    filter(Filing.kode.ilike('%s%%' % prefix)).\
-                    order_by(Filing.nama)
-            rows = q.all()
-            r = []
-            for k in rows:
-                d={}
-                d['id']          = k[0]
-                d['value']       = k[2]
-                d['kode']        = k[1]
-                d['nama']        = k[2]
-                r.append(d)    
-            return r
-            
-        elif url_dict['act']=='changeid':
-            row = Filing.get_by_id('filing_id' in params and params['filing_id'] or 0)
-            if row:
-                ses['filing_id']=row.id
-                ses['filing_kd']=row.kode
-                ses['filing_nm']=row.nama
-                return {'success':True}
-                
-            
-
+ 
     #######    
     # Add #
     #######
@@ -209,13 +178,11 @@ class view_filing(BaseViews):
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    req.session[SESS_ADD_FAILED] = e.render()               
-                    return HTTPFound(location=req.route_url('efiling-filing-add'))
+                    return dict(form=form)
+                    
                 self.save_request(dict(controls))
             return self.route_list()
-        elif SESS_ADD_FAILED in req.session:
-            return self.session_failed(SESS_ADD_FAILED)
-        return dict(form=form.render())
+        return dict(form=form)
 
         
     ########
@@ -229,7 +196,7 @@ class view_filing(BaseViews):
         request.session.flash(msg, 'error')
         return route_list()
 
-    @view_config(route_name='efiling-filing-edit', renderer='templates/filing/edit.pt',
+    @view_config(route_name='efiling-filing-edit', renderer='templates/filing/add.pt',
                  permission='edit')
     def view_filing_edit(self):
         request = self.request
@@ -254,7 +221,10 @@ class view_filing(BaseViews):
         values = row.to_dict()
         values['kategori_nm']= row.kategoris and row.kategoris.nama or ""
         values['lokasi_nm']= row.lokasis and row.lokasis.nama or ""
-        return dict(form=form.render(appstruct=values))
+        #for f in row.files:
+        #    values[]
+        form.set_appstruct(values)
+        return dict(form=form)
 
     ##########
     # Delete #

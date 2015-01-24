@@ -68,7 +68,7 @@ class Filing(DefaultModel, Base):
 class FilingFile(DefaultModel, Base):
     __tablename__ = 'filing_files'
     __table_args__ = {'extend_existing':True,'schema' : 'efiling'}
-    filing    = relationship("Filing", backref="file")
+    filing    = relationship("Filing", backref="files")
     filing_id = Column(Integer, ForeignKey("efiling.filings.id"), nullable=False)
     nama        = Column(String(256),nullable=False)
     path        = Column(String(256),nullable=False)
