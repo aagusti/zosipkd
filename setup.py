@@ -22,6 +22,7 @@ requires=['pyramid>=1.5a2',
           'alembic>=0.3.4',
           'pyramid_beaker',
           'pytz',
+          'sqlalchemy-datatable',
          ]
 
 if sys.argv[1:] and sys.argv[1] == 'develop-use-pip':

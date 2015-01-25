@@ -1,9 +1,11 @@
 import os
 import sys
 import transaction
-
-from sqlalchemy import engine_from_config
-
+from sqlalchemy import (
+    engine_from_config,
+    select,
+    )
+from sqlalchemy.schema import CreateSchema
 from pyramid.paster import (
     get_appsettings,
     setup_logging,
@@ -25,6 +27,7 @@ from ..models.eis import *
 from ..models.aset_models import *    
 from ..models.efiling_models import *   
 import initial_data
+from tools import mkdir
 
 
 ALEMBIC_CONF = """    
@@ -75,6 +78,13 @@ def usage(argv):
           '(example: "%s development.ini")' % (cmd, cmd))
     sys.exit(1)
 
+def create_schema(engine, schema):
+    sql = select([('schema_name')]).\
+          select_from('information_schema.schemata').\
+          where("schema_name = '%s'" % schema)
+    q = engine.execute(sql)
+    if not q.fetchone():
+        engine.execute(CreateSchema(schema))
 
 def main(argv=sys.argv):
     if len(argv) != 2:
@@ -82,6 +92,7 @@ def main(argv=sys.argv):
     config_uri = argv[1]
     setup_logging(config_uri)
     settings = get_appsettings(config_uri)
+    mkdir(settings['static_files'])
     # Create Ziggurat tables
     alembic_ini_file = 'alembic.ini'
     if not os.path.exists(alembic_ini_file):
@@ -99,5 +110,6 @@ def main(argv=sys.argv):
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
     init_model()
+    create_schema(engine, 'efiling')
     Base.metadata.create_all(engine)
     initial_data.insert()
