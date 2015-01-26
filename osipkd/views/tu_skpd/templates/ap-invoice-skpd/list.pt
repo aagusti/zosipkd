@@ -197,6 +197,19 @@
                 "aTargets"   : [6],
                 "mRender"    : function (data, type, full) {
                                return formatNumber(data);}
+            },{
+                "aTargets" : [2], // Column number which needs to be modified
+                "mRender"  : function (data, type, full) {
+                    if (data == "1") {
+                        return 'UP';
+                    } else if (data == "2") {
+                        return 'TU';
+                    } else if (data == "3") {
+                        return 'GU';
+                    } else if (data == "4") {
+                        return 'LS';
+                    }
+                }
             }],
             "aoColumns": [
                 null, {
