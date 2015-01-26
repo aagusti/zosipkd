@@ -371,9 +371,14 @@
         $("#ttd_jab").attr('readonly',true);
         $("#ttd_nip").attr('readonly',true);
         </script>
-        </div>    
-
+        </div>
+        <br>
         <!---ap_pemilik------------------------------------------------------------------->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+               <h5 class="panel-title">Kontrak</h5>
+            </div>
+        <br>
         <div class="form-group"> 
           <div tal:define="field form['ap_pemilik']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
@@ -483,8 +488,9 @@
               </div>
             </div>
           </div>
+        </div><br> 
         </div>        
-
+        <hr>
         <!----barang_nip------------------------------------------------------------------>
         <div class="form-group"> 
           <div tal:define="field form['barang_uid']" style="display: none;">
@@ -943,7 +949,7 @@
             "bScrollCollapse": true,
             "bSort"          : true,
             "bInfo"          : false,
-            "bFilter"        : true,
+            "bFilter"        : false,
             "bAutoWidth"     : false,
             "bPaginate"      : true,
             "sPaginationType": "full_numbers",
@@ -964,8 +970,20 @@
                 "bSearchable": false,
                 "bSortable"  : false,
                 "aTargets"   : [3,4,6]
-            }            
-            ],
+            },{
+                "aTargets" : [3], // Column number which needs to be modified
+                "mRender"  : function (data, type, full) {
+                    if (data == "1") {
+                        return 'UP';
+                    } else if (data == "2") {
+                        return 'TU';
+                    } else if (data == "3") {
+                        return 'GU';
+                    } else if (data == "4") {
+                        return 'LS';
+                    }
+                }
+            }],
             "aoColumns": [
                 null, 
                 {"sWidth": "50px"}, 

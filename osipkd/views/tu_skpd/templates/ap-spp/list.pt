@@ -111,11 +111,12 @@
       <thead>
         <tr>
             <th>Index</th>
-            <th>Kode</th>
-            <th>Tanggal SPP</th>
+            <th>No. SPP</th>
+            <th>Tanggal</th>
             <th>Jenis</th>
             <th>Uraian</th>
             <th>Nilai</th>
+            <th>Posted</th>
         </tr>
       </thead>
       <tbody>
@@ -164,17 +165,34 @@
                 "aTargets"   : [0]
             },{
                 "bSearchable": false,
-                "bSortable"  : false,
                 "aTargets"   : [2,5]
             },{
                 "bSearchable": true,
-                "bSortable"  : true,
                 "aTargets"   : [3,4]
+            },{
+                "bSortable"  : true,
+                "aTargets"   : [1,2]
+            },{
+                "bSortable"  : false,
+                "aTargets"   : [3,4,5,6]
             },{
                 "sClass"   : "right",
                 "aTargets" : [5],
                 "mRender"  : function (data, type, full) {
                              return formatNumber(data);}
+            },{
+                "aTargets" : [3], // Column number which needs to be modified
+                "mRender"  : function (data, type, full) {
+                    if (data == "1") {
+                        return 'UP';
+                    } else if (data == "2") {
+                        return 'TU';
+                    } else if (data == "3") {
+                        return 'GU';
+                    } else if (data == "4") {
+                        return 'LS';
+                    }
+                }
             }],
             "aoColumns": [
                 null, 
@@ -182,7 +200,8 @@
                 {"sWidth": "30px"}, 
                 {"sWidth": "30px"}, 
                 {"sWidth": "200px"},
-                {"sWidth": "100px"},
+                {"sWidth": "30px"},
+                {"sWidth": "30px"},
             ],
             
             "fnRowCallback": function (nRow, aData, iDisplayIndex) {
@@ -238,9 +257,10 @@
             }
         });
         $('#btn_print').click(function () {
-            url = "/ap-report-skpd/act/spp?id="+mID;
+            //url = "/ap-report-skpd/act/spp?id="+mID;
             if (mID) {
-                   window.open(url);
+                   //window.open(url);
+                $('#dlgRpt').modal('show');
             } else {
                 alert('Silahkan pilih Kegiatan ID');
             }
@@ -249,8 +269,50 @@
             window.location = '/tu-skpd';
             return false;
         });
+        $('#btn_pil_rpt').click(function () {
+            var rpt = $('input[name="rpt"]:checked').val();
+            url = "/ap-report-skpd/act/spp"+rpt+"?id="+mID;
+            if (mID) {
+                //alert(url);
+                window.open(url);
+            } else {
+                alert('Silahkan pilih Kegiatan ID');
+            }
+        });
      });
     </script>
+      <!-- Modal Report -->
+    <div class="modal fade" id="dlgRpt" tabindex="-1" role="dialog" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="dlgRptLabel">Pilih Report</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                    <label class="control-label col-xs-3" for="rpt">Jenis Laporan</label>
+                        <div class="col-sm-2">
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="1">Pengantar</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="2">Ringkasan</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="3">Rincian</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="btn_pil_rpt" name="btn_pil_rpt">Cetak</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
     
   </div> <!--End Metal-->
 </html>
