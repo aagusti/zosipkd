@@ -147,10 +147,10 @@
         <label class="control-label col-xs-2" for="rpt">Jenis Laporan</label>
         <div class="col-sm-2">
             <div class="radio">
-                <label><input type="radio" name="rpt" value="1">Invoice</label>
+                <label><input type="radio" name="rpt" value="1">Tagihan/Piutang</label>
             </div>
             <div class="radio">
-                <label><input type="radio" name="rpt" value="2">AR Payment</label>
+                <label><input type="radio" name="rpt" value="2">STS</label>
             </div>
         </div>
 
