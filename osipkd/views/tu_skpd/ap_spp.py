@@ -61,13 +61,15 @@ class view_ap_spp(BaseViews):
                 columns.append(ColumnDT('jenis'))
                 columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('nominal'))
+                columns.append(ColumnDT('posted'))
  
                 query = DBSession.query(Spp.id,
                           Spp.kode,
                           Spp.tanggal,
                           Spp.jenis,
                           Spp.nama,
-                          Spp.nominal
+                          Spp.nominal,
+                          Spp.posted
                         ).filter(Spp.tahun_id==ses['tahun'],
                               Spp.unit_id==ses['unit_id'],
                         ).order_by(Spp.no_urut.desc()
@@ -406,7 +408,7 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           missing=colander.drop,
                           oid="barang_nip",
-                          title="BB"
+                          title="Barang"
                           )
     barang_nama        = colander.SchemaNode(
                           colander.String(),
@@ -439,6 +441,11 @@ class AddSchema(colander.Schema):
                           missing=colander.drop,
                           oid="kasi_jab",
                           title="Jabatan")
+    posted           = colander.SchemaNode(
+                          colander.Integer(),
+                          missing=colander.drop,
+                          oid="posted"
+                          )
 
 class EditSchema(AddSchema):
     id             = colander.SchemaNode(
