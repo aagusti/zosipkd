@@ -22,7 +22,9 @@ requires=['pyramid>=1.5a2',
           'alembic>=0.3.4',
           'pyramid_beaker',
           'pytz',
-          'sqlalchemy-datatable',
+          'sqlalchemy-datatables',
+          #'pyjasperclient',
+          'pyJasper',
          ]
 
 if sys.argv[1:] and sys.argv[1] == 'develop-use-pip':
@@ -59,6 +61,7 @@ setup(name='osipkd',
       [paste.app_factory]
       main = osipkd:main
       [console_scripts]
-      initialize_osipkd_db = osipkd.scripts.initializedb:main      
+      initialize_osipkd_db = osipkd.scripts.initializedb:main
+      create_route_source = osipkd.scripts.CreateRouteSource:main
       """,
       )
