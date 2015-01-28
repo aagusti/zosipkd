@@ -108,11 +108,11 @@ user-act	0	2014-12-24 03:04:42.837591	1	Users	/user/act/{act}	read
 user-add	0	2014-12-24 03:04:42.837591	1	Tambah user	/user/add	add
 user-edit	0	2014-12-24 03:04:42.837591	1	Edit user	/user/{id}/edit	edit
 user-delete	0	2014-12-24 03:04:42.837591	1	Hapus user	/user/{id}/delete	delete
-user-group	0	2014-12-24 03:04:42.837591	1	Group User	/user-group	read
-user-group-act	0	2014-12-24 03:04:42.837591	1	Group User Act	/user-group/act/{act}	read
-user-group-add	0	2014-12-24 03:04:42.837591	1	Tambah Group User	/user-group/add	add
-user-group-edit	0	2014-12-24 03:04:42.837591	1	Edit Group User	/user-group/{id}/edit	edit
-user-group-delete	0	2014-12-24 03:04:42.837591	1	Hapus Group User	/user-group/{id}/delete	delete
+user-group	0	2014-12-24 03:04:42.837591	1	Group User	/user/group	read
+user-group-act	0	2014-12-24 03:04:42.837591	1	Group User Act	/user/group/act/{act}	read
+user-group-add	0	2014-12-24 03:04:42.837591	1	Tambah Group User	/user/group/add	add
+user-group-edit	0	2014-12-24 03:04:42.837591	1	Edit Group User	/user/group/{id}/edit	edit
+user-group-delete	0	2014-12-24 03:04:42.837591	1	Hapus Group User	/user/group/{id}/delete	delete
 user-unit	0	2014-12-24 03:04:42.837591	1	User Unit	/user/unit	read
 user-unit-act	0	2014-12-24 03:04:42.837591	1	User Unit Act	/user/unit/act/{act}	read
 user-unit-add	0	2014-12-24 03:04:42.837591	1	Tambah User Unit	/user/unit/add	add
