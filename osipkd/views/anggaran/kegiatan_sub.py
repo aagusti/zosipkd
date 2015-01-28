@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func, cast, BigInteger, or_
+from sqlalchemy import not_, func, cast, BigInteger, or_, join
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
@@ -18,14 +18,18 @@ from osipkd.views.base_view import BaseViews
 SESS_ADD_FAILED = 'Tambah ag-kegiatan-sub gagal'
 SESS_EDIT_FAILED = 'Edit ag-kegiatan-sub gagal'
 
-def deferred_jv_type(node, kw):
-    values = kw.get('jv_type', [])
+def deferred_sdana(node, kw):
+    values = kw.get('sdana', [])
     return widget.SelectWidget(values=values)
     
-JV_TYPE = (
-    ('lra', 'LRA'),
-    ('lo', 'LO'),
-    ('ju', 'Jurnal Umum'),
+SDANA = (
+    ('PAD', 'PAD'),
+    ('DAU', 'DAU'),
+    ('DAK', 'DAK'),
+    ('APBD Provinsi', 'APBD Provinsi'),
+    ('APBN', 'APBN'),
+    ('LOAN', 'LOAN'),
+    ('Bagi Hasil', 'Bagi Hasil'),
     )
 
 class view_kegiatan_sub(BaseViews):
@@ -169,16 +173,17 @@ class view_kegiatan_sub(BaseViews):
             term = 'term' in params and params['term'] or ''
             q = DBSession.query(KegiatanSub.id, KegiatanSub.kode, KegiatanSub.no_urut,
                                 KegiatanSub.nama
-                      ).join(Kegiatan).filter(KegiatanSub.unit_id == ses['unit_id'],
-                           KegiatanSub.tahun_id==ses['tahun'],
-                           KegiatanSub.kode.ilike('%%%s%%' % term))
+                        ).join(Kegiatan
+                        ).filter(KegiatanSub.unit_id == ses['unit_id'],
+                                 KegiatanSub.tahun_id==ses['tahun'],
+                                 KegiatanSub.kode.ilike('%%%s%%' % term))
                            
             rows = q.all()
             r = []
             for k in rows:
                 d={}
                 d['id']          = k[0]
-                d['value']       = k[1]
+                d['value']       = ''.join([k[1],'-',str(k[2])])
                 d['kode']        = k[1]
                 d['nama']        = k[3]
                 r.append(d)
@@ -188,19 +193,22 @@ class view_kegiatan_sub(BaseViews):
         elif url_dict['act']=='headofnama1':
             term = 'term' in params and params['term'] or ''
             q = DBSession.query(KegiatanSub.id, KegiatanSub.kode, KegiatanSub.no_urut,
-                                KegiatanSub.nama).join(Kegiatan).filter(
-                      KegiatanSub.unit_id == ses['unit_id'],
-                      KegiatanSub.tahun_id==ses['tahun'],
-                      KegiatanSub.nama.ilike('%%%s%%' % term))
+                                KegiatanSub.nama
+                        ).join(Kegiatan
+                        ).filter(KegiatanSub.unit_id ==ses['unit_id'],
+                                 KegiatanSub.tahun_id==ses['tahun'],
+                                 KegiatanSub.nama.ilike('%%%s%%' % term))
+                           
             rows = q.all()
             r = []
             for k in rows:
                 d={}
                 d['id']          = k[0]
                 d['value']       = k[3]
-                d['kode']        = k[1]
+                d['kode']        = ''.join([k[1],'-',str(k[2])])
                 d['nama']        = k[3]
-                r.append(d)    
+                r.append(d)
+            print '****----****',r                
             return r
             
 
@@ -239,7 +247,7 @@ class view_kegiatan_sub(BaseViews):
                 d={}
                 d['id']          = k[0]
                 d['value']       = k[3]
-                d['kode']        = k[1]
+                d['kode']        = ''.join([k[1],'-',str(k[2])])
                 d['nama']        = k[3]
                 r.append(d)    
             return r
@@ -247,7 +255,6 @@ class view_kegiatan_sub(BaseViews):
         elif url_dict['act']=='headofkode3':
             term         = 'term' in params and params['term'] or ''
             ap_spd_id    = 'ap_spd_id' in params and params['ap_spd_id'] or 0
-            #kegiatan_sub = 'kegiatan_sub_id' in params and params['kegiatan_sub_id'] or 0
             
             q = DBSession.query(KegiatanSub.id.label('kegiatan_sub_id'), Kegiatan.kode.label('kode'), KegiatanSub.nama.label('nama'),
                                 func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran'),
@@ -285,10 +292,6 @@ class view_kegiatan_sub(BaseViews):
                                spds.triwulan_id==4 and k[7] 
                 if d['nominal']==0:
                    d['nominal'] = d['anggaran'] // 4
-                
-                               
-                #if d['anggaran'] - d['lalu'] - d['nominal']<0:
-                #d['nominal'] = d['anggaran'] - d['lalu']
             
                 d['value']       = d['kode']
                 d['kode']        = d['kode']
@@ -303,19 +306,18 @@ class view_kegiatan_sub(BaseViews):
         elif url_dict['act']=='headofnama3':
             term         = 'term' in params and params['term'] or ''
             ap_spd_id    = 'ap_spd_id' in params and params['ap_spd_id'] or 0
-            #kegiatan_sub = 'kegiatan_sub_id' in params and params['kegiatan_sub_id'] or 0
             
             q = DBSession.query(KegiatanSub.id.label('kegiatan_sub_id'), Kegiatan.kode.label('kode'), KegiatanSub.nama.label('nama'),
-                    cast(func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4),BigInteger).label('anggaran'),
-                    cast(func.sum(KegiatanItem.bln01+KegiatanItem.bln02*KegiatanItem.bln03),BigInteger).label('trw1'),
-                    cast(func.sum(KegiatanItem.bln04+KegiatanItem.bln05*KegiatanItem.bln06),BigInteger).label('trw2'),
-                    cast(func.sum(KegiatanItem.bln07+KegiatanItem.bln08*KegiatanItem.bln09),BigInteger).label('trw3'),
-                    cast(func.sum(KegiatanItem.bln10+KegiatanItem.bln11*KegiatanItem.bln12),BigInteger).label('trw4')
-                    ).join(Kegiatan).join(KegiatanItem
-                    ).filter(KegiatanSub.unit_id == ses['unit_id'],
-                           KegiatanSub.tahun_id==ses['tahun'],
-                           KegiatanSub.nama.ilike('%s%%' % term)
-                    ).group_by(KegiatanSub.id, Kegiatan.kode, KegiatanSub.nama)
+                                func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran'),
+                                func.sum(KegiatanItem.bln01+KegiatanItem.bln02*KegiatanItem.bln03).label('trw1'),
+                                func.sum(KegiatanItem.bln04+KegiatanItem.bln05*KegiatanItem.bln06).label('trw2'),
+                                func.sum(KegiatanItem.bln07+KegiatanItem.bln08*KegiatanItem.bln09).label('trw3'),
+                                func.sum(KegiatanItem.bln10+KegiatanItem.bln11*KegiatanItem.bln12).label('trw4')
+                        ).join(Kegiatan).join(KegiatanItem
+                        ).filter(KegiatanSub.unit_id == ses['unit_id'],
+                               KegiatanSub.tahun_id==ses['tahun'],
+                               KegiatanSub.nama.ilike('%%%s%%' % term)
+                        ).group_by(KegiatanSub.id, Kegiatan.kode, KegiatanSub.nama)
                     
             rows = q.all()
 
@@ -332,7 +334,7 @@ class view_kegiatan_sub(BaseViews):
                             ).join(Spd
                             ).filter(SpdItem.kegiatan_sub_id==d['id'],
                             Spd.tanggal<=spd_tanggal).first()
-                
+                        
                 d['lalu']     = rows2.lalu or 0
                         
                 d['nominal'] = spds.triwulan_id==1 and k[4] or\
@@ -341,17 +343,13 @@ class view_kegiatan_sub(BaseViews):
                                spds.triwulan_id==4 and k[7] 
                 if d['nominal']==0:
                    d['nominal'] = d['anggaran'] // 4
-                
-                               
-                #if d['anggaran'] - d['lalu'] - d['nominal']<0:
-                #d['nominal'] = d['anggaran'] - d['lalu']
             
                 d['value']       = d['nama']
                 d['kode']        = d['kode']
                 d['nama']        = d['nama']
-                d['anggaran']    = d['anggaran']
-                d['lalu']        = d['lalu']
-                d['nominal']     = d['nominal']
+                d['anggaran']    = "%d" % d['anggaran']
+                d['lalu']        = "%d" % d['lalu']
+                d['nominal']     = "%d" % d['nominal']
                 r.append(d)
             print '****----****',r                
             return r
@@ -469,6 +467,7 @@ class AddSchema(colander.Schema):
                           title = 'Anggaran YAD')
     sdana            = colander.SchemaNode(
                           colander.String(),
+                          widget=widget.SelectWidget(values=SDANA),
                           missing=colander.drop,
                           title = 'Sumber Dana')
     ttd1nip          = colander.SchemaNode(
@@ -614,7 +613,7 @@ class EditSchema(AddSchema):
 
 def get_form(request, class_form):
     schema = class_form(validator=form_validator)
-    schema = schema.bind()
+    schema = schema.bind(sdana=SDANA)
     schema.request = request
     return Form(schema, buttons=('simpan','batal'))
     
