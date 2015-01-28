@@ -183,7 +183,8 @@ class SpmPotongan(DefaultModel,Base):
     ap_spm_id      = Column(BigInteger,   ForeignKey("apbd.ap_spms.id"),    nullable=False)
     rekening_id    = Column(Integer,      ForeignKey("admin.rekenings.id"), nullable=False)
     no_urut        = Column(SmallInteger, nullable=False)
-
+    nilai          = Column(BigInteger,   default=0)
+    
     @classmethod
     def max_no_urut(cls, ap_spm_id):
         return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
@@ -390,12 +391,12 @@ class ARInvoiceItem(DefaultModel, Base):
     harga            = Column(BigInteger,   nullable=False, default=0)
     nilai            = Column(BigInteger,   nullable=False, default=0)
     notes1           = Column(String(64))  
+    
     @classmethod
     def max_no_urut(cls, ar_invoice_id):
         return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
-                .filter(cls.tahun_id==tahun,
-                        cls.unit_id==unit_id
-                ).scalar() or 0
+                .filter(cls.ar_invoice_id==ar_invoice_id
+                ).scalar() or 0 
     
 class ARInvoiceDetail(NamaModel, Base):
     __tablename__  ='ar_invoice_details'
