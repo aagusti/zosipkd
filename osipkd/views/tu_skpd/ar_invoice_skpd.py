@@ -112,7 +112,7 @@ class AddSchema(colander.Schema):
                           title="Uraian")
     kode             = colander.SchemaNode(
                           colander.String(),
-                          title="Kode")
+                          title="No. Piutang")
     penyetor         = colander.SchemaNode(
                           colander.String(),
                           title="Penyetor")
@@ -218,9 +218,14 @@ def view_edit(request):
     elif SESS_EDIT_FAILED in request.session:
         del request.session[SESS_EDIT_FAILED]
         return dict(form=form)
-    values = row.to_dict() #dict(zip(row.keys(), row))
+    values = row.to_dict() 
+    
+    #Ketika pas edit, kode sama nama muncul sesuai id kegiatansub
     values['kegiatan_nm']=row.kegiatansubs.nama
-    values['kegiatan_kd']=row.kegiatansubs.kode
+    kd=row.kegiatansubs.kode
+    ur=row.kegiatansubs.no_urut
+    values['kegiatan_kd']="%s" % kd + "-%d" % ur
+    
     form.set_appstruct(values) 
     return dict(form=form)
 

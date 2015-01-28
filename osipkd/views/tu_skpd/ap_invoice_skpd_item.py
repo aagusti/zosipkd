@@ -103,9 +103,6 @@ def view_add(request):
     DBSession.flush()
     amount = "%d" % APInvoice.get_nilai(row.ap_invoice_id) 
     return {"success": True, 'id': row.id, "msg":'Success Tambah Item Invoice', 'jml_total':amount}
-    #except:
-    #    return {'success':False, 'msg':'Gagal Tambah Item Invoice'}
-
 
 ########
 # Edit #
@@ -159,4 +156,5 @@ def view_delete(request):
     msg = 'Data sudah dihapus'
     query_id(request).delete()
     DBSession.flush()
-    return {'success':True, "msg":msg}
+    amount = "%d" % APInvoice.get_nilai(row.ap_invoice_id) 
+    return {'success':True, "msg":msg, 'jml_total':amount}

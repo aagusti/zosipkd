@@ -279,7 +279,8 @@
         </script>
           <div class="col-md-4"> 
             <button type="submit" class="btn btn-primary" id="simpan" name="simpan">Simpan</button>
-            <button type="submit" class="btn btn-danger" id="batal" name="batal">Batal</button>
+            <button type="submit" class="btn btn-danger"  id="batal"  name="batal">Batal</button>
+            <button type="submit" class="btn btn-warning" id="tutup"  name="tutup">Tutup</button>
           </div>
         </div>              
       </form>
@@ -294,9 +295,9 @@
                 <th>SPM ID</th>
                 <th>Rekening ID</th>
                 <th>No. Urut</th>
-                <th>No. SPM</th>
                 <th>Rekening</th>
                 <th>Uraian</th>
+                <th>Nilai</th>
             </tr>
         </thead>
         <tbody>
@@ -316,16 +317,23 @@
           <input id="rekening_id" type="hidden" value="" name="rekening_id">
           <input id="ap_spm_id" type="hidden" value="" name="ap_spm_id">
           <div class="form-group">
-            <div class="col-md-1">
-               <input id="no_urut" readonly class=" form-control " type="text" value="" name="no_urut">
-            </div>
             <label for="kode1" class="control-label col-md-1" id="req-kode1">
                 Rekening </label>
             <div class="col-md-2">
                <input id="kode1" class=" form-control " type="text" value="" name="kode1">
             </div>
-            <div class="col-md-5">
+            <div class="col-md-7">
                <input id="nama1" class=" form-control " readonly type="text" value="" name="nama1">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="no_urut" class="control-label col-md-1" id="req-no_urut">
+                No. Urut</label>
+            <div class="col-md-1">
+               <input id="no_urut" readonly class=" form-control " type="text" value="" name="no_urut">
+            </div>
+            <div class="col-md-3">
+               <input id="nilai" class=" form-control " type="text" value="0" name="nilai">
             </div>
             <!--Button----------------------------------------------------------->
             <div class="col-md-3">
@@ -338,11 +346,7 @@
             </div> 
           </div>
           <script>
-            $('#rekening_add').click(function () {
-                var ap_spm_id;
-                ap_spm_id = $('#id').val();
-                alert(ap_spm_id);
-          
+            $('#rekening_add').click(function () {     
                 $('#ap_spm_potongan_id').val('');
                 $('#detail').submit();
             })
@@ -351,7 +355,7 @@
                 "hint"     : true,
                 "highlight": true,
                 "minLength": 1,
-                "remote"   : "/rekening/act/headofkode61?term=%QUERY", 
+                "remote"   : "/rekening/act/headofkode11?term=%QUERY", 
             },{
                "name"      : 'kode1',
                "displayKey": 'value',
@@ -384,6 +388,7 @@
                       $('#no_urut').val('');
                       $('#kode1').val('');
                       $('#nama1').val('');
+                      $('#nilai').val(0);
                       //$('#jml_total').val(formatNumber(html.jml_total));
                       oTable.fnReloadAjax(oTableUrl);
                     } else {
@@ -414,8 +419,8 @@
       var tb_array = [
           '<div class="btn-group pull-left">',
           '<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
-          '<button id="btn_print"  class="btn btn btn-primary" type="button">Print</button>',
-          '<button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
+          //'<button id="btn_print"  class="btn btn btn-primary" type="button">Print</button>',
+          //'<button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
           '&nbsp;',
           '</div>',
       ];
@@ -447,6 +452,11 @@
                 "bSearchable": false,
                 "bVisible"   : false,
                 "aTargets"   : [0,1,2]
+            },{ 
+                "sClass"     : "right",
+                "aTargets"   : [6],
+                "mRender"    : function (data, type, full) {
+                               return formatNumber(data);}
             },{
                 "bSearchable": false,
                 "bSortable"  : false,
@@ -454,12 +464,12 @@
             }],
             "aoColumns": [
                 null, 
-                {"sWidth": "50px"}, 
+                {"sWidth": "50px"},
                 {"sWidth": "50px"},
                 {"sWidth": "20px"}, 
-                {"sWidth": "50px"},
-                {"sWidth": "50px"}, 
-                {"sWidth": "100px"},
+                {"sWidth": "40px"}, 
+                {"sWidth": "200px"},
+                {"sWidth": "50px", "sClass": "right"},
             ],
             "fnRowCallback": function (nRow, aData, iDisplayIndex) {
                 $(nRow).on("click", function (event) {
@@ -474,8 +484,9 @@
                         $("#ap_spm_id").val(data[1]);
                         $("#rekening_id").val(data[2]);
                         $("#no_urut").val(data[3]);
-                        $("#kode1").val(data[5]);
-                        $("#nama1").val(data[6]);
+                        $("#kode1").val(data[4]);
+                        $("#nama1").val(data[5]);
+                        $("#nilai").val(data[6]);
                         oTable.$('tr.row_selected').removeClass('row_selected');
                         $(this).addClass('row_selected');
                     }
@@ -507,6 +518,10 @@
                 success: function (html) {
                   if (html.success == true) {
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                    $('#no_urut').val('');
+                    $('#kode1').val('');
+                    $('#nama1').val('');
+                    $('#nilai').val(0);
                     oTable.fnReloadAjax(oTableUrl);
                   } else {
                     $("#errors").css('display', 'inline', 'important');

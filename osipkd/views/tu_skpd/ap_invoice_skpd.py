@@ -113,12 +113,15 @@ class view_ap_invoice_skpd(BaseViews):
             return r
             
         elif url_dict['act']=='headofkode1':
-            term = 'term' in params and params['term'] or ''
+            term  = 'term'  in params and params['term'] or ''
+            #jenis = 'jenis' in params and params['jenis'] or ''
+            #jenis1= "%d" % jenis
             q = DBSession.query(APInvoice.id,APInvoice.kode.label('kode1'),APInvoice.nama.label('nama1'),APInvoice.amount.label('amount1'),
                                 )\
                                 .filter(APInvoice.unit_id == ses['unit_id'],
                                         APInvoice.tahun_id == ses['tahun'],
                                         APInvoice.posted == 0,
+                                        #APInvoice.jenis == jenis1,
                                         APInvoice.kode.ilike('%s%%' % term))
             rows = q.all()                               
             r = []
@@ -154,7 +157,7 @@ class AddSchema(colander.Schema):
                           missing=colander.drop)
     kode            = colander.SchemaNode(
                           colander.String(),
-                          title="Kode")
+                          title="No. Utang")
     jenis           = colander.SchemaNode(
                           colander.String(),
                           widget=widget.SelectWidget(values=AP_TYPE),
@@ -288,9 +291,14 @@ def view_edit(request):
     elif SESS_EDIT_FAILED in request.session:
         del request.session[SESS_EDIT_FAILED]
         return dict(form=form)
-    values = row.to_dict() #dict(zip(row.keys(), row))
+    values = row.to_dict()
+    
+    #Ketika pas edit, kode sama nama muncul sesuai id kegiatansub
     values['kegiatan_nm']=row.kegiatansubs.nama
-    values['kegiatan_kd']=row.kegiatansubs.kode
+    kd=row.kegiatansubs.kode
+    ur=row.kegiatansubs.no_urut
+    values['kegiatan_kd']="%s" % kd + "-%d" % ur
+    
     form.set_appstruct(values) 
     return dict(form=form)
 

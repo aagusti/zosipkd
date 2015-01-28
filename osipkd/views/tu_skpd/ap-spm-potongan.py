@@ -39,16 +39,16 @@ class view_ap_spm_potongan(BaseViews):
                 columns.append(ColumnDT('ap_spm_id'))
                 columns.append(ColumnDT('rekening_id'))
                 columns.append(ColumnDT('no_urut'))
-                columns.append(ColumnDT('kode_spm'))
                 columns.append(ColumnDT('kode_rek'))
                 columns.append(ColumnDT('nama_rek'))
+                columns.append(ColumnDT('nilai'))
                 query = DBSession.query(SpmPotongan.id,
                                         SpmPotongan.ap_spm_id,
                                         SpmPotongan.rekening_id,
                                         SpmPotongan.no_urut,
-                                        Spm.kode.label('kode_spm'),
                                         Rekening.kode.label('kode_rek'),
-                                        Rekening.nama.label('nama_rek')
+                                        Rekening.nama.label('nama_rek'),
+                                        SpmPotongan.nilai,
                             ).join(Spm, Rekening,
                             ).filter(SpmPotongan.ap_spm_id==Spm.id,
                                      SpmPotongan.ap_spm_id==ap_spm_id,
@@ -57,9 +57,9 @@ class view_ap_spm_potongan(BaseViews):
                                         SpmPotongan.ap_spm_id,
                                         SpmPotongan.rekening_id,
                                         SpmPotongan.no_urut,
-                                        Spm.kode.label('kode_spm'),
                                         Rekening.kode.label('kode_rek'),
-                                        Rekening.nama.label('nama_rek'))
+                                        Rekening.nama.label('nama_rek'),
+                                        SpmPotongan.nilai)
                             
                 rowTable = DataTables(req, SpmPotongan, query, columns)
                 return rowTable.output_result()
@@ -105,7 +105,8 @@ def view_add(request):
     row.rekening_id = controls['rekening_id']
     if not controls['no_urut'] or controls['no_urut'].split()=='':
         controls['no_urut'] = SpmPotongan.max_no_urut(ap_spm_id)+1
-    row.no_urut     = controls['no_urut']    
+    row.no_urut     = controls['no_urut']  
+    row.nilai       = controls['nilai'].replace('.','')    
     #try:
     DBSession.add(row)
     DBSession.flush()

@@ -104,7 +104,7 @@
               $('#kegiatan_kd').val(datum.kode);
               $('#kegiatan_sub_id').val(datum.id);
         });
-        
+        //$("#kegiatan_nm").attr('readonly',true);
         </script>
       </div>
       <!--NO Urut-------------------------------------------------------------------->
@@ -391,8 +391,15 @@
                 success: function (html) {
                   if (html.success == true) {
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                    $('#amount').val('');
                     $('#no_urut').val('');
+                    $('#item_nm').val('');
+                    $('#nama').val('');
+                    $('#vol_1').val(1);
+                    $('#vol_2').val(1);
+                    $('#amount').val(0);
+                    $('#harga').val(0);
+                    $('#pph').val(0);
+                    $('#ppn').val(0);
                     $('#jml_total').val(formatNumber(html.jml_total)); 
                     oTable.fnReloadAjax(oTableUrl);
                   } else {
@@ -532,6 +539,16 @@
                 success: function (html) {
                   if (html.success == true) {
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                    $('#no_urut').val('');
+                    $('#item_nm').val('');
+                    $('#nama').val('');
+                    $('#vol_1').val(1);
+                    $('#vol_2').val(1);
+                    $('#amount').val(0);
+                    $('#harga').val(0);
+                    $('#pph').val(0);
+                    $('#ppn').val(0);
+                    $('#jml_total').val(formatNumber(html.jml_total)); 
                     oTable.fnReloadAjax(oTableUrl);
                   } else {
                     $("#errors").css('display', 'inline', 'important');
@@ -559,7 +576,6 @@
         });
 
         $("#jml_total").attr('readonly',true);
-        $("#kegiatan_nm").attr('readonly',true);
         jml_total=$("#jml_total").val();
         $("#jml_total").val(formatNumber(jml_total));
      });

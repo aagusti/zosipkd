@@ -75,6 +75,16 @@
                    tal:repeat="error field.error.messages()">
                    ${error}</p>
           </div>
+          <div tal:define="field form['spd_tgl']"  id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-2">
+               ${structure:field.serialize()}
+                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                   tal:repeat="error field.error.messages()">
+                   ${error}</p>
+            </div>
+          </div>
           <script>
                $('#spd_kd').typeahead({
                     "hint"     : true,
@@ -100,14 +110,15 @@
               $('#spd_kd').bind('typeahead:selected', function(obj, datum, name) {      
                     $('#ap_spd_id').val(datum.id);
                     $('#spd_nm').val(datum.nama);
-                    //$('#spd_kd').val(datum.kode);
+                    $('#spd_tgl').val(datum.tanggal);
               });
               $('#spd_nm').bind('typeahead:selected', function(obj, datum, name) {      
                     $('#ap_spd_id').val(datum.id);
-                    //$('#spd_nm').val(datum.nama);
-                    $('#spd_kd').val(datum.kode);
+                    $('#spd_nm').val(datum.nama);
+                    $('#spd_tgl').val(datum.tanggal);
               });
               $("#spd_nm").attr('readonly',true);
+              $("#spd_tgl").attr('readonly',true);
           </script>
         </div>
 
@@ -867,7 +878,7 @@
                 "hint"     : true,
                 "highlight": true,
                 "minLength": 1,
-                "remote"   : "/ap-invoice-skpd/act/headofkode1?term=%QUERY", 
+                "remote"   : "/ap-invoice-skpd/act/headofkode1?jenis="+$('#jenis').val()+"&term=%QUERY", 
             },{
                "name"      : 'kode1',
                "displayKey": 'value',
@@ -898,6 +909,9 @@
                   success: function (html) {
                     if (html.success == true) {
                       $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                      $('#kode1').val('');
+                      $('#nama1').val('');
+                      $('#amount1').val(0);
                       $('#jml_total').val(formatNumber(html.jml_total));
                       oTable.fnReloadAjax(oTableUrl);
                     } else {
@@ -1037,6 +1051,10 @@
                 success: function (html) {
                   if (html.success == true) {
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                    $('#kode1').val('');
+                    $('#nama1').val('');
+                    $('#amount1').val(0);
+                    $('#jml_total').val(formatNumber(html.jml_total));
                     oTable.fnReloadAjax(oTableUrl);
                   } else {
                     $("#errors").css('display', 'inline', 'important');

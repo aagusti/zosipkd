@@ -250,7 +250,7 @@ class AddSchema(colander.Schema):
                           oid="ap_spp_id")
     spp_kd          = colander.SchemaNode(
                           colander.String(),
-                          title = "SPP",
+                          title = "No. SPP",
                           oid="spp_kd")
     spp_nm          = colander.SchemaNode(
                           colander.String(),

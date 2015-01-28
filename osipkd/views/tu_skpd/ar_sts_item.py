@@ -107,14 +107,10 @@ def view_add(request):
     row.kegiatan_item_id = controls['kegiatan_item_id']
     row.amount           = controls['amount'].replace('.','')
     
-    #try:
     DBSession.add(row)
     DBSession.flush()
     nilai = "%d" % Sts.get_nilai(row.ar_sts_id) 
     return {"success": True, 'id': row.id, "msg":'Success Tambah Item STS', 'jml_total':nilai}
-    #except:
-    #return {'success':False, 'msg':'Gagal Tambah Item Invoice'}
-
 
 ########
 # Edit #
@@ -138,7 +134,6 @@ def view_edit(request):
     if request.POST:
         if 'simpan' in request.POST:
             controls = request.POST.items()
-            
             try:
                 c = form.validate(controls)
             except ValidationFailure, e:
@@ -148,9 +143,7 @@ def view_edit(request):
     elif SESS_EDIT_FAILED in request.session:
         del request.session[SESS_EDIT_FAILED]
         return dict(form=form)
-    values = row.to_dict() #dict(zip(row.keys(), row))
-    #values['kegiatan_nm']=row.kegiatan_subs.nama
-    #values['kegiatan_kd']=row.kegiatan_subs.kode
+    values = row.to_dict()
     form.set_appstruct(values) 
     return dict(form=form)
 
@@ -168,4 +161,5 @@ def view_delete(request):
     msg = 'Data sudah dihapus'
     query_id(request).delete()
     DBSession.flush()
-    return {'success':True, "msg":msg}
+    nilai = "%d" % Sts.get_nilai(row.ar_sts_id) 
+    return {'success':True, "msg":msg, 'jml_total':nilai}

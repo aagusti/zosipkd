@@ -62,29 +62,6 @@
            "displayKey": 'value',
         }); 
         
-        function reload_kegiatan(){
-            /*$.ajax({
-              type: "POST",
-              url: "/ag-kegiatan-sub/act/reload",
-              data: "kegiatan_kd="+$('#kegiatan_kd').val(),
-              success: function (html) {
-                if (html.success == true) {
-                  $('#kegiatan_sub_id').val(html.kegiatan_sub_id);
-                    oTableUrl = "/ag-kegiatan-item/act/grid?kegiatan_sub_id="+html.kegiatan_sub_id;  
-                    oTable.fnReloadAjax(oTableUrl);
-                    $("#errors").html("<span class=''></span> " + '');
-                } else {
-                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
-                  $('#kegiatan_sub_id').val('');
-                }
-              },
-              beforeSend: function () {
-                $("#errors").css('display', 'inline', 'important');
-                $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
-              }
-            });*/
-        };
-        
         function change_unit(){
             $.ajax({
               type: "POST",
@@ -93,7 +70,7 @@
               success: function (html) {
                 if (html.success == true) {
                   $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                  reload_kegiatan();
+                  oTable.fnReloadAjax(oTableUrl);
                 } else {
                   $("#errors").css('display', 'inline', 'important');
                   $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
@@ -192,6 +169,17 @@
                "bSearchable": true,
                "bSortable"  : false,
                "aTargets"   : [2,3,4,5,6]
+            },{
+                "aTargets" : [4], // Column number which needs to be modified
+                "mRender"  : function (data, type, full) {
+                    if (data == "1") {
+                        return 'Penerimaan';
+                    } else if (data == "2") {
+                        return 'Kontra Pos';
+                    } else if (data == "3") {
+                        return 'Lainnya';
+                    } 
+                }
             }],
             "aoColumns": [
                 null, {

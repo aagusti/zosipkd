@@ -230,6 +230,7 @@ class view_ap_spp(BaseViews):
         values = row.to_dict() #dict(zip(row.keys(), row))
         values['spd_nm']=row.spds.nama
         values['spd_kd']=row.spds.kode
+        values['spd_tgl']=row.spds.tanggal
         form.set_appstruct(values) 
         return dict(form=form)
 
@@ -275,10 +276,14 @@ class AddSchema(colander.Schema):
     spd_kd          = colander.SchemaNode(
                           colander.String(),
                           oid='spd_kd',
-                          title="SPD")
+                          title="No. SPD")
     spd_nm          = colander.SchemaNode(
                           colander.String(),
                           oid='spd_nm')
+    spd_tgl         = colander.SchemaNode(
+                          colander.String(),
+                          oid='spd_tgl',
+                          title="Tgl. SPD")
     no_urut         = colander.SchemaNode(
                           colander.Integer(),
                           missing=colander.drop,

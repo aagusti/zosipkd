@@ -73,7 +73,7 @@
               success: function (html) {
                 if (html.success == true) {
                   $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                  reload_kegiatan();
+                  oTable.fnReloadAjax(oTableUrl);
                 } else {
                   $("#errors").css('display', 'inline', 'important');
                   $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
@@ -110,7 +110,7 @@
       <thead>
         <tr>
             <th>Index</th>
-            <th>Kode</th>
+            <th>No. SPM</th>
             <th>Tanggal SPM</th>
             <th>Jenis</th>
             <th>Uraian</th>
@@ -166,6 +166,19 @@
                 "aTargets" : [5],
                 "mRender"  : function (data, type, full) {
                 return formatNumber(data);}
+            },{
+                "aTargets" : [3], // Column number which needs to be modified
+                "mRender"  : function (data, type, full) {
+                    if (data == "1") {
+                        return 'UP';
+                    } else if (data == "2") {
+                        return 'TU';
+                    } else if (data == "3") {
+                        return 'GU';
+                    } else if (data == "4") {
+                        return 'LS';
+                    }
+                }
             }],
             "aoColumns": [
                 null, 

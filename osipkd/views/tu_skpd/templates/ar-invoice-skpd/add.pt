@@ -338,10 +338,6 @@
           <script>
            
           $('#rekening_add').click(function () {
-                var ar_invoice_id;
-                ar_invoice_id = $('#id').val();
-                alert(ar_invoice_id);          
-          
                 $('#ar_invoice_item_id').val('');
                 $('#detail').submit();
            })
@@ -379,8 +375,13 @@
                 success: function (html) {
                   if (html.success == true) {
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                    $('#nilai').val('');
                     $('#no_urut').val('');
+                    $('#item_nm').val('');
+                    $('#vol_1').val(1);
+                    $('#vol_2').val(1);
+                    $('#nilai').val(0);
+                    $('#harga').val(0);
+                    $('#nama').val('');
                     $('#jml_total').val(formatNumber(html.jml_total)); 
                     oTable.fnReloadAjax(oTableUrl);
                   } else {
@@ -515,6 +516,14 @@
                 success: function (html) {
                   if (html.success == true) {
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                    $('#no_urut').val('');
+                    $('#item_nm').val('');
+                    $('#vol_1').val(1);
+                    $('#vol_2').val(1);
+                    $('#nilai').val(0);
+                    $('#harga').val(0);
+                    $('#nama').val('');
+                    $('#jml_total').val(formatNumber(html.jml_total)); 
                     oTable.fnReloadAjax(oTableUrl);
                   } else {
                     $("#errors").css('display', 'inline', 'important');

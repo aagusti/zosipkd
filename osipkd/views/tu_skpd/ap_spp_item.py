@@ -101,9 +101,6 @@ def view_add(request):
     DBSession.flush()
     amount = "%d" % Spp.get_nilai(row.ap_spp_id) 
     return {"success": True, 'id': row.id, "msg":'Success Tambah Invoice', 'jml_total':amount}
-    #except:
-    #    return {'success':False, 'msg':'Gagal Tambah Item Invoice'}
-
 
 ########
 # Edit #
@@ -136,9 +133,7 @@ def view_edit(request):
     elif SESS_EDIT_FAILED in request.session:
         del request.session[SESS_EDIT_FAILED]
         return dict(form=form)
-    values = row.to_dict() #dict(zip(row.keys(), row))
-    #values['kegiatan_nm']=row.kegiatan_subs.nama
-    #values['kegiatan_kd']=row.kegiatan_subs.kode
+    values = row.to_dict()
     form.set_appstruct(values) 
     return dict(form=form)
 
@@ -156,4 +151,5 @@ def view_delete(request):
     msg = 'Data sudah dihapus'
     query_id(request).delete()
     DBSession.flush()
-    return {'success':True, "msg":msg}
+    amount = "%d" % Spp.get_nilai(row.ap_spp_id)
+    return {'success':True, "msg":msg, 'jml_total':amount}

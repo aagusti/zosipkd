@@ -252,6 +252,7 @@
         <div class="col-md-3">
           <button type="submit" class="btn btn-primary" id="simpan" name="simpan">Simpan</button>
           <button type="submit" class="btn btn-danger"  id="batal"  name="batal">Batal</button>
+          <button type="submit" class="btn btn-warning" id="tutup"  name="tutup">Tutup</button>
         </div>
       </div>
       </form>
@@ -310,10 +311,6 @@
               </div>
           <script>
             $('#rekening_add').click(function () {
-                var ar_sts_id;
-                ar_sts_id = $('#id').val();
-                alert(ar_sts_id);          
-          
                 $('#ar_sts_item_id').val('');
                 $('#detail').submit();
             })
@@ -353,6 +350,9 @@
                     if (html.success == true) {
                       $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
                       $('#jml_total').val(formatNumber(html.jml_total));
+                      $('#kode1').val('');
+                      $('#nama1').val('');
+                      $('#amount').val(0);
                       oTable.fnReloadAjax(oTableUrl);
                     } else {
                       $("#errors").css('display', 'inline', 'important');
@@ -382,8 +382,8 @@
       var tb_array = [
           '<div class="btn-group pull-left">',
           '<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
-          '<button id="btn_print"  class="btn btn btn-primary" type="button">Print</button>',
-          '<button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
+          //'<button id="btn_print"  class="btn btn btn-primary" type="button">Print</button>',
+          //'<button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
           '&nbsp;',
           '</div>',
       ];
@@ -452,8 +452,8 @@
 
                         $("#ar_sts_item_id").val(data[0]);
                         $("#kegiatan_item_id").val(data[1]);
-                        $("#kode1").val(data[2]);
-                        $("#nama1").val(data[7]);
+                        $("#kode1").val(data[4]);
+                        $("#nama1").val(data[5]);
                         $("#amount").val(data[6]);    
 
                         oTable.$('tr.row_selected').removeClass('row_selected');
@@ -487,6 +487,10 @@
                 success: function (html) {
                   if (html.success == true) {
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                    $('#jml_total').val(formatNumber(html.jml_total));
+                    $('#kode1').val('');
+                    $('#nama1').val('');
+                    $('#amount').val(0);
                     oTable.fnReloadAjax(oTableUrl);
                   } else {
                     $("#errors").css('display', 'inline', 'important');
