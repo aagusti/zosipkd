@@ -201,6 +201,9 @@
                   success: function (html) {
                     if (html.success == true) {
                       $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                      $('#kode1').val('');
+                      $('#nama1').val('');
+                      $('#amount1').val(0);
                       $('#jml_total').val(formatNumber(html.jml_total));
                       oTable.fnReloadAjax(oTableUrl);
                     } else {
@@ -231,8 +234,8 @@
       var tb_array = [
           '<div class="btn-group pull-left">',
           '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
-          '	<button id="btn_print"  class="btn btn btn-primary" type="button">Print</button>',
-          ' <button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
+          //'<button id="btn_print"  class="btn btn btn-primary" type="button">Print</button>',
+          //'<button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
           '	&nbsp;',
           '</div>',
       ];
@@ -327,6 +330,10 @@
                 success: function (html) {
                   if (html.success == true) {
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                    $('#kode1').val('');
+                    $('#nama1').val('');
+                    $('#amount1').val(0);
+                    $('#jml_total').val(formatNumber(html.jml_total));
                     oTable.fnReloadAjax(oTableUrl);
                   } else {
                     $("#errors").css('display', 'inline', 'important');

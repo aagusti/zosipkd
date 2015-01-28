@@ -105,26 +105,16 @@ class view_ap_spd_item(BaseViews):
                 return {"success": False, 'msg':'Invoice tidak ditemukan'}
         else:
             row = SpdItem()
-        
-        #row = SpdItem()
+
         row.ap_spd_id       = ap_spd_id
         row.kegiatan_sub_id = controls['kegiatan_sub_id']
         row.anggaran = controls['anggaran'].replace('.','')
         row.lalu     = controls['lalu'].replace('.','')
         row.nominal  = controls['nominal'].replace('.','')
 
-        #try:
         DBSession.add(row)
         DBSession.flush()
         return {"success": True, 'id': row.id, "msg":'Success Tambah SPD'}
-          #row = DBSession.query(KegiatanSub).filter_by(id=ap_kegiatan_id).first()
-          #row.posted=1
-          #DBSession.add(row)
-          #DBSession.flush()
-          #return {"success": True, "msg":'Success Tambah Item SPD'}
-        #except:
-        #    return {'success':False, 'msg':'Gagal Tambah Item SPD'}
-
 
     ########
     # Edit #

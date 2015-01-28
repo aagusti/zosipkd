@@ -151,4 +151,5 @@ def view_delete(request):
     msg = 'Data sudah dihapus'
     query_id(request).delete()
     DBSession.flush()
-    return {'success':True, "msg":msg}
+    nominal = "%d" % Giro.get_nilai(row.ap_giro_id) 
+    return {'success':True, "msg":msg, 'jml_total':nominal}

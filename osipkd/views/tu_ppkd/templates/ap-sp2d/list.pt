@@ -73,7 +73,7 @@
               success: function (html) {
                 if (html.success == true) {
                   $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                  reload_kegiatan();
+                  oTable.fnReloadAjax(oTableUrl);
                 } else {
                   $("#errors").css('display', 'inline', 'important');
                   $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
@@ -111,9 +111,9 @@
       <thead>
         <tr>
             <th>Index</th>
-            <th>Kode SP2D</th>
+            <th>No. SP2D</th>
             <th>Tanggal</th>
-            <th>Kode SPM</th>
+            <th>No. SPM</th>
             <th>Uraian</th>
             <th>Nilai</th>
         </tr>

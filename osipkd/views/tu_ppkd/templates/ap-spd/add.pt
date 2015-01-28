@@ -215,7 +215,6 @@
         
             $('#kegiatan_kd').bind('typeahead:selected', function(obj, datum, name) {  
                   $('#kegiatan_sub_id').val(datum.id);
-                  //$('#kegiatan_kd').val(datum.kode);
                   $('#kegiatan_nm').val(datum.nama);
                   $('#anggaran').val(datum.anggaran);
                   $('#lalu').val(datum.lalu);
@@ -225,7 +224,6 @@
             $('#kegiatan_nm').bind('typeahead:selected', function(obj, datum, name) {      
                   $('#kegiatan_sub_id').val(datum.id);
                   $('#kegiatan_kd').val(datum.kode);
-                  //$('#kegiatan_nm').val(datum.nama);
                   $('#anggaran').val(datum.anggaran);
                   $('#lalu').val(datum.lalu);
                   $('#nominal').val(datum.nominal);
@@ -252,9 +250,9 @@
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
                     $('#kegiatan_kd').val('');
                     $('#kegiatan_nm').val('');
-                    $('#anggaran').val('');
-                    $('#lalu').val('');
-                    $('#nominal').val('');
+                    $('#anggaran').val(0);
+                    $('#lalu').val(0);
+                    $('#nominal').val(0);
                     $('#kegiatan_sub_id').val('');
                     $('#jml_total').val(formatNumber(html.jml_total)); 
                     oTable.fnReloadAjax(oTableUrl);
@@ -395,6 +393,13 @@
                 success: function (html) {
                   if (html.success == true) {
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                    $('#kegiatan_kd').val('');
+                    $('#kegiatan_nm').val('');
+                    $('#anggaran').val(0);
+                    $('#lalu').val(0);
+                    $('#nominal').val(0);
+                    $('#jumlah').val(0);
+                    $('#kegiatan_sub_id').val('');
                     oTable.fnReloadAjax(oTableUrl);
                   } else {
                     $("#errors").css('display', 'inline', 'important');
@@ -421,7 +426,7 @@
             return false;
         });
 
-        $("#kegiatan_nm").attr('readonly',true);
+        //$("#kegiatan_nm").attr('readonly',true);
      });
     </script>
   

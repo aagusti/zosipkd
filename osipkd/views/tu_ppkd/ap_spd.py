@@ -84,7 +84,7 @@ class view_ap_spd_ppkd(BaseViews):
                 
         elif url_dict['act']=='headofkode1':
             term = 'term' in params and params['term'] or ''
-            q = DBSession.query(Spd.id, Spd.kode.label('spd_kd'), Spd.nama.label('spd_nm')
+            q = DBSession.query(Spd.id, Spd.kode.label('spd_kd'), Spd.nama.label('spd_nm'), Spd.tanggal.label('spd_tgl')
                       ).filter(Spd.unit_id == ses['unit_id'],
                            Spd.tahun_id==ses['tahun'],
                            Spd.kode.ilike('%s%%' % term))        
@@ -96,12 +96,13 @@ class view_ap_spd_ppkd(BaseViews):
                 d['value']       = k[1]
                 d['kode']        = k[1]
                 d['nama']        = k[2]
+                d['tanggal']     = k[3]
                 r.append(d)    
             return r
             
         elif url_dict['act']=='headofnama1':
             term = 'term' in params and params['term'] or ''
-            q = DBSession.query(Spd.id, Spd.kode.label('spd_kd'), Spp.nama.label('spd_nm')
+            q = DBSession.query(Spd.id, Spd.kode.label('spd_kd'), Spp.nama.label('spd_nm'), Spd.tanggal.label('spd_tgl')
                       ).filter(Spd.unit_id == ses['unit_id'],
                            Spd.tahun_id==ses['tahun'],
                            Spd.nama.ilike('%s%%' % term))        
@@ -113,6 +114,7 @@ class view_ap_spd_ppkd(BaseViews):
                 d['value']       = k[2]
                 d['kode']        = k[1]
                 d['nama']        = k[2]
+                d['tanggal']     = k[3]
                 r.append(d)    
             return r
 
@@ -213,9 +215,7 @@ class view_ap_spd_ppkd(BaseViews):
         elif SESS_EDIT_FAILED in request.session:
             del request.session[SESS_EDIT_FAILED]
             return dict(form=form)
-        values = row.to_dict() #dict(zip(row.keys(), row))
-        #values['kegiatan_nm']=row.kegiatansubs.nama
-        #values['kegiatan_kd']=row.kegiatansubs.kode
+        values = row.to_dict() 
         form.set_appstruct(values) 
         return dict(form=form)
 

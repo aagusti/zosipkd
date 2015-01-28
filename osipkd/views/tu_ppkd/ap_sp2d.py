@@ -223,7 +223,7 @@ class view_ap_sp2d_ppkd(BaseViews):
         elif SESS_EDIT_FAILED in request.session:
             del request.session[SESS_EDIT_FAILED]
             return dict(form=form)
-        values = row.to_dict() #dict(zip(row.keys(), row))
+        values = row.to_dict() 
         values['spm_nm']=row.spms.nama
         values['spm_kd']=row.spms.kode
         form.set_appstruct(values) 
@@ -262,7 +262,7 @@ class AddSchema(colander.Schema):
     spm_kd          = colander.SchemaNode(
                           colander.String(),
                           oid='spm_kd',
-                          title="SPM")
+                          title="No. SPM")
     spm_nm          = colander.SchemaNode(
                           colander.String(),
                           oid='spm_nm')
