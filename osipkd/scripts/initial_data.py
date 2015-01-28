@@ -5,6 +5,7 @@ from sqlalchemy import (
     )
 from data.user import UserData
 from data.routes import RouteData
+from data.apps import AppsData
 from DbTools import (
     get_pkeys,
     execute,
@@ -23,6 +24,7 @@ from ..models import (
 fixtures = [
     ('users', UserData),
     ('routes', RouteData),
+    ('admin.apps', AppsData),
     ]
 
 def insert():
