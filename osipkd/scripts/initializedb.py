@@ -86,6 +86,10 @@ def create_schema(engine, schema):
     if not q.fetchone():
         engine.execute(CreateSchema(schema))
 
+def create_schemas(engine):
+    for schema in ['efiling', 'admin', 'aset', 'eis', 'gaji', 'apbd']:
+        create_schema(engine, schema)
+
 def main(argv=sys.argv):
     if len(argv) != 2:
         usage(argv)
@@ -110,6 +114,7 @@ def main(argv=sys.argv):
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
     init_model()
-    create_schema(engine, 'efiling')
+    create_schemas(engine)
     Base.metadata.create_all(engine)
     initial_data.insert()
+    transaction.commit()
