@@ -25,6 +25,7 @@ requires=['pyramid>=1.5a2',
           'sqlalchemy-datatables',
           #'pyjasperclient',
           'pyJasper',
+          'xlrd',
          ]
 
 if sys.argv[1:] and sys.argv[1] == 'develop-use-pip':

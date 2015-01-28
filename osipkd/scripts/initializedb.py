@@ -111,5 +111,8 @@ def main(argv=sys.argv):
     DBSession.configure(bind=engine)
     init_model()
     create_schema(engine, 'efiling')
+    create_schema(engine, 'admin')
+    create_schema(engine, 'aset')
     Base.metadata.create_all(engine)
     initial_data.insert()
+    transaction.commit()
