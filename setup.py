@@ -26,6 +26,7 @@ requires=['pyramid>=1.5a2',
           #'pyjasperclient',
           'pyJasper',
           'xlrd',
+          'paste',
          ]
 
 if sys.argv[1:] and sys.argv[1] == 'develop-use-pip':
@@ -64,5 +65,6 @@ setup(name='osipkd',
       [console_scripts]
       initialize_osipkd_db = osipkd.scripts.initializedb:main
       create_route_source = osipkd.scripts.CreateRouteSource:main
+      create_apps_source = osipkd.scripts.CreateAppsSource:main
       """,
       )

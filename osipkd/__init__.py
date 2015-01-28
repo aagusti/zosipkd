@@ -117,17 +117,18 @@ def main(global_config, **settings):
     config.add_static_view('js', 'js')
     
     config.add_renderer('csv', '.tools.CSVRenderer')
-    
+
     routes = DBSession.query(Route.kode, Route.path, Route.nama, Route.factory).all()
     for route in routes:
         if route.factory and route.factory != 'None': 
             config.add_route(route.kode, route.path, factory= route.factory) #(route.factory).encode("utf8"))
         else:
             config.add_route(route.kode, route.path)
-            
         if route.nama:
             titles[route.kode] = route.nama
 
-            
     config.scan()
+    app = config.make_wsgi_app()
+    from paste.translogger import TransLogger
+    app = TransLogger(app, setup_console_handler=False)
     return config.make_wsgi_app()
