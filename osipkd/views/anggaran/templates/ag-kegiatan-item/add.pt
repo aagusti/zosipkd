@@ -244,10 +244,10 @@
                   
                 </div>
                 <div>
-                  <label for="jml2" class="control-label col-md-2" id="req-jml2">
+                  <label for="jml1" class="control-label col-md-2" id="req-jml1">
                           Jumlah RKA</label>
                   <div class="col-md-4">
-                      <input class="form-control" type="text" id="jml2">
+                      <input class="form-control" type="text" id="jml1">
                   </div>
                   
                 </div>
@@ -326,7 +326,7 @@
                   <label for="jml2" class="control-label col-md-2" id="req-jml2">
                           Jumlah DPA</label>
                   <div class="col-md-4">
-                      <input class="form-control" type="text" id="jml2">
+                      <input class="form-control" type="text" id="jml2" name="jml2">
                   </div>
                   
                 </div>
