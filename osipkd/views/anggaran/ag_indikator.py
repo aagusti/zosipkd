@@ -168,58 +168,70 @@ class AddSchema(colander.Schema):
     tolok_ukur_1    = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          oid='tolok_ukur_1',
                           title='Tolok Ukur RKA'
                           )
     volume_1        = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
                           default=1,
+                          oid='volume_1',
                           )
     satuan_1        = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          oid='satuan_1',
                           )
     tolok_ukur_2    = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          oid='tolok_ukur_2',
                           title='Tolok Ukur DPA'
                           )
     volume_2        = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
                           default=1,
+                          oid='volume_2',
                           )
     satuan_2        = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          oid='satuan_2',
                           )
     tolok_ukur_3    = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          oid='tolok_ukur_3',
                           title='Tolok Ukur RPKA'
                           )
     volume_3        = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
                           default=1,
+                          oid='volume_3',
                           )
     satuan_3        = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          oid='satuan_3',
                           )
     tolok_ukur_4    = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          oid='tolok_ukur_4',
                           title='Tolok Ukur DPPA'
                           )
     volume_4        = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
                           default=1,
+                          oid='volume_4',
                           )
     satuan_4        = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          oid='satuan_4',
                           )
                           
 class EditSchema(AddSchema):
