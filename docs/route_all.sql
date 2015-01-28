@@ -98,6 +98,11 @@ urusan-act	0	2014-12-24 03:04:42.837591	1	Action	/urusan/act/{act}	read
 urusan-add	0	2014-12-24 03:04:42.837591	1	Tambah urusan	/urusan/add	add
 urusan-edit	0	2014-12-24 03:04:42.837591	1	Edit urusan	/urusan/{id}/edit	edit
 urusan-delete	0	2014-12-24 03:04:42.837591	1	Hapus urusan	/urusan/{id}/delete	delete
+dasarhukum	0	2014-12-24 03:04:42.837591	1	Dasar Hukum	/dasarhukum	read
+dasarhukum-act	0	2014-12-24 03:04:42.837591	1	Dasar Hukum Act	/dasarhukum/act/{act}	read
+dasarhukum-add	0	2014-12-24 03:04:42.837591	1	Tambah Dasar Hukum	/dasarhukum/add	add
+dasarhukum-edit	0	2014-12-24 03:04:42.837591	1	Edit Dasar Hukum	/dasarhukum/{id}/edit	edit
+dasarhukum-delete	0	2014-12-24 03:04:42.837591	1	Hapus Dasar Hukum	/dasarhukum/{id}/delete	delete
 user	0	2014-12-24 03:04:42.837591	1	Users	/user	read
 user-act	0	2014-12-24 03:04:42.837591	1	Users	/user/act/{act}	read
 user-add	0	2014-12-24 03:04:42.837591	1	Tambah user	/user/add	add
@@ -156,6 +161,12 @@ ag-kegiatan-sub-add-fast	0	2014-12-24 03:04:42.837591	1	Anggaran Penerimaan Act	
 ag-pendapatan	0	2014-12-24 03:04:42.837591	1	Anggaran Pendapatan	/ag-pendapatan	read
 ag-penerimaan	0	2014-12-24 03:04:42.837591	1	Anggaran Penerimaan	/ag-penerimaan	read
 ag-pengeluaran	0	2014-12-24 03:04:42.837591	1	Anggaran Pengeluaran	/ag-pengeluaran	read
+ag-indikator	0	2014-12-24 03:04:42.837591	1	Indikator Kegiatan	/ag-indikator/{kegiatan_sub_id}	read
+ag-indikator-act	0	2014-12-24 03:04:42.837591	1	Indikator Kegiatan Act	/ag-indikator/act/{act}	read
+ag-indikator-add	0	2014-12-24 03:04:42.837591	1	Tambah Indikator Kegiatan	/ag-indikator/{kegiatan_sub_id}/add	add
+ag-indikator-edit	0	2014-12-24 03:04:42.837591	1	Edit Indikator Kegiatan	/ag-indikator/{kegiatan_sub_id}/{id}/edit	edit
+ag-indikator-delete	0	2014-12-24 03:04:42.837591	1	Hapus Indikator Kegiatan	/ag-indikator/{kegiatan_sub_id}/{id}/delete	delete
+ag-indikator-add-fast	0	2014-12-24 03:04:42.837591	1	Tambah Indikator Kegiatan	/ag-indikator/add/fast	add
 anggaran_r000	0	2014-12-24 03:04:42.837591	1	Report Master	/ag-report/r000	read
 anggaran_r000_act	0	2014-12-24 03:04:42.837591	1	Report Master Act	/ag-report/r000/act/{act}	read
 anggaran_r100	0	2014-12-24 03:04:42.837591	1	Report RKA	/ag-report/r100	read
@@ -236,6 +247,10 @@ ap-spm-act	0	2014-12-24 03:04:42.837591	1	SPM Act	/ap-spm/act/{act}	read
 ap-spm-add	0	2014-12-24 03:04:42.837591	1	Tambah SPM	/ap-spm/add	add
 ap-spm-edit	0	2014-12-24 03:04:42.837591	1	Edit SPM	/ap-spm/{id}/edit	edit
 ap-spm-delete	0	2014-12-24 03:04:42.837591	1	Hapus SPM	/ap-spm/{id}/delete	delete
+ap-spm-potongan-act	0	2014-12-24 03:04:42.837591	1	SPM Potongan Act	/ap-spm-potongan/act/{act}	read
+ap-spm-potongan-add	0	2014-12-24 03:04:42.837591	1	Tambah SPM Potongan	/ap-spm-potongan/{ap_spm_id}/add	add
+ap-spm-potongan-edit	0	2014-12-24 03:04:42.837591	1	Edit SPM Potongan	/ap-spm-potongan/{ap_spm_id}/{id}/edit	edit
+ap-spm-potongan-delete	0	2014-12-24 03:04:42.837591	1	Hapus SPM Potongan	/ap-spm-potongan/{ap_spm_id}/{id}/delete	delete
 ap-spp	0	2014-12-24 03:04:42.837591	1	SPP	/ap-spp	read
 ap-spp-act	0	2014-12-24 03:04:42.837591	1	SPP Act	/ap-spp/act/{act}	read
 ap-spp-add	0	2014-12-24 03:04:42.837591	1	Tambah SPP	/ap-spp/add	add
@@ -267,16 +282,6 @@ ar-report-skpd	0	2014-12-24 03:04:42.837591	1	Laporan Pendapatan	/ar-report-skpd
 ar-report-skpd-act	0	2014-12-24 03:04:42.837591	1	Report AR SKPD Act	/ar-report-skpd/act/{act}	read
 ap-report-skpd	0	2014-12-24 03:04:42.837591	1	Laporan Belanja	/ap-report-skpd	read
 ap-report-skpd-act	0	2014-12-24 03:04:42.837591	1	Report AP SKPD Act	/ap-report-skpd/act/{act}	read
-ag-indikator	0	2014-12-24 03:04:42.837591	1	Indikator Kegiatan	/ag-indikator/{kegiatan_sub_id}	read
-ag-indikator-act	0	2014-12-24 03:04:42.837591	1	Indikator Kegiatan Act	/ag-indikator/act/{act}	read
-ag-indikator-add	0	2014-12-24 03:04:42.837591	1	Tambah Indikator Kegiatan	/ag-indikator/{kegiatan_sub_id}/add	add
-ag-indikator-edit	0	2014-12-24 03:04:42.837591	1	Edit Indikator Kegiatan	/ag-indikator/{kegiatan_sub_id}/{id}/edit	edit
-ag-indikator-delete	0	2014-12-24 03:04:42.837591	1	Hapus Indikator Kegiatan	/ag-indikator/{kegiatan_sub_id}/{id}/delete	delete
-ag-indikator-add-fast	0	2014-12-24 03:04:42.837591	1	Tambah Indikator Kegiatan	/ag-indikator/add/fast	add
-ap-spm-potongan-act	0	2014-12-24 03:04:42.837591	1	SPM Potongan Act	/ap-spm-potongan/act/{act}	read
-ap-spm-potongan-add	0	2014-12-24 03:04:42.837591	1	Tambah SPM Potongan	/ap-spm-potongan/{ap_spm_id}/add	add
-ap-spm-potongan-edit	0	2014-12-24 03:04:42.837591	1	Edit SPM Potongan	/ap-spm-potongan/{ap_spm_id}/{id}/edit	edit
-ap-spm-potongan-delete	0	2014-12-24 03:04:42.837591	1	Hapus SPM Potongan	/ap-spm-potongan/{ap_spm_id}/{id}/delete	delete
 p-ap-invoice-skpd	0	2014-12-24 03:04:42.837591	1	Posting Tagihan/Utang	/p-ap-invoice-skpd	view
 p-ap-invoice-skpd-act	0	2014-12-24 03:04:42.837591	1	Posting Tagihan/Utang Act	/p-ap-invoice-skpd/act/{act}	read
 p-ap-sp2d-skpd	0	2014-12-24 03:04:42.837591	1	Posting SP2D	/p-ap-sp2d-skpd	view
