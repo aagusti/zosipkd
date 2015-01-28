@@ -293,10 +293,64 @@
         $(document).ready(function () {
             $("#btn_close").click(function () {
                 url = '/ag-indikator/'+$('#kegiatan_sub_id').val();
-                alert(url);
                 window.location = url;
                 //return false;
             });
+		
+		var a ="${request.session['ag_step_nm']}";
+		if (a == 'RKA'){
+		$('#tolok_ukur_2').attr('readonly', true)
+		$('#tolok_ukur_3').attr('readonly', true)
+		$('#tolok_ukur_4').attr('readonly', true)
+
+		$('#volume_2').attr('readonly', true)
+		$('#volume_3').attr('readonly', true)
+		$('#volume_4').attr('readonly', true)
+
+		$('#satuan_2').attr('readonly', true)
+		$('#satuan_3').attr('readonly', true)
+		$('#satuan_4').attr('readonly', true)
+		}
+		else if  (a == 'DPA'){
+		$('#tolok_ukur_1').attr('readonly', true)
+		$('#tolok_ukur_3').attr('readonly', true)
+		$('#tolok_ukur_4').attr('readonly', true)
+
+		$('#volume_1').attr('readonly', true)
+		$('#volume_3').attr('readonly', true)
+		$('#volume_4').attr('readonly', true)
+
+		$('#satuan_1').attr('readonly', true)
+		$('#satuan_3').attr('readonly', true)
+		$('#satuan_4').attr('readonly', true)
+		}
+		else if  (a == 'RPKA'){
+		$('#tolok_ukur_1').attr('readonly', true)
+		$('#tolok_ukur_2').attr('readonly', true)
+		$('#tolok_ukur_3').attr('readonly', true)
+
+		$('#volume_1').attr('readonly', true)
+		$('#volume_2').attr('readonly', true)
+		$('#volume_4').attr('readonly', true)
+
+		$('#satuan_1').attr('readonly', true)
+		$('#satuan_2').attr('readonly', true)
+		$('#satuan_4').attr('readonly', true)
+		}
+		else if  (a == 'DPPA'){
+		$('#tolok_ukur_1').attr('readonly', true)
+		$('#tolok_ukur_2').attr('readonly', true)
+		$('#tolok_ukur_3').attr('readonly', true)
+
+		$('#volume_1').attr('readonly', true)
+		$('#volume_2').attr('readonly', true)
+		$('#volume_3').attr('readonly', true)
+
+		$('#satuan_1').attr('readonly', true)
+		$('#satuan_2').attr('readonly', true)
+		$('#satuan_3').attr('readonly', true)
+		}
+		
         });  
     </script>
       <br>
