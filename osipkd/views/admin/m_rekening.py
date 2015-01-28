@@ -18,6 +18,8 @@ from datatables import ColumnDT, DataTables
 from osipkd.tools import row2dict, xls_reader
 from osipkd.models import (DBSession,)
 from osipkd.models.pemda_model import Rekening
+from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
+
 
 SESS_ADD_FAILED = 'Tambah rekening gagal'
 SESS_EDIT_FAILED = 'Edit rekening gagal'
@@ -197,6 +199,56 @@ class view_rekening(BaseViews):
             return self.get_kode_dict(term,'9')
         elif url_dict['act']=='import':
             pass
+            
+        elif url_dict['act']=='headofkode10':
+            term = 'term' in params and params['term'] or ''
+            kegiatan_sub_id = 'kegiatan_sub_id' in params and params['kegiatan_sub_id'] or 0
+                        
+            q = DBSession.query(Rekening.id, 
+                                Rekening.kode, 
+                                Rekening.nama, 
+                      ).join(KegiatanItem, 
+                             KegiatanSub,
+                      ).filter(KegiatanSub.unit_id == ses['unit_id'],
+                               KegiatanSub.tahun_id==ses['tahun'],
+                               KegiatanItem.kegiatan_sub_id == KegiatanSub.id,
+                               KegiatanItem.rekening_id == Rekening.id,
+                               KegiatanItem.kegiatan_sub_id == kegiatan_sub_id,
+                               Rekening.kode.ilike('%%%s%%' % term))
+            rows = q.all()
+            
+            if not rows:
+                return {'success':False, 'msg':'Rekening tidak ditemukan'}
+                
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[1]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
+            print '****----****',r                
+            return r
+            
+        elif url_dict['act']=='headofkode11':
+            term = 'term' in params and params['term'] or ''            
+            q = DBSession.query(Rekening.id, 
+                                Rekening.kode, 
+                                Rekening.nama, 
+                      ).filter(Rekening.kode.ilike('%%%s%%' % term))
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[1]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
+            print '****----****',r                
+            return r
+            
             
     #######    
     # Add #
