@@ -300,8 +300,8 @@
         <fieldset class="deformFormFieldset">
           <!--Piutang------------------------------------------------------------->
           <input id="ap_spm_potongan_id" type="hidden" value="" name="ap_spm_potongan_id">
-          <input id="rekening_id" type="hidden" value="" name="rekening_id">
-          <input id="ap_spm_id" type="hidden" value="" name="ap_spm_id">
+          <input id="rekening_id"        type="hidden" value="" name="rekening_id">
+          <input id="ap_spm_id"          type="hidden" value="" name="ap_spm_id">
           <div class="form-group">
             <label for="kode1" class="control-label col-md-1" id="req-kode1">
                 Rekening </label>
@@ -366,7 +366,7 @@
               if (is_success){
                 $.ajax({
                   type: "POST",
-                  url: "/ap-spm/potongan/"+ap_spm_id+"/add",
+                  url: "/ap-spm-potongan/"+ap_spm_id+"/add",
                   data: $('#detail').serialize(),
                   success: function (html) {
                     if (html.success == true) {
@@ -401,7 +401,7 @@
       var oTable;
       var iPos;
       var ap_spm_id = $('#id').val();
-      var oTableUrl = "/ap-spm/potongan/"+ap_spm_id+"/act/grid";
+      var oTableUrl = "/ap-spm-potongan/"+ap_spm_id+"/act/grid";
       var tb_array = [
           '<div class="btn-group pull-left">',
           '<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
@@ -500,7 +500,7 @@
               if (confirm('Yakin dihapus?')==true){
                 $.ajax({
                 type: "POST",
-                url: "/ap-spm/potongan/"+$("#id").val()+"/"+mID+"/delete",
+                url: "/ap-spm-potongan/"+$("#id").val()+"/"+mID+"/delete",
                 success: function (html) {
                   if (html.success == true) {
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
