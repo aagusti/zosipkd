@@ -113,6 +113,7 @@ class AddSchema(colander.Schema):
                           )
     kode            = colander.SchemaNode(
                           colander.String(),
+                          #missing=colander.drop,
                           title = "No. STS"
                           )
     nama            = colander.SchemaNode(
@@ -181,13 +182,18 @@ def save(values, row=None):
     if not row:
         row = Sts()
     row.created = datetime.now()
-    #row.create_uid = user.id
     row.from_dict(values)
     row.updated = datetime.now()
-    #row.update_uid = user.id
+    
     if not row.no_urut:
-       row.no_urut = Sts.max_no_urut(row.tahun_id,row.unit_id)+1;
-       
+        row.no_urut = Sts.max_no_urut(row.tahun_id,row.unit_id)+1;
+    
+    #if not row.kode:
+    #    tahun    = request.ses['tahun']
+    #    unit_kd  = request.session['unit_kd']
+    #    no_urut  = row.no_urut
+    #    row.kode = "STS%d" % tahun + "-%s" % unit_kd + "-%d" % no_urut
+            
     DBSession.add(row)
     DBSession.flush()
     return row

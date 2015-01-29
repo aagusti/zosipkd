@@ -150,10 +150,17 @@ class view_ap_spp(BaseViews):
         row.from_dict(values)
         row.updated = datetime.now()
         row.update_uid = self.request.user.id
+        
         if not row.no_urut:
-              row.no_urut = Spp.max_no_urut(row.tahun_id,row.unit_id)+1;
+            row.no_urut = Spp.max_no_urut(row.tahun_id,row.unit_id)+1;
+            
+        if not row.kode:
+            tahun    = self.session['tahun']
+            unit_kd  = self.session['unit_kd']
+            no_urut  = row.no_urut
+            row.kode = "SPP%d" % tahun + "-%s" % unit_kd + "-%d" % no_urut
+        
         row.disabled = 'disabled' in values and 1 or 0      
-        print('XXXXXXXXXXXXX');
         DBSession.add(row)
         DBSession.flush()
         return row
@@ -267,6 +274,7 @@ class AddSchema(colander.Schema):
                           oid = "tahun_id")
     kode            = colander.SchemaNode(
                           colander.String(),
+                          missing=colander.drop,
                           title = "No. SPP"
                           )
     ap_spd_id       = colander.SchemaNode(

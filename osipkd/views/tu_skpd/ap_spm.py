@@ -50,6 +50,7 @@ class view_ap_spm(BaseViews):
         req = self.request
         params = req.params
         url_dict = req.matchdict
+        pk_id = 'id' in params and params['id'] and int(params['id']) or 0
         if url_dict['act']=='grid':
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             if url_dict['act']=='grid':
@@ -61,12 +62,14 @@ class view_ap_spm(BaseViews):
                 columns.append(ColumnDT('jenis'))
                 columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('nominal'))
+                columns.append(ColumnDT('posted'))
                 query = DBSession.query(Spm.id,
                                         Spm.kode,
                                         Spm.tanggal,
                                         Spp.jenis,
                                         Spm.nama,
-                                        Spp.nominal
+                                        Spp.nominal,
+                                        Spm.posted,
                                         )\
                             .filter(Spm.ap_spp_id==Spp.id,
                                     Spp.tahun_id==ses['tahun'],
@@ -74,13 +77,25 @@ class view_ap_spm(BaseViews):
 
                 rowTable = DataTables(req, Spm, query, columns)
                 return rowTable.output_result()
-
+        
+        elif url_dict['act']=='posting':
+            row = Spm()
+            row.id = pk_id
+            row.update_uid = self.request.user.id
+            row.posted = 1
+            
+            row = self.save(row)
+            self.request.session.flash('SPM sudah diposting.')
+            return row
+                
         elif url_dict['act']=='headofkode':
             term = 'term' in params and params['term'] or ''
-            q = DBSession.query(Spm.id, Spm.kode.label('spm_kd'), Spm.nama.label('spm_nm')
-                      ).join(Spp).filter(Spp.unit_id == ses['unit_id'],
-                           Spp.tahun_id==ses['tahun'],
-                           Spm.kode.ilike('%s%%' % term))        
+            q = DBSession.query(Spm.id, Spm.kode.label('spm_kd'), Spm.nama.label('spm_nm'), Spp.nominal.label('spm_n'),
+                      ).join(Spp
+                      ).filter(Spp.unit_id == ses['unit_id'],
+                               Spp.tahun_id==ses['tahun'],
+                               Spm.posted==1,
+                               Spm.kode.ilike('%%%s%%' % term))        
             rows = q.all()
             r = []
             for k in rows:
@@ -89,16 +104,18 @@ class view_ap_spm(BaseViews):
                 d['value']       = k[1]
                 d['kode']        = k[1]
                 d['nama']        = k[2]
+                d['nilai']       = k[3]
                 r.append(d)    
             return r
             
         elif url_dict['act']=='headofnama':
             term = 'term' in params and params['term'] or ''
-            q = DBSession.query(Spm.id, Spm.kode.label('spm_kd'), Spm.nama.label('spm_nm')).join(Spp
-                      ).filter(
-                      Spp.unit_id == ses['unit_id'],
-                      Spp.tahun_id==ses['tahun'],
-                      Spm.nama.ilike('%s%%' % term))
+            q = DBSession.query(Spm.id, Spm.kode.label('spm_kd'), Spm.nama.label('spm_nm'), Spp.nominal.label('spm_n'),
+                      ).join(Spp
+                      ).filter(Spp.unit_id == ses['unit_id'],
+                               Spp.tahun_id==ses['tahun'],
+                               Spm.posted==1,
+                               Spm.nama.ilike('%%%s%%' % term))
             rows = q.all()
             r = []
             for k in rows:
@@ -107,6 +124,7 @@ class view_ap_spm(BaseViews):
                 d['value']       = k[2]
                 d['kode']        = k[1]
                 d['nama']        = k[2]
+                d['nilai']       = k[3]
                 r.append(d)    
             return r
                 
@@ -135,6 +153,13 @@ class view_ap_spm(BaseViews):
         row.update_uid = self.request.user.id
         row.posted=0
         row.disabled=0   
+        
+        if not row.kode:
+            tahun    = self.session['tahun']
+            unit_kd  = self.session['unit_kd']
+            no_urut  = Spm.get_norut(row.id)+1
+            row.kode = "SPM%d" % tahun + "-%s" % unit_kd + "-%d" % no_urut
+            
         DBSession.add(row)
         DBSession.flush()
 
@@ -280,6 +305,7 @@ class AddSchema(colander.Schema):
     ttd_nip         = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          title = "TTD",
                           oid = "ttd_nip"
                           )
     ttd_nama        = colander.SchemaNode(
@@ -295,6 +321,7 @@ class AddSchema(colander.Schema):
     verified_nip    = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          title = "Verified",
                           oid = "verified_nip"
                           )
     verified_nama   = colander.SchemaNode(

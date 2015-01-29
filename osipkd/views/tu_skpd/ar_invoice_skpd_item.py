@@ -155,5 +155,5 @@ def view_delete(request):
     msg = 'Data sudah dihapus'
     query_id(request).delete()
     DBSession.flush()
-    nilai = "%d" % ARInvoice.get_nilai(row.ar_invoice_id)
+    nilai = ARInvoice.get_nilai(row.ar_invoice_id)
     return {'success':True, "msg":msg, 'jml_total':nilai}

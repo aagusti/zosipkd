@@ -8,7 +8,7 @@ from pyramid.httpexceptions import ( HTTPFound, )
 import colander
 from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
-from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
+from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem, Pegawai, Pejabat, Jabatan
 from osipkd.models.pemda_model import Unit
 from osipkd.models.apbd_tu import ARInvoice, ARInvoiceItem
     
@@ -102,7 +102,11 @@ class AddSchema(colander.Schema):
     bendahara_uid    = colander.SchemaNode(
                           colander.Integer(),
                           oid="bendahara_uid",
-                          title="Bendahara")                      
+                          title="Bendahara") 
+    bendahara_nip    = colander.SchemaNode(
+                          colander.String(),
+                          oid="bendahara_nip",
+                          title="Bendahara")                          
     bendahara_nm     = colander.SchemaNode(
                           colander.String(),
                           oid="bendahara_nm") 
@@ -146,8 +150,6 @@ def save(values, row=None):
     if not row:
         row = ARInvoice()
     row.from_dict(values)
-    #if not row.no_urut:
-    #      row.no_urut = ARInvoice.max_no_urut(row.tahun_id,row.unit_id)+1;
     DBSession.add(row)
     DBSession.flush()
     return row

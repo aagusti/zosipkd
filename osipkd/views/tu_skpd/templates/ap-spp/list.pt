@@ -116,7 +116,7 @@
             <th>Jenis</th>
             <th>Uraian</th>
             <th>Nilai</th>
-            <th>Posted</th>
+            <th>Posting</th>
         </tr>
       </thead>
       <tbody>
@@ -130,11 +130,12 @@
       var oTableUrl = "/ap-spp/act/grid";
       var tb_array = [
           '<div class="btn-group pull-left">',
-          '	<button id="btn_tambah" class="btn btn btn-primary" type="button">Tambah</button>',
-          '	<button id="btn_edit" class="btn btn btn-primary" type="button">Edit</button>',
-          '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',
-          '	<button id="btn_print" class="btn btn btn-primary" type="button">Cetak</button>',
-          ' <button id="btn_close" class="btn btn-warning" type="button" >Tutup</button>',
+          '	<button id="btn_tambah"  class="btn btn btn-primary" type="button">Tambah</button>',
+          '	<button id="btn_edit"    class="btn btn btn-primary" type="button">Edit</button>',
+          '	<button id="btn_delete"  class="btn btn btn-danger"  type="button">Hapus</button>',
+          '	<button id="btn_print"   class="btn btn btn-primary" type="button">Cetak</button>',
+          '	<button id="btn_posting" class="btn btn btn-success" type="button">Posting</button>',
+          ' <button id="btn_close"   class="btn btn-warning"     type="button">Tutup</button>',
           '	&nbsp;',
           '</div>',
       ];
@@ -181,7 +182,7 @@
                 "mRender"  : function (data, type, full) {
                              return formatNumber(data);}
             },{
-                "aTargets" : [3], // Column number which needs to be modified
+                "aTargets" : [3], // Untuk Jenis
                 "mRender"  : function (data, type, full) {
                     if (data == "1") {
                         return 'UP';
@@ -193,6 +194,15 @@
                         return 'LS';
                     }
                 }
+            },{
+                "aTargets" : [6], // Untuk Posted
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return 'N';
+                    } else if (data == "1") {
+                        return 'Y';
+                    }
+                }
             }],
             "aoColumns": [
                 null, 
@@ -201,7 +211,7 @@
                 {"sWidth": "30px"}, 
                 {"sWidth": "200px"},
                 {"sWidth": "30px"},
-                {"sWidth": "30px"},
+                {"sWidth": "30px","class":"right"},
             ],
             
             "fnRowCallback": function (nRow, aData, iDisplayIndex) {

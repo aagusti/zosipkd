@@ -115,6 +115,7 @@
             <th>Kegiatan</th>
             <th>Uraian</th>
             <th>Nilai</th>
+            <th>Posting</th>
         </tr>
       </thead>
       <tbody>
@@ -164,7 +165,7 @@
             },{
                 "bSearchable": false,
                 "bSortable"  : false,
-                "aTargets"   : [3,4,6]
+                "aTargets"   : [3,4,6,7]
             },{
                 "bSearchable": true,
                 "bSortable"  : false,
@@ -187,6 +188,15 @@
                         return 'LS';
                     }
                 }
+            },{
+                "aTargets" : [7], // Column number which needs to be modified
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return 'N';
+                    } else if (data == "1") {
+                        return 'Y';
+                    }
+                }
             }],
             "aoColumns": [
                 null, {
@@ -201,6 +211,8 @@
                     "sWidth": "200px",
                 }, {
                     "sWidth": "70px",
+                }, {
+                    "sWidth": "20px", "class":"right"
                 }
             ],
             "fnRowCallback": function (nRow, aData, iDisplayIndex) {

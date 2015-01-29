@@ -115,6 +115,7 @@
             <th>Jenis</th>
             <th>Uraian</th>
             <th>Nilai</th>
+            <th>Posting</th>
         </tr>
       </thead>
       <tbody>
@@ -128,11 +129,12 @@
       var oTableUrl = "/ap-spm/act/grid";
       var tb_array = [
           '<div class="btn-group pull-left">',
-          '	<button id="btn_tambah" class="btn btn btn-primary" type="button">Tambah</button>',
-          '	<button id="btn_edit" class="btn btn btn-primary" type="button">Edit</button>',
-          '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',
-          '	<button id="btn_print" class="btn btn btn-primary" type="button">Cetak</button>',
-          ' <button id="btn_close" class="btn btn-warning" type="button" >Tutup</button>',
+          '	<button id="btn_tambah"   class="btn btn btn-primary" type="button">Tambah</button>',
+          '	<button id="btn_edit"     class="btn btn btn-primary" type="button">Edit</button>',
+          '	<button id="btn_delete"   class="btn btn btn-danger"  type="button">Hapus</button>',
+          '	<button id="btn_print"    class="btn btn btn-primary" type="button">Cetak</button>',
+          '	<button id="btn_posting"  class="btn btn btn-success" type="button">Posting</button>',
+          ' <button id="btn_close"    class="btn btn-warning"     type="button" >Tutup</button>',
           '	&nbsp;',
           '</div>',
       ];
@@ -167,7 +169,7 @@
                 "mRender"  : function (data, type, full) {
                 return formatNumber(data);}
             },{
-                "aTargets" : [3], // Column number which needs to be modified
+                "aTargets" : [3], // Untuk Jenis
                 "mRender"  : function (data, type, full) {
                     if (data == "1") {
                         return 'UP';
@@ -179,6 +181,15 @@
                         return 'LS';
                     }
                 }
+            },{
+                "aTargets" : [6], // Untuk Posting
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return 'N';
+                    } else if (data == "1") {
+                        return 'Y';
+                    }
+                }
             }],
             "aoColumns": [
                 null, 
@@ -186,7 +197,8 @@
                 {"sWidth": "30px"}, 
                 {"sWidth": "30px"}, 
                 {"sWidth": "200px"}, 
-                {"sWidth": "100px"}
+                {"sWidth": "100px"},
+                {"sWidth": "20px","class":"right"},
             ],
             
             "fnRowCallback": function (nRow, aData, iDisplayIndex) {
@@ -224,6 +236,36 @@
             }
         });
         /**********************************************************************/
+        $('#btn_posting').click(function () {
+            if (mID) {
+                var posting = confirm('Posting data ini?');
+                if (posting == true) {
+                    $.ajax({
+                        type: "POST",
+                        url : "/ap-spm/act/posting",
+                        data: "id="+mID,
+                        success: function (html) {
+                            if (html.success == true) {
+                                $("#errors").css('display', 'inline', 'important');
+                                $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                                oTable.fnReloadAjax(oTableUrl);
+                            } else {
+                                $("#errors").css('display', 'inline', 'important');
+                                $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                            }
+                        },
+                        beforeSend: function () {
+                            $("#errors").css('display', 'inline', 'important');
+                            $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+                        }
+                    });
+                    return false;
+                };
+            } else {
+                alert('Silahkan pilih data yang akan diPosting');
+            }
+        });
+        
         $('#btn_tambah').click(function () {
             window.location = '/ap-spm/add';
         });

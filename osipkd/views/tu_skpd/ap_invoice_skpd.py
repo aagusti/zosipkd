@@ -62,6 +62,7 @@ class view_ap_invoice_skpd(BaseViews):
                 columns.append(ColumnDT('kegiatan_sub_nm'))
                 columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('amount'))
+                columns.append(ColumnDT('posted'))
 
                 query = DBSession.query(APInvoice.id,
                           APInvoice.kode,
@@ -70,6 +71,7 @@ class view_ap_invoice_skpd(BaseViews):
                           KegiatanSub.nama.label('kegiatan_sub_nm'),
                           APInvoice.nama,
                           APInvoice.amount,
+                          APInvoice.posted,
                         ).outerjoin(APInvoiceItem
                         ).filter(APInvoice.tahun_id==ses['tahun'],
                               APInvoice.unit_id==ses['unit_id'],
@@ -81,6 +83,8 @@ class view_ap_invoice_skpd(BaseViews):
                           APInvoice.tanggal,
                           KegiatanSub.nama.label('kegiatan_sub_nm'),
                           APInvoice.nama,
+                          APInvoice.amount,
+                          APInvoice.posted,
                         )
                 rowTable = DataTables(req, APInvoice, query, columns)
                 return rowTable.output_result()
@@ -218,8 +222,10 @@ def save(values, row=None):
     if not row:
         row = APInvoice()
     row.from_dict(values)
+    
     if not row.no_urut:
         row.no_urut = APInvoice.max_no_urut(row.tahun_id,row.unit_id)+1;
+            
     DBSession.add(row)
     DBSession.flush()
     return row

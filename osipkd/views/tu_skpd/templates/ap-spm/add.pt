@@ -115,26 +115,19 @@
 
         <!--nip------------------------------------------------------------------------>
         <div class="form-group"> 
-          <div tal:define="field form['ttd_uid']" id="item-${field.oid}">
+          <div tal:define="field form['ttd_uid']" style="display: none;">
+              ${structure:field.serialize()}
+          </div>
+          <div tal:define="field form['ttd_nip']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
-            <div class="col-md-1">
-               ${structure:field.serialize()}
-              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                 tal:repeat="error field.error.messages()">
-                 ${error}</p>
-            </div>
-          </div>
-
-          <div tal:define="field form['ttd_nip']" id="item-${field.oid}">
             <div class="col-md-2">
                ${structure:field.serialize()}
               <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                  tal:repeat="error field.error.messages()">
                  ${error}</p>
             </div>
-          </div>
-                
+          </div>  
           <!---ttd_nama------------------------------------------------------------------->
             <div tal:define="field form['ttd_nama']" id="item-${field.oid}">
               <div class="col-md-3">
@@ -198,18 +191,12 @@
 
         <!--verified_nip-------------------------------------------------------------------->
         <div class="form-group"> 
-          <div tal:define="field form['verified_uid']" id="item-${field.oid}">
+          <div tal:define="field form['verified_uid']" style="display: none;">
+              ${structure:field.serialize()}
+          </div>
+          <div tal:define="field form['verified_nip']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
-            <div class="col-md-1">
-               ${structure:field.serialize()}
-              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                 tal:repeat="error field.error.messages()">
-                 ${error}</p>
-            </div>
-          </div>
-
-          <div tal:define="field form['verified_nip']" id="item-${field.oid}">
             <div class="col-md-2">
                ${structure:field.serialize()}
               <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
@@ -217,7 +204,6 @@
                  ${error}</p>
             </div>
           </div>
-                
           <!---veriffied_nama------------------------------------------------------------------->
           <div tal:define="field form['verified_nama']" id="item-${field.oid}">
             <div class="col-md-3">
