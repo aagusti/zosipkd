@@ -358,6 +358,38 @@ class ViewAnggaranLap(BaseViews):
             response.write(pdf)
             return response
 
+        ## Pendapatan Lampiran
+        elif url_dict['act']=='11' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_1_1*KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], 
+                   Kegiatan.kode=='0.00.00.10')\
+				         .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id)
+
+            generator = r1011Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
         ## BTL RKA
         elif url_dict['act']=='21' :
             subq1 = DBSession.query(Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
@@ -387,6 +419,38 @@ class ViewAnggaranLap(BaseViews):
                 .order_by(Rekening.kode).all()                    
 
             generator = r102Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ## BTL RKA Lampiran
+        elif url_dict['act']=='211' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_1_1*KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], 
+                   Kegiatan.kode=='0.00.00.21')\
+           			 .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id,)
+
+            generator = r1021Generator()
             pdf = generator.generate(query)
             response=req.response
             response.content_type="application/pdf"
@@ -437,6 +501,38 @@ class ViewAnggaranLap(BaseViews):
             response.write(pdf)
             return response
             
+        ## BL RKA Ikhtisar
+        elif url_dict['act']=='2211' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_1_1*KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], 
+                   KegiatanSub.id==self.request.params['id'])\
+         		     .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id,)
+
+            generator = r1041Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+		
         ## Biaya RKA
         elif url_dict['act']=='3' :
             subq1 = DBSession.query(Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
@@ -509,6 +605,37 @@ class ViewAnggaranLap(BaseViews):
             response.write(pdf)
             return response
 
+        ## Biaya Terima RKA Lampiran
+        elif url_dict['act']=='311' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_1_1*KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], Kegiatan.kode=='0.00.00.31')\
+                 .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id,)
+
+            generator = r1061Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
         ## Biaya Keluar RKA
         elif url_dict['act']=='32' :
             subq1 = DBSession.query(Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
@@ -538,6 +665,38 @@ class ViewAnggaranLap(BaseViews):
                 .order_by(Rekening.kode).all()                    
 
             generator = r107Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ## Biaya Keluar RKA Lampiran
+        elif url_dict['act']=='321' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_1_1*KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], 
+                   Kegiatan.kode=='0.00.00.32')\
+                 .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id,)
+
+            generator = r1071Generator()
             pdf = generator.generate(query)
             response=req.response
             response.content_type="application/pdf"
@@ -657,6 +816,38 @@ class ViewAnggaranLap(BaseViews):
             response.write(pdf)
             return response
 
+        ## Pendapatan DPA Lampiran
+        elif url_dict['act']=='11' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], 
+                   Kegiatan.kode=='0.00.00.10')\
+                 .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id,)
+
+            generator = r2011Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+			
         ## BTL DPA
         elif url_dict['act']=='21' :
             subq1 = DBSession.query(Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
@@ -690,6 +881,38 @@ class ViewAnggaranLap(BaseViews):
                 .order_by(Rekening.kode).all()                    
 
             generator = r202Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ## BTL DPA Lampiran
+        elif url_dict['act']=='211' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], 
+                  Kegiatan.kode=='0.00.00.21')\
+                 .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id,)
+
+            generator = r2021Generator()
             pdf = generator.generate(query)
             response=req.response
             response.content_type="application/pdf"
@@ -753,7 +976,39 @@ class ViewAnggaranLap(BaseViews):
             response.write(pdf)
             return response
 
-        ## Biaya DPA
+         ## BL DPA Ikhtisar
+        elif url_dict['act']=='2211' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], 
+                   KegiatanSub.id==self.request.params['id'])\
+                 .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id,)
+
+            generator = r2041Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+       ## Biaya DPA
         elif url_dict['act']=='3' :
             subq1 = DBSession.query(Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
                 (KegiatanItem.vol_2_1* KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('jml2'),
@@ -827,6 +1082,38 @@ class ViewAnggaranLap(BaseViews):
             response.write(pdf)
             return response
 
+        ## Biaya Terima DPA Lampiran
+        elif url_dict['act']=='311' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], 
+                   Kegiatan.kode=='0.00.00.31')\
+                 .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id,)
+
+            generator = r2061Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
         ## Biaya Keluar DPA
         elif url_dict['act']=='32' :
             subq1 = DBSession.query(Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
@@ -857,6 +1144,38 @@ class ViewAnggaranLap(BaseViews):
                 .order_by(Rekening.kode).all()                    
 
             generator = r207Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ## Biaya Keluar DPA Lampiran
+        elif url_dict['act']=='321' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], 
+                   Kegiatan.kode=='0.00.00.32')\
+			           .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id,)
+
+            generator = r2071Generator()
             pdf = generator.generate(query)
             response=req.response
             response.content_type="application/pdf"
@@ -968,6 +1287,38 @@ class ViewAnggaranLap(BaseViews):
             response.write(pdf)
             return response
 
+        ## Pendapatan RPKA Lampiran
+        elif url_dict['act']=='11' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_3_1*KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], 
+                   Kegiatan.kode=='0.00.00.10')\
+			           .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id,)
+
+            generator = r3011Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
         ## BTL RPKA
         elif url_dict['act']=='21' :
             subq1 = DBSession.query(Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
@@ -1000,6 +1351,38 @@ class ViewAnggaranLap(BaseViews):
                 .order_by(Rekening.kode).all()                    
 
             generator = r302Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ## BTL RPKA Lampiran
+        elif url_dict['act']=='211' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_3_1*KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], 
+                   Kegiatan.kode=='0.00.00.21')\
+			           .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id,)
+
+            generator = r3021Generator()
             pdf = generator.generate(query)
             response=req.response
             response.content_type="application/pdf"
@@ -1056,6 +1439,38 @@ class ViewAnggaranLap(BaseViews):
                    KegiatanSub.id==self.request.params['id'])
 
             generator = r304Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ## BL RPKA Lampiran
+        elif url_dict['act']=='2211' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_3_1*KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], 
+                   KegiatanSub.id==self.request.params['id'])\
+			           .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id,)
+
+            generator = r3041Generator()
             pdf = generator.generate(query)
             response=req.response
             response.content_type="application/pdf"
@@ -1142,7 +1557,39 @@ class ViewAnggaranLap(BaseViews):
             response.write(pdf)
             
             return response
-            
+
+        ## Biaya Terima RPKA Lampiran
+        elif url_dict['act']=='311' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_3_1*KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], 
+                   Kegiatan.kode=='0.00.00.31')\
+			           .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id,)
+
+            generator = r3061Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+             
         ## Biaya Keluar
         elif url_dict['act']=='32' :
             subq1 = DBSession.query(Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
@@ -1176,6 +1623,38 @@ class ViewAnggaranLap(BaseViews):
                 .order_by(Rekening.kode).all()                    
 
             generator = r307Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ## Biaya Keluar Lampiran
+        elif url_dict['act']=='321' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_3_1*KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], 
+                   Kegiatan.kode=='0.00.00.32')\
+			           .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id,)
+
+            generator = r3071Generator()
             pdf = generator.generate(query)
             response=req.response
             response.content_type="application/pdf"
@@ -1287,6 +1766,38 @@ class ViewAnggaranLap(BaseViews):
             response.write(pdf)
             return response
 
+        ## Pendapatan DPPA Lampiran
+        elif url_dict['act']=='11' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], 
+                   Kegiatan.kode=='0.00.00.10')\
+			           .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id,)
+
+            generator = r4011Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
         ## BTL DPPA
         elif url_dict['act']=='21' :
             subq1 = DBSession.query(Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
@@ -1319,6 +1830,38 @@ class ViewAnggaranLap(BaseViews):
                 .order_by(Rekening.kode).all()                    
 
             generator = r402Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ## BTL DPPA Lampiran
+        elif url_dict['act']=='211' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], 
+                   Kegiatan.kode=='0.00.00.21')\
+			           .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id,)
+
+            generator = r4021Generator()
             pdf = generator.generate(query)
             response=req.response
             response.content_type="application/pdf"
@@ -1373,6 +1916,38 @@ class ViewAnggaranLap(BaseViews):
                    KegiatanSub.id==self.request.params['id'])
 
             generator = r404Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ## BL DPPA Lampiran
+        elif url_dict['act']=='2211' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], 
+                   KegiatanSub.id==self.request.params['id'])\
+			           .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id,)
+
+            generator = r4041Generator()
             pdf = generator.generate(query)
             response=req.response
             response.content_type="application/pdf"
@@ -1457,6 +2032,38 @@ class ViewAnggaranLap(BaseViews):
             response.write(pdf)
             return response
 
+        ## Biaya Terima DPPA Lampiran
+        elif url_dict['act']=='311' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], 
+                   Kegiatan.kode=='0.00.00.31')\
+			           .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id,)
+
+            generator = r4061Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
         ## Biaya Keluar DPPA
         elif url_dict['act']=='32' :
             subq1 = DBSession.query(Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
@@ -1489,6 +2096,38 @@ class ViewAnggaranLap(BaseViews):
                 .order_by(Rekening.kode).all()                    
 
             generator = r407Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ## Biaya Keluar DPPA Lampiran
+        elif url_dict['act']=='321' :
+            subq = DBSession.query(Unit.id, Urusan.kode, Urusan.nama)\
+                 .filter(Unit.urusan_id==Urusan.id,
+                 Unit.id==self.session['unit_id']).subquery()
+
+            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                 Urusan.nama.label('urusan_nm'), subq.c.kode.label('urusan_kd1'), subq.c.nama.label('urusan_nm1'),
+                 Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                 KegiatanSub.lokasi, KegiatanSub.id, func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran')
+                 ).join(Unit).join(Kegiatan).join(Program).join(Urusan).join(KegiatanItem)\
+                 .filter(subq.c.id==Unit.id,
+                   KegiatanSub.tahun_id==self.session['tahun'],
+                   KegiatanSub.unit_id==self.session['unit_id'], 
+                   Kegiatan.kode=='0.00.00.32')\
+			           .group_by(KegiatanSub.tahun_id, Urusan.kode,
+                 Urusan.nama, subq.c.kode, subq.c.nama,
+                 Unit.id, Unit.kode, Unit.nama,
+                 Program.kode, Program.nama,
+                 Kegiatan.kode, Kegiatan.nama,
+                 KegiatanSub.lokasi, KegiatanSub.id,)
+
+            generator = r4071Generator()
             pdf = generator.generate(query)
             response=req.response
             response.content_type="application/pdf"
@@ -2121,8 +2760,6 @@ class r001Generator(JasperGenerator):
 
     def generate_xml(self, tobegreeted):
         """Generates the XML File used by Jasperreports"""
-        #return open('/home/aagusti/env/osipkd/osipkd/reports/apbd/xml/R001.xml').read()
-        #ET.SubElement(self.root, 'generator').text = __revision__
         xml_a  =  ET.SubElement(self.root, 'master')
         for kode, uraian in tobegreeted:
             xml_greeting  =  ET.SubElement(xml_a, 'urusan')
@@ -2439,6 +3076,64 @@ class r101Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "customer").text = customer
         return self.root
 
+class r1011Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_1.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_1_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_1_1*KegiatanItem.vol_1_2).label('volume1'),
+                    KegiatanItem.hsat_1.label('harga1'),KegiatanItem.sat_1_1,KegiatanItem.sat_1_2,
+                    (KegiatanItem.vol_1_1* KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('jumlah1'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id
+                    ).order_by(Rekening.kode).all()
+                    
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume1)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga1)
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_1_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_1_2
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah1)
+
+        return self.root
+
 class r102Generator(JasperGenerator):
     def __init__(self):
         super(r102Generator, self).__init__()
@@ -2465,6 +3160,64 @@ class r102Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
             ET.SubElement(xml_greeting, "jumlah1").text = unicode(row.jumlah1)
             ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root
+
+class r1021Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_1.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_1_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_1_1*KegiatanItem.vol_1_2).label('volume1'),
+                    KegiatanItem.hsat_1.label('harga1'),KegiatanItem.sat_1_1,KegiatanItem.sat_1_2,
+                    (KegiatanItem.vol_1_1* KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('jumlah1'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id
+                    ).order_by(Rekening.kode).all()
+
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume1)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga1)
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_1_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_1_2
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah1)
+
         return self.root
 
 class r103Generator(JasperGenerator):
@@ -2577,6 +3330,64 @@ class r104Generator(JasperGeneratorWithSubreport):
                 ET.SubElement(xml_c, "jumlah1").text =unicode(row3.jumlah1)
         return self.root
 
+class r1041Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_1.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_1_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_1_1*KegiatanItem.vol_1_2).label('volume1'),
+                    KegiatanItem.hsat_1.label('harga1'),KegiatanItem.sat_1_1,KegiatanItem.sat_1_2,
+                    (KegiatanItem.vol_1_1* KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('jumlah1'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id
+                    ).order_by(Rekening.kode).all()
+
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume1)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga1)
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_1_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_1_2
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah1)
+
+        return self.root
+
 class r105Generator(JasperGenerator):
     def __init__(self):
         super(r105Generator, self).__init__()
@@ -2633,6 +3444,64 @@ class r106Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
 
+class r1061Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_1.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_1_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_1_1*KegiatanItem.vol_1_2).label('volume1'),
+                    KegiatanItem.hsat_1.label('harga1'),KegiatanItem.sat_1_1,KegiatanItem.sat_1_2,
+                    (KegiatanItem.vol_1_1* KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('jumlah1'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id
+                    ).order_by(Rekening.kode).all()
+
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume1)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga1)
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_1_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_1_2
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah1)
+
+        return self.root
+
 class r107Generator(JasperGenerator):
     def __init__(self):
         super(r107Generator, self).__init__()
@@ -2661,6 +3530,64 @@ class r107Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
         
+class r1071Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_1.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_1_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_1_1*KegiatanItem.vol_1_2).label('volume1'),
+                    KegiatanItem.hsat_1.label('harga1'),KegiatanItem.sat_1_1,KegiatanItem.sat_1_2,
+                    (KegiatanItem.vol_1_1* KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('jumlah1'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id
+                    ).order_by(Rekening.kode).all()
+
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume1)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga1)
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_1_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_1_2
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah1)
+
+        return self.root
+
 class r200Generator(JasperGeneratorWithSubreport):
     def __init__(self):
 
@@ -2766,6 +3693,64 @@ class r201Generator(JasperGenerator):
             ET.SubElement(xml_a, "customer").text = customer
         return self.root
 
+class r2011Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_2.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_2_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2).label('volume1'),
+                    KegiatanItem.hsat_2.label('harga1'),KegiatanItem.sat_2_1,KegiatanItem.sat_2_2,
+                    (KegiatanItem.vol_2_1* KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('jumlah1'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id
+                    ).order_by(Rekening.kode).all()
+
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume1)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga1)
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_2_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_2_2
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah1)
+
+        return self.root
+
 class r202Generator(JasperGenerator):
     """Jasper-Generator for Greetingcards"""
     def __init__(self):
@@ -2794,6 +3779,64 @@ class r202Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
             ET.SubElement(xml_greeting, "jumlah2").text = unicode(row.jumlah2)
             ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root
+
+class r2021Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_2.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_2_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2).label('volume1'),
+                    KegiatanItem.hsat_2.label('harga1'),KegiatanItem.sat_2_1,KegiatanItem.sat_2_2,
+                    (KegiatanItem.vol_2_1* KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('jumlah1'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id
+                    ).order_by(Rekening.kode).all()
+
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume1)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga1)
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_2_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_2_2
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah1)
+
         return self.root
 
 class r203Generator(JasperGenerator):
@@ -2929,6 +3972,64 @@ class r204Generator(JasperGeneratorWithSubreport):
 
         return self.root
 
+class r2041Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_2.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_2_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2).label('volume1'),
+                    KegiatanItem.hsat_2.label('harga1'),KegiatanItem.sat_2_1,KegiatanItem.sat_2_2,
+                    (KegiatanItem.vol_2_1* KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('jumlah1'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id
+                    ).order_by(Rekening.kode).all()
+
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume2)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga2)
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_2_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_2_2
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah2)
+
+        return self.root
+
 class r205Generator(JasperGenerator):
     """Jasper-Generator for Greetingcards"""
     def __init__(self):
@@ -2989,6 +4090,64 @@ class r206Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
 
+class r2061Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_2.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_2_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2).label('volume1'),
+                    KegiatanItem.hsat_2.label('harga1'),KegiatanItem.sat_2_1,KegiatanItem.sat_2_2,
+                    (KegiatanItem.vol_2_1* KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('jumlah1'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id
+                    ).order_by(Rekening.kode).all()
+
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume1)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga1)
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_2_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_2_2
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah1)
+
+        return self.root
+
 class r207Generator(JasperGenerator):
     """Jasper-Generator for Greetingcards"""
     def __init__(self):
@@ -3017,6 +4176,64 @@ class r207Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "trw3").text = unicode(row.trw3)
             ET.SubElement(xml_greeting, "trw4").text = unicode(row.trw4)            
             ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root
+
+class r2071Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_2.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_2_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2).label('volume1'),
+                    KegiatanItem.hsat_2.label('harga1'),KegiatanItem.sat_2_1,KegiatanItem.sat_2_2,
+                    (KegiatanItem.vol_2_1* KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('jumlah1'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id
+                    ).order_by(Rekening.kode).all()
+
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume1)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga1)
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_2_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_2_2
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah1)
+
         return self.root
 
 class r300Generator(JasperGeneratorWithSubreport):
@@ -3123,6 +4340,71 @@ class r301Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
 
+class r3011Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_3.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_3_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2).label('volume1'),
+                    (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2).label('volume2'),
+                    KegiatanItem.hsat_2.label('harga1'),KegiatanItem.sat_2_1,KegiatanItem.sat_2_2,
+                    KegiatanItem.hsat_3.label('harga2'),KegiatanItem.sat_3_1,KegiatanItem.sat_3_2,
+                    (KegiatanItem.vol_2_1* KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('jumlah1'),
+                    (KegiatanItem.vol_3_1* KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('jumlah2'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id).order_by(Rekening.kode).all()
+
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume1").text =unicode(row3.volume1)
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume2)
+                ET.SubElement(xml_c, "harga1").text =unicode(row3.harga1)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga2)
+                ET.SubElement(xml_c, "satuan11").text =row3.sat_2_1
+                ET.SubElement(xml_c, "satuan12").text =row3.sat_2_2
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_3_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_3_2
+                ET.SubElement(xml_c, "jumlah1").text =unicode(row3.jumlah1)
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah2)
+
+        return self.root
+
 class r302Generator(JasperGenerator):
     """Jasper-Generator for Greetingcards"""
     def __init__(self):
@@ -3153,6 +4435,71 @@ class r302Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "trw3").text = unicode(row.trw3)
             ET.SubElement(xml_greeting, "trw4").text = unicode(row.trw4)
             ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root
+
+class r3021Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_3.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_3_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2).label('volume1'),
+                    (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2).label('volume2'),
+                    KegiatanItem.hsat_2.label('harga1'),KegiatanItem.sat_2_1,KegiatanItem.sat_2_2,
+                    KegiatanItem.hsat_3.label('harga2'),KegiatanItem.sat_3_1,KegiatanItem.sat_3_2,
+                    (KegiatanItem.vol_2_1* KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('jumlah1'),
+                    (KegiatanItem.vol_3_1* KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('jumlah2'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id).order_by(Rekening.kode).all()
+
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume1").text =unicode(row3.volume1)
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume2)
+                ET.SubElement(xml_c, "harga1").text =unicode(row3.harga1)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga2)
+                ET.SubElement(xml_c, "satuan11").text =row3.sat_2_1
+                ET.SubElement(xml_c, "satuan12").text =row3.sat_2_2
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_3_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_3_2
+                ET.SubElement(xml_c, "jumlah1").text =unicode(row3.jumlah1)
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah2)
+
         return self.root
 
 class r303Generator(JasperGenerator):
@@ -3333,6 +4680,71 @@ class r304Generator(JasperGeneratorWithSubreport):
 
         return self.root
 
+class r3041Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_3.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_3_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2).label('volume1'),
+                    (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2).label('volume2'),
+                    KegiatanItem.hsat_2.label('harga1'),KegiatanItem.sat_2_1,KegiatanItem.sat_2_2,
+                    KegiatanItem.hsat_3.label('harga2'),KegiatanItem.sat_3_1,KegiatanItem.sat_3_2,
+                    (KegiatanItem.vol_2_1* KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('jumlah1'),
+                    (KegiatanItem.vol_3_1* KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('jumlah2'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id).order_by(Rekening.kode).all()
+
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume1").text =unicode(row3.volume1)
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume2)
+                ET.SubElement(xml_c, "harga1").text =unicode(row3.harga1)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga2)
+                ET.SubElement(xml_c, "satuan11").text =row3.sat_2_1
+                ET.SubElement(xml_c, "satuan12").text =row3.sat_2_2
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_3_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_3_2
+                ET.SubElement(xml_c, "jumlah1").text =unicode(row3.jumlah1)
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah2)
+
+        return self.root
+	
 class r305Generator(JasperGenerator):
     """Jasper-Generator for Greetingcards"""
     def __init__(self):
@@ -3397,6 +4809,71 @@ class r306Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
 
+class r3061Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_3.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_3_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2).label('volume1'),
+                    (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2).label('volume2'),
+                    KegiatanItem.hsat_2.label('harga1'),KegiatanItem.sat_2_1,KegiatanItem.sat_2_2,
+                    KegiatanItem.hsat_3.label('harga2'),KegiatanItem.sat_3_1,KegiatanItem.sat_3_2,
+                    (KegiatanItem.vol_2_1* KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('jumlah1'),
+                    (KegiatanItem.vol_3_1* KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('jumlah2'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id).order_by(Rekening.kode).all()
+
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume1").text =unicode(row3.volume1)
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume2)
+                ET.SubElement(xml_c, "harga1").text =unicode(row3.harga1)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga2)
+                ET.SubElement(xml_c, "satuan11").text =row3.sat_2_1
+                ET.SubElement(xml_c, "satuan12").text =row3.sat_2_2
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_3_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_3_2
+                ET.SubElement(xml_c, "jumlah1").text =unicode(row3.jumlah1)
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah2)
+
+        return self.root
+
 class r307Generator(JasperGenerator):
     """Jasper-Generator for Greetingcards"""
     def __init__(self):
@@ -3429,6 +4906,71 @@ class r307Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
         
+class r3071Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_3.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_3_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2).label('volume1'),
+                    (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2).label('volume2'),
+                    KegiatanItem.hsat_2.label('harga1'),KegiatanItem.sat_2_1,KegiatanItem.sat_2_2,
+                    KegiatanItem.hsat_3.label('harga2'),KegiatanItem.sat_3_1,KegiatanItem.sat_3_2,
+                    (KegiatanItem.vol_2_1* KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('jumlah1'),
+                    (KegiatanItem.vol_3_1* KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('jumlah2'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id).order_by(Rekening.kode).all()
+
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume1").text =unicode(row3.volume1)
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume2)
+                ET.SubElement(xml_c, "harga1").text =unicode(row3.harga1)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga2)
+                ET.SubElement(xml_c, "satuan11").text =row3.sat_2_1
+                ET.SubElement(xml_c, "satuan12").text =row3.sat_2_2
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_3_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_3_2
+                ET.SubElement(xml_c, "jumlah1").text =unicode(row3.jumlah1)
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah2)
+
+        return self.root
+
 class r400Generator(JasperGeneratorWithSubreport):
     def __init__(self):
 
@@ -3533,6 +5075,71 @@ class r401Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
 
+class r4011Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_4.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_4_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2).label('volume1'),
+                    (KegiatanItem.vol_4_1*KegiatanItem.vol_4_2).label('volume2'),
+                    KegiatanItem.hsat_3.label('harga1'),KegiatanItem.sat_3_1,KegiatanItem.sat_3_2,
+                    KegiatanItem.hsat_4.label('harga2'),KegiatanItem.sat_4_1,KegiatanItem.sat_4_2,
+                    (KegiatanItem.vol_3_1* KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('jumlah1'),
+                    (KegiatanItem.vol_4_1* KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('jumlah2'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id)
+
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume1").text =unicode(row3.volume1)
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume2)
+                ET.SubElement(xml_c, "harga1").text =unicode(row3.harga1)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga2)
+                ET.SubElement(xml_c, "satuan11").text =row3.sat_3_1
+                ET.SubElement(xml_c, "satuan12").text =row3.sat_3_2
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_4_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_4_2
+                ET.SubElement(xml_c, "jumlah1").text =unicode(row3.jumlah1)
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah2)
+
+        return self.root
+
 class r402Generator(JasperGenerator):
     """Jasper-Generator for Greetingcards"""
     def __init__(self):
@@ -3563,6 +5170,71 @@ class r402Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "trw3").text = unicode(row.trw3)
             ET.SubElement(xml_greeting, "trw4").text = unicode(row.trw4)
             ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root
+
+class r4021Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_4.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_4_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2).label('volume1'),
+                    (KegiatanItem.vol_4_1*KegiatanItem.vol_4_2).label('volume2'),
+                    KegiatanItem.hsat_3.label('harga1'),KegiatanItem.sat_3_1,KegiatanItem.sat_3_2,
+                    KegiatanItem.hsat_4.label('harga2'),KegiatanItem.sat_4_1,KegiatanItem.sat_4_2,
+                    (KegiatanItem.vol_3_1* KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('jumlah1'),
+                    (KegiatanItem.vol_4_1* KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('jumlah2'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id)
+
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume1").text =unicode(row3.volume1)
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume2)
+                ET.SubElement(xml_c, "harga1").text =unicode(row3.harga1)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga2)
+                ET.SubElement(xml_c, "satuan11").text =row3.sat_3_1
+                ET.SubElement(xml_c, "satuan12").text =row3.sat_3_2
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_4_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_4_2
+                ET.SubElement(xml_c, "jumlah1").text =unicode(row3.jumlah1)
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah2)
+
         return self.root
 
 class r403Generator(JasperGenerator):
@@ -3718,6 +5390,71 @@ class r404Generator(JasperGeneratorWithSubreport):
 
         return self.root
 
+class r4041Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_4.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_4_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2).label('volume1'),
+                    (KegiatanItem.vol_4_1*KegiatanItem.vol_4_2).label('volume2'),
+                    KegiatanItem.hsat_3.label('harga1'),KegiatanItem.sat_3_1,KegiatanItem.sat_3_2,
+                    KegiatanItem.hsat_4.label('harga2'),KegiatanItem.sat_4_1,KegiatanItem.sat_4_2,
+                    (KegiatanItem.vol_3_1* KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('jumlah1'),
+                    (KegiatanItem.vol_4_1* KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('jumlah2'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id)
+
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume1").text =unicode(row3.volume1)
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume2)
+                ET.SubElement(xml_c, "harga1").text =unicode(row3.harga1)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga2)
+                ET.SubElement(xml_c, "satuan11").text =row3.sat_3_1
+                ET.SubElement(xml_c, "satuan12").text =row3.sat_3_2
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_4_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_4_2
+                ET.SubElement(xml_c, "jumlah1").text =unicode(row3.jumlah1)
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah2)
+
+        return self.root
+
 class r405Generator(JasperGenerator):
     """Jasper-Generator for Greetingcards"""
     def __init__(self):
@@ -3782,6 +5519,71 @@ class r406Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
 
+class r4061Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_4.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_4_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2).label('volume1'),
+                    (KegiatanItem.vol_4_1*KegiatanItem.vol_4_2).label('volume2'),
+                    KegiatanItem.hsat_3.label('harga1'),KegiatanItem.sat_3_1,KegiatanItem.sat_3_2,
+                    KegiatanItem.hsat_4.label('harga2'),KegiatanItem.sat_4_1,KegiatanItem.sat_4_2,
+                    (KegiatanItem.vol_3_1* KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('jumlah1'),
+                    (KegiatanItem.vol_4_1* KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('jumlah2'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id)
+
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume1").text =unicode(row3.volume1)
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume2)
+                ET.SubElement(xml_c, "harga1").text =unicode(row3.harga1)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga2)
+                ET.SubElement(xml_c, "satuan11").text =row3.sat_3_1
+                ET.SubElement(xml_c, "satuan12").text =row3.sat_3_2
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_4_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_4_2
+                ET.SubElement(xml_c, "jumlah1").text =unicode(row3.jumlah1)
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah2)
+
+        return self.root
+
 class r407Generator(JasperGenerator):
     """Jasper-Generator for Greetingcards"""
     def __init__(self):
@@ -3812,6 +5614,71 @@ class r407Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "trw3").text = unicode(row.trw3)
             ET.SubElement(xml_greeting, "trw4").text = unicode(row.trw4)            
             ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root
+
+class r4071Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1221_4.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1221_4_subreport1.jrxml'))
+
+        print self.mainreport,self.subreportlist
+        self.xpath = '/apbd/kegiatan'
+        
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'kegiatan')
+        
+        for row in tobegreeted:
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "urusan_kd1").text = row.urusan_kd1
+            ET.SubElement(xml_a, "urusan_nm1").text = row.urusan_nm1
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "lokasi").text = row.lokasi
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)            
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
+            ET.SubElement(xml_a, "customer").text = customer
+            
+            rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
+                    KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
+                    (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2).label('volume1'),
+                    (KegiatanItem.vol_4_1*KegiatanItem.vol_4_2).label('volume2'),
+                    KegiatanItem.hsat_3.label('harga1'),KegiatanItem.sat_3_1,KegiatanItem.sat_3_2,
+                    KegiatanItem.hsat_4.label('harga2'),KegiatanItem.sat_4_1,KegiatanItem.sat_4_2,
+                    (KegiatanItem.vol_3_1* KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('jumlah1'),
+                    (KegiatanItem.vol_4_1* KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('jumlah2'),
+                    ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                            KegiatanItem.rekening_id==Rekening.id,
+                            KegiatanItem.kegiatan_sub_id==row.id)
+
+            for row3 in rowitems :
+                xml_c = ET.SubElement(xml_a, "rekening")
+                ET.SubElement(xml_c, "rek_kd").text =row3.rek_kd
+                ET.SubElement(xml_c, "rek_nm").text =row3.rek_nm
+                ET.SubElement(xml_c, "level_id").text =unicode(row3.level_id)
+                ET.SubElement(xml_c, "item_kd").text =row3.item_kd
+                ET.SubElement(xml_c, "item_nm").text =row3.item_nm
+                ET.SubElement(xml_c, "volume1").text =unicode(row3.volume1)
+                ET.SubElement(xml_c, "volume2").text =unicode(row3.volume2)
+                ET.SubElement(xml_c, "harga1").text =unicode(row3.harga1)
+                ET.SubElement(xml_c, "harga2").text =unicode(row3.harga2)
+                ET.SubElement(xml_c, "satuan11").text =row3.sat_3_1
+                ET.SubElement(xml_c, "satuan12").text =row3.sat_3_2
+                ET.SubElement(xml_c, "satuan21").text =row3.sat_4_1
+                ET.SubElement(xml_c, "satuan22").text =row3.sat_4_2
+                ET.SubElement(xml_c, "jumlah1").text =unicode(row3.jumlah1)
+                ET.SubElement(xml_c, "jumlah2").text =unicode(row3.jumlah2)
+
         return self.root
 
 class r500Generator(JasperGenerator):
