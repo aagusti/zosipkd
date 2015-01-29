@@ -488,19 +488,38 @@
         });
         
         $('#btn_pdf').click(function () {
-            if ($('#kegiatan_kd').val()=='0.00.00.10')
-                url = "/ag-report/r${request.session['ag_step_id']}00/act/1";
-            else if ($('#kegiatan_kd').val()=='0.00.00.21')
-                url = "/ag-report/r${request.session['ag_step_id']}00/act/21";
-            else if ($('#kegiatan_kd').val()=='0.00.00.31')
-                url = "/ag-report/r${request.session['ag_step_id']}00/act/3";
-            else if ($('#kegiatan_kd').val()=='0.00.00.21')
-                url = "/ag-report/r${request.session['ag_step_id']}00/act/3";
-                
-            //alert(url);
-            window.open(url);
+            var kegiatan_kd = $('#kegiatan_kd').val();
+            $('#dlgRpt').modal('show');
         });
-        
+
+        $('#btn_pil_rpt').click(function () {
+            var rpt = $('input[name="rpt"]:checked').val();
+            if(rpt==1){
+              if ($('#kegiatan_kd').val()=='0.00.00.10'){
+                url = "/ag-report/r${request.session['ag_step_id']}00/act/1"; 
+              }else if ($('#kegiatan_kd').val()=='0.00.00.21'){
+                url = "/ag-report/r${request.session['ag_step_id']}00/act/21";
+              }else if ($('#kegiatan_kd').val()=='0.00.00.31'){
+                url = "/ag-report/r${request.session['ag_step_id']}00/act/31"; 
+              }else if ($('#kegiatan_kd').val()=='0.00.00.32'){
+                url = "/ag-report/r${request.session['ag_step_id']}00/act/32"; 
+              }
+              window.open(url);
+            }
+            if(rpt==2){
+              if ($('#kegiatan_kd').val()=='0.00.00.10'){
+                url = "/ag-report/r${request.session['ag_step_id']}00/act/11"; 
+              }else if ($('#kegiatan_kd').val()=='0.00.00.21'){
+                url = "/ag-report/r${request.session['ag_step_id']}00/act/211";
+              }else if ($('#kegiatan_kd').val()=='0.00.00.31'){
+                url = "/ag-report/r${request.session['ag_step_id']}00/act/311"; 
+              }else if ($('#kegiatan_kd').val()=='0.00.00.32'){
+                url = "/ag-report/r${request.session['ag_step_id']}00/act/321"; 
+              }
+              window.open(url);
+            }
+        });        
+
         $(function(){
             reload_kegiatan();
         });
@@ -512,5 +531,101 @@
         
         })
     </script>
+
+    <!-- Modal Cetak -->
+    <div class="modal fade" id="dlgRpt" tabindex="-1" role="dialog" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="dlgRptLabel">Pilih Report</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                    <label class="control-label col-xs-3" for="rpt">Jenis Laporan</label>
+						<!--RKA-->
+                        <div class="col-sm-2" tal:attributes="style request.session['ag_step_id']!=1 and  'display:none'">
+                            <div class="radio" style="${row and row.rekening_kd !='0.00.00.10' and 'display:none'}">
+                                <label><input type="radio" name="rpt" value="1">RKA-1</label>
+                            </div>
+                            <div class="radio" style="${row and row.rekening_kd !='0.00.00.21' and 'display:none'}">
+                                <label><input type="radio" name="rpt" value="1">RKA-21</label>
+                            </div>
+                            <div class="radio" style="${row and row.rekening_kd !='0.00.00.31' and 'display:none'}">
+                                <label><input type="radio" name="rpt" value="1">RKA-31</label>
+                            </div>
+                            <div class="radio" style="${row and row.rekening_kd !='0.00.00.32' and 'display:none'}">
+                                <label><input type="radio" name="rpt" value="1">RKA-32</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="2">Lampiran</label>
+                            </div>
+                        </div>
+						<!--DPA-->
+                        <div class="col-sm-2" tal:attributes="style request.session['ag_step_id']!=2 and  'display:none'">
+                            <div class="radio" style="${row and row.rekening_kd !='0.00.00.10' and 'display:none'}">
+                                <label><input type="radio" name="rpt" value="1">DPA-1</label>
+                            </div>
+                            <div class="radio" style="${row and row.rekening_kd !='0.00.00.21' and 'display:none'}">
+                                <label><input type="radio" name="rpt" value="1">DPA-21</label>
+                            </div>
+                            <div class="radio" style="${row and row.rekening_kd !='0.00.00.31' and 'display:none'}">
+                                <label><input type="radio" name="rpt" value="1">DPA-31</label>
+                            </div>
+                            <div class="radio" style="${row and row.rekening_kd !='0.00.00.32' and 'display:none'}">
+                                <label><input type="radio" name="rpt" value="1">DPA-32</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="2">Lampiran</label>
+                            </div>
+                        </div>
+						<!--RPKA-->
+                        <div class="col-sm-2" tal:attributes="style request.session['ag_step_id']!=3 and  'display:none'">
+                            <div class="radio" style="${row and row.rekening_kd !='0.00.00.10' and 'display:none'}">
+                                <label><input type="radio" name="rpt" value="1">RPKA-1</label>
+                            </div>
+                            <div class="radio" style="${row and row.rekening_kd !='0.00.00.21' and 'display:none'}">
+                                <label><input type="radio" name="rpt" value="1">RPKA-21</label>
+                            </div>
+                            <div class="radio" style="${row and row.rekening_kd !='0.00.00.31' and 'display:none'}">
+                                <label><input type="radio" name="rpt" value="1">RPKA-31</label>
+                            </div>
+                            <div class="radio" style="${row and row.rekening_kd !='0.00.00.32' and 'display:none'}">
+                                <label><input type="radio" name="rpt" value="1">RPKA-32</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="2">Lampiran</label>
+                            </div>
+                        </div>
+						<!--DPPA-->
+                        <div class="col-sm-2" tal:attributes="style request.session['ag_step_id']!=4 and  'display:none'">
+                            <div class="radio" style="${row and row.rekening_kd !='0.00.00.10' and 'display:none'}">
+                                <label><input type="radio" name="rpt" value="1">DPPA-1</label>
+                            </div>
+                            <div class="radio" style="${row and row.rekening_kd !='0.00.00.21' and 'display:none'}">
+                                <label><input type="radio" name="rpt" value="1">DPPA-21</label>
+                            </div>
+                            <div class="radio" style="${row and row.rekening_kd !='0.00.00.31' and 'display:none'}">
+                                <label><input type="radio" name="rpt" value="1">DPPA-31</label>
+                            </div>
+                            <div class="radio" style="${row and row.rekening_kd !='0.00.00.32' and 'display:none'}">
+                                <label><input type="radio" name="rpt" value="1">DPPA-32</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="2">Lampiran</label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="btn_pil_rpt" name="btn_pil_rpt">Cetak</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
+    
   </div>
 </html>
