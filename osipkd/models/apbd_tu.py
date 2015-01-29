@@ -28,7 +28,11 @@ class Spd(NamaModel, Base):
                 .filter(cls.tahun_id==tahun
                 ).scalar() or 0
     
-    
+    @classmethod
+    def get_norut(cls, id):
+        return DBSession.query(func.count(cls.id).label('no_urut'))\
+               .scalar() or 0 
+               
     @classmethod
     def get_kode(cls, p):
         spd_kode = FixLength(SPD_KODE)
@@ -152,7 +156,7 @@ class Spm(NamaModel, Base):
     
     spps           = relationship("Spp", backref="spms")
                    
-    ap_spp_id         = Column(BigInteger,   ForeignKey("apbd.ap_spps.id"), nullable=False)
+    ap_spp_id      = Column(BigInteger,   ForeignKey("apbd.ap_spps.id"), nullable=False)
     kode           = Column(String(50),   nullable=False)
     nama           = Column(String(250),  nullable=False)
     tanggal        = Column(Date,   nullable=False) 
@@ -172,6 +176,11 @@ class Spm(NamaModel, Base):
                 .filter(cls.tahun_id==tahun,
                         cls.unit_id==unit_id
                 ).scalar() or 0
+           
+    @classmethod
+    def get_norut(cls, id):
+        return DBSession.query(func.count(cls.id).label('no_urut'))\
+               .scalar() or 0
 
 class SpmPotongan(DefaultModel,Base):
     __tablename__  = 'ap_spm_potongans'
@@ -206,14 +215,19 @@ class Sp2d(NamaModel, Base):
     verified_uid   = Column(BigInteger, nullable=False)
     verified_nip   = Column(String(50), nullable=False)
     verified_nama  = Column(String(64), nullable=False)
-
     posted         = Column(SmallInteger, nullable=False, default=0)
+    
     @classmethod
     def max_no_urut(cls, tahun):
         return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
                 .filter(cls.tahun_id==tahun
                 ).scalar() or 0
-
+    
+    @classmethod
+    def get_norut(cls, id):
+        return DBSession.query(func.count(cls.id).label('no_urut'))\
+               .scalar() or 0
+                
 class APInvoice(NamaModel, Base):
     __tablename__  = 'ap_invoices'
     __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}
@@ -326,7 +340,12 @@ class Giro(NamaModel, Base):
                                       Sp2d.ap_spm_id==Spm.id,
                                       Spm.ap_spp_id==Spp.id                                      
                                       ).first()
-                                      
+     
+    @classmethod
+    def get_norut(cls, id):
+        return DBSession.query(func.count(cls.id).label('no_urut'))\
+               .scalar() or 0     
+               
 class GiroItem(DefaultModel, Base):
     __tablename__  ='ap_giro_items'
     __table_args__ = {'extend_existing':True,'schema' :'apbd'}
@@ -352,6 +371,7 @@ class ARInvoice(NamaModel, Base):
     nilai           = Column(BigInteger, nullable=False)
     bendahara_uid   = Column(Integer,    nullable=False)
     bendahara_nm    = Column(String(64))
+    bendahara_nip   = Column(String(64))
     penyetor        = Column(String(64))
     alamat          = Column(String(150))
     tgl_terima      = Column(Date)    
@@ -374,7 +394,12 @@ class ARInvoice(NamaModel, Base):
                 .filter(cls.tahun_id==tahun,
                         cls.unit_id==unit_id
                 ).scalar() or 0
-                
+    
+    @classmethod
+    def get_norut(cls, id):
+        return DBSession.query(func.count(cls.id).label('no_urut'))\
+               .scalar() or 0
+               
 class ARInvoiceItem(DefaultModel, Base):
     __tablename__  = 'ar_invoice_items'
     __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}
