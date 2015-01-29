@@ -284,13 +284,25 @@
         });
  
         $('#btn_print').click(function () {
-            url = "/ag-report/r${request.session['ag_step_id']}00/act/221?id="+mID;
+            //url = "/ag-report/r${request.session['ag_step_id']}00/act/221?id="+mID;
             if (mID) {
-                   window.open(url);
+              $('#dlgRpt').modal('show');
             } else {
-                alert('Silahkan pilih Kegiatan ID');
+              alert('Silahkan pilih Kegiatan ID');
             }
         });
+
+        $('#btn_pil_rpt').click(function () {
+            var rpt = $('input[name="rpt"]:checked').val();
+            if(rpt==1){
+                  url = "/ag-report/r${request.session['ag_step_id']}00/act/221?id="+mID;
+              window.open(url);
+            }
+            if(rpt==2){
+                  url = "/ag-report/r${request.session['ag_step_id']}00/act/2211?id="+mID;
+              window.open(url);
+            }
+        });  
 
         $("#btn_close").click(function () {
             window.location = '/anggaran';
@@ -300,5 +312,62 @@
         
      });
     </script>
-  </div> <!--End Metal-->
+
+    <!-- Modal Cetak -->
+    <div class="modal fade" id="dlgRpt" tabindex="-1" role="dialog" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="dlgRptLabel">Pilih Report</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                    <label class="control-label col-xs-3" for="rpt">Jenis Laporan</label>
+						<!--RKA-->
+                        <div class="col-sm-2" tal:attributes="style request.session['ag_step_id']!=1 and  'display:none'">
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="1">RKA-2.2.1</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="2">Lampiran</label>
+                            </div>
+                        </div>
+						<!--DPA-->
+                        <div class="col-sm-2" tal:attributes="style request.session['ag_step_id']!=2 and  'display:none'">
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="1">DPA-2.2.1</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="2">Lampiran</label>
+                            </div>
+                        </div>
+						<!--RPKA-->
+                        <div class="col-sm-2" tal:attributes="style request.session['ag_step_id']!=3 and  'display:none'">
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="1">RPKA-2.2.1</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="2">Lampiran</label>
+                            </div>
+                        </div>
+						<!--DPPA-->
+                        <div class="col-sm-2" tal:attributes="style request.session['ag_step_id']!=4 and  'display:none'">
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="1">DPPA-2.2.1</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="2">Lampiran</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="btn_pil_rpt" name="btn_pil_rpt">Cetak</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->  </div> <!--End Metal-->
 </html>
