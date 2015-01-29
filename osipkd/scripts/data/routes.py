@@ -1739,7 +1739,7 @@ RouteData = [
         id=249,
         kode='ap-spm-potongan-act',
         nama='SPM Potongan Act',
-        path='/ap-spm-potongan/act/{act}',
+        path='/ap-spm-potongan/{ap_spm_id}/act/{act}',
         perm_name='read',
         ),
     dict(
