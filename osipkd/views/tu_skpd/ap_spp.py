@@ -96,10 +96,11 @@ class view_ap_spp(BaseViews):
             
         elif url_dict['act']=='headofkode1':
             term = 'term' in params and params['term'] or ''
-            q = DBSession.query(Spp.id, Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm')
+            q = DBSession.query(Spp.id, Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm'), Spp.nominal.label('spp_n')
                       ).filter(Spp.unit_id == ses['unit_id'],
-                           Spp.tahun_id==ses['tahun'],
-                           Spp.kode.ilike('%s%%' % term))        
+                               Spp.tahun_id==ses['tahun'],
+                               Spp.posted==1,
+                               Spp.kode.ilike('%%%s%%' % term))        
             rows = q.all()
             r = []
             for k in rows:
@@ -108,25 +109,29 @@ class view_ap_spp(BaseViews):
                 d['value']       = k[1]
                 d['kode']        = k[1]
                 d['nama']        = k[2]
+                d['nilai']       = k[3]
                 r.append(d)               
             return r
             
         elif url_dict['act']=='headofnama1':
             term = 'term' in params and params['term'] or ''
-            q = DBSession.query(Spp.id, Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm')
+            q = DBSession.query(Spp.id, Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm'), Spp.nominal.label('spp_n')
                       ).filter(Spp.unit_id == ses['unit_id'],
-                           Spp.tahun_id==ses['tahun'],
-                           Spp.nama.ilike('%s%%' % term))        
+                               Spp.tahun_id==ses['tahun'],
+                               Spp.posted==1,
+                               Spp.nama.ilike('%%%s%%' % term))        
             rows = q.all()
             r = []
             for k in rows:
                 d={}
                 d['id']          = k[0]
-                d['value']       = k[2]
+                d['value']       = k[1]
                 d['kode']        = k[1]
                 d['nama']        = k[2]
-                r.append(d)    
+                d['nilai']       = k[3]
+                r.append(d)               
             return r
+            
     #######    
     # Add #
     #######
