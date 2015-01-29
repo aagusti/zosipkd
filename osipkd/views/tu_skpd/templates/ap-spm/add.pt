@@ -35,13 +35,23 @@
 
           <!--Tanggal-------------------------------------------------------------------->
           <div tal:define="field form['tanggal']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
             <div class="col-md-2">
                ${structure:field.serialize()}
               <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                  tal:repeat="error field.error.messages()">
                  ${error}</p>
+            </div>
+          </div>
+          <div tal:define="field form['spp_n']"  id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-2">
+               ${structure:field.serialize()}
+                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                   tal:repeat="error field.error.messages()">
+                   ${error}</p>
             </div>
           </div>
          </div>
@@ -90,12 +100,14 @@
                   $('#nama').val(datum.nama);
                   $('#spp_nm').val(datum.nama);
                   $('#ap_spp_id').val(datum.id);
+                  $('#spp_n').val(datum.nilai);
             });
             $('#spp_nm').bind('typeahead:selected', function(obj, datum, name) {  
                   $('#nama').val(datum.nama);
                   $('#ap_spp_id').val(datum.id);
+                  $('#spp_n').val(datum.nilai);
             });
-            $("#spp_nm").attr('readonly',true);
+            $("#spp_n").attr('readonly',true);
           </script>
         </div>
 
@@ -272,8 +284,136 @@
       </form>
     </div>  
   </div>   
+ 
+    <table class="table table-bordered table-hover table-condensed" id="table2">
+      <thead>
+        <tr>
+            <th>Index</th>
+            <th>No. SPP</th>
+            <th>Tanggal</th>
+            <th>Jenis</th>
+            <th>Uraian</th>
+            <th>Nilai</th>
+            <th>Posting</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    
+    <script>
+      var mID;
+      var oTable2;
+      var iPos2;
+      var ap_spp_id = $('#ap_spp_id').val();
+      var oTableUrl2 = "/ap-spm/act/grid2?ap_spp_id="+ap_spp_id;
 
-    <div class="row">
+      $(document).ready(function () {
+        oTable2 = $('#table2').dataTable({
+            "sAjaxSource"    : oTableUrl2,
+            "bServerSide"    : true,
+            "bProcessing"    : true,           
+            "bScrollCollapse": true,
+            "bSort"          : false,
+            "bInfo"          : false,
+            "bFilter"        : false,
+            "bAutoWidth"     : false,
+            "bPaginate"      : true,
+            "sPaginationType": "full_numbers",
+
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            "aoColumnDefs": [{
+                "bSearchable": false,
+                "bVisible"   : false,
+                "aTargets"   : [0]
+            },{
+                "bSearchable": false,
+                "aTargets"   : [2,5]
+            },{
+                "bSearchable": true,
+                "aTargets"   : [3,4]
+            },{
+                "bSortable"  : true,
+                "aTargets"   : [1,2]
+            },{
+                "bSortable"  : false,
+                "aTargets"   : [3,4,5,6]
+            },{
+                "sClass"   : "right",
+                "aTargets" : [5],
+                "mRender"  : function (data, type, full) {
+                             return formatNumber(data);}
+            },{
+                "aTargets" : [3], // Untuk Jenis
+                "mRender"  : function (data, type, full) {
+                    if (data == "1") {
+                        return 'UP';
+                    } else if (data == "2") {
+                        return 'TU';
+                    } else if (data == "3") {
+                        return 'GU';
+                    } else if (data == "4") {
+                        return 'LS';
+                    }
+                }
+            },{
+                "aTargets" : [6], // Untuk Posted
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return 'N';
+                    } else if (data == "1") {
+                        return 'Y';
+                    }
+                }
+            }],
+            "aoColumns": [
+                null, 
+                {"sWidth": "30px"}, 
+                {"sWidth": "30px"}, 
+                {"sWidth": "30px"}, 
+                {"sWidth": "200px"},
+                {"sWidth": "30px"},
+                {"sWidth": "30px","class":"right"},
+            ],
+            
+            "fnRowCallback": function (nRow, aData, iDisplayIndex) {
+                $(nRow).on("click", function (event) {
+                    if ($(this).hasClass('row_selected')) {
+                        /* mID = '';
+                        $(this).removeClass('row_selected'); */
+                    } else {
+
+                        var data = oTable2.fnGetData(this);
+                        mID = data[0];
+
+                        oTable2.$('tr.row_selected').removeClass('row_selected');
+                        $(this).addClass('row_selected');
+                    }
+                })
+            },
+        });
+
+        function formatNumber(n) {
+                 return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                 }
+
+        $('#table2 tbody').on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            } else {
+                iPos2 = oTable2.fnGetPosition(this);
+                var aData = oTable2.fnGetData(iPos2);
+                mID = aData[0];
+                oTable2.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+     });
+    </script>
+
       <table class="table table-bordered table-hover table-condensed" id="table1">
         <thead>
             <tr>
@@ -289,7 +429,6 @@
         <tbody>
         </tbody>
     </table>
-  </div>
 
   <div  class="panel panel-default">
     <div class="panel-heading">
