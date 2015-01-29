@@ -64,6 +64,43 @@ class view_ap_sp2d_ppkd(BaseViews):
                            
                 rowTable = DataTables(req, Sp2d, query, columns)
                 return rowTable.output_result()
+            
+        elif url_dict['act']=='grid2':
+            ap_spm_id = 'ap_spm_id' in params and params['ap_spm_id'] or 0
+            # defining columns
+            columns = []
+            columns.append(ColumnDT('id'))
+            columns.append(ColumnDT('kode'))
+            columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
+            columns.append(ColumnDT('jenis'))
+            columns.append(ColumnDT('nama'))
+            columns.append(ColumnDT('nominal'))
+            columns.append(ColumnDT('posted'))
+            query = DBSession.query(Sp2d.id,
+                                    Spm.kode.label('kode'),
+                                    Spm.tanggal.label('tanggal'),
+                                    Spp.jenis.label('jenis'),
+                                    Spm.nama.label('nama'),
+                                    Spp.nominal.label('nominal'),
+                                    Spm.posted.label('posted'),
+                            ).join(Spm 
+                            ).outerjoin(Spp
+                            ).filter(Sp2d.ap_spm_id==ap_spm_id,
+                                    Sp2d.ap_spm_id==Spm.id,
+                                    Spm.ap_spp_id==Spp.id,
+                                    #Spp.tahun_id==ses['tahun'],
+                                    #Spp.unit_id==ses['unit_id'],
+                            ).group_by(Sp2d.id,
+                                    Spm.kode.label('kode'),
+                                    Spm.tanggal.label('tanggal'),
+                                    Spp.jenis.label('jenis'),
+                                    Spm.nama.label('nama'),
+                                    Spp.nominal.label('nominal'),
+                                    Spm.posted.label('posted'),
+                            )
+                                  
+            rowTable = DataTables(req, Sp2d, query, columns)
+            return rowTable.output_result()
                 
         elif url_dict['act']=='headofkode':
             term = 'term' in params and params['term'] or ''
@@ -150,7 +187,14 @@ class view_ap_sp2d_ppkd(BaseViews):
         row.updated = datetime.now()
         row.update_uid = self.request.user.id
         row.posted=0
-        row.disabled = 'disabled' in values and 1 or 0      
+        row.disabled = 'disabled' in values and 1 or 0  
+
+        if not row.kode:
+            tahun    = self.session['tahun']
+            unit_kd  = self.session['unit_kd']
+            no_urut  = Sp2d.get_norut(row.id)+1
+            row.kode = "SP2D%d" % tahun + "-%s" % unit_kd + "-%d" % no_urut
+            
         DBSession.add(row)
         DBSession.flush()
         return row
@@ -226,6 +270,7 @@ class view_ap_sp2d_ppkd(BaseViews):
         values = row.to_dict() 
         values['spm_nm']=row.spms.nama
         values['spm_kd']=row.spms.kode
+        values['spm_n'] =row.spms.spps.nominal
         form.set_appstruct(values) 
         return dict(form=form)
 
@@ -263,12 +308,17 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           oid='spm_kd',
                           title="No. SPM")
+    spm_n           = colander.SchemaNode(
+                          colander.String(),
+                          oid='spm_n',
+                          title="Nilai")
     spm_nm          = colander.SchemaNode(
                           colander.String(),
                           oid='spm_nm')
                             
     kode            = colander.SchemaNode(
                           colander.String(),
+                          missing=colander.drop,
                           title="No. SP2D")
     nama            = colander.SchemaNode(
                           colander.String(),
@@ -288,7 +338,7 @@ class AddSchema(colander.Schema):
     bud_nip         = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="BUD TTD",
+                          title = "BUD",
                           oid="bud_nip"
                           )
     bud_nama        = colander.SchemaNode(
@@ -305,7 +355,7 @@ class AddSchema(colander.Schema):
     verified_nip    = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="Verified TTD",
+                          title = "Verified",
                           oid="verified_nip"
                           )
     verified_nama   = colander.SchemaNode(

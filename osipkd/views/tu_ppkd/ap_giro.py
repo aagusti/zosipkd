@@ -80,7 +80,14 @@ class view_ap_giro_ppkd(BaseViews):
         row.updated = datetime.now()
         row.update_uid = self.request.user.id
         row.posted=0
-        row.disabled = 'disabled' in values and 1 or 0      
+        row.disabled = 'disabled' in values and 1 or 0     
+
+        if not row.kode:
+            tahun    = self.session['tahun']
+            unit_kd  = self.session['unit_kd']
+            no_urut  = Giro.get_norut(row.id)+1
+            row.kode = "GIRO%d" % tahun + "-%s" % unit_kd + "-%d" % no_urut
+            
         DBSession.add(row)
         DBSession.flush()
         return row
@@ -193,6 +200,7 @@ class AddSchema(colander.Schema):
                           oid = "tahun_id")
     kode       = colander.SchemaNode(
                           colander.String(),
+                          missing=colander.drop,
                           title="No. Giro")
     nama            = colander.SchemaNode(
                           colander.String(),

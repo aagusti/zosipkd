@@ -87,7 +87,7 @@ class view_ap_spd_ppkd(BaseViews):
             q = DBSession.query(Spd.id, Spd.kode.label('spd_kd'), Spd.nama.label('spd_nm'), Spd.tanggal.label('spd_tgl')
                       ).filter(Spd.unit_id == ses['unit_id'],
                            Spd.tahun_id==ses['tahun'],
-                           Spd.kode.ilike('%s%%' % term))        
+                           Spd.kode.ilike('%%%s%%' % term))        
             rows = q.all()
             r = []
             for k in rows:
@@ -96,7 +96,7 @@ class view_ap_spd_ppkd(BaseViews):
                 d['value']       = k[1]
                 d['kode']        = k[1]
                 d['nama']        = k[2]
-                d['tanggal']     = k[3]
+                d['tanggal']     = "%s" % k[3]
                 r.append(d)    
             return r
             
@@ -140,9 +140,14 @@ class view_ap_spd_ppkd(BaseViews):
         row.from_dict(values)
         row.updated = datetime.now()
         row.update_uid = self.request.user.id
-        #if not row.no_urut:
-        #      row.no_urut = Spd.max_no_urut(row.tahun_id,row.unit_id)+1;
-        row.disabled = 'disabled' in values and 1 or 0      
+        row.disabled = 'disabled' in values and 1 or 0     
+
+        if not row.kode:
+            tahun    = self.session['tahun']
+            unit_kd  = self.session['unit_kd']
+            no_urut  = Spd.get_norut(row.id)+1
+            row.kode = "SPD%d" % tahun + "-%s" % unit_kd + "-%d" % no_urut
+            
         DBSession.add(row)
         DBSession.flush()
         return row
@@ -252,6 +257,7 @@ class AddSchema(colander.Schema):
                           oid = "tahun_id")
     kode             = colander.SchemaNode(
                           colander.String(),
+                          missing=colander.drop,
                           title="No. SPD")
     nama             = colander.SchemaNode(
                           colander.String(),
