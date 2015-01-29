@@ -120,7 +120,7 @@
           <div tal:define="field form['nama']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
-            <div class="col-md-6">
+            <div class="col-md-8">
                ${structure:field.serialize()}
               <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                  tal:repeat="error field.error.messages()">
@@ -144,7 +144,7 @@
             </div>
           </div>
           <div tal:define="field form['bud_nama']" id="item-${field.oid}">
-            <div class="col-md-4">
+            <div class="col-md-3">
                ${structure:field.serialize()}
               <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                  tal:repeat="error field.error.messages()">
@@ -217,12 +217,17 @@
             </div>
           </div>
           <div tal:define="field form['verified_nama']" id="item-${field.oid}">
-            <div class="col-md-4">
+            <div class="col-md-3">
                ${structure:field.serialize()}
               <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                  tal:repeat="error field.error.messages()">
                  ${error}</p>
             </div>
+          </div>
+          <div class="col-md-4"> 
+            <button type="submit" class="btn btn-primary" id="simpan" name="simpan" >Simpan</button>
+            <button type="submit" class="btn btn-danger" id="batal" name="batal">Batal</button>
+            <button type="submit" class="btn btn-warning" id="tutup" name="tutup">Tutup</button>
           </div>
         <script>
            $('#verified_uid').typeahead({
@@ -274,15 +279,7 @@
         $("#verified_uid").attr('readonly',true);
         $("#verified_nip").attr('readonly',true);
         </script>
-        </div>
-
-        <div class="form-group"> 
-          <div class="col-md-4"> 
-            <button type="submit" class="btn btn-primary" id="simpan" name="simpan" >Simpan</button>
-            <button type="submit" class="btn btn-danger" id="batal" name="batal">Batal</button>
-            <button type="submit" class="btn btn-warning" id="tutup" name="tutup">Tutup</button>
-          </div>
-        </div>               
+        </div>              
       </form>
     </div>   
    </div> 
