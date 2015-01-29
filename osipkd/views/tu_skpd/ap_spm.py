@@ -50,6 +50,7 @@ class view_ap_spm(BaseViews):
         req = self.request
         params = req.params
         url_dict = req.matchdict
+        
         pk_id = 'id' in params and params['id'] and int(params['id']) or 0
         if url_dict['act']=='grid':
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
@@ -77,6 +78,42 @@ class view_ap_spm(BaseViews):
 
                 rowTable = DataTables(req, Spm, query, columns)
                 return rowTable.output_result()
+        
+        elif url_dict['act']=='grid2':
+            ap_spp_id = 'ap_spp_id' in params and params['ap_spp_id'] or 0
+            # defining columns
+            columns = []
+            columns.append(ColumnDT('id'))
+            columns.append(ColumnDT('kode'))
+            columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
+            columns.append(ColumnDT('jenis'))
+            columns.append(ColumnDT('nama'))
+            columns.append(ColumnDT('nominal'))
+            columns.append(ColumnDT('posted'))
+ 
+            query = DBSession.query(Spm.id,
+                                    Spp.kode.label('kode'),
+                                    Spp.tanggal.label('tanggal'),
+                                    Spp.jenis.label('jenis'),
+                                    Spp.nama.label('nama'),
+                                    Spp.nominal.label('nominal'),
+                                    Spp.posted.label('posted'),
+                            ).join(Spp
+                            ).filter(#Spp.tahun_id==ses['tahun'],
+                                    #Spp.unit_id==ses['unit_id'],
+                                    Spm.ap_spp_id==ap_spp_id,
+                                    Spm.ap_spp_id==Spp.id
+                            ).group_by(Spm.id,
+                                    Spp.kode.label('kode'),
+                                    Spp.tanggal.label('tanggal'),
+                                    Spp.jenis.label('jenis'),
+                                    Spp.nama.label('nama'),
+                                    Spp.nominal.label('nominal'),
+                                    Spp.posted.label('posted'),
+                            )
+ 
+            rowTable = DataTables(req, Spm, query, columns)
+            return rowTable.output_result()
         
         elif url_dict['act']=='posting':
             row = Spm()
@@ -238,6 +275,7 @@ class view_ap_spm(BaseViews):
         values = row.to_dict() 
         values['spp_kd']=row.spps.kode
         values['spp_nm']=row.spps.nama
+        values['spp_n'] =row.spps.nominal
         form.set_appstruct(values) 
         return dict(form=form)
 
@@ -277,6 +315,10 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           title = "No. SPP",
                           oid="spp_kd")
+    spp_n           = colander.SchemaNode(
+                          colander.String(),
+                          title = "Nilai",
+                          oid="spp_n")
     spp_nm          = colander.SchemaNode(
                           colander.String(),
                           oid='spp_nm')
