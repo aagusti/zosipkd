@@ -243,7 +243,12 @@
             } else {
                 iPos = oTable.fnGetPosition(this);
                 var aData = oTable.fnGetData(iPos);
+
                 mID = aData[0];
+                No_Spm = aData[1];
+                Uraian = aData[4];
+                Jenis  = aData[3];
+
                 oTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
             }
@@ -270,6 +275,25 @@
             //url = "/ap-report-skpd/act/spp?id="+mID;
             if (mID) {
                    //window.open(url);
+                $('#No_Spm').val(No_Spm);
+                $('#Uraian').val(Uraian);
+                $('#Jenis').val(Jenis);
+                if($('#Jenis').val()=="1"){
+                   $('#Jenis').val('UP');				
+                }
+                else if($('#Jenis').val()=="2"){
+                   $('#Jenis').val('TU');				
+                }
+                else if($('#Jenis').val()=="3"){
+                   $('#Jenis').val('GU');				
+                }
+                else if($('#Jenis').val()=="4"){
+                   $('#Jenis').val('LS');				
+                }
+                else {
+                   $('#Jenis').val('');				
+                }
+	
                 $('#dlgRpt').modal('show');
             } else {
                 alert('Silahkan pilih Kegiatan ID');
@@ -281,9 +305,38 @@
         });
         $('#btn_pil_rpt').click(function () {
             var rpt = $('input[name="rpt"]:checked').val();
-            url = "/ap-report-skpd/act/spp"+rpt+"?id="+mID;
             if (mID) {
-                //alert(url);
+                if(rpt==1){
+                    url = "/ap-report-skpd/act/spp"+rpt+"?id="+mID;
+                }
+                else if(rpt==2){
+                  if($('#Jenis').val()=="UP"){
+                    url = "/ap-report-skpd/act/spp"+rpt+"?id="+mID;
+                  }
+                  else if($('#Jenis').val()=="TU"){
+                    url = "/ap-report-skpd/act/spp"+rpt+"?id="+mID;
+                  }
+                  else if($('#Jenis').val()=="GU"){
+                    url = "/ap-report-skpd/act/spp"+rpt+"1?id="+mID;
+                  }
+                  else if($('#Jenis').val()=="LS"){
+                    url = "/ap-report-skpd/act/spp"+rpt+"2?id="+mID;
+                  }
+                }
+                else if(rpt==3){
+                  if($('#Jenis').val()=="UP"){
+                    url = "/ap-report-skpd/act/spp"+rpt+"?id="+mID;
+                  }
+                  else if($('#Jenis').val()=="TU"){
+                    url = "/ap-report-skpd/act/spp"+rpt+"1?id="+mID;
+                  }
+                  else if($('#Jenis').val()=="GU"){
+                    url = "/ap-report-skpd/act/spp"+rpt+"2?id="+mID;
+                  }
+                  else if($('#Jenis').val()=="LS"){
+                    url = "/ap-report-skpd/act/spp"+rpt+"3?id="+mID;
+                  }
+                }
                 window.open(url);
             } else {
                 alert('Silahkan pilih Kegiatan ID');
@@ -292,36 +345,53 @@
      });
     </script>
       <!-- Modal Report -->
+      <!-- Modal Report -->
     <div class="modal fade" id="dlgRpt" tabindex="-1" role="dialog" data-backdrop="static">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="dlgRptLabel">Pilih Report</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                    <label class="control-label col-xs-3" for="rpt">Jenis Laporan</label>
-                        <div class="col-sm-2">
-                            <div class="radio">
-                                <label><input type="radio" name="rpt" value="1">Pengantar</label>
-                            </div>
-                            <div class="radio">
-                                <label><input type="radio" name="rpt" value="2">Ringkasan</label>
-                            </div>
-                            <div class="radio">
-                                <label><input type="radio" name="rpt" value="3">Rincian</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" id="btn_pil_rpt" name="btn_pil_rpt">Cetak</button>
-                </div>
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="dlgRptLabel">Pilih Report</h4>
+          </div>
+
+          <div class="modal-body">
+            <div class="col-md-3">
+                <input id="No_Spm" class="form-control typeahead" type="text" value="" name="No_Spm" readonly="true">
             </div>
+      
+            <div class="col-md-7">
+              <input id="Uraian" class=" form-control" type="text" value="" name="Uraian" readonly="true">
+            </div>
+
+            <div class="col-md-2">
+              <input id="Jenis" class=" form-control" type="text" value="" name="Jenis" readonly="true">
+            </div>
+          </div>
+
+          <div class="modal-body">
+                  <div class="form-group">
+                  <label class="control-label col-xs-3" for="rpt">Jenis Laporan</label>
+                      <div class="col-sm-2">
+                          <div class="radio">
+                              <label><input type="radio" name="rpt" value="1">Pengantar</label>
+                          </div>
+                          <div class="radio">
+                              <label><input type="radio" name="rpt" value="2">Ringkasan</label>
+                          </div>
+                          <div class="radio">
+                              <label><input type="radio" name="rpt" value="3">Rincian</label>
+                          </div>
+                      </div>
+                  </div>
+          </div>
+          <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                  <button type="button" class="btn btn-primary" id="btn_pil_rpt" name="btn_pil_rpt">Cetak</button>
+          </div>
         </div>
+      </div>
     </div>
+    <!-- End Modal -->
     <!-- End Modal -->
     
   </div> <!--End Metal-->
