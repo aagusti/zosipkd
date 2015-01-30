@@ -186,8 +186,7 @@
                 success: function (html) {
                   if (html.success == true) {
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                    oTable.fnReloadAjax("/ag-indikator/act/grid?type=4");
-                    alert('Silahkan refresh or tekan F5 !!');
+                    oTable.fnReloadAjax(oTableUrl);
                   } else {
                     $("#errors").css('display', 'inline', 'important');
                     $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
