@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R103002" language="groovy" pageWidth="595" pageHeight="842" columnWidth="487" leftMargin="54" rightMargin="54" topMargin="30" bottomMargin="72">
-	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.zoom" value="1.2100000000000004"/>
+	<property name="ireport.x" value="35"/>
 	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[/apbd/spp]]>
@@ -67,12 +67,13 @@
 	</variable>
 	<variable name="nm_bulan" class="java.lang.String">
 		<variableExpression><![CDATA[$F{tanggal}.substring(5,7)=="01" ? "Januari" : $F{tanggal}.substring(5,7)=="02" ? "Februari" : $F{tanggal}.substring(5,7)=="03" ? "Maret" : $F{tanggal}.substring(5,7)=="04" ? "April" : $F{tanggal}.substring(5,7)=="05" ? "Mei" : $F{tanggal}.substring(5,7)=="06" ? "Juni" : $F{tanggal}.substring(5,7)=="07" ? "Juli" : $F{tanggal}.substring(5,7)=="08" ? "Agustus" : $F{tanggal}.substring(5,7)=="09" ? "September" : $F{tanggal}.substring(5,7)=="10" ? "Oktober" : $F{tanggal}.substring(5,7)=="11" ? "November" : $F{tanggal}.substring(5,7)=="12" ? "Desember" : ""]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{tanggal}.substring(5,7)=="01" ? "Januari" : $F{tanggal}.substring(5,7)=="02" ? "Februari" : $F{tanggal}.substring(5,7)=="03" ? "Maret" : $F{tanggal}.substring(5,7)=="04" ? "April" : $F{tanggal}.substring(5,7)=="05" ? "Mei" : $F{tanggal}.substring(5,7)=="06" ? "Juni" : $F{tanggal}.substring(5,7)=="07" ? "Juli" : $F{tanggal}.substring(5,7)=="08" ? "Agustus" : $F{tanggal}.substring(5,7)=="09" ? "September" : $F{tanggal}.substring(5,7)=="10" ? "Oktober" : $F{tanggal}.substring(5,7)=="11" ? "November" : $F{tanggal}.substring(5,7)=="12" ? "Desember" : ""]]></initialValueExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="202" splitType="Stretch">
+		<band height="137" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="0" width="487" height="16"/>
 				<textElement textAlignment="Center" markup="none">
@@ -113,56 +114,14 @@
 				<textElement markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[RENCANA PENGGUNAAN DANA]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="146" width="59" height="13"/>
-				<textElement markup="none">
-					<font isBold="false"/>
-				</textElement>
-				<text><![CDATA[Program]]></text>
-			</staticText>
-			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="59" y="146" width="428" height="26"/>
-				<textElement markup="none">
-					<font isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{program_nm}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="0" y="172" width="59" height="13"/>
-				<textElement markup="none">
-					<font isBold="false"/>
-				</textElement>
-				<text><![CDATA[Kegiatan]]></text>
-			</staticText>
-			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="59" y="172" width="428" height="30"/>
-				<textElement markup="none">
-					<font isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{kegiatan_nm}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="48" y="146" width="11" height="13"/>
-				<textElement textAlignment="Center" markup="none">
-					<font isBold="false"/>
-				</textElement>
-				<text><![CDATA[:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="48" y="172" width="11" height="13"/>
-				<textElement textAlignment="Center" markup="none">
-					<font isBold="false"/>
-				</textElement>
-				<text><![CDATA[:]]></text>
+				<text><![CDATA[PENGGUNAAN DANA]]></text>
 			</staticText>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="14">
+		<band height="37">
 			<staticText>
-				<reportElement x="0" y="0" width="27" height="14"/>
+				<reportElement x="0" y="23" width="27" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -175,7 +134,7 @@
 				<text><![CDATA[No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="27" y="0" width="87" height="14"/>
+				<reportElement x="27" y="23" width="87" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -188,7 +147,7 @@
 				<text><![CDATA[Kode Rekening]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="114" y="0" width="289" height="14"/>
+				<reportElement x="114" y="23" width="289" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -201,7 +160,7 @@
 				<text><![CDATA[Uraian]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="403" y="0" width="84" height="14"/>
+				<reportElement x="403" y="23" width="84" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -213,6 +172,20 @@
 				</textElement>
 				<text><![CDATA[Jumlah]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="55" height="13"/>
+				<textElement markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[BULAN :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="44" y="0" width="193" height="14"/>
+				<textElement markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{nm_bulan}+" "+$F{tahun}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<detail>

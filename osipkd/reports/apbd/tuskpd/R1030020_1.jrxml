@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R103002" language="groovy" pageWidth="595" pageHeight="842" columnWidth="487" leftMargin="54" rightMargin="54" topMargin="30" bottomMargin="72">
-	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="227"/>
+	<property name="ireport.zoom" value="1.2100000000000004"/>
+	<property name="ireport.x" value="45"/>
+	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[/apbd/spp]]>
 	</queryString>
@@ -70,9 +70,6 @@
 		<variableExpression><![CDATA[]]></variableExpression>
 		<initialValueExpression><![CDATA[$F{jenis}=="LS" ? "LANGSUNG" : $F{jenis}=="UP" ? "UANG PERSEDIAAN" : $F{jenis}=="TU" ? "TAMBAHAN UANG PERSEDIAAN" : $F{jenis}=="GU" ? "GANTI UANG PERSEDIAAN" : ""]]></initialValueExpression>
 	</variable>
-	<variable name="nm_bulan" class="java.lang.String">
-		<variableExpression><![CDATA[$F{tanggal}.substring(5,7)=="01" ? "Januari" : $F{tanggal}.substring(5,7)=="02" ? "Februari" : $F{tanggal}.substring(5,7)=="03" ? "Maret" : $F{tanggal}.substring(5,7)=="04" ? "April" : $F{tanggal}.substring(5,7)=="05" ? "Mei" : $F{tanggal}.substring(5,7)=="06" ? "Juni" : $F{tanggal}.substring(5,7)=="07" ? "Juli" : $F{tanggal}.substring(5,7)=="08" ? "Agustus" : $F{tanggal}.substring(5,7)=="09" ? "September" : $F{tanggal}.substring(5,7)=="10" ? "Oktober" : $F{tanggal}.substring(5,7)=="11" ? "November" : $F{tanggal}.substring(5,7)=="12" ? "Desember" : ""]]></variableExpression>
-	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -115,7 +112,7 @@
 				<textElement markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{unit_nm}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["SKPD "+$F{unit_nm}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="58" width="487" height="27"/>
@@ -138,7 +135,7 @@ Pengguna Anggaran / Kuasa Pengguna Anggaran
 				<textElement textAlignment="Justified" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Dengan memperhatikan Peraturan Bupati Nomor "+$F{no_perkdh}+" tanggal "+$F{tgl_perkdh}+ " tentang Penjabaran Anggaran Pendapatan dan Belanja Daerah Tahun Anggaran "+$F{tahun}+ ", bersama ini kami mengajukan Surat Permintaan Pembayaran "+$V{jenis_nm}+" sebagai berikut: "]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Dengan memperhatikan Peraturan {Jabatan}{ProperDaerah} Nomor "+$F{no_perkdh}+" tanggal "+$F{tgl_perkdh}+ " tentang Penjabaran APBD, bersama ini kami mengajukan Surat Permintaan Pembayaran "+$V{jenis_nm}+" sebagai berikut: "]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="202" width="193" height="14"/>
@@ -271,7 +268,6 @@ Pengguna Anggaran / Kuasa Pengguna Anggaran
 				<textElement markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{ttd_nama}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="218" y="280" width="269" height="16"/>
@@ -299,7 +295,7 @@ Pengguna Anggaran / Kuasa Pengguna Anggaran
 				<textElement textAlignment="Center" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tanggal}.substring(8,10)+" "+$V{nm_bulan}+" "+$F{tanggal}.substring(0,4)]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tanggal}.substring(8,10)+"-"+$F{tanggal}.substring(5,7)+"-"+$F{tanggal}.substring(0,4)]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="294" y="431" width="193" height="16"/>
@@ -314,6 +310,13 @@ Pengguna Anggaran / Kuasa Pengguna Anggaran
 					<font isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["NIP. "+$F{ttd_nip}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="294" width="269" height="16"/>
+				<textElement markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(terbilang {3SPPAmountTxt})"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

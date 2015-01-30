@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R103002" language="groovy" pageWidth="595" pageHeight="842" columnWidth="487" leftMargin="54" rightMargin="54" topMargin="30" bottomMargin="72">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="26"/>
 	<queryString language="xPath">
 		<![CDATA[/apbd/spp]]>
 	</queryString>
@@ -50,6 +50,12 @@
 	</field>
 	<field name="ttd_nama" class="java.lang.String">
 		<fieldDescription><![CDATA[ttd_nama]]></fieldDescription>
+	</field>
+	<field name="ttd_nip_pptk" class="java.lang.String">
+		<fieldDescription><![CDATA[ttd_nip_pptk]]></fieldDescription>
+	</field>
+	<field name="ttd_nama_pptk" class="java.lang.String">
+		<fieldDescription><![CDATA[ttd_nama_pptk]]></fieldDescription>
 	</field>
 	<variable name="jenis_nm" class="java.lang.String">
 		<variableExpression><![CDATA[]]></variableExpression>
@@ -342,6 +348,34 @@
 					<font isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ttd_nama}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="58" width="193" height="14"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Pejabat Pelaksana Teknis Kegiatan]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="42" width="193" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Mengetahui,]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="113" width="193" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ttd_nama_pptk}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="129" width="193" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["NIP. "+$F{ttd_nip_pptk}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

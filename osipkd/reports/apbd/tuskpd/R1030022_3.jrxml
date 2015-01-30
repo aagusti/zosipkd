@@ -72,7 +72,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="202" splitType="Stretch">
+		<band height="148" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="0" width="487" height="16"/>
 				<textElement textAlignment="Center" markup="none">
@@ -113,49 +113,7 @@
 				<textElement markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[RENCANA PENGGUNAAN DANA]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="146" width="59" height="13"/>
-				<textElement markup="none">
-					<font isBold="false"/>
-				</textElement>
-				<text><![CDATA[Program]]></text>
-			</staticText>
-			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="59" y="146" width="428" height="26"/>
-				<textElement markup="none">
-					<font isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{program_nm}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="0" y="172" width="59" height="13"/>
-				<textElement markup="none">
-					<font isBold="false"/>
-				</textElement>
-				<text><![CDATA[Kegiatan]]></text>
-			</staticText>
-			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="59" y="172" width="428" height="30"/>
-				<textElement markup="none">
-					<font isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{kegiatan_nm}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="48" y="146" width="11" height="13"/>
-				<textElement textAlignment="Center" markup="none">
-					<font isBold="false"/>
-				</textElement>
-				<text><![CDATA[:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="48" y="172" width="11" height="13"/>
-				<textElement textAlignment="Center" markup="none">
-					<font isBold="false"/>
-				</textElement>
-				<text><![CDATA[:]]></text>
+				<text><![CDATA[PENGGUNAAN DANA]]></text>
 			</staticText>
 		</band>
 	</title>
@@ -277,7 +235,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tanggal}.substring(8,10)+" "+$V{nm_bulan}+" "+$F{tanggal}.substring(0,4)]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tanggal}.substring(8,10)+"-"+$V{nm_bulan}+"-"+$F{tanggal}.substring(0,4)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="403" y="0" width="84" height="14"/>
