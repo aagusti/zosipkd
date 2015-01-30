@@ -248,6 +248,20 @@ def save(values, request, row=None):
     if not row:
         row = KegiatanIndikator()
     ag_step_id = request.session['ag_step_id']
+    
+    if not values['tolok_ukur_1']: 
+        values['tolok_ukur_1']='-'
+        values['satuan_1']='-'
+    if not values['tolok_ukur_2']: 
+        values['tolok_ukur_2']='-'
+        values['satuan_2']='-'
+    if not values['tolok_ukur_3']: 
+        values['tolok_ukur_3']='-'
+        values['satuan_3']='-'
+    if not values['tolok_ukur_4']: 
+        values['tolok_ukur_4']='-'
+        values['satuan_4']='-'
+        
     if ag_step_id<2:
         values['tolok_ukur_2'] = values['tolok_ukur_%s' % ag_step_id] 
         values['volume_2'] = values['volume_%s' % ag_step_id] 
@@ -257,7 +271,7 @@ def save(values, request, row=None):
         values['volume_3'] = values['volume_%s' % ag_step_id] 
         values['satuan_3'] = values['satuan_%s' % ag_step_id] 
     if ag_step_id<5:
-        values['tolok_ukur_3'] = values['tolok_ukur_%s' % ag_step_id] 
+        values['tolok_ukur_4'] = values['tolok_ukur_%s' % ag_step_id] 
         values['volume_4'] = values['volume_%s' % ag_step_id] 
         values['satuan_4'] = values['satuan_%s' % ag_step_id] 
         
@@ -332,10 +346,10 @@ def view_edit(request):
     if request.POST:
         if 'simpan' in request.POST:
             controls = request.POST.items()  
-            try:
-                c = form.validate(controls)
-            except ValidationFailure, e:
-                return dict(form=form, row=rows)
+            #try:
+            #    c = form.validate(controls)
+            #except ValidationFailure, e:
+            #    return dict(form=form, row=rows)
             save_request(dict(controls), request, row)
         return route_list(request,kegiatan_sub_id)
     elif SESS_EDIT_FAILED in request.session:
@@ -353,9 +367,7 @@ def view_edit(request):
 def view_delete(request):
     q = query_id(request)
     row = q.first()
-    if not row:
-        return {'success':False, "msg":self.id_not_found()}
-
+        
     msg = 'Data sudah dihapus'
     query_id(request).delete()
     DBSession.flush()
