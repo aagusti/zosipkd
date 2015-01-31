@@ -34,7 +34,12 @@ class BaseViews(object):
         #self.session['tahun'] =  cday.strftime('%Y')
         if not 'bulan' in self.session:
             self.session['bulan'] = str(cday.month).zfill(2)
-        
+        if not 'tanggal' in self.session:
+            self.session['tanggal'] = datetime.date(datetime.now()) 
+        if not 'tanggal2' in self.session:
+            self.session['tanggal2'] = datetime.date(datetime.now()) 
+        #datetime.date(datetime.now().year,
+        #                                  datetime.now().month, datetime.now().day)
         #    if cday.month ==12:
         #        self.session['bulan'] = '01'
         #        self.session['tahun'] = str(cday.year + 1)
@@ -125,3 +130,9 @@ def change_act(request):
         ses['tahun'] = 'tahun' in params and params['tahun'] or '2014'
         ses['bulan'] = 'bulan' in params and params['bulan'] or '12'
         return {'success':True}
+    elif url_dict['act']=='tanggal':
+        ses['tanggal'] = 'tanggal' in params and datetime.strptime(params['tanggal'],'%Y-%m-%d') or datetime.date(datetime.now())
+        ses['tanggal2'] = 'tanggal2' in params and datetime.strptime(params['tanggal2'],'%Y-%m-%d') or ses['tanggal']
+        return {'success':True, 'msg':''}
+        
+        

@@ -41,6 +41,60 @@
            <input id="unit_nm" class=" form-control " type="text" value="${request.session['unit_nm']}" name="unit_nm">
         </div>
       </div>
+      <!----------------------------------------------------------------------->
+      <!--Tanggal-->
+      <div class="form-group">
+        <div class="col-md-3">
+          <div id="item-tanggal">
+            <label for="tanggal" class="control-label col-md-3" id="req-tanggal">
+                    Tanggal</label>
+            <div class="col-md-9">
+               <input id="tanggal" class="form-control" type="text" readonly 
+                      value="${request.session['tanggal']}" name="tanggal">
+            </div>
+          </div>
+        </div>
+      <script>
+      $('#tanggal').click(
+          function(){
+            if (!Modernizr.inputtypes['date'] ||
+                "date" != "date"){
+              $('#tanggal').pickadate({"selectMonths": true,
+                "submitFormat": "yyyy-mm-dd", 
+                "selectYears": true, "format": "yyyy-mm-dd"});
+            }
+          }
+
+      );
+      
+      $('#tanggal').change(function(){
+            $.ajax({
+              type: "POST",
+              url: "/change/tanggal",
+              data: "tanggal="+$('#tanggal').val(),
+              success: function (html) {
+                if (html.success == true) {
+                  $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                  oTable.fnReloadAjax(oTableUrl);
+
+                } else {
+                  $("#errors").css('display', 'inline', 'important');
+                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                  $('#unit_kd').val('');
+                  $('#unit_nm').val('');
+                  $('#unit_id').val('');
+                }
+              },
+              beforeSend: function () {
+                $("#errors").css('display', 'inline', 'important');
+                $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+              }
+            });
+      });
+      
+      </script>
+      </div>
+      
       <script>
 
         $('#unit_kd').typeahead({
@@ -126,65 +180,6 @@
         
       </script> 
       
-      <!----------------------------------------------------------------------->
-      <!--input id="kegiatan_sub_id" type="hidden" value="" name="kegiatan_sub_id">
-      <div class="form-group">
-        <div class="col-md-3">
-          <div id="item-kegiatan_kd">
-            <label for="kegiatan_kd" class="control-label col-md-3" id="req-kegiatan_kd">
-                    Kegiatan</label>
-            <div class="col-md-9">
-               <input id="kegiatan_kd" class=" form-control " type="text" value="" name="kegiatan_kd">
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-md-5">
-           <input id="kegiatan_nm" class=" form-control " type="text" value="" name="kegiatan_nm">
-        </div>
-        
-      </div-->
-
-      <script>
-        $('#kegiatan_kd').typeahead({
-            "hint": true,
-            "highlight": true,
-            "minLength": 1,
-            "remote": "/ag-kegiatan-sub/act/headofkode?term=%QUERY", 
-        },
-        {
-          "name": 'kegiatan_kd',
-          "displayKey": 'value',
-        }); 
-                
-        $('#kegiatan_nm').typeahead({
-            "hint": true,
-            "highlight": true,
-            "minLength": 1,
-            "remote": "/ag-kegiatan-sub/act/headofnama?term=%QUERY", 
-        },
-        
-        {
-          "name": 'kegiatan_nm',
-          "displayKey": 'value',
-        }); 
-        
-        $('#kegiatan_kd').bind('typeahead:selected', function(obj, datum, name) {  
-              $('#kegiatan_nm').val(datum.nama);
-              $('#kegiatan_sub_id').val(datum.id);
-              oTableUrl = "/ar-payment-item/act/grid?kegiatan_sub_id="+datum.id;
-              oTable.fnReloadAjax(oTableUrl);
-        });
-
-        $('#kegiatan_nm').bind('typeahead:selected', function(obj, datum, name) {      
-              $('#kegiatan_kd').val(datum.kode);
-              $('#kegiatan_sub_id').val(datum.id);
-              oTableUrl = "/ar-payment-item/act/grid?kegiatan_sub_id="+datum.id;
-              oTable.fnReloadAjax(oTableUrl);
-        });
-        
-      </script> 
-      
   </fieldset>
   </form>
   
@@ -200,6 +195,7 @@
                 <th>Ref. Nama</th>
                 <th>Tanggal</th>
                 <th>Nilai</th>
+                <th>Posted</th>                
             </tr>
         </thead>
         <tbody>
@@ -248,7 +244,8 @@
               null,
               {"width": "75px", "sClass":"center"},
               {"width": "100px", "sClass":"right"},
-          ]
+              {"width": "50px", "sClass":"center"},
+              ]
         });
           
         var tb_array = [
@@ -256,8 +253,8 @@
           '	<button id="btn_add" class="btn btn btn-primary" type="button">Tambah</button>',
           '	<button id="btn_edit" class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',
-          '	<!--button id="btn_pdf" class="btn btn btn-warning" type="button">PDF</button-->',
-          '	<button id="btn_csv" class="btn btn btn-default" type="button">CSV</button>',
+          '	<button id="btn_post" class="btn btn btn-warning" type="button">Posting Transaksi</button>',
+          '	<button id="btn_post_rkp" class="btn btn btn-success" type="button">Posting Rekap</button>',
           '	&nbsp;',
           '</div>',
         ];
@@ -294,7 +291,44 @@
             if (mID) window.location = '/ar-payment-item/'+mID+'/delete';
             else alert('Pilih Baris yang akan di hapus');
         });        
-
+        $('#btn_post').click(function () {
+           $.ajax({
+              type: "POST",
+              url: "/ag-payment-item/detail/post",
+              //data: "unit_kd="+$('#kegiatan_kd').val(),
+              success: function (html) {
+                if (html.success == true) {
+                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                  oTable.fnReloadAjax(oTableUrl);
+                } else {
+                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                }
+              },
+              beforeSend: function () {
+                $("#errors").css('display', 'inline', 'important');
+                $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+              }
+            });
+         });        
+        $('#btn_post_rkp').click(function () {
+           $.ajax({
+              type: "POST",
+              url: "/ag-payment-item/rekap/post",
+              //data: "unit_kd="+$('#kegiatan_kd').val(),
+              success: function (html) {
+                if (html.success == true) {
+                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                  oTable.fnReloadAjax(oTableUrl);
+                } else {
+                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                }
+              },
+              beforeSend: function () {
+                $("#errors").css('display', 'inline', 'important');
+                $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+              }
+            });
+         });
         })
     </script>
   </div>

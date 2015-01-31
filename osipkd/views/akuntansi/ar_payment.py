@@ -202,10 +202,12 @@ class view_ar_payment_item(BaseViews):
             columns.append(ColumnDT('ref_nama'))
             columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
             columns.append(ColumnDT('amount',  filter=self._number_format))
-            
+            columns.append(ColumnDT('posted'))           
             query = DBSession.query(ARPaymentItem).filter(
                       ARPaymentItem.tahun == ses['tahun'],
-                      ARPaymentItem.unit_id == ses['unit_id']
+                      ARPaymentItem.unit_id == ses['unit_id'],
+                      ARPaymentItem.tanggal == ses['tanggal'],
+                      
                       )
             rowTable = DataTables(req, ARPaymentItem, query, columns)
             return rowTable.output_result()
@@ -285,6 +287,11 @@ class view_ar_payment_item(BaseViews):
             return dict(form=form)
         
             #return self.session_failed(SESS_ADD_FAILED)
+        rowd={}
+        rowd['unit_id']     = ses['unit_id']
+        rowd['unit_nm']     = ses['unit_nm']
+        rowd['unit_kd']     = ses['unit_kd']
+        form.set_appstruct(rowd)                  
         return dict(form=form)
 
         

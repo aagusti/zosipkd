@@ -191,6 +191,9 @@ class view_app(BaseViews):
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
         values = row.to_dict()
+        if not values['tahun']:
+            values['tahun'] = 0
+
         return dict(form=form.render(appstruct=values))
 
     ##########

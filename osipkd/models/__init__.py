@@ -34,7 +34,7 @@ from pyramid.security import (
     Everyone,
     ALL_PERMISSIONS
     )
-from ..tools import as_timezone
+from ..tools import as_timezone, dict_to_str
 
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))

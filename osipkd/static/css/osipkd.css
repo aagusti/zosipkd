@@ -50,6 +50,15 @@ border: 1px solid transparent;
   padding: 3px 6px;
   height: 26px;
 }
+.input-group-addon{
+  padding: 3px 6px;
+  height: 26px;
+}
+
+.picker__select--month, .picker__select--year {
+    padding: 0.1em;
+    /*height: 3em;*/
+}
 
 .container {
     --max-width: 1024px;

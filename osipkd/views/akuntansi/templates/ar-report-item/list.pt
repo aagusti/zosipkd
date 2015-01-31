@@ -2,5 +2,98 @@
   <div metal:fill-slot="content">
     <h4>${request.title}</h4>
     <hr>
+    <div class="row">
+      <div class="col-md-8">
+        <div class="input-group">
+          <span class="input-group-addon">
+            <input type="radio" name="ar-item-lap" id="ar-item-lap1" value="y">
+          </span>
+          <input type="text" class="form-control" aria-label="..." readonly value="Laporan Piutang">
+        </div><!-- /input-group -->
+      </div><!-- /.col-lg-6 -->
+    </div>
+    <div class="row">
+      <div class="col-md-8">
+        <div class="input-group">
+          <span class="input-group-addon">
+            <input type="radio" name="ar-item-lap" id="ar-item-lap2" value="y">
+          </span>
+          <input type="text" class="form-control" aria-label="..." readonly value="Laporan Realisasi">
+        </div><!-- /input-group -->
+      </div><!-- /.col-lg-6 -->
+    </div>
+
+    <div class="row">
+      <div class="col-md-8">
+        <div class="input-group">
+          <span class="input-group-addon">
+            <input type="radio" name="ar-item-lap" id="ar-item-lap2" value="y">
+          </span>
+          <input type="text" class="form-control" aria-label="..." readonly value="Laporan Saldo Piutang">
+        </div><!-- /input-group -->
+      </div><!-- /.col-lg-6 -->
+    </div>
+
+    <div class="row">
+      <label for="tanggal" class="control-label col-md-1" id="req-tanggal">
+              Periode</label>
+      <div class="col-md-3">
+         <input id="tanggal" class="form-control" type="text" readonly 
+                value="${request.session['tanggal']}" name="tanggal"/>
+      </div>
+      <div class="col-md-3">
+        <input id="tanggal2" class="form-control" type="text" readonly 
+                value="${request.session['tanggal2']}" name="tanggal"/>
+      </div>
+      <button id="btn_pdf" class="btn btn-success" type="button"
+              name="btn_pdf">Print</button>
+      <button id="btn_csv" class="btn btn-warning" type="button"
+              name="btn_csv">CSV</button>
+    </div>
+    <script>
+      $('#tanggal').click(
+          function(){
+            if (!Modernizr.inputtypes['date'] ||
+                "date" != "date"){
+              $('#tanggal').pickadate({"selectMonths": true,
+                "submitFormat": "yyyy-mm-dd", 
+                "selectYears": true, "format": "yyyy-mm-dd"});
+            }
+          }
+      );
+      $('#tanggal2').click(
+          function(){
+            if (!Modernizr.inputtypes['date'] ||
+                "date" != "date"){
+              $('#tanggal2').pickadate({"selectMonths": true,
+                "submitFormat": "yyyy-mm-dd", 
+                "selectYears": true, "format": "yyyy-mm-dd"});
+            }
+          }
+      );
+      
+      $('#tanggal, #tanggal2').change(function(){
+            if ($('#tanggal').val()>$('#tanggal2').val()){
+                $('#tanggal2').val($('#tanggal').val());
+            }
+            $.ajax({
+              type: "POST",
+              url: "/change/tanggal",
+              data: "tanggal="+$('#tanggal').val()+"&tanggal2="+$('#tanggal2').val(),
+              success: function (html) {
+                if (html.success == true) {
+                  $("#success").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                } else {
+                  $("#errors").css('display', 'inline', 'important');
+                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                }
+              },
+              beforeSend: function () {
+                $("#errors").css('display', 'inline', 'important');
+                $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+              }
+            });
+      });
+    </script>
   </div>
 </html>

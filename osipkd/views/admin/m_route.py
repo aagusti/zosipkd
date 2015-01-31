@@ -35,7 +35,9 @@ PERM_CHOICE = ((None,'None'),
       ('read', 'Read'),
       ('add', 'Add'),
       ('edit', 'Edit'),
-      ('delete', 'Delete'),)
+      ('delete', 'Delete'),
+      ('post', 'Posting'),
+      )
                 
 class AddSchema(colander.Schema):
     kode = colander.SchemaNode(
@@ -77,7 +79,7 @@ class view_routes(BaseViews):
     ##########    
     @view_config(route_name='routes-act', renderer='json',
                  permission='read')
-    def gaji_routes_act(self):
+    def routes_act(self):
         ses = self.request.session
         req = self.request
         params = req.params
@@ -98,12 +100,14 @@ class view_routes(BaseViews):
             return rowTable.output_result()
             
         elif url_dict['act']=='headof':
+            print 'nama--------------------------'
             term = 'term' in params and params['term'] or '' 
             rows = DBSession.query(Route.id, Route.nama
                       ).filter(
-                      Route.nama.ilike('%%%s%%' % term),
+                      Route.nama.ilike('%{term}%'.format(term=term)),
                       Route.perm_name != None).\
                       order_by(Route.nama).all()
+            print rows
             r = []
             for k in rows:
                 d={}
@@ -111,9 +115,6 @@ class view_routes(BaseViews):
                 d['value']       = k[1]
                 r.append(d)
             return r                  
-
-                
-            
 
     #######    
     # Add #

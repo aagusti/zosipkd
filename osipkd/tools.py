@@ -5,25 +5,37 @@ import csv
 import io
 import csv, codecs, cStringIO
 import uuid
+import locale
+import pytz
+import mechanize
+import urllib
+import calendar    
 
 from types import (
     IntType,
     LongType,
+    ListType,
+    StringType,
+    UnicodeType,
+    BooleanType,
     )
 from datetime import (
+    date,
     datetime,
     timedelta,
     )
-import locale
-import pytz
-from pyramid.threadlocal import get_current_registry    
-
+from random import choice
+from string import (
+    ascii_uppercase,
+    ascii_lowercase,
+    digits,
+    )
+from pyramid.threadlocal import get_current_registry
 
 ################
 # Phone number #
 ################
 MSISDN_ALLOW_CHARS = map(lambda x: str(x), range(10)) + ['+']
-
 def get_msisdn(msisdn, country='+62'):
     for ch in msisdn:
         if ch not in MSISDN_ALLOW_CHARS:
@@ -83,6 +95,9 @@ def get_timezone():
 ########
 one_second = timedelta(1.0/24/60/60)
 TimeZoneFile = '/etc/timezone'
+DateType = type(date.today())
+DateTimeType = type(datetime.now())
+
 if os.path.exists(TimeZoneFile):
     DefaultTimeZone = open(TimeZoneFile).read().strip()
 else:
@@ -108,6 +123,47 @@ def create_date(year, month, day):
 def create_now():
     tz = get_timezone()
     return datetime.now(tz)
+
+def date_from_str(value):
+    separator = None
+    value = value.split()[0] # dd-mm-yyyy HH:MM:SS  
+    for s in ['-', '/']:
+        if value.find(s) > -1:
+            separator = s
+            break    
+    if separator:
+        t = map(lambda x: int(x), value.split(separator))
+        y, m, d = t[2], t[1], t[0]
+        if d > 999: # yyyy-mm-dd
+            y, d = d, y
+    else: # if len(value) == 8: # yyyymmdd
+        y, m, d = int(value[:4]), int(value[4:6]), int(value[6:])
+    return date(y, m, d)    
+    
+def dmy(tgl):
+    return tgl.strftime('%d-%m-%Y')
+    
+def dmyhms(t):
+    return t.strftime('%d-%m-%Y %H:%M:%S')
+    
+def next_month(year, month):
+    if month == 12:
+        month = 1
+        year += 1
+    else:
+        month += 1
+    return year, month
+    
+def best_date(year, month, day):
+    try:
+        return date(year, month, day)
+    except ValueError:
+        last_day = calendar.monthrange(year, month)[1]
+        return date(year, month, last_day)
+
+def next_month_day(year, month, day):
+    year, month = next_month(year, month)
+    return best_date(year, month, day)
     
 ################
 # Months #
@@ -321,4 +377,24 @@ class Upload(SaveFile):
             output_file.write(data)
         output_file.close()
         return filename      
-        
+def to_str(v):
+    typ = type(v)
+    print typ, v
+    if typ == DateType:
+        return dmy(v)
+    if typ == DateTimeType:
+        return dmyhms(v)
+    if v == 0:
+        return '0'
+    if typ in [UnicodeType, StringType]:
+        return v.strip()
+    elif typ is BooleanType:
+        return v and '1' or '0'
+    return v and str(v) or ''
+    
+def dict_to_str(d):
+    r = {}
+    for key in d:
+        val = d[key]        
+        r[key] = to_str(val)
+    return r        

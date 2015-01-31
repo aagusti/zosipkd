@@ -49,6 +49,7 @@ class ARInvoiceItem(NamaModel, Base):
     bulan = Column(Integer)
     minggu = Column(Integer)
     hari = Column(Integer)
+    posted = Column(SmallInteger, nullable=False, default=0)
     
 class ARPaymentItem(NamaModel, Base):
     __tablename__ = 'ar_payment_item'
@@ -62,7 +63,6 @@ class ARPaymentItem(NamaModel, Base):
     kegiatan_subs = relationship("KegiatanSub", backref=backref("ar_payment_items"))
     rekening_id = Column(Integer, ForeignKey("admin.rekenings.id"), nullable=False)
     rekenings = relationship("Rekening", backref=backref("ar_payment_items"))
-
     ref_kode = Column(String(32))
     ref_nama = Column(String(64))
     tanggal = Column(DateTime(timezone=True), nullable=True)
@@ -76,6 +76,7 @@ class ARPaymentItem(NamaModel, Base):
     bulan = Column(Integer)
     minggu = Column(Integer)
     hari = Column(Integer)
+    posted = Column(SmallInteger, nullable=False, default=0)
     
 class ARTargetItem(NamaModel, Base):
     __tablename__ = 'ar_target_item'

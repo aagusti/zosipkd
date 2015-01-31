@@ -49,12 +49,12 @@ class AddSchema(colander.Schema):
                     
     rekening_nm_widget = widget.AutocompleteInputWidget(
             size=60,
-            values = '/rekening/act/headofkode8',
+            values = '/rekening/act/headofkode4',
             min_length=1)
   
     rekening_kd_widget = widget.AutocompleteInputWidget(
             size=60,
-            values = '/rekening/act/headofkode8',
+            values = '/rekening/act/headofkode4',
             min_length=1)
     
     unit_id  = colander.SchemaNode(
@@ -186,9 +186,11 @@ class view_ar_invoice_item(BaseViews):
             columns.append(ColumnDT('ref_nama'))
             columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
             columns.append(ColumnDT('amount',  filter=self._number_format))
+            columns.append(ColumnDT('posted'))
             
             query = DBSession.query(ARItem).filter(ARItem.tahun==ses['tahun'],
-                      ARItem.unit_id==ses['unit_id'])
+                      ARItem.unit_id==ses['unit_id'],
+                      ARItem.tanggal == ses['tanggal'])
             rowTable = DataTables(req, ARItem, query, columns)
             return rowTable.output_result()
         
@@ -265,8 +267,11 @@ class view_ar_invoice_item(BaseViews):
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
             return dict(form=form)
-        
-            #return self.session_failed(SESS_ADD_FAILED)
+        rowd={}
+        rowd['unit_id']     = ses['unit_id']
+        rowd['unit_nm']     = ses['unit_nm']
+        rowd['unit_kd']     = ses['unit_kd']
+        form.set_appstruct(rowd)                  
         return dict(form=form)
 
         
@@ -288,6 +293,18 @@ class view_ar_invoice_item(BaseViews):
         row = self.query_id().first()
         if not row:
             return id_not_found(request)
+        form = self.get_form(EditSchema)
+
+        if request.POST:
+            if 'simpan' in request.POST:
+                controls = request.POST.items()
+                print controls
+                try:
+                    c = form.validate(controls)
+                except ValidationFailure, e:
+                    return dict(form=form)
+                self.save_request(dict(controls), row)
+            return self.route_list()
         #values = row.to_dict()
         rowd={}
         rowd['id']          = row.id
@@ -308,24 +325,7 @@ class view_ar_invoice_item(BaseViews):
         rowd['is_kota']         = row.is_kota
         rowd['disabled']    = row.disabled
         rowd['sumber_id']    = row.sumber_id
-        
-        form = self.get_form(EditSchema)
-        form.set_appstruct(rowd)
-        if request.POST:
-            if 'simpan' in request.POST:
-                controls = request.POST.items()
-                print controls
-                try:
-                    c = form.validate(controls)
-                except ValidationFailure, e:
-                    return dict(form=form)
-                    #request.session[SESS_EDIT_FAILED] = e.render()               
-                    #return HTTPFound(location=request.route_url('ar-invoice-item-edit',
-                    #                  id=row.id))
-                self.save_request(dict(controls), row)
-            return self.route_list()
-        elif SESS_EDIT_FAILED in request.session:
-            return self.session_failed(SESS_EDIT_FAILED)
+        form.set_appstruct(rowd)                  
         return dict(form=form)
 
     ##########

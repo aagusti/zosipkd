@@ -159,7 +159,7 @@ class KegiatanSub(NamaModel, Base):
     units     = relationship("Unit",     backref="kegiatansubs") 
     
     no_urut  = Column(Integer, nullable=False)
-    #nama    = Column(String(255))
+    nama    = Column(String(255))
     lokasi   = Column(String(255))
     sifat    = Column(String(50))
     bagian   = Column(String(50))
@@ -268,7 +268,7 @@ class KegiatanItem(NamaModel, Base):
 
     kegiatan_sub_id = Column(BigInteger, ForeignKey("apbd.kegiatan_subs.id"), nullable=False)
     rekening_id     = Column(Integer ,   ForeignKey("admin.rekenings.id"),     nullable=False)    
-    kode            = Column(String(25))
+    kode            = Column(String(32))
     nama            = Column(String(255), nullable=False)
     no_urut         = Column(Integer , nullable=False)
     header_id       = Column(BigInteger , nullable=True)
