@@ -209,7 +209,7 @@
       var mThn;
       var oTable;
       var iPos;
-      var oTableUrl = "/ar-payment-item/act/grid";;  
+      var oTableUrl = "/ar-payment-item/grid/act";;  
         
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
