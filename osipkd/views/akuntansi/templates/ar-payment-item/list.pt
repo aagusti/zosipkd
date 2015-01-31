@@ -238,7 +238,7 @@
               null,
               {"width": "75px"},
               null,
-               {"width": "100px", "sClass":"left"},
+               {"width": "150px", "sClass":"left"},
               null,
               {"width": "75px", "sClass":"center"},
               {"width": "100px", "sClass":"right"},
