@@ -75,7 +75,7 @@ class AddSchema(colander.Schema):
                     title="SKPD",
                     widget = unit_nm_widget)
 
-    kegiatan_sub_id  = colander.SchemaNode(
+    """kegiatan_sub_id  = colander.SchemaNode(
                     colander.Integer(),
                     oid='kegiatan_sub_id',
                     title="SKPD")
@@ -90,7 +90,7 @@ class AddSchema(colander.Schema):
                     colander.String(),
                     oid='kegiatan_sub_nm',
                     widget = kegiatan_nm_widget)
-
+    """
     rekening_id  = colander.SchemaNode(
                     colander.Integer(),
                     oid='rekening_id')
@@ -194,8 +194,8 @@ class view_ar_payment_item(BaseViews):
         if url_dict['act']=='grid':
             columns = []
             columns.append(ColumnDT('id'))
-            columns.append(ColumnDT('kegiatan_subs.kegiatans.kode'))
-            columns.append(ColumnDT('kegiatan_subs.no_urut'))
+            #columns.append(ColumnDT('kegiatan_subs.kegiatans.kode'))
+            #columns.append(ColumnDT('kegiatan_subs.no_urut'))
             columns.append(ColumnDT('kode'))
             columns.append(ColumnDT('nama'))
             columns.append(ColumnDT('ref_kode'))
@@ -313,32 +313,8 @@ class view_ar_payment_item(BaseViews):
         row = self.query_id().first()
         if not row:
             return id_not_found(request)
-        #values = row.to_dict()
-        rowd={}
-        rowd['id']          = row.id
-        rowd['unit_id']     = row.unit_id
-        rowd['unit_nm']     = row.units.nama
-        rowd['unit_kd']     = row.units.kode
-        rowd['kegiatan_sub_id'] =row.kegiatan_sub_id
-        rowd['kegiatan_sub_kd'] ="".join([row.kegiatan_subs.kegiatans.kode,'-',str(row.kegiatan_subs.no_urut)])
-        rowd['kegiatan_sub_nm'] =row.kegiatan_subs.nama
-        rowd['rekening_id'] = row.rekening_id
-        rowd['kode']        = row.kode
-        rowd['nama']        = row.nama
-        rowd['ref_kode']    = row.ref_kode
-        rowd['ref_nama']    = row.ref_nama
-        rowd['tanggal']    = row.tanggal
-        rowd['amount']     = row.amount
-        rowd['kecamatan_kd']    = row.kecamatan_kd
-        rowd['kecamatan_nm']    = row.kecamatan_nm
-        rowd['kelurahan_kd']    = row.kelurahan_kd
-        rowd['kelurahan_nm']    = row.kelurahan_nm
-        rowd['is_kota']         = row.is_kota
-        rowd['disabled']    = row.disabled
-        rowd['sumber_id']    = row.sumber_id
         
         form = self.get_form(EditSchema)
-        form.set_appstruct(rowd)
         if request.POST:
             if 'simpan' in request.POST:
                 controls = request.POST.items()
@@ -354,6 +330,30 @@ class view_ar_payment_item(BaseViews):
             return self.route_list()
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
+        rowd = row.to_dict()
+        #rowd={}
+        #rowd['id']          = row.id
+        #rowd['unit_id']     = row.unit_id
+        rowd['unit_nm']     = row.units.nama
+        rowd['unit_kd']     = row.units.kode
+        #rowd['kegiatan_sub_id'] =row.kegiatan_sub_id
+        #rowd['kegiatan_sub_kd'] ="".join([row.kegiatan_subs.kegiatans.kode,'-',str(row.kegiatan_subs.no_urut)])
+        #rowd['kegiatan_sub_nm'] =row.kegiatan_subs.nama
+        #rowd['rekening_id'] = row.rekening_id
+        #rowd['kode']        = row.kode
+        #rowd['nama']        = row.nama
+        #rowd['ref_kode']    = row.ref_kode
+        #rowd['ref_nama']    = row.ref_nama
+        #rowd['tanggal']    = row.tanggal
+        #rowd['amount']     = row.amount
+        #rowd['kecamatan_kd']    = row.kecamatan_kd
+        #rowd['kecamatan_nm']    = row.kecamatan_nm
+        #rowd['kelurahan_kd']    = row.kelurahan_kd
+        #rowd['kelurahan_nm']    = row.kelurahan_nm
+        #rowd['is_kota']         = row.is_kota
+        #rowd['disabled']      = row.disabled
+        #rowd['sumber_id']    = row.sumber_id
+        form.set_appstruct(rowd)
         return dict(form=form)
 
     ##########

@@ -187,8 +187,8 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Kegiatan</th>
-                <th>No</th>
+                <!--th>Kegiatan</th>
+                <th>No</th-->
                 <th>Kode</th>
                 <th>Uraian</th>
                 <th>Ref. Kode</th>
@@ -236,8 +236,6 @@
                     }],
           "aoColumns": [
               null,
-              {"width": "75px"},
-              {"width": "50px"},
               {"width": "75px"},
               null,
                {"width": "100px", "sClass":"left"},
