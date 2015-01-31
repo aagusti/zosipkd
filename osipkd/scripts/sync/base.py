@@ -1,7 +1,6 @@
 #!/usr/bin/python
-
 import sys
-from config import (db_url_dst)
+#from config import (db_url_dst)
 from tools import humanize_time, print_log, eng_profile, stop_daemon
 import os
 import demon
@@ -27,6 +26,7 @@ from urllib import unquote_plus
 from urlparse import urlparse
 from optparse import OptionParser
 from datetime import date
+from config import bphtb, pbb, padl, osipkd
 
 def row2dict(row):
     d = {}
@@ -43,12 +43,22 @@ def error(s):
     print_log(s,'ERROR')
     log.error(s)    
 
-eng_dst = create_engine(db_url_dst)
-DBSession = scoped_session(sessionmaker())
-Base = declarative_base()
-DBSession.configure(bind=eng_dst)
-Base.metadata.bind = eng_dst
-#eng_dst.echo =True
+if bphtb['db_url']:
+    bphtb_Base = declarative_base()
+    bphtb_eng  = create_engine(bphtb['db_url'])
+    bphtb_Session = scoped_session(sessionmaker())
+    bphtb_Session.configure(bind=bphtb_eng)
+    bphtb_Base.metadata.bind = bphtb_eng
+
+
+if osipkd['db_url']:
+    osipkd_Base = declarative_base()
+    osipkd_eng  = create_engine(osipkd['db_url'])
+    osipkd_Session = scoped_session(sessionmaker())
+    osipkd_Session.configure(bind=osipkd_eng)
+    osipkd_Base.metadata.bind = osipkd_eng
+    #osipkd_eng.echo = True
+    
 class base(object):
     def to_dict(self): # Elixir like
         values = {}
@@ -69,4 +79,3 @@ class base(object):
     def get_id_by_kode(cls, kode):
           return DBSession.query(cls.id).filter(cls.kode==kode)
           
-
