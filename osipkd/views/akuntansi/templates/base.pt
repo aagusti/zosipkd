@@ -11,7 +11,8 @@
           <li><a href="/ar-invoice-item">Ketetapan</a></li>
           <li><a href="/ar-payment-item">Realisasi</a></li>
           <li><a href="/ar/payment/sts">STS</a></li>
-          <li><a href="/ar-report-item">Laporan</a></li>
+          <li><a href="/ar/report/item/skpd">Laporan SKPD</a></li>
+          <li><a href="/ar-report-item">Laporan Pemda</a></li>
         </ul>
       </li>
       

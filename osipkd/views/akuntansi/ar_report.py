@@ -36,4 +36,12 @@ class view_ar_payment_item(BaseViews):
         params = req.params
         url_dict = req.matchdict
         return dict(project='Akrual')
-        
+ 
+    @view_config(route_name='ar-report-item-skpd', renderer='templates/ar-report-item/listskpd.pt',
+                 permission='read')
+    def view_list(self):
+        ses = self.request.session
+        req = self.request
+        params = req.params
+        url_dict = req.matchdict
+        return dict(project='Akrual')

@@ -2660,5 +2660,12 @@ RouteData = {
         path='/ar/payment/sts/{ar_sts_id}/item/{act}/act',
         perm_name='read',
         ),        
+    dict(
+        id=381,
+        kode='ar-report-item-skpd',
+        nama=' Laporan Pendapatan SKPD',
+        path='/ar/report/item/skpd',
+        perm_name='read',
+        ), 
 ]}
 

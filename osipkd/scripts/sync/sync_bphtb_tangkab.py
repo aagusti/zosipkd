@@ -25,11 +25,7 @@ class BphtbBank(bphtb_Base, base):
     rekening = Rekening.get_by_kode(bphtb['rekening_kd'])
     i = 0
     for row in rows:
-      odata = ARPayment.get_by_ref_kode(row.tahun,row.transno)
-      i += 1
-      if i/100 == i/100.0:
-        print 'Commit ', i
-        osipkd_Session.commit()
+      odata = ARPayment.get_by_ref_kode(row.tahun,''.join([row.transno,'/',str(row.seq)]))
       if not odata:
           odata = ARPayment()
           odata.unit_id         = Unit.get_by_kode(bphtb['unit_kd'])
@@ -53,6 +49,11 @@ class BphtbBank(bphtb_Base, base):
 
           #odata.updated         =
           #odata.update_uid      =
+      i += 1
+      if i/100 == i/100.0:
+        print 'Commit ', i
+        osipkd_Session.commit()
+          
     osipkd_Session.commit()
     
 if __name__ == '__main__':
