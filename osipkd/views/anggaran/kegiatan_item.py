@@ -103,17 +103,22 @@ class view_ak_jurnal(BaseViews):
         elif url_dict['act']=='headofkode1':
             term = 'term' in params and params['term'] or ''
             kegiatan_sub = 'kegiatan_sub_id' in params and params['kegiatan_sub_id'] or 0
-            q = DBSession.query(KegiatanItem.id, Rekening.kode.label('kode1'),Rekening.nama.label('nama1')
-                                )\
-                                .join(KegiatanSub, Rekening)\
-                                .outerjoin(Kegiatan)\
-                                .filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+            q = DBSession.query(KegiatanItem.id, Kegiatan.kode.label('kegiatan_kd'),
+                                Kegiatan.nama.label('kegiatan_nm'),
+                                KegiatanSub.no_urut.label('kegiatan_no'),
+                                Rekening.kode.label('rekening_kd'),
+                                Rekening.nama.label('rekening_nm'),
+                                KegiatanItem.no_urut.label('item_no'),
+                                ).\
+                          join(KegiatanSub, Rekening).\
+                          outerjoin(Kegiatan).\
+                          filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                                         #KegiatanSub.id==kegiatan_sub,
                                         KegiatanSub.unit_id == ses['unit_id'],
                                         KegiatanSub.tahun_id == ses['tahun'],
                                         KegiatanSub.kegiatan_id==Kegiatan.id,
                                         KegiatanItem.rekening_id==Rekening.id,
-                                        Kegiatan.kode=='0.00.00.10', 
+                                        #Kegiatan.kode=='0.00.00.10', 
                                         Rekening.kode.ilike('%%%s%%' % term))\
                       
             rows = q.all()                               
@@ -121,12 +126,14 @@ class view_ak_jurnal(BaseViews):
             for k in rows:
                 d={}
                 d['id']      = k[0]
-                d['value']   = k[1]
-                d['kode']    = k[1]
-                d['nama']    = k[2]
-                #d['amount']  = k[3]
+                d['value']   = '{kegiatan_kd}-{kegiatan_no}-{rekening_kd}-{item_no}'.\
+                                format(kegiatan_kd=k[1], kegiatan_no=k[3], 
+                                       rekening_kd=k[4], item_no=k[6])
+                d['kode']    = '{kegiatan_kd}-{kegiatan_no}-{rekening_kd}-{item_no}'.\
+                                format(kegiatan_kd=k[1], kegiatan_no=k[3], 
+                                       rekening_kd=k[4], item_no=k[6])
+                d['nama']    = k[5]
                 r.append(d)
-            print '---****----',r              
             return r            
         
     ###############                    

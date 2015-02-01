@@ -7,53 +7,27 @@
   <fieldset class="deformFormFieldset">
       <!--Tahun---------------------------------------------------------------->
       <div class="form-group">
-        <div class="col-md-3">
-          <div id="item-tahun">
-            <label for="tahun" class="control-label col-md-3" id="req-tahun">
-                    Tahun</label>
-            <div class="col-md-9">
-               <input id="tahun" class=" form-control " type="text" 
-                      value="${request.session['tahun']}" 
-                      readonly name="tahun">
-            </div>
+        <div id="item-tahun">
+          <label for="tahun" class="control-label col-md-1" id="req-tahun">
+                  Tahun</label>
+          <div class="col-md-2">
+             <input id="tahun" class=" form-control " type="text" 
+                    value="${request.session['tahun']}" 
+                    readonly name="tahun">
           </div>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-2">
            <input id="tahun_nm" class=" form-control " type="text" value="${request.session['ag_step_nm']}" name="tahun_nm" readonly>
         </div>
-        
-      </div>
-
-      <!----------------------------------------------------------------------->
-      <input id="unit_id" type="hidden" value="${request.session['unit_id']}" name="unit_id">
-      <div class="form-group"><!--SKPD-->
-        <div class="col-md-3">
-          <div id="item-unit_kd">
-            <label for="unit_kd" class="control-label col-md-3" id="req-unit_kd">
-                    SKPD</label>
-            <div class="col-md-9">
-               <input id="unit_kd" class="form-control typeahead" type="text" value="${request.session['unit_kd']}" name="unit_kd">
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-md-5">
-           <input id="unit_nm" class=" form-control " type="text" value="${request.session['unit_nm']}" name="unit_nm">
-        </div>
-      </div>
-      <!----------------------------------------------------------------------->
       <!--Tanggal-->
-      <div class="form-group">
-        <div class="col-md-3">
           <div id="item-tanggal">
-            <label for="tanggal" class="control-label col-md-3" id="req-tanggal">
+            <label for="tanggal" class="control-label col-md-4" id="req-tanggal">
                     Tanggal</label>
-            <div class="col-md-9">
+            <div class="col-md-3">
                <input id="tanggal" class="form-control" type="text" readonly 
                       value="${request.session['tanggal']}" name="tanggal">
             </div>
           </div>
-        </div>
       <script>
       $('#tanggal').click(
           function(){
@@ -93,7 +67,26 @@
       });
       
       </script>
+
+      
       </div>
+
+      <!----------------------------------------------------------------------->
+      <input id="unit_id" type="hidden" value="${request.session['unit_id']}" name="unit_id">
+      <div class="form-group"><!--SKPD-->
+        <div id="item-unit_kd">
+          <label for="unit_kd" class="control-label col-md-1" id="req-unit_kd">
+                  SKPD</label>
+          <div class="col-md-2">
+             <input id="unit_kd" class="form-control typeahead" type="text" value="${request.session['unit_kd']}" name="unit_kd">
+          </div>
+        </div>
+        
+        <div class="col-md-9">
+           <input id="unit_nm" class=" form-control " type="text" value="${request.session['unit_nm']}" name="unit_nm">
+        </div>
+      </div>
+      <!----------------------------------------------------------------------->
       
       <script>
 

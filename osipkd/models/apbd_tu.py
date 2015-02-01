@@ -451,15 +451,17 @@ class Sts(NamaModel, Base):
     nama           = Column(String(64), nullable=False)
     jenis          = Column(BigInteger, nullable=False)                 
     nominal        = Column(BigInteger, nullable=False)
-    ttd_uid        = Column(Integer,    nullable=False)
-    ttd_nip        = Column(String(32), nullable=False)
-    ttd_nama       = Column(String(64), nullable=False)
-    ttd_jab        = Column(String(64), nullable=False)
+    ttd_uid        = Column(Integer)
+    ttd_nip        = Column(String(32))
+    ttd_nama       = Column(String(64))
+    ttd_jab        = Column(String(64))
     bank_nama      = Column(String(32), nullable=False)
     bank_account   = Column(String(64), nullable=False)
     tgl_sts        = Column(Date) 
     tgl_validasi   = Column(Date)
     posted         = Column(SmallInteger, nullable=False, default=0)
+    UniqueConstraint('tahun_id', 'unit_id', 'kode',
+            name = 'ar_sts_kode_ukey')
     
     @classmethod
     def max_no_urut(cls, tahun, unit_id):

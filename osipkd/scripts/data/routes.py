@@ -1,5 +1,6 @@
-RouteData = [
-    dict(
+RouteData = {
+ 'options': ['insert if not exists'],
+ 'data': [dict(
         id=1,
         kode='home',
         nama='Home',
@@ -940,8 +941,8 @@ RouteData = [
     dict(
         id=135,
         kode='ar-invoice-item-act',
-        nama='Penetapan/Tagihan Act',
-        path='/ar-invoice-item/act/{act}',
+        nama='Ketetapan/Tagihan Act',
+        path='/ar-invoice-item/{act}/act',
         perm_name='read',
         ),
     dict(
@@ -976,7 +977,7 @@ RouteData = [
         id=140,
         kode='ar-payment-item-act',
         nama='Realisasi/STS Act',
-        path='/ar-payment-item/act/{act}',
+        path='/ar-payment-item/{act}/act',
         perm_name='read',
         ),
     dict(
@@ -2596,5 +2597,68 @@ RouteData = [
         path='/efiling/file/{id}/delete',
         perm_name='delete',
         ),
-]
+    dict(
+        id=372,
+        kode='ar-payment-sts',
+        nama=' STS',
+        path='/ar/payment/sts',
+        perm_name='read',
+        ),
+    dict(
+        id=373,
+        kode='ar-payment-sts-add',
+        nama='Tambah STS',
+        path='/ar/payment/sts/add',
+        perm_name='read',
+        ),
+    dict(
+        id=374,
+        kode='ar-payment-sts-edit',
+        nama='Edit STS',
+        path='/ar/payment/sts/{id}/edit',
+        perm_name='edit',
+        ),
+    dict(
+        id=375,
+        kode='ar-payment-sts-delete',
+        nama='Hapus STS',
+        path='/ar/payment/sts/{id}/delete',
+        perm_name='delete',
+        ),
+    dict(
+        id=376,
+        kode='ar-payment-sts-act',
+        nama=' STS Act',
+        path='/ar/payment/sts/{act}/act',
+        perm_name='read',
+        ),
+    dict(
+        id=377,
+        kode='ar-payment-sts-item-add',
+        nama='Tambah STS Item',
+        path='/ar/payment/sts/{ar_sts_id}/item/add',
+        perm_name='read',
+        ),
+    dict(
+        id=378,
+        kode='ar-payment-sts-item-edit',
+        nama='Edit STS Item',
+        path='/ar/payment/sts/{ar_sts_id}/item/{id}/edit',
+        perm_name='edit',
+        ),
+    dict(
+        id=379,
+        kode='ar-payment-sts-item-delete',
+        nama='Hapus STS Item',
+        path='/ar/payment/sts/{ar_sts_id}/item/{id}/delete',
+        perm_name='delete',
+        ),
+    dict(
+        id=380,
+        kode='ar-payment-sts-item-act',
+        nama=' STS Item Act',
+        path='/ar/payment/sts/{ar_sts_id}/item/{act}/act',
+        perm_name='read',
+        ),        
+]}
 
