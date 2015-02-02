@@ -49,7 +49,7 @@
           <div class="col-md-12">
             <div class="input-group">
               <span class="input-group-addon">
-                <input type="radio" name="ar-item-lap" id="ar-item-lap1" value="y">
+                <input type="radio" name="ar-item-lap" id="ar-item-lap1" value="1">
               </span>
               <input type="text" class="form-control" aria-label="..." readonly value="Laporan Piutang">
             </div><!-- /input-group -->
@@ -59,7 +59,7 @@
           <div class="col-md-12">
             <div class="input-group">
               <span class="input-group-addon">
-                <input type="radio" name="ar-item-lap" id="ar-item-lap2" value="y">
+                <input type="radio" name="ar-item-lap" id="ar-item-lap2" value="2">
               </span>
               <input type="text" class="form-control" aria-label="..." readonly value="Laporan Realisasi">
             </div><!-- /input-group -->
@@ -70,7 +70,7 @@
           <div class="col-md-12">
             <div class="input-group">
               <span class="input-group-addon">
-                <input type="radio" name="ar-item-lap" id="ar-item-lap2" value="y">
+                <input type="radio" name="ar-item-lap" id="ar-item-lap2" value="3">
               </span>
               <input type="text" class="form-control" aria-label="..." readonly value="Laporan Saldo Piutang">
             </div><!-- /input-group -->
@@ -88,7 +88,7 @@
           <div class="col-md-12">
             <div class="input-group">
               <span class="input-group-addon">
-                <input type="radio" name="ar-item-level" id="ar-item-level1" value="y">
+                <input type="radio" name="ar-item-level" id="ar-item-level1" value="1">
               </span>
               <input type="text" class="form-control" aria-label="..." readonly value="Jenis">
             </div><!-- /input-group -->
@@ -98,7 +98,7 @@
           <div class="col-md-12">
             <div class="input-group">
               <span class="input-group-addon">
-                <input type="radio" name="ar-item-level" id="ar-item-leve2" value="y">
+                <input type="radio" name="ar-item-level" id="ar-item-leve2" value="2">
               </span>
               <input type="text" class="form-control" aria-label="..." readonly value="Objek">
             </div><!-- /input-group -->
@@ -109,7 +109,7 @@
           <div class="col-md-12">
             <div class="input-group">
               <span class="input-group-addon">
-                <input type="radio" name="ar-item-level" id="ar-item-level3" value="y">
+                <input type="radio" name="ar-item-level" id="ar-item-level3" value="3">
               </span>
               <input type="text" class="form-control" aria-label="..." readonly value="Rincian Objek">
             </div><!-- /input-group -->
@@ -179,6 +179,23 @@
               }
             });
       });
+      
+      $('#btn_pdf').click(function () {
+            var jenis = $('input[name="ar-item-lap"]:checked').val();
+            var level = $('input[name="ar-item-level"]:checked').val();
+            var mulai = $('#tanggal').val();
+            var selesai = $('#tanggal2').val();
+            if(jenis==undefined) {
+                alert('Silahkan pilih jenis report yang akan ditampilkan!');
+                return;
+            }
+            if(level==undefined) {
+                alert('Silahkan pilih kedalaman yang akan ditampilkan!');
+                return;
+            }
+            window.open('/ar-report-item-skpd/'+jenis+'/act/?level='+level+'&mulai='+mulai+'&selesai='+selesai);
+      });
+      
     </script>
   </div>
 </html>
