@@ -2667,5 +2667,19 @@ RouteData = {
         path='/ar/report/item/skpd',
         perm_name='read',
         ), 
+    dict(
+        id=382,
+        kode='ar-report-item-act',
+        nama=' Laporan Pendapatan SKPD',
+        path='/ar-report-item/{act}/act',
+        perm_name='read',
+        ), 
+    dict(
+        id=383,
+        kode='ar-report-item-skpd-act',
+        nama=' Laporan Pendapatan SKPD',
+        path='/ar-report-item-skpd/{act}/act',
+        perm_name='read',
+        ), 
 ]}
 
