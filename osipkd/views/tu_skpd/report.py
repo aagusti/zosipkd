@@ -107,13 +107,29 @@ class ViewTUSKPDLap(BaseViews):
         params = req.params
         url_dict = req.matchdict
 
-        tipe = 'tipe' in params and params['tipe'] and int(params['tipe']) or 0
+        #tipe = 'tipe' in params and params['tipe'] and int(params['tipe']) or 0
         mulai = 'mulai' in params and params['mulai'] or 0
         selesai = 'selesai' in params and params['selesai'] or 0
         
         ### LAPORAN INVOICE
         if url_dict['act']=='1' :
-            print XXXXXXXX
+            query = DBSession.query(ARInvoice.tahun_id.label('tahun'), Unit.nama.label('unit_nm'),
+                  ARInvoice.kode, ARInvoice.tgl_terima, ARInvoice.tgl_validasi, ARInvoice.penyetor, ARInvoice.nama.label('uraian'), 
+                  Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'), ARInvoiceItem.nilai.label('jumlah'
+                  )).filter(ARInvoice.unit_id==Unit.id, ARInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                  KegiatanItem.rekening_id==Rekening.id,
+                  ARInvoiceItem.ar_invoice_id==ARInvoice.id, ARInvoice.unit_id==self.session['unit_id'],
+                  ARInvoice.tahun_id==self.session['tahun'],  
+                  ARInvoice.tgl_terima.between(mulai,selesai)
+                  ).order_by(ARInvoice.tgl_terima)
+
+            generator = b101r001Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
            
         # INVOICE
         elif url_dict['act']=='arinvoice' :
@@ -155,6 +171,26 @@ class ViewTUSKPDLap(BaseViews):
             response.write(pdf)
             return response
     
+        ### LAPORAN STS
+        if url_dict['act']=='2' :
+            query = DBSession.query(Sts.tahun_id.label('tahun'), Unit.nama.label('unit_nm'),
+                  Sts.kode, Sts.tgl_sts, Sts.tgl_validasi, Sts.jenis, Sts.nama.label('uraian'), 
+                  Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'), StsItem.amount.label('jumlah'
+                  )).filter(Sts.unit_id==Unit.id, StsItem.kegiatan_item_id==KegiatanItem.id,
+                  KegiatanItem.rekening_id==Rekening.id,
+                  StsItem.ar_sts_id==Sts.id, Sts.unit_id==self.session['unit_id'],
+                  Sts.tahun_id==self.session['tahun'],  
+                  Sts.tgl_sts.between(mulai,selesai)
+                  ).order_by(Sts.tgl_sts)
+
+            generator = b101r002Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+           
     # BELANJA
     @view_config(route_name="ap-report-skpd", renderer="templates/report-skpd/belanja.pt", permission="read")
     def ap_report_skpd(self):
@@ -1056,6 +1092,54 @@ class ViewTUSKPDLap(BaseViews):
             response.content_disposition='filename=output.pdf' 
             response.write(pdf)
             return response
+
+#Laporan AR Invoice
+class b101r001Generator(JasperGenerator):
+    def __init__(self):
+        super(b101r001Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuskpd/R101001.jrxml')
+        self.xpath = '/apbd/arinvoice'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'arinvoice')
+            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "tgl_terima").text = unicode(row.tgl_terima)
+            ET.SubElement(xml_greeting, "tgl_validasi").text = unicode(row.tgl_validasi)
+            ET.SubElement(xml_greeting, "penyetor").text = row.penyetor
+            ET.SubElement(xml_greeting, "uraian").text = row.uraian
+            ET.SubElement(xml_greeting, "rek_kd").text = row.rek_kd
+            ET.SubElement(xml_greeting, "rek_nm").text = row.rek_nm
+            ET.SubElement(xml_greeting, "jumlah").text = unicode(row.jumlah)
+            ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root
+
+#Laporan AR Sts
+class b101r002Generator(JasperGenerator):
+    def __init__(self):
+        super(b101r002Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuskpd/R101002.jrxml')
+        self.xpath = '/apbd/arinvoice'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'arinvoice')
+            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "tgl_sts").text = unicode(row.tgl_sts)
+            ET.SubElement(xml_greeting, "tgl_validasi").text = unicode(row.tgl_validasi)
+            ET.SubElement(xml_greeting, "jenis").text = unicode(row.jenis)
+            ET.SubElement(xml_greeting, "uraian").text = row.uraian
+            ET.SubElement(xml_greeting, "rek_kd").text = row.rek_kd
+            ET.SubElement(xml_greeting, "rek_nm").text = row.rek_nm
+            ET.SubElement(xml_greeting, "jumlah").text = unicode(row.jumlah)
+            ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root
 
 #TBP-Generator
 class b102r002Generator(JasperGenerator):
