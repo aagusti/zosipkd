@@ -15,6 +15,50 @@
         //    }
         //});
 
+        $('#tanggal').click(
+            function(){
+              if (!Modernizr.inputtypes['date'] ||
+                  "date" != "date"){
+                $('#tanggal').pickadate({"selectMonths": true,
+                  "submitFormat": "yyyy-mm-dd", 
+                  "selectYears": true, "format": "yyyy-mm-dd"});
+              }
+            }
+        );
+        $('#tanggal2').click(
+            function(){
+              if (!Modernizr.inputtypes['date'] ||
+                  "date" != "date"){
+                $('#tanggal2').pickadate({"selectMonths": true,
+                  "submitFormat": "yyyy-mm-dd", 
+                  "selectYears": true, "format": "yyyy-mm-dd"});
+              }
+            }
+        );
+        
+        $('#tanggal, #tanggal2').change(function(){
+              if ($('#tanggal').val()>$('#tanggal2').val()){
+                  $('#tanggal2').val($('#tanggal').val());
+              }
+              $.ajax({
+                type: "POST",
+                url: "/change/tanggal",
+                data: "tanggal="+$('#tanggal').val()+"&tanggal2="+$('#tanggal2').val(),
+                success: function (html) {
+                  if (html.success == true) {
+                    $("#success").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                  } else {
+                    $("#errors").css('display', 'inline', 'important');
+                    $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                  }
+                },
+                beforeSend: function () {
+                  $("#errors").css('display', 'inline', 'important');
+                  $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+                }
+              });
+        });
+
         $('#btn_cetak').click(function () {
             if($('#unit_nm').val()=='Pilih Unit') {
                 alert('Silahkan pilih Unit terlebih dahulu!');
@@ -24,14 +68,14 @@
             var rpt = $('input[name="rpt"]:checked').val();
             var jenis = $('input[name="jenis"]:checked').val();
             var tipe = $('#tipe').val();
-            var mulai = ($('#mulai').val()).substr(6,4)+"-"+($('#mulai').val()).substr(3,2)+"-"+($('#mulai').val()).substr(0,2);
-            var selesai = ($('#selesai').val()).substr(6,4)+"-"+($('#selesai').val()).substr(3,2)+"-"+($('#selesai').val()).substr(0,2);
+            var mulai = $('#tanggal').val();
+            var selesai = $('#tanggal2').val();
             
-            if($('#mulai').val()=='') {
+            if($('#tanggal').val()=='') {
                 alert('Silahkan isikan tanggal terlebih dahulu!');
                 return;
             }
-            if($('#selesai').val()=='') {
+            if($('#tanggal2').val()=='') {
                 alert('Silahkan isikan tanggal terlebih dahulu!');
                 return;
             }
@@ -151,20 +195,19 @@
       </script> 
 
     </div>
-<script>
-    $("#mulai,#selesai").datepicker({dateFormat:'dd-mm-yy'});
-</script>    
     <div class="panel-body">
         <div class="form-group">
         <div class="row">
             <label class="control-label col-xs-2" for="mulai">Mulai</label>
             <div class="col-xs-2">
-                <input class="form-control" type="text" name="mulai" id="mulai" value="" />
+                   <input id="tanggal" class="form-control" type="text" readonly 
+                          value="${request.session['tanggal']}" name="tanggal"/>
             </div>
             <div class="col-xs-2">
               <div class="input-group">
                 <span class="input-group-addon">s.d</span>
-                <input class="form-control" type="text" name="selesai" id="selesai" value="" />
+                  <input id="tanggal2" class="form-control" type="text" readonly 
+                          value="${request.session['tanggal2']}" name="tanggal"/>
               </div>
             </div>
             </div>
