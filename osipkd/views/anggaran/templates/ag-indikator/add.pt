@@ -286,7 +286,7 @@
         <div class="col-sm-3">
           <button type="submit" class="btn btn-primary" id="simpan" name="simpan">Simpan</button>
           <button type="submit" class="btn btn-danger"  id="batal"  name="batal">Batal</button>
-          <!--button type="button" class="btn btn-warning" id="btn_close">Tutup</button-->
+          <button type="button" class="btn btn-warning" id="btn_close">Tutup</button>
         </div>
       </div>
       <script type='text/javascript'>
@@ -299,56 +299,56 @@
 		
 		var a ="${request.session['ag_step_nm']}";
 		if (a == 'RKA'){
-      $('#tolok_ukur_2').attr('readonly', true)
-      $('#tolok_ukur_3').attr('readonly', true)
-      $('#tolok_ukur_4').attr('readonly', true)
+		$('#tolok_ukur_2').attr('readonly', true)
+		$('#tolok_ukur_3').attr('readonly', true)
+		$('#tolok_ukur_4').attr('readonly', true)
 
-      $('#volume_2').attr('readonly', true)
-      $('#volume_3').attr('readonly', true)
-      $('#volume_4').attr('readonly', true)
+		$('#volume_2').attr('readonly', true)
+		$('#volume_3').attr('readonly', true)
+		$('#volume_4').attr('readonly', true)
 
-      $('#satuan_2').attr('readonly', true)
-      $('#satuan_3').attr('readonly', true)
-      $('#satuan_4').attr('readonly', true)
+		$('#satuan_2').attr('readonly', true)
+		$('#satuan_3').attr('readonly', true)
+		$('#satuan_4').attr('readonly', true)
 		}
 		else if  (a == 'DPA'){
-      $('#tolok_ukur_1').attr('readonly', true)
-      $('#tolok_ukur_3').attr('readonly', true)
-      $('#tolok_ukur_4').attr('readonly', true)
+		$('#tolok_ukur_1').attr('readonly', true)
+		$('#tolok_ukur_3').attr('readonly', true)
+		$('#tolok_ukur_4').attr('readonly', true)
 
-      $('#volume_1').attr('readonly', true)
-      $('#volume_3').attr('readonly', true)
-      $('#volume_4').attr('readonly', true)
+		$('#volume_1').attr('readonly', true)
+		$('#volume_3').attr('readonly', true)
+		$('#volume_4').attr('readonly', true)
 
-      $('#satuan_1').attr('readonly', true)
-      $('#satuan_3').attr('readonly', true)
-      $('#satuan_4').attr('readonly', true)
+		$('#satuan_1').attr('readonly', true)
+		$('#satuan_3').attr('readonly', true)
+		$('#satuan_4').attr('readonly', true)
 		}
 		else if  (a == 'RPKA'){
-      $('#tolok_ukur_1').attr('readonly', true)
-      $('#tolok_ukur_2').attr('readonly', true)
-      $('#tolok_ukur_4').attr('readonly', true)
+		$('#tolok_ukur_1').attr('readonly', true)
+		$('#tolok_ukur_2').attr('readonly', true)
+		$('#tolok_ukur_3').attr('readonly', true)
 
-      $('#volume_1').attr('readonly', true)
-      $('#volume_2').attr('readonly', true)
-      $('#volume_4').attr('readonly', true)
+		$('#volume_1').attr('readonly', true)
+		$('#volume_2').attr('readonly', true)
+		$('#volume_4').attr('readonly', true)
 
-      $('#satuan_1').attr('readonly', true)
-      $('#satuan_2').attr('readonly', true)
-      $('#satuan_4').attr('readonly', true)
+		$('#satuan_1').attr('readonly', true)
+		$('#satuan_2').attr('readonly', true)
+		$('#satuan_4').attr('readonly', true)
 		}
 		else if  (a == 'DPPA'){
-      $('#tolok_ukur_1').attr('readonly', true)
-      $('#tolok_ukur_2').attr('readonly', true)
-      $('#tolok_ukur_3').attr('readonly', true)
+		$('#tolok_ukur_1').attr('readonly', true)
+		$('#tolok_ukur_2').attr('readonly', true)
+		$('#tolok_ukur_3').attr('readonly', true)
 
-      $('#volume_1').attr('readonly', true)
-      $('#volume_2').attr('readonly', true)
-      $('#volume_3').attr('readonly', true)
+		$('#volume_1').attr('readonly', true)
+		$('#volume_2').attr('readonly', true)
+		$('#volume_3').attr('readonly', true)
 
-      $('#satuan_1').attr('readonly', true)
-      $('#satuan_2').attr('readonly', true)
-      $('#satuan_3').attr('readonly', true)
+		$('#satuan_1').attr('readonly', true)
+		$('#satuan_2').attr('readonly', true)
+		$('#satuan_3').attr('readonly', true)
 		}
 		
         });  

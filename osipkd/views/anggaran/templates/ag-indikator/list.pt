@@ -119,7 +119,6 @@
                   else if (row[1]=="3") return "Keluaran";
                   else if (row[1]=="4") return "Hasil";
                   else return "Blm Definisi";
-                  //return data +' ('+ row[3]+')';
               },
               "targets": 1
           }],
@@ -154,20 +153,14 @@
                 var aData = oTable.fnGetData(iPos);
                 oTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
-                /*
-                $('#kegiatan_item_id').val(aData[0]);
-                $('#nama').val(aData[3]);
-                $('#amount').val(aData[4]);
-                $('#rekening_kd').val(aData[1]);
-                $('#no_urut').val(aData[2]);
-                $('#rekening_nm').val(aData[5]);
-                $('#rekening_id').val(aData[6]);
-                */
+
                 mID = aData[0];
                 oTable.$('tr.row_selected').removeClass('row_selected');
                 $(this).addClass('row_selected');
         }
         });
+        
+        // Menu Button //
         $('#btn_add').click(function () {
             window.location = '/ag-indikator/'+$('#kegiatan_sub_id').val()+'/add';
         });
@@ -178,29 +171,8 @@
         });
 
         $('#btn_delete').click(function () {
-            if (mID) {
-              if (confirm('Yakin dihapus?')==true){
-                $.ajax({
-                type: "POST",
-                url : "/ag-indikator/"+$('#kegiatan_sub_id').val()+"/"+mID+"/delete",
-                success: function (html) {
-                  if (html.success == true) {
-                    $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                    oTable.fnReloadAjax(oTableUrl);
-                  } else {
-                    $("#errors").css('display', 'inline', 'important');
-                    $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
-                  }
-                },
-                beforeSend: function () {
-                  $("#errors").css('display', 'inline', 'important');
-                  $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
-                }
-                });
-              } else {
-                  alert('Silahkan pilih data yang akan di hapus');
-              }
-            }
+            if (mID) window.location = "/ag-indikator/"+$('#kegiatan_sub_id').val()+"/"+mID+"/delete";
+            else alert('Pilih Baris yang akan di hapus');
         });        
         
         $("#btn_close").click(function () {
