@@ -195,7 +195,7 @@
         });
 
         $('#btn_print').click(function () {
-            url = "/ag-report/r000/act/r001"
+            url = "/aset/lap01/${kib}/act";
             window.open(url);
         });
 

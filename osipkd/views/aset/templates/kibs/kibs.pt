@@ -71,7 +71,26 @@
              ${error}</p>
         </div>
         <script>
-          
+        $('#kategori_kd').typeahead({
+            "hint"     : true,
+            "highlight": true,
+            "minLength": 1,
+            "remote"   : "/aset/kategori/headofkode/act/?term=%QUERY", 
+        },{
+           "name"      : 'kategori_kd',
+           "displayKey": 'value',
+        }); 
+                
+        $('#kategori_nm').typeahead({
+            "hint"     : true,
+            "highlight": true,
+            "minLength": 1,
+            "remote"   : "/aset/kategori/headofnama/act/?term=%QUERY", 
+        },{
+           "name"      : 'kategori_nm',
+           "displayKey": 'value',
+        }); 
+        
           $('#kategori_nm').bind('typeahead:selected', function(obj, datum, name) {      
                 $('#kategori_id').val(datum.id);
                 $('#kategori_kd').val(datum.kode);
@@ -270,7 +289,6 @@
             $('#kategori_id').val(datum.id);
             $('#kategori_nm').val(datum.uraian);
          });
-         
       </script>
       
 </div>
