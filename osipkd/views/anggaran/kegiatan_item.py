@@ -233,6 +233,7 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           missing=colander.drop,
                           default=1,
+                          oid="vol_1_1",
                           title="Volume 1"
                           )
     sat_1_1          = colander.SchemaNode(
@@ -244,6 +245,7 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           missing=colander.drop,
                           default=1,
+                          oid="vol_1_2",
                           title="Volume 2")
     sat_1_2          = colander.SchemaNode(
                           colander.String(),
@@ -254,11 +256,13 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           missing=colander.drop,
                           default=0,
+                          oid="hsat_1",
                           title="Harga")
     vol_2_1          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
                           default=1,
+                          oid="vol_2_1",
                           title="Volume 1")
     sat_2_1          = colander.SchemaNode(
                           colander.String(),
@@ -269,6 +273,7 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           missing=colander.drop,
                           default=1,
+                          oid="vol_2_2",
                           title="Volume 2")
     sat_2_2          = colander.SchemaNode(
                           colander.String(),
@@ -279,11 +284,13 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           missing=colander.drop,
                           default=0,
+                          oid="hsat_2",
                           title="Harga")
     vol_3_1          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
                           default=1,
+                          oid="vol_3_1",
                           title="Volume 1")
     sat_3_1          = colander.SchemaNode(
                           colander.String(),
@@ -294,6 +301,7 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           missing=colander.drop,
                           default=1,
+                          oid="vol_3_2",
                           title="Volume 2")
     sat_3_2          = colander.SchemaNode(
                           colander.String(),
@@ -304,11 +312,13 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           missing=colander.drop,
                           default=0,
+                          oid="hsat_3",
                           title="Harga")
     vol_4_1          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
                           default=1,
+                          oid="vol_4_1",
                           title="Volume 1")
     sat_4_1          = colander.SchemaNode(
                           colander.String(),
@@ -319,6 +329,7 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           missing=colander.drop,
                           default=1,
+                          oid="vol_4_2",
                           title="Volume 2")
     sat_4_2          = colander.SchemaNode(
                           colander.String(),
@@ -329,6 +340,7 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           missing=colander.drop,
                           default=0,
+                          oid="hsat_4",
                           title="Harga")
     pelaksana        = colander.SchemaNode(
                           colander.String(),
