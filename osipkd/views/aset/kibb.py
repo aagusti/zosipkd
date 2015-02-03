@@ -213,7 +213,7 @@ class view_aset_kibb(BaseViews):
         request.session.flash(msg, 'error')
         return route_list()
 
-    @view_config(route_name='aset-kibb-edit', renderer='templates/kibb/edit.pt',
+    @view_config(route_name='aset-kibb-edit', renderer='templates/kibs/edit.pt',
                  permission='edit')
     def view_kebijakan_edit(self):
         request = self.request
@@ -229,20 +229,20 @@ class view_aset_kibb(BaseViews):
                     c = form.validate(controls)
                 except ValidationFailure, e:
                     request.session[SESS_EDIT_FAILED] = e.render()               
-                    return HTTPFound(location=request.route_url('kebijakan-edit',
+                    return HTTPFound(location=request.route_url('aset-kibb-edit', #'kebijakan-edit',
                                       id=row.id))
                 self.save_request(dict(controls), row)
             return self.route_list()
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
         values = row.to_dict()
-        values['kibb_nm']= row.kibbs and row.kibbs.uraian or ""
+        #values['kibb_nm']= row.kibbs and row.kibbs.uraian or ""
         return dict(form=form.render(appstruct=values))
 
     ##########
     # Delete #
     ##########    
-    @view_config(route_name='aset-kibb-delete', renderer='templates/kibb/delete.pt',
+    @view_config(route_name='aset-kibb-delete', renderer='templates/kibs/delete.pt',
                  permission='delete')
     def view_delete(self):
         request = self.request

@@ -86,7 +86,7 @@ class view_kategori(BaseViews):
             columns.append(ColumnDT('id'))
             columns.append(ColumnDT('kode'))
             columns.append(ColumnDT('uraian'))
-            columns.append(ColumnDT('parent.kode'))
+            columns.append(ColumnDT('parent_id'))
             columns.append(ColumnDT('level_id'))
             columns.append(ColumnDT('disabled'))
             
