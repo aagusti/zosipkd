@@ -219,6 +219,7 @@ class AddSchema(colander.Schema):
                           )
     nama             = colander.SchemaNode(
                           colander.String(),
+                          oid="nama",
                           )
     no_urut          = colander.SchemaNode(
                           colander.String(),
