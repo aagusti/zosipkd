@@ -366,12 +366,23 @@ def view_edit(request):
              permission='delete')
 def view_delete(request):
     q = query_id(request)
+    kegiatan_sub_id = request.matchdict['kegiatan_sub_id']
     row = q.first()
         
-    msg = 'Data sudah dihapus'
-    query_id(request).delete()
-    DBSession.flush()
-    return {'success':True, "msg":msg}
+    if not row:
+        return id_not_found(request,kegiatan_sub_id)
+        
+    form = Form(colander.Schema(), buttons=('hapus','cancel'))
+    values= {}
+    
+    if request.POST:
+        if 'hapus' in request.POST:
+            msg = '%s berhasil.' % (request.title)
+            DBSession.query(KegiatanIndikator).filter(KegiatanIndikator.id==request.matchdict['id']).delete()
+            DBSession.flush()
+            request.session.flash(msg)
+        return route_list(request,kegiatan_sub_id)
+    return dict(row=row, form=form.render())
 
             
                         
