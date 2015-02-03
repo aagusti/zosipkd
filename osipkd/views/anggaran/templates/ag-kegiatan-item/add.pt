@@ -178,6 +178,7 @@
 
 
     <!-- Komponen Biaya -->
+	  <!--RKA-->
       <div class="form-group"  tal:attributes="style request.session['ag_step_id']!=1 and 'display:none'">
         <div class="col-sm-12">  
         <div class="panel panel-default" id="panel1">
@@ -256,8 +257,23 @@
           </div>
         </div>
         </div>
+
+		<script>
+		var a, b, c, jml1;
+		a = $('#vol_1_1').val();
+		b = $('#vol_1_2').val();
+		c = $('#hsat_1').val();
+		jml1 = (a*b)*c;
+		$('#jml1').val(formatNumber(jml1));
+		$('#hsat_1').val(formatNumber(c));
+		
+        function formatNumber(n) {
+            return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+		</script>
       </div>
           
+	  <!--DPA-->
       <div class="form-group"   tal:attributes="style request.session['ag_step_id']!=2 and  'display:none'">
         <div class="col-sm-12"> 
         <div class="panel panel-default" id="panel1">
@@ -326,7 +342,7 @@
                   <label for="jml2" class="control-label col-md-2" id="req-jml2">
                           Jumlah DPA</label>
                   <div class="col-md-4">
-                      <input class="form-control" type="text" id="jml2" name="jml2">
+                      <input class="form-control" type="text" value="" id="jml2" name="jml2">
                   </div>
                   
                 </div>
@@ -334,7 +350,23 @@
           </div>
         </div>
         </div>
+		
+		<script>
+		var a, b, c, jml2;
+		a = $('#vol_2_1').val();
+		b = $('#vol_2_2').val();
+		c = $('#hsat_2').val();
+		jml2 = (a*b)*c;
+		$('#jml2').val(formatNumber(jml2));
+		$('#hsat_2').val(formatNumber(c));
+		
+        function formatNumber(n) {
+            return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+		</script>
       </div>
+
+	  <!--RPKA-->
       <div class="form-group"   tal:attributes="style request.session['ag_step_id']!=3 and  'display:none'">
         <div class="col-sm-12"> 
           <div class="panel-heading">RPKA</div>
@@ -410,8 +442,23 @@
               </div>              
           </div>
         </div>
+
+		<script>
+		var a, b, c, jml3;
+		a = $('#vol_3_1').val();
+		b = $('#vol_3_2').val();
+		c = $('#hsat_3').val();
+		jml3 = (a*b)*c;
+		$('#jml3').val(formatNumber(jml3));
+		$('#hsat_3').val(formatNumber(c));
+		
+        function formatNumber(n) {
+            return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+		</script>
       </div>
      
+	  <!--DPPA-->
      <div class="form-group"   tal:attributes="style request.session['ag_step_id']!=4 and  'display:none'">
         <div class="col-sm-12"> 
           <div class="panel-heading">DPPA</div>
@@ -487,6 +534,20 @@
               </div>              
           </div>
         </div>
+		
+		<script>
+		var a, b, c, jml4;
+		a = $('#vol_4_1').val();
+		b = $('#vol_4_2').val();
+		c = $('#hsat_4').val();
+		jml4 = (a*b)*c;
+		$('#jml4').val(formatNumber(jml4));
+		$('#hsat_4').val(formatNumber(c));
+		
+        function formatNumber(n) {
+            return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+		</script>
      </div>
      
       <div class="form-group">
