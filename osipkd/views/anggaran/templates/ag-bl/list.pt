@@ -360,7 +360,7 @@
                                 <label><input type="radio" name="rpt" value="2">Lampiran</label>
                             </div>
                         </div>
-                    </div>
+                    </div><br><br><br><br>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
