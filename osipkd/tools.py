@@ -7,7 +7,6 @@ import csv, codecs, cStringIO
 import uuid
 import locale
 import pytz
-import mechanize
 import urllib
 import calendar    
 
