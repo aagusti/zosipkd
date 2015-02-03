@@ -2681,5 +2681,19 @@ RouteData = {
         path='/ar-report-item-skpd/{act}/act',
         perm_name='read',
         ), 
+    dict(
+        id=384,
+        kode='aset-lap01',
+        nama=' Laporan Aset',
+        path='/aset/lap01',
+        perm_name='read',
+        ), 
+    dict(
+        id=385,
+        kode='aset-lap01-act',
+        nama=' Laporan Aset',
+        path='/aset/lap01/{act}/act',
+        perm_name='read',
+        ), 
 ]}
 
