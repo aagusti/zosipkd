@@ -64,14 +64,14 @@
         }); 
         
         function reload_kegiatan(){
-            /*$.ajax({
+            $.ajax({
               type: "POST",
-              url: "/ag-kegiatan-sub/act/reload",
-              data: "kegiatan_kd="+$('#kegiatan_kd').val(),
+              url: "/ag-bl/act/reload",
+              //data: "kegiatan_kd="+$('#kegiatan_kd').val(),
               success: function (html) {
                 if (html.success == true) {
-                  $('#kegiatan_sub_id').val(html.kegiatan_sub_id);
-                    oTableUrl = "/ag-kegiatan-item/act/grid?kegiatan_sub_id="+html.kegiatan_sub_id;  
+                  //$('#kegiatan_sub_id').val(html.kegiatan_sub_id);
+                    oTableUrl = "/ag-bl/act/grid";  
                     oTable.fnReloadAjax(oTableUrl);
                     $("#errors").html("<span class=''></span> " + '');
                 } else {
@@ -83,7 +83,7 @@
                 $("#errors").css('display', 'inline', 'important');
                 $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
               }
-            });*/
+            });
         };
         
         function change_unit(){
