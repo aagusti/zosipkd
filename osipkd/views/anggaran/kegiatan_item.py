@@ -476,6 +476,23 @@ def save(values, request, row=None):
 def save_request(values, request, row=None):
     if 'id' in request.matchdict:
         values['id'] = request.matchdict['id']
+
+    values["vol_1_1"]=values["vol_1_1"].replace('.','') 
+    values["vol_1_2"]=values["vol_1_2"].replace('.','') 
+    values["hsat_1"]=values["hsat_1"].replace('.','') 
+
+    values["vol_2_1"]=values["vol_2_1"].replace('.','') 
+    values["vol_2_2"]=values["vol_2_2"].replace('.','') 
+    values["hsat_2"]=values["hsat_2"].replace('.','') 
+
+    values["vol_3_1"]=values["vol_3_1"].replace('.','') 
+    values["vol_3_2"]=values["vol_3_2"].replace('.','') 
+    values["hsat_3"]=values["hsat_3"].replace('.','') 
+
+    values["vol_4_1"]=values["vol_4_1"].replace('.','') 
+    values["vol_4_2"]=values["vol_4_2"].replace('.','') 
+    values["hsat_4"]=values["hsat_4"].replace('.','') 
+
     row = save(values, request, row)
     request.session.flash('Kegiatan sudah disimpan.')
         
