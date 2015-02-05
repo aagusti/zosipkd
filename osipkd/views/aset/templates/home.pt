@@ -4,7 +4,7 @@
 <!-- Main component for a primary marketing message or call to action -->
 <div class="well">
 <h1>os-Aset</h1>
-<p><img src="/static/img/pyramid.png" class="img-float img-thumbnail"/>
+<p><img src="/files/logo.png" class="img-float img-thumbnail"/>
 Selamat Datang di Aplikasi <code>Manajemen Aset Daerah</code>
 
 <p>Aplikasi Manajemen Aset Daerah adalah aplikasi yang digunakan untuk mendata

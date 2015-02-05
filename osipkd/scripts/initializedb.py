@@ -1,6 +1,7 @@
 import os
 import sys
 import transaction
+from shutil import copyfile
 from sqlalchemy import (
     engine_from_config,
     select,
@@ -90,6 +91,16 @@ def create_schemas(engine):
     for schema in ['efiling', 'admin', 'aset', 'eis', 'gaji', 'apbd']:
         create_schema(engine, schema)
 
+def copy_logo(settings):
+    target_dir = os.path.realpath(settings['static_files'])
+    target_file = os.path.join(target_dir, 'logo.png')
+    if os.path.exists(target_file):
+        return
+    source_dir = os.path.join(os.path.split(__file__)[0], '..', '..', 'docs')
+    source_dir = os.path.realpath(source_dir)
+    source_file = os.path.join(source_dir, 'logo.png')
+    copyfile(source_file, target_file)
+
 def main(argv=sys.argv):
     if len(argv) != 2:
         usage(argv)
@@ -97,6 +108,7 @@ def main(argv=sys.argv):
     setup_logging(config_uri)
     settings = get_appsettings(config_uri)
     mkdir(settings['static_files'])
+    copy_logo(settings)
     # Create Ziggurat tables
     alembic_ini_file = 'alembic.ini'
     if not os.path.exists(alembic_ini_file):
