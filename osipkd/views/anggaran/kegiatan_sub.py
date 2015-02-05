@@ -108,6 +108,20 @@ class view_kegiatan_sub(BaseViews):
                 # returns what is needed by DataTable
                 #session.query(Table.column, func.count(Table.column)).group_by(Table.column).all()
                 return rowTable.output_result()
+
+        elif url_dict['act']=='reload':
+            #if not kegiatan_kd:
+            #    return {'success':False}
+            query = DBSession.query(KegiatanSub).join(Kegiatan).join(Program).filter(
+                       KegiatanSub.unit_id == ses['unit_id'],
+                       KegiatanSub.tahun_id == ses['tahun'],
+                       Program.kode<>'0.00.00'
+                       ).first()
+                       
+            #if not query:
+            #    return {'success':False, 'msg':'Data Kegiatan Tidak Ditemukan'}
+
+            return {"success": True}
                 
        
     @view_config(route_name='ag-kegiatan-sub-act', renderer='json',
