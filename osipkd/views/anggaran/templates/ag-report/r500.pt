@@ -1,7 +1,9 @@
 <html metal:use-macro="load: ../base.pt">
   <div metal:fill-slot="content" class="panel panel-default ">
-    <h4>Laporan APBD</h4>
-    <hr>
+    <div class="panel-heading">
+    <h4 class="panel-title">Laporan APBD</h4>
+    </div>
+	
     <script>
       var mID;
       $(document).ready(function () {
@@ -194,7 +196,7 @@
                 <br>
                 <div class="col-md-8">
                       <button id="btn_cetak" name="btn_cetak" type="button" class="btn btn-primary "
-                            value="cetak">Cetak Laporan</button>
+                            value="cetak">Cetak</button>
                       <button id="btn_close" name="btn_close" type="button" class="btn btn-warning"
                             value="btn_close">Tutup</button>
                 </div>          
