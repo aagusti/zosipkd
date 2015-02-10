@@ -229,6 +229,12 @@
                         $(this).addClass('row_selected');
                     }
                 })
+				//Kondisi Background-color
+                switch(aData[7]){
+                    case '1' :
+                        $('td',nRow).css("background-color","#ddffdd")
+                        break;
+                }
             },
         });
 
@@ -245,6 +251,8 @@
                 iPos = oTable.fnGetPosition(this);
                 var aData = oTable.fnGetData(iPos);
                 mID = aData[0];
+				        nilai = aData[6];
+
                 oTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
             }
