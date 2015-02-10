@@ -318,6 +318,12 @@ def view_delete(request):
     row = q.first()
     if not row:
         return id_not_found(request)
+    if row.posted:
+        request.session.flash('Data sudah diposting', 'error')
+        return route_list(request)
+    if row.amount:
+        request.session.flash('Data tidak bisa dihapus, karena memiliki data items')
+        return route_list(request)
     form = Form(colander.Schema(), buttons=('hapus','cancel'))
     values= {}
     if request.POST:
