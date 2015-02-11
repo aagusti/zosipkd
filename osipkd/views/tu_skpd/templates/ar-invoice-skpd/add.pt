@@ -519,7 +519,6 @@
                 success: function (html) {
                   if (html.success == true) {
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                    $('#jml_total').val(formatNumber(html.jml_total)); 
                     $('#no_urut').val('');
                     $('#item_nm').val('');
                     $('#vol_1').val(1);
@@ -527,6 +526,12 @@
                     $('#nilai').val(0);
                     $('#harga').val(0);
                     $('#nama').val('');
+                    
+                    if(html.jml_total=="None"){
+                      $('#jml_total').val(0);}
+                    else{
+                      $('#jml_total').val(formatNumber(html.jml_total));} 
+                      
                     oTable.fnReloadAjax(oTableUrl);
                   } else {
                     $("#errors").css('display', 'inline', 'important');
