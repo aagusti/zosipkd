@@ -213,7 +213,7 @@
                 })
                 switch(aData[6]){
                     case '1' :
-                        $('td',nRow).css("background-color","#00FA9A")
+                        $('td',nRow).css("background-color","#ddffdd")
                         break;
                 }
             },
