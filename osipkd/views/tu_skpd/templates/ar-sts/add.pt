@@ -487,10 +487,15 @@
                 success: function (html) {
                   if (html.success == true) {
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                    $('#jml_total').val(formatNumber(html.jml_total));
                     $('#kode1').val('');
                     $('#nama1').val('');
                     $('#amount').val(0);
+
+                    if(html.jml_total=="None"){
+                      $('#jml_total').val(0);}
+                    else{
+                      $('#jml_total').val(formatNumber(html.jml_total));} 
+
                     oTable.fnReloadAjax(oTableUrl);
                   } else {
                     $("#errors").css('display', 'inline', 'important');

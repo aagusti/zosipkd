@@ -113,6 +113,7 @@
             <th>Jenis</th>
             <th>Uraian</th>
             <th>Nilai</th>
+            <th>Posting</th>
         </tr>
       </thead>
       <tbody>
@@ -130,6 +131,7 @@
           '	<button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
           '	<button id="btn_print"  class="btn btn btn-primary" type="button">Cetak</button>',
+          '	<button id="btn_posting" class="btn btn btn-success" type="button">Posting</button>',
           ' <button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
           '	&nbsp;',
           '</div>',
@@ -180,6 +182,15 @@
                         return 'Lainnya';
                     } 
                 }
+            },{
+                "aTargets" : [7], // Untuk Posted
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return 'N';
+                    } else if (data == "1") {
+                        return 'Y';
+                    }
+                }
             }],
             "aoColumns": [
                 null, {
@@ -194,6 +205,8 @@
                     "sWidth": "120px",
                 }, {
                     "sWidth": "60px",
+                }, {
+                    "sWidth": "30px","class":"right"
                 }
             ],
             
@@ -211,6 +224,11 @@
                         $(this).addClass('row_selected');
                     }
                 })
+                switch(aData[7]){
+                    case '1' :
+                        $('td',nRow).css("background-color","#00FA9A")
+                        break;
+                }
             },
         });
 
@@ -227,6 +245,7 @@
                 iPos = oTable.fnGetPosition(this);
                 var aData = oTable.fnGetData(iPos);
                 mID = aData[0];
+                mID2 = aData[6];
                 oTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
             }
@@ -235,6 +254,14 @@
         $('#btn_tambah').click(function () {
             window.location = '/ar-sts/add';
         });
+        $('#btn_posting').click(function () {
+            if (mID) {
+                window.location = '/ar-sts/' + mID +'/posting';
+            } else {
+                alert('Silahkan pilih data yang akan diposting');
+            }
+        });
+        
         $('#btn_edit').click(function () {
             if (mID) {
                 window.location = '/ar-sts/' + mID +'/edit';
@@ -242,6 +269,7 @@
                 alert('Silahkan pilih data yang akan diedit');
             }
         });
+
         $('#btn_delete').click(function () {
             if (mID) {
                 window.location = '/ar-sts/' + mID +'/delete';
