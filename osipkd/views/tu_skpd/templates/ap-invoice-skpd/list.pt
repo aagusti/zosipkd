@@ -123,7 +123,7 @@
     </table>
     
     <script>
-      var mID;
+      var mID, mID2;
       var oTable;
       var iPos;
       var oTableUrl = "/ap-invoice-skpd/act/grid";
@@ -224,6 +224,7 @@
 
                         var data = oTable.fnGetData(this);
                         mID = data[0];
+                        mID2 = data[6];
 
                         oTable.$('tr.row_selected').removeClass('row_selected');
                         $(this).addClass('row_selected');
@@ -252,6 +253,7 @@
                 var aData = oTable.fnGetData(iPos);
                 mID = aData[0];
 				        nilai = aData[6];
+                mID2 = aData[6];
 
                 oTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
@@ -270,7 +272,9 @@
         });
         $('#btn_delete').click(function () {
             if (mID) {
-                window.location = '/ap-invoice-skpd/' + mID +'/delete';
+                if(mID2=="0"){
+                    window.location = '/ap-invoice-skpd/' + mID +'/delete'; }
+                else{alert('Data tidak dapat dihapus, karena masih mempunyai item.');}
             } else {
                 alert('Silahkan pilih data yang akan di hapus');
             }

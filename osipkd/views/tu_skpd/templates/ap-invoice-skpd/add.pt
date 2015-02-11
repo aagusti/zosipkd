@@ -548,7 +548,12 @@
                     $('#harga').val(0);
                     $('#pph').val(0);
                     $('#ppn').val(0);
-                    $('#jml_total').val(formatNumber(html.jml_total)); 
+
+                    if(html.jml_total=="None"){
+                      $('#jml_total').val(0);}
+                    else{
+                      $('#jml_total').val(formatNumber(html.jml_total));} 
+
                     oTable.fnReloadAjax(oTableUrl);
                   } else {
                     $("#errors").css('display', 'inline', 'important');
