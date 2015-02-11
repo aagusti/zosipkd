@@ -240,6 +240,15 @@
         $('#btn_tambah').click(function () {
             window.location = '/ap-sp2d/add';
         });
+        
+        $('#btn_posting').click(function () {
+            if (mID) {
+                window.location = '/ap-sp2d/' + mID +'/posting';
+            } else {
+                alert('Silahkan pilih data yang akan diposting');
+            }
+        });
+        
         $('#btn_edit').click(function () {
             if (mID) {
                 window.location = '/ap-sp2d/' + mID +'/edit';
@@ -247,6 +256,7 @@
                 alert('Silahkan pilih data yang akan diedit');
             }
         });
+
         $('#btn_delete').click(function () {
             if (mID) {
                 window.location = '/ap-sp2d/' + mID +'/delete';
@@ -254,6 +264,7 @@
                 alert('Silahkan pilih data yang akan di hapus');
             }
         });
+
         $('#btn_print').click(function () {
             url = "/ap-report-sp2d/act/sp2d?id="+mID;
             if (mID) {
