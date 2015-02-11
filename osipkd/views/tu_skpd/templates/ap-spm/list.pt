@@ -163,7 +163,7 @@
             "aoColumnDefs": [{
                 "bSearchable": false,
                 "bVisible"   : false,
-                "aTargets"   : [0]
+                "aTargets"   : [0,7]
             },{
                 "sClass"   : "right",
                 "aTargets" : [5],
