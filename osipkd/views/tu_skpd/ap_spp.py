@@ -202,7 +202,6 @@ class view_ap_spp(BaseViews):
                 except ValidationFailure, e:
                     return dict(form=form)
                 row = self.save_request(controls_dicted)
-                #return HTTPFound(location=request.route_url('ap-spp-edit', id=row.id))
                 return self.route_list()
             return self.route_list()
         elif SESS_ADD_FAILED in request.session:
@@ -277,8 +276,7 @@ class view_ap_spp(BaseViews):
                 DBSession.flush()
                 request.session.flash(msg)
             return self.route_list()
-        return dict(row=row,
-                     form=form.render())
+        return dict(row=row, form=form.render())
 
     ###########
     # Posting #
@@ -421,7 +419,7 @@ class AddSchema(colander.Schema):
                           )
     ttd_nama        = colander.SchemaNode(
                           colander.String(),
-                          missing=colander.drop,
+                          #missing=colander.drop,
                           oid="ttd_nama",
                           title="Nama")
     ttd_jab         = colander.SchemaNode(
@@ -483,7 +481,7 @@ class AddSchema(colander.Schema):
                           )
     pptk_nama        = colander.SchemaNode(
                           colander.String(),
-                          missing=colander.drop,
+                          #missing=colander.drop,
                           oid="pptk_nama",
                           title="Nama")
     barang_uid         = colander.SchemaNode(
@@ -499,7 +497,7 @@ class AddSchema(colander.Schema):
                           )
     barang_nama        = colander.SchemaNode(
                           colander.String(),
-                          missing=colander.drop,
+                          #missing=colander.drop,
                           oid="barang_nama",
                           title="Nama")
     barang_jab         = colander.SchemaNode(
@@ -520,7 +518,7 @@ class AddSchema(colander.Schema):
                           )
     kasi_nama        = colander.SchemaNode(
                           colander.String(),
-                          missing=colander.drop,
+                          #missing=colander.drop,
                           oid="kasi_nama",
                           title="Nama")
     kasi_jab         = colander.SchemaNode(
