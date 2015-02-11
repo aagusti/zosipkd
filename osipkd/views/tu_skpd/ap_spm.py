@@ -240,7 +240,6 @@ class view_ap_spm(BaseViews):
                 except ValidationFailure, e:
                     return dict(form=form)
                 row = self.save_request(controls_dicted)
-                #return HTTPFound(location=request.route_url('ap-spm-edit', id=row.id))
                 return self.route_list()
             return self.route_list()
         elif SESS_ADD_FAILED in request.session:
@@ -328,8 +327,7 @@ class view_ap_spm(BaseViews):
                 self.save_request3(row)
                 
             return self.route_list()
-        return dict(row=row,
-                     form=form.render())
+        return dict(row=row,form=form.render())
 
     ###########
     # Posting #
