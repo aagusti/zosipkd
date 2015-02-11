@@ -124,7 +124,7 @@
     </table>
     
     <script>
-      var mID;
+      var mID, mID2, mID3;
       var oTable;
       var iPos;
       var oTableUrl = "/ap-spp/act/grid";
@@ -135,6 +135,7 @@
           '	<button id="btn_delete"  class="btn btn btn-danger"  type="button">Hapus</button>',
           '	<button id="btn_print"   class="btn btn btn-primary" type="button">Cetak</button>',
           '	<button id="btn_posting" class="btn btn btn-success" type="button">Posting</button>',
+          '	<button id="btn_unposting" class="btn btn btn-danger" type="button">UnPosting</button>',
           ' <button id="btn_close"   class="btn btn-warning"     type="button">Tutup</button>',
           '	&nbsp;',
           '</div>',
@@ -219,6 +220,7 @@
                     if ($(this).hasClass('row_selected')) {
                         /* mID = '';
                         $(this).removeClass('row_selected'); */
+                        
                     } else {
 
                         var data = oTable.fnGetData(this);
@@ -228,6 +230,12 @@
                         $(this).addClass('row_selected');
                     }
                 })
+                
+                switch(aData[6]){
+                    case '1' :
+                        $('td',nRow).css("background-color","#ddffdd")
+                        break;
+                }
             },
         });
 
@@ -248,6 +256,9 @@
                 No_Spm = aData[1];
                 Uraian = aData[4];
                 Jenis  = aData[3];
+				        nilai = aData[5];
+                mID2 = aData[5];
+                mID3 = aData[6];
 
                 oTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
@@ -256,6 +267,24 @@
         /**********************************************************************/
         $('#btn_tambah').click(function () {
             window.location = '/ap-spp/add';
+        });
+        $('#btn_posting').click(function () {
+            if (mID) {
+                if(mID2=="0"){
+                    alert('Data tidak dapat diposting, karena bernilai 0.'); }
+                else{window.location = '/ap-spp/' + mID +'/posting';}
+            } else {
+                alert('Silahkan pilih data yang akan diposting');
+            }
+        });
+        $('#btn_unposting').click(function () {
+            if (mID) {
+                if(mID3=="0"){
+                    alert('Data tidak dapat di UnPosting.'); }
+                else{window.location = '/ap-spp/' + mID +'/unposting';}
+            } else {
+                alert('Silahkan pilih data yang akan diunposting');
+            }
         });
         $('#btn_edit').click(function () {
             if (mID) {
