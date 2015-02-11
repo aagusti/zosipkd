@@ -10,7 +10,7 @@ from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
 from osipkd.models.pemda_model import Unit
-from osipkd.models.apbd_tu import Spp, SppItem, Spm
+from osipkd.models.apbd_tu import Spp, SppItem, Spm, SpmPotongan
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
