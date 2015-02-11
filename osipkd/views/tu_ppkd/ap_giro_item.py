@@ -64,6 +64,10 @@ class view_ap_spp_item(BaseViews):
 #######    
 # Add #
 #######
+def save_request2(row=None):
+    row = Sp2d()
+    return row
+    
 @view_config(route_name='ap-giro-item-add', renderer='json',
              permission='add')
 def view_add(request):
@@ -100,6 +104,12 @@ def view_add(request):
     DBSession.add(row)
     DBSession.flush()
     nominal = "%d" % Giro.get_nilai(row.ap_giro_id) 
+    
+    #Untuk update status disabled pada SP2D
+    row = DBSession.query(Sp2d).filter(Sp2d.id==controls['ap_sp2d_id']).first()   
+    row.disabled=1
+    save_request2(row)
+    
     return {"success": True, 'id': row.id, "msg":'Success Tambah SP2D', 'jml_total':nominal}
 
 ########
@@ -151,5 +161,6 @@ def view_delete(request):
     msg = 'Data sudah dihapus'
     query_id(request).delete()
     DBSession.flush()
+    
     nominal = "%d" % Giro.get_nilai(row.ap_giro_id) 
     return {'success':True, "msg":msg, 'jml_total':nominal}

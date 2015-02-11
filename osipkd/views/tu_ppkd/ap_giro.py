@@ -122,8 +122,7 @@ class view_ap_giro_ppkd(BaseViews):
                 except ValidationFailure, e:
                     return dict(form=form)
                 row = self.save_request(controls_dicted)
-                return HTTPFound(location=request.route_url('ap-giro-edit', 
-                                          id=row.id))
+                return self.route_list()
             return self.route_list()
         elif SESS_ADD_FAILED in request.session:
             del request.session[SESS_ADD_FAILED]
@@ -151,7 +150,6 @@ class view_ap_giro_ppkd(BaseViews):
         if request.POST:
             if 'simpan' in request.POST:
                 controls = request.POST.items()
-                
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
@@ -161,9 +159,7 @@ class view_ap_giro_ppkd(BaseViews):
         elif SESS_EDIT_FAILED in request.session:
             del request.session[SESS_EDIT_FAILED]
             return dict(form=form)
-        values = row.to_dict() #dict(zip(row.keys(), row))
-        #values['sp2d_nm']=row.sp2ds.nama
-        #values['sp2d_kd']=row.sp2ds.kode
+        values = row.to_dict() 
         form.set_appstruct(values) 
         return dict(form=form)
 

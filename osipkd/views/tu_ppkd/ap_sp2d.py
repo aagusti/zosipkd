@@ -49,12 +49,14 @@ class view_ap_sp2d_ppkd(BaseViews):
                 columns.append(ColumnDT('kode1'))
                 columns.append(ColumnDT('nama1'))
                 columns.append(ColumnDT('nominal1'))
+                columns.append(ColumnDT('posted'))
                 query = DBSession.query(Sp2d.id, 
                                         Sp2d.kode, 
                                         Sp2d.tanggal,
                                         Spm.kode.label('kode1'), 
                                         Spm.nama.label('nama1'), 
                                         Spp.nominal.label('nominal1'),
+                                        Sp2d.posted,
                         ).join(Spm 
                         ).outerjoin(Spp
                         ).filter(Spp.tahun_id==ses['tahun'],
@@ -197,6 +199,12 @@ class view_ap_sp2d_ppkd(BaseViews):
             
         DBSession.add(row)
         DBSession.flush()
+        
+        #Untuk update status disabled pada SPM
+        row = DBSession.query(Spm).filter(Spm.id==row.ap_spm_id).first()   
+        row.disabled=1
+        self.save_request3(row)
+                
         return row
                                           
     def save_request(self, values, row=None):
@@ -228,8 +236,7 @@ class view_ap_sp2d_ppkd(BaseViews):
                 except ValidationFailure, e:
                     return dict(form=form)
                 row = self.save_request(controls_dicted)
-                return HTTPFound(location=request.route_url('ap-sp2d-edit', 
-                                          id=row.id))
+                return self.route_list()
             return self.route_list()
         elif SESS_ADD_FAILED in request.session:
             del request.session[SESS_ADD_FAILED]
@@ -251,13 +258,17 @@ class view_ap_sp2d_ppkd(BaseViews):
     def view_edit(self):
         request = self.request
         row = self.query_id().first()
+        
         if not row:
             return id_not_found(request)
+        if row.posted:
+            request.session.flash('Data sudah diposting', 'error')
+            return self.route_list()
+            
         form = self.get_form(EditSchema)
         if request.POST:
             if 'simpan' in request.POST:
                 controls = request.POST.items()
-                
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
@@ -278,25 +289,71 @@ class view_ap_sp2d_ppkd(BaseViews):
     ##########
     # Delete #
     ##########    
+    def save_request3(self, row=None):
+        row = Spm()
+        return row
+        
     @view_config(route_name='ap-sp2d-delete', renderer='templates/ap-sp2d/delete.pt',
                  permission='delete')
     def view_delete(self):
         q = self.query_id()
         row = q.first()
         request=self.request
+        
         if not row:
             return id_not_found(request)
+        if row.posted:
+            request.session.flash('Data sudah diposting', 'error')
+            return self.route_list()
+            
         form = Form(colander.Schema(), buttons=('hapus','cancel'))
         values= {}
         if request.POST:
             if 'hapus' in request.POST:
-                msg = '%s Kode %s %s sudah dihapus.' % (request.title, row.kode, row.nama)
+          
+                #Untuk menghapus SP2D
+                msg = '%s dengan kode %s telah berhasil.' % (request.title, row.kode)
                 DBSession.query(Sp2d).filter(Sp2d.id==request.matchdict['id']).delete()
                 DBSession.flush()
                 request.session.flash(msg)
+                
+                #Untuk update status posted dan disabled pada SPM
+                row = DBSession.query(Spm).filter(Spm.id==row.ap_spm_id).first()   
+                row.posted=0
+                row.disabled=0
+                self.save_request3(row)
+                
             return self.route_list()
-        return dict(row=row,
-                     form=form.render())
+        return dict(row=row,form=form.render())
+
+    ###########
+    # Posting #
+    ###########     
+    def save_request2(self, row=None):
+        row = Sp2d()
+        self.request.session.flash('SP2D sudah diposting.')
+        return row
+        
+    @view_config(route_name='ap-sp2d-posting', renderer='templates/ap-sp2d/posting.pt',
+                 permission='posting')
+    def view_edit_posting(self):
+        request = self.request
+        row = self.query_id().first()
+        
+        if not row:
+            return id_not_found(request)
+        if row.posted:
+            request.session.flash('Data sudah diposting', 'error')
+            return self.route_list()
+            
+        form = Form(colander.Schema(), buttons=('posting','cancel'))
+        
+        if request.POST:
+            if 'posting' in request.POST: 
+                row.posted=1
+                self.save_request2(row)
+            return self.route_list()
+        return dict(row=row, form=form.render()) 
 
 class AddSchema(colander.Schema):
             
@@ -343,7 +400,7 @@ class AddSchema(colander.Schema):
                           )
     bud_nama        = colander.SchemaNode(
                           colander.String(),
-                          missing=colander.drop,
+                          #missing=colander.drop,
                           title="BUD Nama",
                           oid="bud_nama")
     verified_uid    = colander.SchemaNode(
@@ -360,7 +417,7 @@ class AddSchema(colander.Schema):
                           )
     verified_nama   = colander.SchemaNode(
                           colander.String(),
-                          missing=colander.drop,
+                          #missing=colander.drop,
                           title="Verified Nama",
                           oid="verified_nama")
 

@@ -181,8 +181,7 @@ class view_ap_spd_ppkd(BaseViews):
                 except ValidationFailure, e:
                     return dict(form=form)
                 row = self.save_request(controls_dicted)
-                return HTTPFound(location=request.route_url('ap-spd-edit', 
-                                          id=row.id))
+                return self.route_list()
             return self.route_list()
         elif SESS_ADD_FAILED in request.session:
             del request.session[SESS_ADD_FAILED]
@@ -210,7 +209,6 @@ class view_ap_spd_ppkd(BaseViews):
         if request.POST:
             if 'simpan' in request.POST:
                 controls = request.POST.items()
-                
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
