@@ -1054,7 +1054,12 @@
                     $('#kode1').val('');
                     $('#nama1').val('');
                     $('#amount1').val(0);
-                    $('#jml_total').val(formatNumber(html.jml_total));
+
+                    if(html.jml_total=="None"){
+                      $('#jml_total').val(0);}
+                    else{
+                      $('#jml_total').val(formatNumber(html.jml_total));} 
+
                     oTable.fnReloadAjax(oTableUrl);
                   } else {
                     $("#errors").css('display', 'inline', 'important');
