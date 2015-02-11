@@ -116,6 +116,7 @@
             <th>No. SPM</th>
             <th>Uraian</th>
             <th>Nilai</th>
+            <th>Posting</th>
         </tr>
       </thead>
       <tbody>
@@ -166,16 +167,25 @@
             },{
                 "bSearchable": false,
                 "bSortable"  : false,
-                "aTargets"   : [2,5]
+                "aTargets"   : [2,5,6]
             },{
                 "bSearchable": true,
                 "bSortable"  : true,
                 "aTargets"   : [3]
             },{
-                "sClass"   : "right",
+                "sClass"   : "right", // Untuk Nilai
                 "aTargets" : [5],
                 "mRender"  : function (data, type, full) {
                              return formatNumber(data);}
+            },{
+                "aTargets" : [6], // Untuk Posted
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return 'N';
+                    } else if (data == "1") {
+                        return 'Y';
+                    }
+                }
             }],
             "aoColumns": [
                 null, 
@@ -184,6 +194,7 @@
                 {"sWidth": "60px"}, 
                 {"sWidth": "200px"}, 
                 {"sWidth": "60px"}
+                {"sWidth": "30px","class":"right"}
             ],
             
             "fnRowCallback": function (nRow, aData, iDisplayIndex) {
@@ -200,6 +211,11 @@
                         $(this).addClass('row_selected');
                     }
                 })
+                switch(aData[6]){
+                    case '1' :
+                        $('td',nRow).css("background-color","#00FA9A")
+                        break;
+                }
             },
         });
 
