@@ -61,6 +61,7 @@ class view_ar_sts(BaseViews):
                 columns.append(ColumnDT('jenis'))
                 columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('nominal'))
+                columns.append(ColumnDT('posted'))
                 
                 query = DBSession.query(Sts).filter(
                           Sts.tahun_id == ses['tahun'],
@@ -144,7 +145,7 @@ class AddSchema(colander.Schema):
                           )
     ttd_nama        = colander.SchemaNode(
                           colander.String(),
-                          missing=colander.drop,
+                          #missing=colander.drop,
                           oid="ttd_nama",
                           title="Nama")
     ttd_jab         = colander.SchemaNode(
@@ -227,8 +228,7 @@ def view_add(request):
             except ValidationFailure, e:
                 return dict(form=form)
             row = save_request(controls_dicted, request)
-            return HTTPFound(location=request.route_url('ar-sts-edit', 
-                                      id=row.id))
+            return route_list(request)
         return route_list(request)
     elif SESS_ADD_FAILED in request.session:
         del request.session[SESS_ADD_FAILED]
@@ -249,8 +249,13 @@ def id_not_found(request):
              permission='edit')
 def view_edit(request):
     row = query_id(request).first()
+    
     if not row:
         return id_not_found(request)
+    if row.posted:
+        request.session.flash('Data sudah diposting', 'error')
+        return route_list(request)
+
     form = get_form(request, EditSchema)
     if request.POST:
         if 'simpan' in request.POST:
@@ -264,9 +269,7 @@ def view_edit(request):
     elif SESS_EDIT_FAILED in request.session:
         del request.session[SESS_EDIT_FAILED]
         return dict(form=form)
-    values = row.to_dict() #dict(zip(row.keys(), row))
-    ##values['kegiatan_nm']=row.kegiatansubs.nama
-    #values['kegiatan_kd']=row.kegiatansubs.kode
+    values = row.to_dict() 
     form.set_appstruct(values) 
     return dict(form=form)
 
@@ -281,14 +284,45 @@ def view_delete(request):
     
     if not row:
         return id_not_found(request)
+    if row.posted:
+        request.session.flash('Data sudah diposting', 'error')
+        return route_list(request)
+            
     form = Form(colander.Schema(), buttons=('hapus','cancel'))
     values= {}
     if request.POST:
         if 'hapus' in request.POST:
-            msg = 'STS ID %d %s sudah dihapus.' % (row.id, row.nama)
+            msg = '%s dengan kode %s telah berhasil.' % (request.title, row.kode)
             DBSession.query(Sts).filter(sts.id==request.matchdict['id']).delete()
             DBSession.flush()
             request.session.flash(msg)
         return route_list(request)
-    return dict(row=row,
-                 form=form.render())
+    return dict(row=row, form=form.render())
+   
+###########
+# Posting #
+###########     
+def save_request2(request, row=None):
+    row = Sts()
+    request.session.flash('STS sudah diposting.')
+    return row
+    
+@view_config(route_name='ar-sts-posting', renderer='templates/ar-sts/posting.pt',
+             permission='posting')
+def view_edit_posting(request):
+    row = query_id(request).first()
+    
+    if not row:
+        return id_not_found(request)
+    if row.posted:
+        request.session.flash('Data sudah diposting', 'error')
+        return route_list(request)
+        
+    form = Form(colander.Schema(), buttons=('posting','cancel'))
+    
+    if request.POST:
+        if 'posting' in request.POST: 
+            row.posted=1
+            save_request2(request, row)
+        return route_list(request)
+    return dict(row=row, form=form.render())       

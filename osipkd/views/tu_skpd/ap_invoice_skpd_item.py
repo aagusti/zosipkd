@@ -98,7 +98,6 @@ def view_add(request):
     row.pph              = controls['pph'].replace('.','')
     row.amount           = float(controls['vol_1'].replace('.',''))*float(controls['vol_2'].replace('.',''))*float(controls['harga'].replace('.',''))
     
-    #try:
     DBSession.add(row)
     DBSession.flush()
     amount = "%d" % APInvoice.get_nilai(row.ap_invoice_id) 
@@ -107,6 +106,9 @@ def view_add(request):
 ########
 # Edit #
 ########
+def route_list(request):
+    return HTTPFound(location=request.route_url('ap-invoice-skpd'))
+    
 def query_id(request):
     return DBSession.query(APInvoiceItem).filter(APInvoiceItem.id==request.matchdict['id'],
                                                  APInvoiceItem.ap_invoice_id==request.matchdict['ap_invoice_id'])

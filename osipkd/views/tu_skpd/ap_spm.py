@@ -64,6 +64,7 @@ class view_ap_spm(BaseViews):
                 columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('nominal'))
                 columns.append(ColumnDT('posted'))
+                columns.append(ColumnDT('nilai'))
                 query = DBSession.query(Spm.id,
                                         Spm.kode,
                                         Spm.tanggal,
@@ -71,10 +72,21 @@ class view_ap_spm(BaseViews):
                                         Spm.nama,
                                         Spp.nominal,
                                         Spm.posted,
+                                        func.sum(SpmPotongan.nilai).label('nilai')
                                         )\
-                            .filter(Spm.ap_spp_id==Spp.id,
-                                    Spp.tahun_id==ses['tahun'],
-                                    Spp.unit_id==ses['unit_id'])\
+                                .outerjoin(SpmPotongan)\
+                                .filter(Spm.ap_spp_id==Spp.id,
+                                        Spp.tahun_id==ses['tahun'],
+                                        Spp.unit_id==ses['unit_id'])\
+                                .group_by(Spm.id,
+                                        Spm.kode,
+                                        Spm.tanggal,
+                                        Spp.jenis,
+                                        Spm.nama,
+                                        Spp.nominal,
+                                        Spm.posted,
+                                        #func.sum(SpmPotongan.nilai).label('nilai')
+                                        )\
 
                 rowTable = DataTables(req, Spm, query, columns)
                 return rowTable.output_result()
@@ -115,16 +127,6 @@ class view_ap_spm(BaseViews):
             rowTable = DataTables(req, Spm, query, columns)
             return rowTable.output_result()
         
-        elif url_dict['act']=='posting':
-            row = Spm()
-            row.id = pk_id
-            row.update_uid = self.request.user.id
-            row.posted = 1
-            
-            row = self.save(row)
-            self.request.session.flash('SPM sudah diposting.')
-            return row
-                
         elif url_dict['act']=='headofkode':
             term = 'term' in params and params['term'] or ''
             q = DBSession.query(Spm.id, Spm.kode.label('spm_kd'), Spm.nama.label('spm_nm'), Spp.nominal.label('spm_n'),
@@ -132,7 +134,8 @@ class view_ap_spm(BaseViews):
                       ).filter(Spp.unit_id == ses['unit_id'],
                                Spp.tahun_id==ses['tahun'],
                                Spm.posted==1,
-                               Spm.kode.ilike('%%%s%%' % term))        
+                               Spm.disabled==0,
+                              Spm.kode.ilike('%%%s%%' % term))        
             rows = q.all()
             r = []
             for k in rows:
@@ -152,6 +155,7 @@ class view_ap_spm(BaseViews):
                       ).filter(Spp.unit_id == ses['unit_id'],
                                Spp.tahun_id==ses['tahun'],
                                Spm.posted==1,
+                               Spm.disabled==0,
                                Spm.nama.ilike('%%%s%%' % term))
             rows = q.all()
             r = []
@@ -200,6 +204,11 @@ class view_ap_spm(BaseViews):
         DBSession.add(row)
         DBSession.flush()
 
+        #Untuk update status disabled pada SPP
+        row = DBSession.query(Spp).filter(Spp.id==row.ap_spp_id).first()   
+        row.disabled=1
+        self.save_request3(row)
+
         return row
 
     def save_request(self, values, row=None):
@@ -231,8 +240,8 @@ class view_ap_spm(BaseViews):
                 except ValidationFailure, e:
                     return dict(form=form)
                 row = self.save_request(controls_dicted)
-                return HTTPFound(location=request.route_url('ap-spm-edit', 
-                                          id=row.id))
+                #return HTTPFound(location=request.route_url('ap-spm-edit', id=row.id))
+                return self.route_list()
             return self.route_list()
         elif SESS_ADD_FAILED in request.session:
             del request.session[SESS_ADD_FAILED]
@@ -254,11 +263,13 @@ class view_ap_spm(BaseViews):
     def view_edit(self):
         request = self.request
         row = self.query_id().first()
+
         if not row:
             return id_not_found(request)
         if row.posted:
             request.session.flash('data sudah diposting', 'error')
             return self.route_list()
+
         form = self.get_form(EditSchema)
         if request.POST:
             if 'simpan' in request.POST:
@@ -282,28 +293,101 @@ class view_ap_spm(BaseViews):
     ##########
     # Delete #
     ##########    
+    def save_request3(self, row=None):
+        row = Spp()
+        return row
+    
     @view_config(route_name='ap-spm-delete', renderer='templates/ap-spm/delete.pt',
                  permission='delete')
     def view_delete(self):
         q = self.query_id()
         row = q.first()
         request=self.request
+
         if not row:
             return id_not_found(request)
         if row.posted:
             request.session.flash('data sudah diposting', 'error')
             return self.route_list()
+
         form = Form(colander.Schema(), buttons=('hapus','cancel'))
         values= {}
         if request.POST:
             if 'hapus' in request.POST:
+
+                #Untuk menghapus SPM
                 msg = '%s Kode %s  No. %s %s sudah dihapus.' % (request.title, row.kode, row.kode, row.nama)
                 DBSession.query(Spm).filter(Spm.id==request.matchdict['id']).delete()
                 DBSession.flush()
                 request.session.flash(msg)
+
+                #Untuk update status posted dan disabled pada SPP
+                row = DBSession.query(Spp).filter(Spp.id==row.ap_spp_id).first()   
+                row.posted=0
+                row.disabled=0
+                self.save_request3(row)
+                
             return self.route_list()
         return dict(row=row,
                      form=form.render())
+
+    ###########
+    # Posting #
+    ###########     
+    def save_request2(self, row=None):
+        row = Spm()
+        self.request.session.flash('SPM sudah diposting.')
+        return row
+        
+    @view_config(route_name='ap-spm-posting', renderer='templates/ap-spm/posting.pt',
+                 permission='posting')
+    def view_edit_posting(self):
+        request = self.request
+        row = self.query_id().first()
+        
+        if not row:
+            return id_not_found(request)
+        if row.posted:
+            request.session.flash('Data sudah diposting', 'error')
+            return self.route_list()
+            
+        form = Form(colander.Schema(), buttons=('posting','cancel'))
+        
+        if request.POST:
+            if 'posting' in request.POST: 
+                row.posted=1
+                self.save_request2(row)
+            return self.route_list()
+        return dict(row=row, form=form.render())                 
+      
+    #############
+    # UnPosting #
+    #############   
+    def save_request4(self, row=None):
+        row = Spm()
+        self.request.session.flash('SPM sudah di UnPosting.')
+        return row
+        
+    @view_config(route_name='ap-spm-unposting', renderer='templates/ap-spm/unposting.pt',
+                 permission='unposting') 
+    def view_edit_unposting(self):
+        request = self.request
+        row = self.query_id().first()
+        
+        if not row:
+            return id_not_found(request)
+        if row.disabled:
+            request.session.flash('Data sudah diposting dan digunakan pada SP2D', 'error')
+            return self.route_list()
+            
+        form = Form(colander.Schema(), buttons=('unposting','cancel'))
+        
+        if request.POST:
+            if 'unposting' in request.POST: 
+                row.posted=0
+                self.save_request4(row)
+            return self.route_list()
+        return dict(row=row, form=form.render())
 
 class AddSchema(colander.Schema):
 
@@ -352,7 +436,7 @@ class AddSchema(colander.Schema):
                           )
     ttd_nama        = colander.SchemaNode(
                           colander.String(),
-                          missing=colander.drop,
+                          #missing=colander.drop,
                           oid = "ttd_nama")
     verified_uid    = colander.SchemaNode(
                           colander.Integer(),
@@ -368,7 +452,7 @@ class AddSchema(colander.Schema):
                           )
     verified_nama   = colander.SchemaNode(
                           colander.String(),
-                          missing=colander.drop,
+                          #missing=colander.drop,
                           oid = "verified_nama"
                           )
 

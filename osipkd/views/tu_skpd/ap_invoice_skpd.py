@@ -259,8 +259,8 @@ def view_add(request):
             except ValidationFailure, e:
                 return dict(form=form)
             row = save_request(controls_dicted, request)
-            return HTTPFound(location=request.route_url('ap-invoice-skpd-edit', 
-                                      id=row.id))
+            #return HTTPFound(location=request.route_url('ap-invoice-skpd-edit', id=row.id))
+            return route_list(request)
         return route_list(request)
     elif SESS_ADD_FAILED in request.session:
         del request.session[SESS_ADD_FAILED]
@@ -281,8 +281,13 @@ def id_not_found(request):
              permission='edit')
 def view_edit(request):
     row = query_id(request).first()
+
     if not row:
         return id_not_found(request)
+    if row.posted:
+        request.session.flash('Data sudah diposting', 'error')
+        return route_list(request)
+
     form = get_form(request, EditSchema)
     if request.POST:
         if 'simpan' in request.POST:

@@ -100,6 +100,7 @@ class view_ap_spp(BaseViews):
                       ).filter(Spp.unit_id == ses['unit_id'],
                                Spp.tahun_id==ses['tahun'],
                                Spp.posted==1,
+                               Spp.disabled==0,
                                Spp.kode.ilike('%%%s%%' % term))        
             rows = q.all()
             r = []
@@ -119,6 +120,7 @@ class view_ap_spp(BaseViews):
                       ).filter(Spp.unit_id == ses['unit_id'],
                                Spp.tahun_id==ses['tahun'],
                                Spp.posted==1,
+                               Spp.disabled==0,
                                Spp.nama.ilike('%%%s%%' % term))        
             rows = q.all()
             r = []
@@ -200,8 +202,8 @@ class view_ap_spp(BaseViews):
                 except ValidationFailure, e:
                     return dict(form=form)
                 row = self.save_request(controls_dicted)
-                return HTTPFound(location=request.route_url('ap-spp-edit', 
-                                          id=row.id))
+                #return HTTPFound(location=request.route_url('ap-spp-edit', id=row.id))
+                return self.route_list()
             return self.route_list()
         elif SESS_ADD_FAILED in request.session:
             del request.session[SESS_ADD_FAILED]
@@ -225,6 +227,9 @@ class view_ap_spp(BaseViews):
         row = self.query_id().first()
         if not row:
             return id_not_found(request)
+        if row.posted:
+            request.session.flash('Data sudah diposting', 'error')
+            return self.route_list()
         form = self.get_form(EditSchema)
         if request.POST:
             if 'simpan' in request.POST:
@@ -257,6 +262,12 @@ class view_ap_spp(BaseViews):
         request=self.request
         if not row:
             return id_not_found(request)
+        if row.posted:
+            request.session.flash('Data sudah diposting', 'error')
+            return self.route_list()
+        if row.nominal:
+            request.session.flash('Data tidak bisa dihapus, karena memiliki data items')
+            return self.route_list()
         form = Form(colander.Schema(), buttons=('hapus','cancel'))
         values= {}
         if request.POST:
@@ -269,6 +280,64 @@ class view_ap_spp(BaseViews):
         return dict(row=row,
                      form=form.render())
 
+    ###########
+    # Posting #
+    ###########   
+    def save_request2(self, row=None):
+        row = Spp()
+        self.request.session.flash('SPP sudah diposting.')
+        return row
+        
+    @view_config(route_name='ap-spp-posting', renderer='templates/ap-spp/posting.pt',
+                 permission='posting')
+    def view_edit_posting(self):
+        request = self.request
+        row = self.query_id().first()
+        
+        if not row:
+            return id_not_found(request)
+        if row.posted:
+            request.session.flash('Data sudah diposting', 'error')
+            return self.route_list()
+            
+        form = Form(colander.Schema(), buttons=('posting','cancel'))
+        
+        if request.POST:
+            if 'posting' in request.POST: 
+                row.posted=1
+                self.save_request2(row)
+            return self.route_list()
+        return dict(row=row, form=form.render())                       
+            
+    #############
+    # UnPosting #
+    #############   
+    def save_request3(self, row=None):
+        row = Spp()
+        self.request.session.flash('SPP sudah di UnPosting.')
+        return row
+        
+    @view_config(route_name='ap-spp-unposting', renderer='templates/ap-spp/unposting.pt',
+                 permission='unposting') 
+    def view_edit_unposting(self):
+        request = self.request
+        row = self.query_id().first()
+        
+        if not row:
+            return id_not_found(request)
+        if row.disabled:
+            request.session.flash('Data sudah diposting dan digunakan pada SPM', 'error')
+            return self.route_list()
+            
+        form = Form(colander.Schema(), buttons=('unposting','cancel'))
+        
+        if request.POST:
+            if 'unposting' in request.POST: 
+                row.posted=0
+                self.save_request3(row)
+            return self.route_list()
+        return dict(row=row, form=form.render())                       
+            
 class AddSchema(colander.Schema):
     unit_id          = colander.SchemaNode(
                           colander.String(),

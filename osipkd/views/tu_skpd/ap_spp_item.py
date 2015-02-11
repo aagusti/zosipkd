@@ -64,6 +64,13 @@ class view_ap_spp_item(BaseViews):
 #######    
 # Add #
 #######
+def save_request2(row=None):
+    row = APInvoice()
+    return row
+
+def route_list(request):
+    return HTTPFound(location=request.route_url('ap-spp'))
+        
 @view_config(route_name='ap-spp-item-add', renderer='json',
              permission='add')
 def view_add(request):
@@ -99,7 +106,15 @@ def view_add(request):
     #try:
     DBSession.add(row)
     DBSession.flush()
+    
     amount = "%d" % Spp.get_nilai(row.ap_spp_id) 
+    
+    #Untuk update status posted dan status_spp pada APInvoice
+    row = DBSession.query(APInvoice).filter(APInvoice.id==controls['ap_invoice_id']).first()   
+    row.posted=1
+    row.status_spp=1
+    save_request2(row)
+
     return {"success": True, 'id': row.id, "msg":'Success Tambah Invoice', 'jml_total':amount}
 
 ########
@@ -151,5 +166,13 @@ def view_delete(request):
     msg = 'Data sudah dihapus'
     query_id(request).delete()
     DBSession.flush()
+
     amount = "%d" % Spp.get_nilai(row.ap_spp_id)
+
+    #Untuk update status posted dan status_spp pada APInvoice    
+    row = DBSession.query(APInvoice).filter(APInvoice.id==row.ap_invoice_id).first()   
+    row.posted=0
+    row.status_spp=0
+    save_request2(row)
+    
     return {'success':True, "msg":msg, 'jml_total':amount}
