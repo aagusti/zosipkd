@@ -174,7 +174,7 @@
     <div class="form-group">
         <div class="col-md-9">
             <button id="btn_cetak" name="btn_cetak" type="button" class="btn btn-primary "
-          value="btn_cetak">Cetak Laporan</button>
+          value="btn_cetak">Cetak</button>
             <button id="btn_close" name="btn_close" type="button" class="btn btn-warning"
           value="btn_close">Tutup</button>
         </div>  
