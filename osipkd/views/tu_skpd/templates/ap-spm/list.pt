@@ -123,7 +123,7 @@
     </table>
     
     <script>
-      var mID;
+      var mID, mID2, mID3;
       var oTable;
       var iPos;
       var oTableUrl = "/ap-spm/act/grid";
@@ -134,6 +134,7 @@
           '	<button id="btn_delete"   class="btn btn btn-danger"  type="button">Hapus</button>',
           '	<button id="btn_print"    class="btn btn btn-primary" type="button">Cetak</button>',
           '	<button id="btn_posting"  class="btn btn btn-success" type="button">Posting</button>',
+          '	<button id="btn_unposting" class="btn btn btn-danger" type="button">UnPosting</button>',
           ' <button id="btn_close"    class="btn btn-warning"     type="button" >Tutup</button>',
           '	&nbsp;',
           '</div>',
@@ -199,6 +200,7 @@
                 {"sWidth": "200px"}, 
                 {"sWidth": "100px"},
                 {"sWidth": "20px","class":"right"},
+                {"sWidth": "30px"},
             ],
             
             "fnRowCallback": function (nRow, aData, iDisplayIndex) {
@@ -215,6 +217,12 @@
                         $(this).addClass('row_selected');
                     }
                 })
+
+                switch(aData[6]){
+                    case '1' :
+                        $('td',nRow).css("background-color","#00FA9A")
+                        break;
+                }
             },
         });
 
@@ -234,44 +242,35 @@
 				        No_Spm = aData[1];
                 Uraian = aData[4];
                 Jenis  = aData[3];
+                mID2 = aData[7];
+                mID3 = aData[6];
                 oTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
             }
         });
         /**********************************************************************/
-        $('#btn_posting').click(function () {
-            if (mID) {
-                var posting = confirm('Posting data ini?');
-                if (posting == true) {
-                    $.ajax({
-                        type: "POST",
-                        url : "/ap-spm/act/posting",
-                        data: "id="+mID,
-                        success: function (html) {
-                            if (html.success == true) {
-                                $("#errors").css('display', 'inline', 'important');
-                                $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                                oTable.fnReloadAjax(oTableUrl);
-                            } else {
-                                $("#errors").css('display', 'inline', 'important');
-                                $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
-                            }
-                        },
-                        beforeSend: function () {
-                            $("#errors").css('display', 'inline', 'important');
-                            $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
-                        }
-                    });
-                    return false;
-                };
-            } else {
-                alert('Silahkan pilih data yang akan diPosting');
-            }
-        });
-        
         $('#btn_tambah').click(function () {
             window.location = '/ap-spm/add';
         });
+
+        $('#btn_posting').click(function () {
+            if (mID) {
+                window.location = '/ap-spm/' + mID +'/posting';
+            } else {
+                alert('Silahkan pilih data yang akan diposting');
+            }
+        });
+        
+        $('#btn_unposting').click(function () {
+            if (mID) {
+                if(mID3=="0"){
+                    alert('Data tidak dapat di UnPosting.'); }
+                else{window.location = '/ap-spm/' + mID +'/unposting';}
+            } else {
+                alert('Silahkan pilih data yang akan diunposting');
+            }
+        });
+        
         $('#btn_edit').click(function () {
             if (mID) {
                 window.location = '/ap-spm/' + mID +'/edit';
@@ -281,7 +280,9 @@
         });
         $('#btn_delete').click(function () {
             if (mID) {
-                window.location = '/ap-spm/' + mID +'/delete';
+                if(mID2=="0" || mID2=="None"){
+                    window.location = '/ap-spm/' + mID +'/delete'; }
+                else{alert('Data tidak dapat dihapus, karena masih mempunyai biaya potongan.');}
             } else {
                 alert('Silahkan pilih data yang akan di hapus');
             }
