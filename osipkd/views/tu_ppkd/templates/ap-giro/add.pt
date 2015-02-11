@@ -3,7 +3,7 @@
     <script type='text/javascript'>
         $(document).ready(function () {
             $("#btn_close").click(function () {
-                window.location = '/ap-invoice-item-skpd';
+                window.location = '/ap-giro';
                 return false;
             });
         });
@@ -333,7 +333,12 @@
                     $('#kode1').val('');
                     $('#nama1').val('');
                     $('#amount1').val(0);
-                    $('#jml_total').val(formatNumber(html.jml_total));
+                    
+                    if(html.jml_total=="None"){
+                      $('#jml_total').val(0);}
+                    else{
+                      $('#jml_total').val(formatNumber(html.jml_total));}
+                      
                     oTable.fnReloadAjax(oTableUrl);
                   } else {
                     $("#errors").css('display', 'inline', 'important');
