@@ -121,7 +121,7 @@
     </table>
     
     <script>
-      var mID;
+      var mID, nilai;
       var oTable;
       var iPos;
       var oTableUrl = "/ar-sts/act/grid";
@@ -170,7 +170,7 @@
             },{
                "bSearchable": true,
                "bSortable"  : false,
-               "aTargets"   : [2,3,4,5,6]
+               "aTargets"   : [2,3,4,5,6,7]
             },{
                 "aTargets" : [4], // Column number which needs to be modified
                 "mRender"  : function (data, type, full) {
@@ -245,7 +245,8 @@
                 iPos = oTable.fnGetPosition(this);
                 var aData = oTable.fnGetData(iPos);
                 mID = aData[0];
-                mID2 = aData[6];
+                //mID2 = aData[6];
+                nilai = aData[6];
                 oTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
             }
