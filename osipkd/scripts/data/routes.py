@@ -2741,7 +2741,7 @@ RouteData = {
         id=392,
         kode='ar-invoice-skpd-posting',
         nama=' Posting Piutang',
-        path='/ap-invoice-skpd/{id}/posting',
+        path='/ar-invoice-skpd/{id}/posting',
         perm_name='posting',
         ), 
     dict(
