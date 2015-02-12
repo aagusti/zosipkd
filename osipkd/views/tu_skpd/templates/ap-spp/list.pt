@@ -124,7 +124,7 @@
     </table>
     
     <script>
-      var mID, mID2, mID3;
+      var mID, mID2, mID3, nilai;
       var oTable;
       var iPos;
       var oTableUrl = "/ap-spp/act/grid";
@@ -270,18 +270,22 @@
         });
         $('#btn_posting').click(function () {
             if (mID) {
-                if(mID2=="0"){
-                    alert('Data tidak dapat diposting, karena bernilai 0.'); }
-                else{window.location = '/ap-spp/' + mID +'/posting';}
+                //if(mID2=="0"){
+                //    alert('Data tidak dapat diposting, karena bernilai 0.'); }
+                //else{
+                window.location = '/ap-spp/' + mID +'/posting';
+                //}
             } else {
                 alert('Silahkan pilih data yang akan diposting');
             }
         });
         $('#btn_unposting').click(function () {
             if (mID) {
-                if(mID3=="0"){
-                    alert('Data tidak dapat di UnPosting.'); }
-                else{window.location = '/ap-spp/' + mID +'/unposting';}
+                //if(mID3=="0"){
+                //    alert('Data tidak dapat di UnPosting.'); }
+                //else{
+                window.location = '/ap-spp/' + mID +'/unposting';
+                //}
             } else {
                 alert('Silahkan pilih data yang akan diunposting');
             }
