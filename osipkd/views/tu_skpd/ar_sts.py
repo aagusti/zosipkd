@@ -287,6 +287,9 @@ def view_delete(request):
     if row.posted:
         request.session.flash('Data sudah diposting', 'error')
         return route_list(request)
+    if row.nominal:
+        request.session.flash('Data tidak bisa dihapus, karena memiliki data items', 'error')
+        return route_list(request)
             
     form = Form(colander.Schema(), buttons=('hapus','cancel'))
     values= {}
