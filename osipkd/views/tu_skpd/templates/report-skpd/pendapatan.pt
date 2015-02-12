@@ -218,14 +218,19 @@
         </div>
       </div>       
 
-    <div class="form-group">
-        <div class="col-md-9">
-            <button id="btn_cetak" name="btn_cetak" type="button" class="btn btn-primary "
-          value="btn_cetak">Cetak</button>
-            <button id="btn_close" name="btn_close" type="button" class="btn btn-warning"
-          value="btn_close">Tutup</button>
-        </div>  
-    </div>      
+        <div class="form-group">
+            <div class="col-md-3">
+              <div id="item-tahun">
+                <label class="control-label col-md" >
+                        </label>
+                <div class="col-md-9">
+              <button class="btn btn-primary" type="button" name="btn_cetak" id="btn_cetak">Cetak</button>
+              <button class="btn btn-warning" type="button" name="btn_close" id="btn_close">Tutup</button>
+
+                </div>
+              </div>
+            </div>
+        </div><br>
   </fieldset>
 </form>
   </div> 
