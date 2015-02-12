@@ -123,7 +123,7 @@
     </table>
     
     <script>
-      var mID, mID2, mID3;
+      var mID, mID2, mID3, nilai;
       var oTable;
       var iPos;
       var oTableUrl = "/ap-spm/act/grid";
@@ -244,6 +244,7 @@
                 Jenis  = aData[3];
                 mID2 = aData[7];
                 mID3 = aData[6];
+                nilai = aData[5];
                 oTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
             }
@@ -263,9 +264,11 @@
         
         $('#btn_unposting').click(function () {
             if (mID) {
-                if(mID3=="0"){
-                    alert('Data tidak dapat di UnPosting.'); }
-                else{window.location = '/ap-spm/' + mID +'/unposting';}
+                //if(mID3=="0"){
+                //    alert('Data tidak dapat di UnPosting.'); }
+                //else{
+                window.location = '/ap-spm/' + mID +'/unposting';
+                //}
             } else {
                 alert('Silahkan pilih data yang akan diunposting');
             }
@@ -280,9 +283,10 @@
         });
         $('#btn_delete').click(function () {
             if (mID) {
-                if(mID2=="0" || mID2=="None"){
-                    window.location = '/ap-spm/' + mID +'/delete'; }
-                else{alert('Data tidak dapat dihapus, karena masih mempunyai biaya potongan.');}
+                //if(mID2=="0" || mID2=="None"){
+                    window.location = '/ap-spm/' + mID +'/delete'; 
+                //}
+                //else{alert('Data tidak dapat dihapus, karena masih mempunyai biaya potongan.');}
             } else {
                 alert('Silahkan pilih data yang akan di hapus');
             }
