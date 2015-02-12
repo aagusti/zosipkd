@@ -122,7 +122,7 @@
     </table>
     
     <script>
-      var mID, mID2;
+      var mID, mID2, nilai;
       var oTable;
       var iPos;
       var oTableUrl = "/ar-invoice-skpd/act/grid";
@@ -238,6 +238,7 @@
                 var aData = oTable.fnGetData(iPos);
                 mID = aData[0];
                 mID2 = aData[7];
+                nilai = aData[7];
                 oTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
             }
@@ -265,9 +266,10 @@
 
         $('#btn_delete').click(function () {
             if (mID) {
-                if(mID2=="0"){
-                    window.location = '/ar-invoice-skpd/' + mID +'/delete'; }
-                else{alert('Data tidak dapat dihapus, karena masih mempunyai item.');}
+                //if(mID2=="0"){
+                    window.location = '/ar-invoice-skpd/' + mID +'/delete'; 
+                //}
+                //else{alert('Data tidak dapat dihapus, karena masih mempunyai item.');}
             } else {
                 alert('Silahkan pilih data yang akan di hapus');
             }
