@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R0009" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" >
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R0009" language="groovy" pageWidth="595" pageHeight="842" columnWidth="525" leftMargin="50" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -33,14 +33,14 @@
 	<title>
 		<band height="77" splitType="Stretch">
 			<staticText>
-				<reportElement  x="0" y="8" width="555" height="17"/>
+				<reportElement x="0" y="8" width="479" height="17"/>
 				<textElement textAlignment="Center">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[REKAPITULASI BARANG KE NERACA]]></text>
 			</staticText>
 			<textField>
-				<reportElement  x="0" y="25" width="555" height="17"/>
+				<reportElement x="0" y="25" width="479" height="17"/>
 				<textElement textAlignment="Center" markup="none">
 					<font size="12" isBold="true"/>
 				</textElement>
@@ -51,7 +51,7 @@
 	<pageHeader>
 		<band height="20" splitType="Stretch">
 			<staticText>
-				<reportElement  x="0" y="0" width="43" height="20"/>
+				<reportElement x="0" y="0" width="43" height="20"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -64,7 +64,7 @@
 				<text><![CDATA[NO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement  x="43" y="0" width="333" height="20"/>
+				<reportElement x="43" y="0" width="333" height="20"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -77,7 +77,7 @@
 				<text><![CDATA[NAMA BARANG]]></text>
 			</staticText>
 			<staticText>
-				<reportElement  x="376" y="0" width="103" height="20"/>
+				<reportElement x="376" y="0" width="103" height="20"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -94,7 +94,7 @@
 	<detail>
 		<band height="20" splitType="Stretch">
 			<textField>
-				<reportElement  x="0" y="0" width="43" height="20"/>
+				<reportElement x="0" y="0" width="43" height="20"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -105,7 +105,7 @@
 				<textFieldExpression><![CDATA[$F{kode}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement  x="43" y="0" width="333" height="20"/>
+				<reportElement x="43" y="0" width="333" height="20"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -116,7 +116,7 @@
 				<textFieldExpression><![CDATA[$F{uraian}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement  x="376" y="0" width="103" height="20"/>
+				<reportElement x="376" y="0" width="103" height="20"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -134,7 +134,7 @@
 	<summary>
 		<band height="42" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement  x="376" y="0" width="103" height="20"/>
+				<reportElement x="376" y="0" width="103" height="20"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -146,7 +146,7 @@
 				</textElement>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement  x="43" y="0" width="333" height="20"/>
+				<reportElement x="43" y="0" width="333" height="20"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -158,7 +158,7 @@
 				</textElement>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement  x="0" y="0" width="43" height="20"/>
+				<reportElement x="0" y="0" width="43" height="20"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>

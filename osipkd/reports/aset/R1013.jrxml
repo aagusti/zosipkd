@@ -27,11 +27,14 @@
 	<variable name="nilai" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{nilai})]]></variableExpression>
 	</variable>
+	<variable name="tot_nilai" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{nilai}]]></variableExpression>
+	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="93" splitType="Stretch">
+		<band height="77" splitType="Stretch">
 			<staticText>
 				<reportElement x="0" y="8" width="479" height="17"/>
 				<textElement textAlignment="Center">
@@ -45,13 +48,6 @@
 					<font size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["TAHUN ANGGARAN "+$F{tahun}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="0" y="62" width="479" height="17"/>
-				<textElement markup="none">
-					<font size="12" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{unitkd}+' '+$F{unitnm}.toUpperCase()]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -151,6 +147,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Top" markup="none">
 					<font isBold="true"/>
 				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{tot_nilai})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="43" y="0" width="333" height="20"/>
@@ -160,9 +157,10 @@
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
-				<textElement verticalAlignment="Top" markup="none">
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font isBold="true"/>
 				</textElement>
+				<textFieldExpression><![CDATA[TOTAL]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="0" width="43" height="20"/>
