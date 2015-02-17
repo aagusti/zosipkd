@@ -1,7 +1,7 @@
 <html metal:use-macro="load: ../base.pt">
   <div metal:fill-slot="content" class="panel panel-default ">
     <div class="panel-heading">
-        <h4 class="panel-title">Laporan SKPD</h4>
+        <h4 class="panel-title">Laporan PPKD</h4>
     </div>
     <script type='text/javascript'>
       $(document).ready(function () {
@@ -49,7 +49,7 @@
         if(jenis=='8') url = "/aset/lap01/11/act";
         if(jenis=='9') url = "/aset/lap01/12/act";
         if(jenis=='10') url = "/aset/lap01/13/act";*/
-        url = "/aset/lap01/"+jenis+"/act";
+        url = "/aset/lap02/"+jenis+"/act";
         //alert(url);
         window.open(url);
       });
@@ -79,21 +79,6 @@
               </div>
             </div>
 
-          <!--UNIT---------------------------------------------------------------->
-            <input id="unit_id" type="hidden" value="${request.session['unit_id']}" name="unit_id">
-            <div class="col-md-3">
-              <div id="item-unit_kd">
-                <label for="unit_kd" class="control-label col-md-3" id="req-unit_kd">
-                        SKPD</label>
-                <div class="col-md-9">
-                   <input id="unit_kd" class="form-control typeahead" type="text" value="${request.session['unit_kd']}" name="unit_kd">
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-5">
-               <input id="unit_nm" class=" form-control " type="text" value="${request.session['unit_nm']}" name="unit_nm">
-            </div>   
           </div>
           <script>
             $('#unit_kd').typeahead({
@@ -178,7 +163,7 @@
                 <label><input type="radio" name="kib" id="kib06" value="kibf">KIB F </label>
             </div>
             <div class="radio">
-                <label><input type="radio" name="kib" id="kib07" value="10">RUSAK BERAT</label>
+                <label><input type="radio" name="kib" id="kib07" value="kib10">RUSAK BERAT</label>
             </div>
             <div class="radio">
                 <label><input type="radio" name="kib" id="kib08" value="11">BUKU INVENTARIS</label>
@@ -191,7 +176,7 @@
             </div>
         </div>
         </div>
-        
+
         <div class="form-group">
             <div class="col-md-3">
               <div id="item-tahun">
@@ -205,6 +190,7 @@
               </div>
             </div>
         </div><br>
+		
       </fieldset>
     </form>
   </div> 
