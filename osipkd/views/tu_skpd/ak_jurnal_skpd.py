@@ -67,6 +67,7 @@ class AddSchema(colander.Schema):
                     widget = unit_nm_widget)
     kode        = colander.SchemaNode(
                     colander.String(),
+                    missing = colander.drop,
                     title="No. Jurnal"
                     )
                     
@@ -94,7 +95,7 @@ class AddSchema(colander.Schema):
                     )
     tgl_source  = colander.SchemaNode(
                     colander.Date(),
-                    title = "Tgl"
+                    title = "Tgl. Ref"
                 )
     
     notes       = colander.SchemaNode(
@@ -143,16 +144,18 @@ class view_ak_jurnal_skpd(BaseViews):
             columns.append(ColumnDT('id'))
             columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
             columns.append(ColumnDT('kode'))
+            columns.append(ColumnDT('jv_type'))
             columns.append(ColumnDT('nama'))
+            columns.append(ColumnDT('source'))
             columns.append(ColumnDT('amount',  filter=self._number_format))
             columns.append(ColumnDT('posted'))
             
-            query = DBSession.query(AkJurnal.id, AkJurnal.tanggal, AkJurnal.kode, 
-                      AkJurnal.nama, AkJurnal.posted,
-                      func.div(func.coalesce(func.sum(AkJurnalItem.amount),0),2).label('amount')).\
+            query = DBSession.query(AkJurnal.id, AkJurnal.tanggal, AkJurnal.kode, AkJurnal.jv_type, 
+                      AkJurnal.nama, AkJurnal.source,  AkJurnal.posted,
+                      func.coalesce(func.sum(AkJurnalItem.amount),0).label('amount')).\
                     outerjoin(AkJurnalItem).\
-                    group_by(AkJurnal.id, AkJurnal.tanggal, AkJurnal.kode, 
-                             AkJurnal.nama, ).\
+                    group_by(AkJurnal.id, AkJurnal.tanggal, AkJurnal.kode, AkJurnal.jv_type, 
+                             AkJurnal.nama, AkJurnal.source,  ).\
                     filter(AkJurnal.tahun_id == ses['tahun'],
                            AkJurnal.unit_id == ses['unit_id'],)
                       
@@ -184,16 +187,24 @@ class view_ak_jurnal_skpd(BaseViews):
             row.created = datetime.now()
             row.create_uid = user.id
         row.from_dict(values)
-        tanggal    = datetime.strptime(values['tanggal'], '%Y-%m-%d')
-        row.tahun_id  = tanggal.year
-        row.periode  = tanggal.month
-        row.hari   = tanggal.day
+        tanggal           = datetime.strptime(values['tanggal'], '%Y-%m-%d')
+        row.tahun_id      = tanggal.year
+        row.periode       = tanggal.month
+        row.updated       = datetime.now()
+        row.update_uid    = user.id
+        row.disable       = 'disable' in values and values['disable'] and 1 or 0
+        row.posted        = 'posted'  in values and values['posted']  and 1 or 0
+        row.tgl_transaksi = datetime.now()
         
-        row.updated = datetime.now()
-        row.update_uid = user.id
-        row.disable   = 'disable' in values and values['disable'] and 1 or 0
-        #row.is_skpd   = 'is_skpd' in values and values['is_skpd'] and 1 or 0
-        row.posted    = 'posted' in values and values['posted'] and 1 or 0
+        if not row.kode:
+            tahun    = self.session['tahun']
+            unit_kd  = self.session['unit_kd']
+            is_skpd  = row.is_skpd
+            jv_type  = row.jv_type
+            tipe     = AkJurnal.get_tipe(jv_type)
+            no_urut  = AkJurnal.get_norut(row.id)+1
+            row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%d" % no_urut
+        
         DBSession.add(row)
         DBSession.flush()
         return row
@@ -206,15 +217,10 @@ class view_ak_jurnal_skpd(BaseViews):
         return row
             
     def route_list(self):#, id):
-        #if id:
-            #return HTTPFound(location=self.request.route_url('ak-jurnal-skpd-edit', id=id) )
-        #else:
-            return HTTPFound(location=self.request.route_url('ak-jurnal-skpd'))#, id=id) )
+        return HTTPFound(location=self.request.route_url('ak-jurnal-skpd'))#, id=id) )
         
     def session_failed(self, session_name):
-        #r = dict(form=self.session[session_name])
         del self.session[session_name]
-        #return r
         
     @view_config(route_name='ak-jurnal-skpd-add', renderer='templates/ak-jurnal-skpd/add.pt',
                  permission='add')
@@ -228,17 +234,11 @@ class view_ak_jurnal_skpd(BaseViews):
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    #req.session[SESS_ADD_FAILED] = e.render()     
-                    #form.set_appstruct(rowd)
                     return dict(form=form)
-                    #return HTTPFound(location=req.route_url('ak-jurnal-add'))
-                id = self.save_request(dict(controls))#.id
-            return self.route_list()#id)
-            
+                id = self.save_request(dict(controls))
+            return self.route_list()
         elif SESS_ADD_FAILED in req.session:
             return dict(form=form)
-        
-            #return self.session_failed(SESS_ADD_FAILED)
         return dict(form=form)
 
         
@@ -258,9 +258,13 @@ class view_ak_jurnal_skpd(BaseViews):
     def view_ak_jurnal_skpd_edit(self):
         request = self.request
         row = self.query_id().first()
+
         if not row:
             return id_not_found(request)
-        #values = row.to_dict()
+        if row.posted:
+            request.session.flash('Data sudah diposting', 'error')
+            return self.route_list()
+
         rowd={}
         rowd['id']            = row.id
         rowd['unit_id']       = row.unit_id
@@ -275,6 +279,7 @@ class view_ak_jurnal_skpd(BaseViews):
         rowd['jv_type']       = row.jv_type
         rowd['disabled']      = row.disabled
         rowd['notes']         = row.notes
+        rowd['is_skpd']       = row.is_skpd
         
         form = self.get_form(EditSchema)
         form.set_appstruct(rowd)
@@ -286,12 +291,8 @@ class view_ak_jurnal_skpd(BaseViews):
                     c = form.validate(controls)
                 except ValidationFailure, e:
                     return dict(form=form)
-                    #request.session[SESS_EDIT_FAILED] = e.render()               
-                    #return HTTPFound(location=request.route_url('ak-jurnal-edit',
-                    #                  id=row.id))
-                #id = self.save_request(dict(controls))#.id
-                self.save_request(dict(controls),row)#.id
-            return self.route_list()#id)
+                self.save_request(dict(controls),row)
+            return self.route_list()
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
         return dict(form=form)
@@ -311,14 +312,73 @@ class view_ak_jurnal_skpd(BaseViews):
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
-                msg = 'Jurnal ID %d %s sudah dihapus.' % (row.id, row.nama)
+                msg = '%s dengan kode %s telah berhasil.' % (request.title, row.kode)
                 try:
                   q.delete()
                   DBSession.flush()
                 except:
-                  msg = 'Jurnal ID %d %s tidak dapat dihapus.' % (row.id, row.nama)
+                  msg = '%s dengan kode %s telah berhasil.' % (request.title, row.kode)
                 request.session.flash(msg)
             return self.route_list()
         return dict(row=row,
                      form=form.render())
 
+    ###########
+    # Posting #
+    ###########   
+    def save_request2(self, row=None):
+        row = AkJurnal()
+        self.request.session.flash('Jurnal sudah diposting.')
+        return row
+        
+    @view_config(route_name='ak-jurnal-skpd-posting', renderer='templates/ak-jurnal-skpd/posting.pt',
+                 permission='posting')
+    def view_edit_posting(self):
+        request = self.request
+        row = self.query_id().first()
+        
+        if not row:
+            return id_not_found(request)
+        if row.posted:
+            request.session.flash('Data sudah diposting', 'error')
+            return self.route_list()
+            
+        form = Form(colander.Schema(), buttons=('posting','cancel'))
+        
+        if request.POST:
+            if 'posting' in request.POST: 
+                row.posted=1
+                row.posted_date=datetime.now()
+                self.save_request2(row)
+            return self.route_list()
+        return dict(row=row, form=form.render())                       
+            
+    #############
+    # UnPosting #
+    #############   
+    def save_request3(self, row=None):
+        row = AkJurnal()
+        self.request.session.flash('Jurnal sudah di UnPosting.')
+        return row
+        
+    @view_config(route_name='ak-jurnal-skpd-unposting', renderer='templates/ak-jurnal-skpd/unposting.pt',
+                 permission='unposting') 
+    def view_edit_unposting(self):
+        request = self.request
+        row = self.query_id().first()
+        
+        if not row:
+            return id_not_found(request)
+        if not row.posted:
+            request.session.flash('Data tidak dapat di Unposting, karena belum diposting.', 'error')
+            return self.route_list()
+            
+        form = Form(colander.Schema(), buttons=('unposting','cancel'))
+        
+        if request.POST:
+            if 'unposting' in request.POST: 
+                row.posted=0
+                row.posted_date=datetime.now()
+                self.save_request3(row)
+            return self.route_list()
+        return dict(row=row, form=form.render())       
