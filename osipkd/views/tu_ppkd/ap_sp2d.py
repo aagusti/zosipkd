@@ -10,7 +10,7 @@ from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
 from osipkd.models.pemda_model import Unit
-from osipkd.models.apbd_tu import Sp2d, Spm, Spp
+from osipkd.models.apbd_tu import Sp2d, Spm, Spp, AkJurnal
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -47,14 +47,14 @@ class view_ap_sp2d_ppkd(BaseViews):
                 columns.append(ColumnDT('kode'))
                 columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
                 columns.append(ColumnDT('kode1'))
-                columns.append(ColumnDT('nama1'))
+                columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('nominal1'))
                 columns.append(ColumnDT('posted'))
                 query = DBSession.query(Sp2d.id, 
                                         Sp2d.kode, 
                                         Sp2d.tanggal,
                                         Spm.kode.label('kode1'), 
-                                        Spm.nama.label('nama1'), 
+                                        Sp2d.nama, 
                                         Spp.nominal.label('nominal1'),
                                         Sp2d.posted,
                         ).join(Spm 
@@ -90,8 +90,6 @@ class view_ap_sp2d_ppkd(BaseViews):
                             ).filter(Sp2d.ap_spm_id==ap_spm_id,
                                     Sp2d.ap_spm_id==Spm.id,
                                     Spm.ap_spp_id==Spp.id,
-                                    #Spp.tahun_id==ses['tahun'],
-                                    #Spp.unit_id==ses['unit_id'],
                             ).group_by(Sp2d.id,
                                     Spm.kode.label('kode'),
                                     Spm.tanggal.label('tanggal'),
@@ -350,8 +348,48 @@ class view_ap_sp2d_ppkd(BaseViews):
         
         if request.POST:
             if 'posting' in request.POST: 
+                #Update posted pada SP2D
                 row.posted=1
                 self.save_request2(row)
+                
+                #Tambah ke Jurnal SKPD
+                nama    = row.nama
+                kode    = row.kode
+                tanggal = row.tanggal
+                tipe    = Sp2d.get_tipe(row.id)
+                periode = Sp2d.get_periode(row.id)
+                
+                row = AkJurnal()
+                row.created    = datetime.now()
+                row.create_uid = self.request.user.id
+                row.updated    = datetime.now()
+                row.update_uid = self.request.user.id
+                row.tahun_id   = self.session['tahun']
+                row.unit_id    = self.session['unit_id']
+                row.nama       = "Dibayar SP2D %s" % tipe + " %s" % nama
+                row.notes      = nama
+                row.periode    = periode
+                row.posted     = 0
+                row.disabled   = 0
+                row.is_skpd    = 0
+                row.jv_type    = 1
+                row.source     = "SP2D-%s" % tipe
+                row.source_no  = kode
+                row.tgl_source = tanggal
+                row.tanggal    = datetime.now()
+                row.tgl_transaksi = datetime.now()
+                
+                if not row.kode:
+                    tahun    = self.session['tahun']
+                    unit_kd  = self.session['unit_kd']
+                    is_skpd  = row.is_skpd
+                    tipe     = AkJurnal.get_tipe(row.jv_type)
+                    no_urut  = AkJurnal.get_norut(row.id)+1
+                    row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%d" % no_urut
+                
+                DBSession.add(row)
+                DBSession.flush()
+                
             return self.route_list()
         return dict(row=row, form=form.render()) 
 
@@ -420,7 +458,6 @@ class AddSchema(colander.Schema):
                           #missing=colander.drop,
                           title="Verified Nama",
                           oid="verified_nama")
-
 
 class EditSchema(AddSchema):
     id             = colander.SchemaNode(
