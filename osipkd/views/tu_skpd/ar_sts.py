@@ -189,11 +189,11 @@ def save(values, row=None):
     if not row.no_urut:
         row.no_urut = Sts.max_no_urut(row.tahun_id,row.unit_id)+1;
     
-    #if not row.kode:
-    #    tahun    = request.ses['tahun']
-    #    unit_kd  = request.session['unit_kd']
-    #    no_urut  = row.no_urut
-    #    row.kode = "STS%d" % tahun + "-%s" % unit_kd + "-%d" % no_urut
+    if not row.kode:
+        tahun    = request.session['tahun']
+        unit_kd  = request.session['unit_kd']
+        no_urut  = row.no_urut
+        row.kode = "STS%d" % tahun + "-%s" % unit_kd + "-%d" % no_urut
             
     DBSession.add(row)
     DBSession.flush()
@@ -307,7 +307,7 @@ def view_delete(request):
 ###########     
 def save_request2(request, row=None):
     row = Sts()
-    request.session.flash('STS sudah diposting.')
+    request.session.flash('STS sudah diposting dan dibuat Jurnalnya.')
     return row
     
 @view_config(route_name='ar-sts-posting', renderer='templates/ar-sts/posting.pt',
@@ -317,6 +317,9 @@ def view_edit_posting(request):
     
     if not row:
         return id_not_found(request)
+    if not row.nominal:
+        request.session.flash('Data tidak dapat diposting, karena bernilai 0.', 'error')
+        return route_list(request)
     if row.posted:
         request.session.flash('Data sudah diposting', 'error')
         return route_list(request)
@@ -325,7 +328,48 @@ def view_edit_posting(request):
     
     if request.POST:
         if 'posting' in request.POST: 
+            #Update posted pada STS
             row.posted=1
             save_request2(request, row)
+            
+            #Tambah ke Jurnal SKPD
+            nama    = row.nama
+            kode    = row.kode
+            tanggal = row.tgl_sts
+            tipe    = Sts.get_tipe(row.id)
+            periode = Sts.get_periode(row.id)
+            
+            row = AkJurnal()
+            row.created    = datetime.now()
+            row.create_uid = request.user.id
+            row.updated    = datetime.now()
+            row.update_uid = request.user.id
+            row.tahun_id   = request.session['tahun']
+            row.unit_id    = request.session['unit_id']
+            row.nama       = "Diterima STS %s" % tipe + " %s" % nama
+            row.notes      = nama
+            row.periode    = periode
+            row.posted     = 0
+            row.disabled   = 0
+            row.is_skpd    = 1
+            row.jv_type    = 1
+            row.source     = "STS-%s" % tipe
+            row.source_no  = kode
+            row.tgl_source = tanggal
+            row.tanggal    = datetime.now()
+            row.tgl_transaksi = datetime.now()
+            
+            if not row.kode:
+                tahun    = request.session['tahun']
+                unit_kd  = request.session['unit_kd']
+                is_skpd  = row.is_skpd
+                tipe     = AkJurnal.get_tipe(row.jv_type)
+                no_urut  = AkJurnal.get_norut(row.id)+1
+                row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%d" % no_urut
+            
+            DBSession.add(row)
+            DBSession.flush()
+            
         return route_list(request)
     return dict(row=row, form=form.render())       
+    
