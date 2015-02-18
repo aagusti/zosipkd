@@ -161,6 +161,7 @@ class AddSchema(colander.Schema):
                           missing=colander.drop)
     kode            = colander.SchemaNode(
                           colander.String(),
+                          missing=colander.drop,
                           title="No. Utang")
     jenis           = colander.SchemaNode(
                           colander.String(),
@@ -226,6 +227,12 @@ def save(values, row=None):
     if not row.no_urut:
         row.no_urut = APInvoice.max_no_urut(row.tahun_id,row.unit_id)+1;
             
+    if not row.kode:
+        tahun    = request.session['tahun']
+        unit_kd  = request.session['unit_kd']
+        no_urut  = row.no_urut
+        row.kode = "UTANG%d" % tahun + "-%s" % unit_kd + "-%d" % no_urut
+        
     DBSession.add(row)
     DBSession.flush()
     return row
@@ -259,7 +266,6 @@ def view_add(request):
             except ValidationFailure, e:
                 return dict(form=form)
             row = save_request(controls_dicted, request)
-            #return HTTPFound(location=request.route_url('ap-invoice-skpd-edit', id=row.id))
             return route_list(request)
         return route_list(request)
     elif SESS_ADD_FAILED in request.session:
