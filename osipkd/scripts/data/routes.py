@@ -2779,5 +2779,19 @@ RouteData = {
         path='/ap-sp2d/{id}/unposting',
         perm_name='unposting',
         ), 
+    dict(
+        id=398,
+        kode='ak-jurnal-skpd-posting',
+        nama=' Posting Jurnal',
+        path='/ak-jurnal-skpd/{id}/posting',
+        perm_name='posting',
+        ), 
+    dict(
+        id=399,
+        kode='ak-jurnal-skpd-unposting',
+        nama=' UnPosting Jurnal',
+        path='/ak-jurnal-skpd/{id}/unposting',
+        perm_name='unposting',
+        ), 
 ]}
 
