@@ -228,6 +228,24 @@ class Sp2d(NamaModel, Base):
         return DBSession.query(func.count(cls.id).label('no_urut'))\
                .scalar() or 0
                 
+    @classmethod
+    def get_periode(cls, id):
+        return DBSession.query(extract('month',cls.tanggal).label('periode'))\
+                .filter(cls.id==id,)\
+                .group_by(extract('month',cls.tanggal)
+                ).scalar() or 0
+                
+    @classmethod
+    def get_tipe(cls, id):
+        return DBSession.query(case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),
+                          (Spp.jenis==3,"GU"),(Spp.jenis==4,"LS")], else_="").label('jenis'))\
+                .join(Spm)\
+                .outerjoin(Spp)\
+                .filter(cls.id==id,
+                        Spm.id==cls.ap_spm_id,
+                        Spp.id==Spm.ap_spp_id,
+                ).scalar() or 0
+     
 class APInvoice(NamaModel, Base):
     __tablename__  = 'ap_invoices'
     __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}
@@ -287,7 +305,7 @@ class APInvoiceItem(DefaultModel, Base):
     ap_invoice_id     = Column(BigInteger, ForeignKey("apbd.ap_invoices.id"),     nullable=False)
     kegiatan_item_id = Column(BigInteger, ForeignKey("apbd.kegiatan_items.id"), nullable=False)  
     no_urut          = Column(Integer) 
-    nama             = Column(String(64)) 
+    nama             = Column(String(200)) 
     vol_1            = Column(BigInteger,   nullable=False, default=0)
     vol_2            = Column(BigInteger,   nullable=False, default=0)
     harga            = Column(BigInteger,   nullable=False, default=0)
@@ -400,6 +418,13 @@ class ARInvoice(NamaModel, Base):
         return DBSession.query(func.count(cls.id).label('no_urut'))\
                .scalar() or 0
                
+    @classmethod
+    def get_periode(cls, id):
+        return DBSession.query(extract('month',cls.tgl_terima).label('periode'))\
+                .filter(cls.id==id,)\
+                .group_by(extract('month',cls.tgl_terima)
+                ).scalar() or 0
+                
 class ARInvoiceItem(DefaultModel, Base):
     __tablename__  = 'ar_invoice_items'
     __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}
@@ -476,6 +501,20 @@ class Sts(NamaModel, Base):
                              ).filter(StsItem.ar_sts_id==ar_sts_id 
                                       ).first()   
 
+    @classmethod
+    def get_periode(cls, id):
+        return DBSession.query(extract('month',cls.tgl_sts).label('periode'))\
+                .filter(cls.id==id,)\
+                .group_by(extract('month',cls.tgl_sts)
+                ).scalar() or 0
+                
+    @classmethod
+    def get_tipe(cls, id):
+        return DBSession.query(case([(Sts.jenis==1,"P"),(Sts.jenis==2,"CP"),
+                          (Sts.jenis==3,"L")], else_="").label('jenis'))\
+                .filter(cls.id==id,
+                ).scalar() or 0        
+                
 class StsItem(DefaultModel, Base):
     __tablename__      = 'ar_sts_items'
     __table_args__     = {'extend_existing':True,'schema' :'apbd'}
@@ -507,22 +546,21 @@ class AkJurnal(NamaModel, Base):
     posted_date     = Column(Date) 
     notes           = Column(String(225),   nullable=False)
     is_skpd         = Column(SmallInteger,  nullable=False)
-    #is_autoreverse  = Column(SmallInteger,  nullable=False)
-    #rekening_id     = Column(BigInteger,  ForeignKey("admin.rekenings.id"),     nullable=False)
-    #rekenings       = relationship("Rekening",    backref="jurnals")
-    #amount           = Column(BigInteger,  default=0) 
- 
+    disabled        = Column(SmallInteger,  nullable=False, default=0)
+    
     @classmethod
-    def get_no_urut(cls, p):
-        row = DBSession.query(func.max(cls.no_urut).label('no_urut'))\
-                .filter(cls.tahun_id==p['tahun_id'],
-                        cls.unit_id==p['unit_id']
-                ).first()
-        if row and row.no_urut:
-           return row.no_urut+1
-        else:
-           return 1
-
+    def get_norut(cls, id):
+        return DBSession.query(func.count(cls.id).label('no_urut'))\
+               .scalar() or 0
+               
+    @classmethod
+    def get_tipe(cls, jv_type):
+        return DBSession.query(case([(cls.jv_type==1,"LRA"),(cls.jv_type==2,"LO"),
+                          (cls.jv_type==3,"Jurnal Umum")], else_="").label('jv_type'))\
+                .filter(cls.jv_type==jv_type
+                ).group_by(cls.jv_type
+                ).scalar() or 0
+                
 class AkJurnalItem(DefaultModel, Base):
     __tablename__   ='ak_jurnal_items'
     __table_args__  = {'extend_existing':True,'schema' :'apbd'}
