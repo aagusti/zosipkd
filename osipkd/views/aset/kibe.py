@@ -78,6 +78,7 @@ class view_aset_kibe(BaseViews):
     @view_config(route_name="aset-kibe-act", renderer="json",
                  permission="read")
     def aset_kibe_act(self):
+        ses      = self.request.session
         req    = self.request
         params = req.params
         url_dict = req.matchdict
@@ -97,7 +98,8 @@ class view_aset_kibe(BaseViews):
             columns.append(ColumnDT('kondisi'))
             query = DBSession.query(AsetKib).\
                     join(AsetKategori).\
-                    filter(AsetKib.kategori_id==AsetKategori.id,
+                    filter(AsetKib.unit_id == ses['unit_id'], 
+                           AsetKib.kategori_id==AsetKategori.id,
                            AsetKib.kib=='E')
             rowTable = DataTables(req, AsetKib, query, columns)
             return rowTable.output_result()

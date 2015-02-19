@@ -39,7 +39,7 @@ class AddSchema(KibSchema):
                           colander.String(),
                           default='B',
                           title="KIB",
-                              oid="kib")
+                          oid="kib")
     b_kd_ruang       = colander.SchemaNode(
                           colander.Integer(),
                           missing=colander.drop,
@@ -109,6 +109,7 @@ class view_aset_kibb(BaseViews):
     @view_config(route_name="aset-kibb-act", renderer="json",
                  permission="read")
     def aset_kibb_act(self):
+        ses    = self.request.session
         req    = self.request
         params = req.params
         url_dict = req.matchdict
@@ -128,7 +129,8 @@ class view_aset_kibb(BaseViews):
             columns.append(ColumnDT('kondisi'))
             query = DBSession.query(AsetKib).\
                     join(AsetKategori).\
-                    filter(AsetKib.kategori_id==AsetKategori.id,
+                    filter(AsetKib.unit_id == ses['unit_id'], 
+                           AsetKib.kategori_id==AsetKategori.id,
                            AsetKib.kib=='B')
             rowTable = DataTables(req, AsetKib, query, columns)
             return rowTable.output_result()
