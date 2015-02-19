@@ -47,7 +47,8 @@
               success: function (html) {
                 if (html.success == true) {
                   $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                  reload_kegiatan();
+                  oTable.fnReloadAjax(oTableUrl);
+                  //reload_kegiatan();
                 } else {
                   $("#errors").css('display', 'inline', 'important');
                   $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
