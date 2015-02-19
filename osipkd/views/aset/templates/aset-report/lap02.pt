@@ -145,25 +145,25 @@
         <label class="control-label col-xs-2" for="jenis">Jenis Laporan</label>
         <div class="col-sm-2">
             <div class="radio">
-                <label><input type="radio" name="kib" id="kib01" value="kiba">KIB A (TANAH)</label>
+                <label><input type="radio" name="kib" id="kib01" value="kiba">KIB A (Tanah)</label>
             </div>
             <div class="radio">
-                <label><input type="radio" name="kib" id="kib02" value="kibb">KIB B </label>
+                <label><input type="radio" name="kib" id="kib02" value="kibb">KIB B (Peralatan dan Mesin)</label>
             </div>
             <div class="radio">
-                <label><input type="radio" name="kib" id="kib03" value="kibc">KIB C </label>
+                <label><input type="radio" name="kib" id="kib03" value="kibc">KIB C (Bangunan)</label>
             </div>
             <div class="radio">
-                <label><input type="radio" name="kib" id="kib04" value="kibd">KIB D </label>
+                <label><input type="radio" name="kib" id="kib04" value="kibd">KIB D (Jalan, Jaringan dan Irigasi)</label>
             </div>
             <div class="radio">
-                <label><input type="radio" name="kib" id="kib05" value="kibe">KIB E </label>
+                <label><input type="radio" name="kib" id="kib05" value="kibe">KIB E (Aset Lainnya)</label>
             </div>
             <div class="radio">
-                <label><input type="radio" name="kib" id="kib06" value="kibf">KIB F </label>
+                <label><input type="radio" name="kib" id="kib06" value="kibf">KIB F (Konstruksi dalam Pengerjaan)</label>
             </div>
             <div class="radio">
-                <label><input type="radio" name="kib" id="kib07" value="kib10">RUSAK BERAT</label>
+                <label><input type="radio" name="kib" id="kib07" value="10">RUSAK BERAT</label>
             </div>
             <div class="radio">
                 <label><input type="radio" name="kib" id="kib08" value="11">BUKU INVENTARIS</label>
