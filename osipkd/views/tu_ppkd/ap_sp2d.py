@@ -149,7 +149,7 @@ class view_ap_sp2d_ppkd(BaseViews):
                                 .outerjoin(Spp,)\
                                 .filter(Spp.unit_id == ses['unit_id'],
                                         Spp.tahun_id == ses['tahun'],
-                                        Sp2d.disabled == 0,
+                                        Sp2d.status_giro == 0,
                                         Sp2d.kode.ilike('%s%%' % term))
             rows = q.all()                               
             r = []
@@ -188,6 +188,7 @@ class view_ap_sp2d_ppkd(BaseViews):
         row.update_uid = self.request.user.id
         row.posted=0
         row.disabled = 'disabled' in values and 1 or 0  
+        row.status_giro = 0  
 
         if not row.kode:
             tahun    = self.session['tahun']
@@ -303,6 +304,9 @@ class view_ap_sp2d_ppkd(BaseViews):
         if row.posted:
             request.session.flash('Data sudah diposting', 'error')
             return self.route_list()
+        if row.status_giro:
+            request.session.flash('Data masih terdapat pada Giro', 'error')
+            return self.route_list()
             
         form = Form(colander.Schema(), buttons=('hapus','cancel'))
         values= {}
@@ -372,7 +376,7 @@ class view_ap_sp2d_ppkd(BaseViews):
                 row.posted     = 0
                 row.disabled   = 0
                 row.is_skpd    = 0
-                row.jv_type    = 1
+                row.jv_type    = 2
                 row.source     = "SP2D-%s" % tipe
                 row.source_no  = kode
                 row.tgl_source = tanggal
