@@ -10,7 +10,7 @@ from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_tu import AkJurnal, AkJurnalItem
 from osipkd.models.pemda_model import Rekening
-from osipkd.models.apbd_anggaran import KegiatanSub
+from osipkd.models.apbd_anggaran import KegiatanSub, Kegiatan, KegiatanItem
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -42,23 +42,47 @@ class view_ak_jurnal_skpd_item(BaseViews):
         params = req.params
         url_dict = req.matchdict
         pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+        
         if url_dict['act']=='grid':
             ak_jurnal_id = url_dict['ak_jurnal_id'].isdigit() and url_dict['ak_jurnal_id'] or 0
             columns = []
             columns.append(ColumnDT('id'))
-            columns.append(ColumnDT('kegiatan_subs.kode'))
-            columns.append(ColumnDT('kegiatan_subs.no_urut'))
-            columns.append(ColumnDT('rekenings.kode'))
-            columns.append(ColumnDT('rekenings.nama'))
+            columns.append(ColumnDT('subkd'))
+            columns.append(ColumnDT('subnm'))
+            columns.append(ColumnDT('rekkd'))
+            columns.append(ColumnDT('reknm'))
             columns.append(ColumnDT('amount',  filter=self._number_format))
-            columns.append(ColumnDT('kegiatan_subs.nama'))
-            columns.append(ColumnDT('ak_jurnal_id'))
             columns.append(ColumnDT('notes'))
-            columns.append(ColumnDT('kegiatan_subs.id'))
+            columns.append(ColumnDT('kegiatan_sub_id'))
             columns.append(ColumnDT('rekening_id'))
+            columns.append(ColumnDT('ak_jurnal_id'))
             
-            query = DBSession.query(AkJurnalItem).\
-                  filter(AkJurnalItem.ak_jurnal_id==ak_jurnal_id)
+            query = DBSession.query(AkJurnalItem.id,
+                                    KegiatanSub.kode.label('subkd'),
+                                    KegiatanSub.nama.label('subnm'),
+                                    Rekening.kode.label('rekkd'),
+                                    Rekening.nama.label('reknm'),
+                                    AkJurnalItem.amount,
+                                    AkJurnalItem.notes,
+                                    AkJurnalItem.kegiatan_sub_id,
+                                    AkJurnalItem.rekening_id,
+                                    AkJurnalItem.ak_jurnal_id,
+                                ).join(AkJurnal, KegiatanSub, Kegiatan, Rekening, KegiatanItem
+                                ).filter(AkJurnalItem.ak_jurnal_id==ak_jurnal_id,
+                                         AkJurnalItem.kegiatan_sub_id==KegiatanSub.id,
+                                         AkJurnalItem.rekening_id==Rekening.id,
+                                         AkJurnalItem.ak_jurnal_id==AkJurnal.id
+                                ).group_by(AkJurnalItem.id,
+                                           KegiatanSub.kode.label('subkd'),
+                                           KegiatanSub.nama.label('subnm'),
+                                           Rekening.kode.label('rekkd'),
+                                           Rekening.nama.label('reknm'),
+                                           AkJurnalItem.amount,
+                                           AkJurnalItem.notes,
+                                           AkJurnalItem.kegiatan_sub_id,
+                                           AkJurnalItem.rekening_id,
+                                           AkJurnalItem.ak_jurnal_id,
+                                )
             rowTable = DataTables(req, AkJurnalItem, query, columns)
             return rowTable.output_result()
         
@@ -67,35 +91,33 @@ class view_ak_jurnal_skpd_item(BaseViews):
     ################    
     @view_config(route_name='ak-jurnal-skpd-item-add', renderer='json',
                  permission='add')
-    def ak_jurnal_skpd_item_add(self):
+    def view_add(self):
         ses = self.request.session
         req = self.request
-        params = req.params
+        params   = req.params
         url_dict = req.matchdict
-        kegiatan_sub_id = 'kegiatan_sub_id' in params and params['kegiatan_sub_id'] or None
-        rekening_id     = 'rekening_id'     in params and params['rekening_id'] or None
-        jurnal_item_id  = 'jurnal_item_id'  in params and params['jurnal_item_id'] or None
-        ak_jurnal_id    = 'ak_jurnal_id'    in params and params['ak_jurnal_id'] or None
+        ak_jurnal_id = 'ak_jurnal_id' in url_dict and url_dict['ak_jurnal_id'] or 0
+        controls = dict(req.POST.items())
         
-        if not jurnal_item_id:
-            row = AkJurnalItem()
-            row_dict = {}
-            row_dict['created']      = datetime.now()
-            row_dict['create_uid']   = req.user.id
-            row_dict['ak_jurnal_id'] = 'ak_jurnal_id' in params and params['ak_jurnal_id'].replace('.', '') or 0
-        else:
-            row = DBSession.query(AkJurnalItem).filter(AkJurnalItem.id==jurnal_item_id).first()
+        jurnal_item_id = 'jurnal_item_id' in controls and controls['jurnal_item_id'] or 0        
+        
+        if jurnal_item_id:
+            row = DBSession.query(AkJurnalItem)\
+                      .join(AkJurnal)\
+                      .filter(AkJurnalItem.id==jurnal_item_id,
+                              AkJurnal.unit_id==ses['unit_id'],
+                              AkJurnalItem.ak_jurnal_id==ak_jurnal_id).first()
             if not row:
-                return {'success':False, 'msg':'Data Tidak Ditemukan'}
-            row.updated    = datetime.now()
-            row.update_uid = req.user.id
-            row_dict = row.to_dict()
+                return {"success": False, 'msg':'Jurnal tidak ditemukan'}
+        else:
+            row = AkJurnalItem()
             
-        row_dict['kegiatan_sub_id'] = kegiatan_sub_id
-        row_dict['rekening_id']     = rekening_id
-        row_dict['amount']          = 'amount' in params and params['amount'].replace('.', '') or 0
-        row_dict['notes']           = 'notes' in params and params['notes'] or None
-        row.from_dict(row_dict)
+        row.ak_jurnal_id    = ak_jurnal_id
+        row.kegiatan_sub_id = controls['kegiatan_sub_id']
+        row.rekening_id     = controls['rekening_id']
+        row.amount          = controls['amount'].replace('.','')
+        row.notes           = controls['notes'].replace('.','')
+        
         DBSession.add(row)
         DBSession.flush()
         return {"success": True, 'id': row.id, "msg":'Success Tambah Data'}

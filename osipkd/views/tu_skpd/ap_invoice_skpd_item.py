@@ -2,14 +2,14 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, cast, BigInteger
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
 from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
-from osipkd.models.pemda_model import Unit
+from osipkd.models.pemda_model import Unit, Rekening
 from osipkd.models.apbd_tu import APInvoice, APInvoiceItem 
     
 from datatables import ColumnDT, DataTables
@@ -39,17 +39,33 @@ class view_ap_invoice_skpd_item(BaseViews):
                 columns.append(ColumnDT('id'))
                 columns.append(ColumnDT('no_urut'))
                 columns.append(ColumnDT('nama'))
-                columns.append(ColumnDT('kegiatanitems.rekenings.kode'))
+                columns.append(ColumnDT('kode_rek'))
                 columns.append(ColumnDT('amount',filter=self._number_format))
                 columns.append(ColumnDT('ppn',filter=self._number_format))
                 columns.append(ColumnDT('pph',filter=self._number_format))
                 columns.append(ColumnDT('vol_1'))
                 columns.append(ColumnDT('vol_2'))
                 columns.append(ColumnDT('harga'))
-                columns.append(ColumnDT('kegiatanitems.nama'))
+                columns.append(ColumnDT('nama_kegiatan'))
                 columns.append(ColumnDT('kegiatan_item_id'))
-                query = DBSession.query(APInvoiceItem).\
-                          filter(APInvoiceItem.ap_invoice_id==ap_invoice_id)
+                columns.append(ColumnDT('nilai'))
+                
+                query = DBSession.query(APInvoiceItem.id,
+                                        APInvoiceItem.no_urut,
+                                        APInvoiceItem.nama,
+                                        Rekening.kode.label('kode_rek'),
+                                        APInvoiceItem.amount,
+                                        APInvoiceItem.ppn,
+                                        APInvoiceItem.pph,
+                                        APInvoiceItem.vol_1,
+                                        APInvoiceItem.vol_2,
+                                        APInvoiceItem.harga,
+                                        KegiatanItem.nama.label('nama_kegiatan'),
+                                        APInvoiceItem.kegiatan_item_id,
+                                        cast(KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2,BigInteger).label('nilai')).\
+                                  join(KegiatanItem).\
+                                  outerjoin(Rekening).\
+                                  filter(APInvoiceItem.ap_invoice_id==ap_invoice_id)
                 rowTable = DataTables(req, APInvoiceItem, query, columns)
                 return rowTable.output_result()
 #######    
@@ -128,7 +144,6 @@ def view_edit(request):
     if request.POST:
         if 'simpan' in request.POST:
             controls = request.POST.items()
-            
             try:
                 c = form.validate(controls)
             except ValidationFailure, e:
@@ -138,7 +153,7 @@ def view_edit(request):
     elif SESS_EDIT_FAILED in request.session:
         del request.session[SESS_EDIT_FAILED]
         return dict(form=form)
-    values = row.to_dict() #dict(zip(row.keys(), row))
+    values = row.to_dict() 
     values['kegiatan_nm']=row.kegiatan_subs.nama
     values['kegiatan_kd']=row.kegiatan_subs.kode
     form.set_appstruct(values) 
@@ -152,11 +167,13 @@ def view_edit(request):
 def view_delete(request):
     q = query_id(request)
     row = q.first()
+    
     if not row:
         return {'success':False, "msg":self.id_not_found()}
 
     msg = 'Data sudah dihapus'
     query_id(request).delete()
     DBSession.flush()
-    amount = "%d" % APInvoice.get_nilai(row.ap_invoice_id) 
+    
+    amount = "%s" % APInvoice.get_nilai(row.ap_invoice_id) 
     return {'success':True, "msg":msg, 'jml_total':amount}

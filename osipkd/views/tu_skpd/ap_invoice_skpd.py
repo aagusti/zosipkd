@@ -339,7 +339,7 @@ def view_delete(request):
     values= {}
     if request.POST:
         if 'hapus' in request.POST:
-            msg = '%s Kode %s  No. %s %s sudah dihapus.' % (request.title, row.kode, row.no_urut, row.nama)
+            msg = '%s dengan kode %s telah berhasil.' % (request.title, row.kode)
             DBSession.query(APInvoice).filter(APInvoice.id==request.matchdict['id']).delete()
             DBSession.flush()
             request.session.flash(msg)

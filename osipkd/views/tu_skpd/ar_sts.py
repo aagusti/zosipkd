@@ -10,7 +10,7 @@ from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
 from osipkd.models.pemda_model import Unit
-from osipkd.models.apbd_tu import Sts, StsItem
+from osipkd.models.apbd_tu import Sts, StsItem, AkJurnal
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -35,7 +35,7 @@ class view_ar_sts(BaseViews):
         req = self.request
         params   = req.params
         url_dict = req.matchdict
-        return dict(project='EIS', #row = row
+        return dict(project='EIS', 
         )
         
     ##########                    
@@ -114,7 +114,7 @@ class AddSchema(colander.Schema):
                           )
     kode            = colander.SchemaNode(
                           colander.String(),
-                          #missing=colander.drop,
+                          missing=colander.drop,
                           title = "No. STS"
                           )
     nama            = colander.SchemaNode(
@@ -179,7 +179,7 @@ def get_form(request, class_form):
     schema.request = request
     return Form(schema, buttons=('simpan','batal'))
     
-def save(values, row=None):
+def save(request, values, row=None):
     if not row:
         row = Sts()
     row.created = datetime.now()
@@ -203,7 +203,7 @@ def save_request(values, request, row=None):
     if 'id' in request.matchdict:
         values['id'] = request.matchdict['id']
     values["nominal"]=values["nominal"].replace('.','')  
-    row = save(values, row)
+    row = save(request, values, row)
     request.session.flash('STS sudah disimpan.')
     return row
         
@@ -296,7 +296,7 @@ def view_delete(request):
     if request.POST:
         if 'hapus' in request.POST:
             msg = '%s dengan kode %s telah berhasil.' % (request.title, row.kode)
-            DBSession.query(Sts).filter(sts.id==request.matchdict['id']).delete()
+            DBSession.query(Sts).filter(Sts.id==request.matchdict['id']).delete()
             DBSession.flush()
             request.session.flash(msg)
         return route_list(request)
@@ -372,4 +372,42 @@ def view_edit_posting(request):
             
         return route_list(request)
     return dict(row=row, form=form.render())       
+
+#############
+# UnPosting #
+#############   
+def save_request3(request, row=None):
+    row = Sts()
+    request.session.flash('STS sudah di UnPosting.')
+    return row
+    
+@view_config(route_name='ar-sts-unposting', renderer='templates/ar-sts/unposting.pt',
+             permission='unposting') 
+def view_edit_unposting(request):
+    row = query_id(request).first()
+    
+    if not row:
+        return id_not_found(request)
+    if not row.posted:
+        request.session.flash('Data tidak dapat di Unposting, karena belum diposting.', 'error')
+        return route_list(request)
+    if row.disabled:
+        request.session.flash('Data jurnal STS sudah diposting.', 'error')
+        return route_list(request)
+        
+    form = Form(colander.Schema(), buttons=('unposting','cancel'))
+    
+    if request.POST:
+        if 'unposting' in request.POST: 
+        
+            #Update status posted pada STS
+            row.posted=0
+            save_request3(request, row)
+            
+            #Menghapus STS yang sudah menjadi jurnal
+            DBSession.query(AkJurnal).filter(AkJurnal.source_no==row.kode).delete()
+            DBSession.flush()
+            
+        return route_list(request)
+    return dict(row=row, form=form.render()) 
     

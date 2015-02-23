@@ -37,7 +37,7 @@ class view_ap_spp(BaseViews):
         req = self.request
         params = req.params
         url_dict = req.matchdict
-        return dict(project='EIS', #row = row
+        return dict(project='EIS',
         )
         
     ##########                    
@@ -243,7 +243,7 @@ class view_ap_spp(BaseViews):
         elif SESS_EDIT_FAILED in request.session:
             del request.session[SESS_EDIT_FAILED]
             return dict(form=form)
-        values = row.to_dict() #dict(zip(row.keys(), row))
+        values = row.to_dict()
         values['spd_nm']=row.spds.nama
         values['spd_kd']=row.spds.kode
         values['spd_tgl']=row.spds.tanggal
@@ -259,19 +259,21 @@ class view_ap_spp(BaseViews):
         q = self.query_id()
         row = q.first()
         request=self.request
+        
         if not row:
             return id_not_found(request)
         if row.posted:
             request.session.flash('Data sudah diposting', 'error')
             return self.route_list()
         if row.nominal:
-            request.session.flash('Data tidak bisa dihapus, karena memiliki data items')
+            request.session.flash('Data tidak bisa dihapus, karena memiliki data items', 'error')
             return self.route_list()
+            
         form = Form(colander.Schema(), buttons=('hapus','cancel'))
         values= {}
         if request.POST:
             if 'hapus' in request.POST:
-                msg = '%s Kode %s  No. %s %s sudah dihapus.' % (request.title, row.kode, row.no_urut, row.nama)
+                msg = '%s dengan kode %s telah berhasil.' % (request.title, row.kode)
                 DBSession.query(Spp).filter(Spp.id==request.matchdict['id']).delete()
                 DBSession.flush()
                 request.session.flash(msg)
@@ -294,6 +296,9 @@ class view_ap_spp(BaseViews):
         
         if not row:
             return id_not_found(request)
+        if not row.nominal:
+            request.session.flash('Data tidak dapat diposting, karena bernilai 0.', 'error')
+            return self.route_list()
         if row.posted:
             request.session.flash('Data sudah diposting', 'error')
             return self.route_list()
@@ -323,6 +328,9 @@ class view_ap_spp(BaseViews):
         
         if not row:
             return id_not_found(request)
+        if not row.posted:
+            request.session.flash('Data tidak dapat di Unposting, karena belum diposting.', 'error')
+            return self.route_list()
         if row.disabled:
             request.session.flash('Data sudah diposting dan digunakan pada SPM', 'error')
             return self.route_list()

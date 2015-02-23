@@ -266,7 +266,7 @@ class view_ap_spm(BaseViews):
         if not row:
             return id_not_found(request)
         if row.posted:
-            request.session.flash('data sudah diposting', 'error')
+            request.session.flash('Data sudah diposting', 'error')
             return self.route_list()
 
         form = self.get_form(EditSchema)
@@ -306,7 +306,7 @@ class view_ap_spm(BaseViews):
         if not row:
             return id_not_found(request)
         if row.posted:
-            request.session.flash('data sudah diposting', 'error')
+            request.session.flash('Data sudah diposting', 'error')
             return self.route_list()
 
         form = Form(colander.Schema(), buttons=('hapus','cancel'))
@@ -315,7 +315,7 @@ class view_ap_spm(BaseViews):
             if 'hapus' in request.POST:
 
                 #Untuk menghapus SPM
-                msg = '%s Kode %s  No. %s %s sudah dihapus.' % (request.title, row.kode, row.kode, row.nama)
+                msg = '%s dengan kode %s telah berhasil.' % (request.title, row.kode)
                 DBSession.query(Spm).filter(Spm.id==request.matchdict['id']).delete()
                 DBSession.flush()
                 request.session.flash(msg)

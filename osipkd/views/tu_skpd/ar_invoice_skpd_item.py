@@ -2,14 +2,14 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, cast, BigInteger
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
 from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
-from osipkd.models.pemda_model import Unit
+from osipkd.models.pemda_model import Unit, Rekening
 from osipkd.models.apbd_tu import ARInvoice, ARInvoiceItem 
     
 from datatables import ColumnDT, DataTables
@@ -39,15 +39,28 @@ class view_ar_invoice_skpd_item(BaseViews):
                 columns.append(ColumnDT('id'))
                 columns.append(ColumnDT('no_urut'))
                 columns.append(ColumnDT('nama'))
-                columns.append(ColumnDT('kegiatanitems.rekenings.kode'))
+                columns.append(ColumnDT('kode_rek'))
                 columns.append(ColumnDT('nilai',filter=self._number_format))
                 columns.append(ColumnDT('vol_1'))
                 columns.append(ColumnDT('vol_2'))
                 columns.append(ColumnDT('harga'))
-                columns.append(ColumnDT('kegiatanitems.nama'))
+                columns.append(ColumnDT('nama_kegiatan'))
                 columns.append(ColumnDT('kegiatan_item_id'))
-                query = DBSession.query(ARInvoiceItem).\
-                          filter(ARInvoiceItem.ar_invoice_id==ar_invoice_id)
+                columns.append(ColumnDT('nilai1'))
+                query = DBSession.query(ARInvoiceItem.id,
+                                        ARInvoiceItem.no_urut,
+                                        ARInvoiceItem.nama,
+                                        Rekening.kode.label('kode_rek'),
+                                        ARInvoiceItem.nilai,
+                                        ARInvoiceItem.vol_1,
+                                        ARInvoiceItem.vol_2,
+                                        ARInvoiceItem.harga,
+                                        KegiatanItem.nama.label('nama_kegiatan'),
+                                        ARInvoiceItem.kegiatan_item_id,
+                                        cast(KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2,BigInteger).label('nilai1')).\
+                                  join(KegiatanItem).\
+                                  outerjoin(Rekening).\
+                                  filter(ARInvoiceItem.ar_invoice_id==ar_invoice_id)
                 rowTable = DataTables(req, ARInvoiceItem, query, columns)
                 return rowTable.output_result()
 #######    
@@ -94,14 +107,10 @@ def view_add(request):
     row.harga            = controls['harga'].replace('.','')
     row.nilai            = float(controls['vol_1'].replace('.',''))*float(controls['vol_2'].replace('.',''))*float(controls['harga'].replace('.',''))
     
-    #try:
     DBSession.add(row)
     DBSession.flush()
     nilai = "%d" % ARInvoice.get_nilai(row.ar_invoice_id) 
     return {"success": True, 'id': row.id, "msg":'Success Tambah Item Invoice', 'jml_total':nilai}
-    #except:
-    #return {'success':False, 'msg':'Gagal Tambah Item Invoice'}
-
 
 ########
 # Edit #
@@ -125,7 +134,6 @@ def view_edit(request):
     if request.POST:
         if 'simpan' in request.POST:
             controls = request.POST.items()
-            
             try:
                 c = form.validate(controls)
             except ValidationFailure, e:
@@ -135,7 +143,7 @@ def view_edit(request):
     elif SESS_EDIT_FAILED in request.session:
         del request.session[SESS_EDIT_FAILED]
         return dict(form=form)
-    values = row.to_dict() #dict(zip(row.keys(), row))
+    values = row.to_dict() 
     values['kegiatan_nm']=row.kegiatan_subs.nama
     values['kegiatan_kd']=row.kegiatan_subs.kode
     form.set_appstruct(values) 
@@ -155,5 +163,7 @@ def view_delete(request):
     msg = 'Data sudah dihapus'
     query_id(request).delete()
     DBSession.flush()
-    nilai = ARInvoice.get_nilai(row.ar_invoice_id)
+    
+    nilai = "%s" % ARInvoice.get_nilai(row.ar_invoice_id)
     return {'success':True, "msg":msg, 'jml_total':nilai}
+    

@@ -8,7 +8,7 @@ from pyramid.httpexceptions import ( HTTPFound, )
 import colander
 from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
-from osipkd.models.apbd_tu import AkJurnal, AkJurnalItem
+from osipkd.models.apbd_tu import AkJurnal, AkJurnalItem, Sp2d, ARInvoice, Sts
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -150,12 +150,12 @@ class view_ak_jurnal_skpd(BaseViews):
             columns.append(ColumnDT('amount',  filter=self._number_format))
             columns.append(ColumnDT('posted'))
             
-            query = DBSession.query(AkJurnal.id, AkJurnal.tanggal, AkJurnal.kode, AkJurnal.jv_type, 
-                      AkJurnal.nama, AkJurnal.source,  AkJurnal.posted,
+            query = DBSession.query(AkJurnal.id, AkJurnal.tanggal, AkJurnal.kode, AkJurnal.jv_type,
+                      AkJurnal.nama, AkJurnal.source, AkJurnal.posted,
                       func.coalesce(func.sum(AkJurnalItem.amount),0).label('amount')).\
                     outerjoin(AkJurnalItem).\
-                    group_by(AkJurnal.id, AkJurnal.tanggal, AkJurnal.kode, AkJurnal.jv_type, 
-                             AkJurnal.nama, AkJurnal.source,  ).\
+                    group_by(AkJurnal.id, AkJurnal.tanggal, AkJurnal.kode, AkJurnal.jv_type,
+                             AkJurnal.nama, AkJurnal.source, ).\
                     filter(AkJurnal.tahun_id == ses['tahun'],
                            AkJurnal.unit_id == ses['unit_id'],)
                       
@@ -216,8 +216,8 @@ class view_ak_jurnal_skpd(BaseViews):
         self.request.session.flash('Jurnal sudah disimpan.')
         return row
             
-    def route_list(self):#, id):
-        return HTTPFound(location=self.request.route_url('ak-jurnal-skpd'))#, id=id) )
+    def route_list(self):
+        return HTTPFound(location=self.request.route_url('ak-jurnal-skpd'))
         
     def session_failed(self, session_name):
         del self.session[session_name]
@@ -236,7 +236,7 @@ class view_ak_jurnal_skpd(BaseViews):
                 except ValidationFailure, e:
                     return dict(form=form)
                 id = self.save_request(dict(controls))
-            return self.route_list()
+            return self.route_list()  
         elif SESS_ADD_FAILED in req.session:
             return dict(form=form)
         return dict(form=form)
@@ -258,7 +258,7 @@ class view_ak_jurnal_skpd(BaseViews):
     def view_ak_jurnal_skpd_edit(self):
         request = self.request
         row = self.query_id().first()
-
+        
         if not row:
             return id_not_found(request)
         if row.posted:
@@ -306,22 +306,41 @@ class view_ak_jurnal_skpd(BaseViews):
         request = self.request
         q = self.query_id()
         row = q.first()
+        kode = row.source_no
         
         if not row:
             return self.id_not_found(request)
+            
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
+                
+                #Untuk hapus jurnal 
                 msg = '%s dengan kode %s telah berhasil.' % (request.title, row.kode)
-                try:
-                  q.delete()
-                  DBSession.flush()
-                except:
-                  msg = '%s dengan kode %s telah berhasil.' % (request.title, row.kode)
-                request.session.flash(msg)
+                q.delete()
+                DBSession.flush()
+                request.session.flash(msg)  
+                
+                #Untuk update status disabled dan posted SP2D    
+                row = DBSession.query(Sp2d).filter(Sp2d.kode==kode).first()
+                if not row:
+                    #Untuk update status disabled dan posted PIUTANG
+                    row = DBSession.query(ARInvoice).filter(ARInvoice.kode==kode).first()
+                    if not row:  
+                        #Untuk update status disabled dan posted STS
+                        row = DBSession.query(Sts).filter(Sts.kode==kode).first()
+                        row.disabled=0
+                        row.posted=0
+                        self.save_request6(row)
+                    row.disabled=0
+                    row.posted=0
+                    self.save_request5(row)
+                row.disabled=0
+                row.posted=0
+                self.save_request4(row)
+                
             return self.route_list()
-        return dict(row=row,
-                     form=form.render())
+        return dict(row=row, form=form.render())
 
     ###########
     # Posting #
@@ -330,12 +349,22 @@ class view_ak_jurnal_skpd(BaseViews):
         row = AkJurnal()
         self.request.session.flash('Jurnal sudah diposting.')
         return row
+    def save_request4(self, row=None):
+        row = Sp2d()
+        return row
+    def save_request5(self, row=None):
+        row = ARInvoice()
+        return row
+    def save_request6(self, row=None):
+        row = Sts()
+        return row
         
     @view_config(route_name='ak-jurnal-skpd-posting', renderer='templates/ak-jurnal-skpd/posting.pt',
                  permission='posting')
     def view_edit_posting(self):
         request = self.request
         row = self.query_id().first()
+        kode = row.source_no
         
         if not row:
             return id_not_found(request)
@@ -347,9 +376,27 @@ class view_ak_jurnal_skpd(BaseViews):
         
         if request.POST:
             if 'posting' in request.POST: 
+                
+                #Update status posted pada Jurnal
                 row.posted=1
                 row.posted_date=datetime.now()
                 self.save_request2(row)
+                
+                #Untuk update status disabled SP2D    
+                row = DBSession.query(Sp2d).filter(Sp2d.kode==kode).first()
+                if not row:
+                    #Untuk update status disabled PIUTANG
+                    row = DBSession.query(ARInvoice).filter(ARInvoice.kode==kode).first()
+                    if not row:  
+                        #Untuk update status disabled STS
+                        row = DBSession.query(Sts).filter(Sts.kode==kode).first()
+                        row.disabled=1
+                        self.save_request6(row)
+                    row.disabled=1
+                    self.save_request5(row)
+                row.disabled=1
+                self.save_request4(row)
+    
             return self.route_list()
         return dict(row=row, form=form.render())                       
             
@@ -366,6 +413,7 @@ class view_ak_jurnal_skpd(BaseViews):
     def view_edit_unposting(self):
         request = self.request
         row = self.query_id().first()
+        kode = row.source_no
         
         if not row:
             return id_not_found(request)
@@ -377,8 +425,27 @@ class view_ak_jurnal_skpd(BaseViews):
         
         if request.POST:
             if 'unposting' in request.POST: 
+                                
+                kode = row.source_no
+                #Update status posted pada Jurnal
                 row.posted=0
                 row.posted_date=datetime.now()
                 self.save_request3(row)
+
+                #Untuk update status disabled SP2D    
+                row = DBSession.query(Sp2d).filter(Sp2d.kode==kode).first()
+                if not row:
+                    #Untuk update status disabled PIUTANG
+                    row = DBSession.query(ARInvoice).filter(ARInvoice.kode==kode).first()
+                    if not row:  
+                        #Untuk update status disabled STS
+                        row = DBSession.query(Sts).filter(Sts.kode==kode).first()
+                        row.disabled=0
+                        self.save_request6(row)
+                    row.disabled=0
+                    self.save_request5(row)
+                row.disabled=0
+                self.save_request4(row)
+                
             return self.route_list()
         return dict(row=row, form=form.render())       

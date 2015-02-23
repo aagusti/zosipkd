@@ -107,7 +107,7 @@ def view_add(request):
         controls['no_urut'] = SpmPotongan.max_no_urut(ap_spm_id)+1
     row.no_urut     = controls['no_urut']  
     row.nilai       = controls['nilai'].replace('.','')    
-    #try:
+
     DBSession.add(row)
     DBSession.flush()
     return {"success": True, 'id': row.id, "msg":'Success Tambah Rekening'}#, 'jml_total':amount}
@@ -157,6 +157,7 @@ def view_edit(request):
 def view_delete(request):
     q = query_id(request)
     row = q.first()
+    
     if not row:
         return {'success':False, "msg":self.id_not_found()}
 
@@ -164,3 +165,4 @@ def view_delete(request):
     query_id(request).delete()
     DBSession.flush()
     return {'success':True, "msg":msg}
+    

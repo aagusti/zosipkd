@@ -27,7 +27,7 @@ class view_ar_invoice_skpd(BaseViews):
         req = self.request
         params   = req.params
         url_dict = req.matchdict
-        return dict(project='EIS', #row = row
+        return dict(project='EIS',
         )
         
     ##########                    
@@ -150,11 +150,11 @@ def get_form(request, class_form):
     schema.request = request
     return Form(schema, buttons=('simpan','batal'))
     
-def save(values, row=None):
+def save(request, values, row=None):
     if not row:
         row = ARInvoice()
     row.from_dict(values)
-
+    
     if not row.kode:
         tahun    = request.session['tahun']
         unit_kd  = request.session['unit_kd']
@@ -169,7 +169,7 @@ def save_request(values, request, row=None):
     if 'id' in request.matchdict:
         values['id'] = request.matchdict['id']
     values["nilai"]=values["nilai"].replace('.','')  
-    row = save(values, row)
+    row = save(request, values, row)
     request.session.flash('Tagihan sudah disimpan.')
     return row
         
@@ -261,8 +261,8 @@ def view_delete(request):
         request.session.flash('Data sudah diposting', 'error')
         return route_list(request)
     if row.nilai:
-	      request.session.flash('Data tidak dapat dihapus, karena memiliki data items')
-	      return route_list(request)
+        request.session.flash('Data tidak bisa dihapus, karena memiliki data items')
+        return route_list(request)
         
     form = Form(colander.Schema(), buttons=('hapus','cancel'))
     values= {}
@@ -280,7 +280,7 @@ def view_delete(request):
 ###########     
 def save_request2(request, row=None):
     row = ARInvoice()
-    request.session.flash('Tagihan sudah diposting.')
+    request.session.flash('Tagihan sudah diposting dan dibuat Jurnalnya.')
     return row
     
 @view_config(route_name='ar-invoice-skpd-posting', renderer='templates/ar-invoice-skpd/posting.pt',
@@ -309,7 +309,6 @@ def view_edit_posting(request):
             nama    = row.nama
             kode    = row.kode
             tanggal = row.tgl_terima
-            #tipe    = Sp2d.get_tipe(row.id)
             periode = ARInvoice.get_periode(row.id)
             
             row = AkJurnal()
@@ -345,4 +344,43 @@ def view_edit_posting(request):
             
         return route_list(request)
     return dict(row=row, form=form.render())    
+    
+#############
+# UnPosting #
+#############   
+def save_request3(request, row=None):
+    row = ARInvoice()
+    request.session.flash('PIUTANG sudah di UnPosting.')
+    return row
+    
+@view_config(route_name='ar-invoice-skpd-unposting', renderer='templates/ar-invoice-skpd/unposting.pt',
+             permission='unposting') 
+def view_edit_unposting(request):
+    row = query_id(request).first()
+    
+    if not row:
+        return id_not_found(request)
+    if not row.posted:
+        request.session.flash('Data tidak dapat di Unposting, karena belum diposting.', 'error')
+        return route_list(request)
+    if row.disabled:
+        request.session.flash('Data jurnal PIUTANG sudah diposting.', 'error')
+        return route_list(request)
+        
+    form = Form(colander.Schema(), buttons=('unposting','cancel'))
+    
+    if request.POST:
+        if 'unposting' in request.POST: 
+        
+            #Update status posted pada PIUTANG
+            row.posted=0
+            save_request3(request, row)
+            
+            #Menghapus PIUTANG yang sudah menjadi jurnal
+            DBSession.query(AkJurnal).filter(AkJurnal.source_no==row.kode).delete()
+            DBSession.flush()
+            
+        return route_list(request)
+    return dict(row=row, form=form.render())
+    
     

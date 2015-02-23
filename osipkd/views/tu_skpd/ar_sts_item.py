@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, cast, BigInteger
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
@@ -42,8 +42,9 @@ class view_ar_sts_item(BaseViews):
                 columns.append(ColumnDT('no_urut1'))
                 columns.append(ColumnDT('kode_rek'))
                 columns.append(ColumnDT('nama_rek'))
-                columns.append(ColumnDT('amount',  filter=self._number_format))
+                columns.append(ColumnDT('amount'))
                 columns.append(ColumnDT('nama'))
+                columns.append(ColumnDT('nilai1'))
 
                 query = DBSession.query(StsItem.id,
                                         StsItem.kegiatan_item_id,
@@ -53,6 +54,7 @@ class view_ar_sts_item(BaseViews):
                                         Rekening.nama.label('nama_rek'),
                                         StsItem.amount.label('amount'),
                                         KegiatanSub.nama.label('nama'),
+                                        cast(KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2,BigInteger).label('nilai1'),
                           ).join(KegiatanItem
                           ).outerjoin(KegiatanSub, Rekening, Kegiatan
                           ).filter(StsItem.ar_sts_id==ar_sts_id,
@@ -67,7 +69,8 @@ class view_ar_sts_item(BaseViews):
                                      Rekening.kode.label('kode_rek'),
                                      Rekening.nama.label('nama_rek'),
                                      StsItem.amount.label('amount'),
-                                     KegiatanSub.nama.label('nama'))
+                                     KegiatanSub.nama.label('nama'),
+                                     cast(KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2,BigInteger).label('nilai1'))
                 rowTable = DataTables(req, StsItem, query, columns)
                 return rowTable.output_result()
 #######    
@@ -161,5 +164,7 @@ def view_delete(request):
     msg = 'Data sudah dihapus'
     query_id(request).delete()
     DBSession.flush()
-    nilai = "%d" % Sts.get_nilai(row.ar_sts_id) 
+    
+    nilai = "%s" % Sts.get_nilai(row.ar_sts_id) 
     return {'success':True, "msg":msg, 'jml_total':nilai}
+    
