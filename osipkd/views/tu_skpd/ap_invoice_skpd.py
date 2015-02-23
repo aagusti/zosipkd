@@ -37,7 +37,7 @@ class view_ap_invoice_skpd(BaseViews):
         req = self.request
         params = req.params
         url_dict = req.matchdict
-        return dict(project='EIS', #row = row
+        return dict(project='EIS', 
         )
         
     ##########                    
@@ -194,7 +194,7 @@ class AddSchema(colander.Schema):
                           title="Nama")
     ap_tanggal      = colander.SchemaNode(
                           colander.Date(),
-                          title="Tanggal")
+                          title="Tgl.Tagihan")
     ap_rekening     = colander.SchemaNode(
                           colander.String(),
                           title="Rekening")
@@ -219,14 +219,14 @@ def get_form(request, class_form):
     schema.request = request
     return Form(schema, buttons=('simpan','batal'))
     
-def save(values, row=None):
+def save(request, values, row=None):
     if not row:
         row = APInvoice()
     row.from_dict(values)
     
     if not row.no_urut:
         row.no_urut = APInvoice.max_no_urut(row.tahun_id,row.unit_id)+1;
-            
+    
     if not row.kode:
         tahun    = request.session['tahun']
         unit_kd  = request.session['unit_kd']
@@ -241,7 +241,7 @@ def save_request(values, request, row=None):
     if 'id' in request.matchdict:
         values['id'] = request.matchdict['id']
     values["amount"]=values["amount"].replace('.','') 
-    row = save(values, row)
+    row = save(request, values, row)
     request.session.flash('Tagihan sudah disimpan.')
     return row
         
@@ -298,7 +298,6 @@ def view_edit(request):
     if request.POST:
         if 'simpan' in request.POST:
             controls = request.POST.items()
-            
             try:
                 c = form.validate(controls)
             except ValidationFailure, e:
@@ -327,6 +326,7 @@ def view_edit(request):
 def view_delete(request):
     q = query_id(request)
     row = q.first()
+    
     if not row:
         return id_not_found(request)
     if row.posted:
@@ -335,6 +335,7 @@ def view_delete(request):
     if row.amount:
         request.session.flash('Data tidak bisa dihapus, karena memiliki data items')
         return route_list(request)
+        
     form = Form(colander.Schema(), buttons=('hapus','cancel'))
     values= {}
     if request.POST:

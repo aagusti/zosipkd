@@ -21,9 +21,11 @@ def deferred_jv_type(node, kw):
     return widget.SelectWidget(values=values)
     
 JV_TYPE = (
-    (1, 'LRA'),
-    (2, 'LO'),
+    (1, 'Jurnal Penerimaan'),
+    (2, 'Jurnal Pengeluaran'),
     (3, 'Jurnal Umum'),
+    (4, 'Jurnal Koreksi'),
+    (5, 'Jurnal Penutup'),
     )
     
 def deferred_is_skpd(node, kw):
@@ -329,6 +331,8 @@ class view_ak_jurnal_skpd(BaseViews):
                     if not row:  
                         #Untuk update status disabled dan posted STS
                         row = DBSession.query(Sts).filter(Sts.kode==kode).first()
+                        if not row:
+                            return self.route_list()
                         row.disabled=0
                         row.posted=0
                         self.save_request6(row)

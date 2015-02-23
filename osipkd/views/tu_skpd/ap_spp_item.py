@@ -103,7 +103,7 @@ def view_add(request):
             
     row.ap_spp_id    = ap_spp_id
     row.ap_invoice_id = controls['ap_invoice_id']
-    #try:
+
     DBSession.add(row)
     DBSession.flush()
     
@@ -167,7 +167,7 @@ def view_delete(request):
     query_id(request).delete()
     DBSession.flush()
 
-    amount = "%d" % Spp.get_nilai(row.ap_spp_id)
+    amount = "%s" % Spp.get_nilai(row.ap_spp_id)
 
     #Untuk update status posted dan status_spp pada APInvoice    
     row = DBSession.query(APInvoice).filter(APInvoice.id==row.ap_invoice_id).first()   
@@ -175,4 +175,5 @@ def view_delete(request):
     row.status_spp=0
     save_request2(row)
     
-    return {'success':True, "msg":msg, 'jml_total':amount}
+    return {'success':True, "msg":msg, 'jml_total':amount}\
+    
