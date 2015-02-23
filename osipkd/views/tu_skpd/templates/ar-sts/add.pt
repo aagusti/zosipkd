@@ -287,6 +287,7 @@
           <!--Piutang------------------------------------------------------------->
           <input id="ar_sts_item_id" type="hidden" value="" name="ar_sts_item_id">
           <input id="kegiatan_item_id" type="hidden" value="" name="kegiatan_item_id">
+          <input id="nilai" type="hidden" value="" name="nilai">    
               <div class="form-group">
                 <label for="kode1" class="control-label col-md-1" id="req-kode1">
                     Rekening </label>
@@ -303,7 +304,7 @@
                 <div class="col-md-2">
                     <button id="rekening_add" name="baru" type="button" class="btn btn-primary "
                         value="baru">Baru</button>
-                    <button id="rekening_save" name="simpan" type="submit" class="btn btn-primary "
+                    <button id="rekening_save" name="simpan" type="button" class="btn btn-primary "
                         value="simpan">Update</button>
                     <button id="rekening_cancel" name="batal" type="reset" class="btn btn-danger "
                         value="batal">Batal</button>
@@ -311,9 +312,45 @@
               </div>
           <script>
             $('#rekening_add').click(function () {
+            var kegiatan_item_id;
+            var nilai = parseInt($('#nilai').val());
+            var harga = parseInt($('#amount').val());
+            kegiatan_item_id = $('#kegiatan_item_id').val();
+            
+            if (kegiatan_item_id==''){
+                alert('data untuk entry masih kosong');
+            }
+            else{
+            if(harga>nilai){
+                alert('harga tidak boleh besar dari anggaran');
+            }
+            else{
                 $('#ar_sts_item_id').val('');
                 $('#detail').submit();
+            }
+            }
             })
+// save update
+          $('#rekening_save').click(function () {
+            var kegiatan_item_id;
+            var nilai = parseInt($('#nilai').val());
+            var harga = parseInt($('#amount').val());
+            kegiatan_item_id = $('#kegiatan_item_id').val();
+
+            if (kegiatan_item_id==''){
+                alert('data harus dipilih terlebih dahulu');
+            }
+            else{
+            if(harga>nilai){
+                alert('harga tidak boleh besar dari anggaran');
+            }
+            else{
+                $('#ar_sts_item_id').val();
+                $('#detail').submit();
+            }
+            }
+           })
+//
             $('#kode1').typeahead({
                 "hint"     : true,
                 "highlight": true,
@@ -327,7 +364,7 @@
             $('#kode1').bind('typeahead:selected', function(obj, datum, name) {  
                   $('#kegiatan_item_id').val(datum.id);
                   $('#nama1').val(datum.nama);
-                  //$('#amount1').val(datum.amount);                  
+                  $('#nilai').val(datum.amount);                  
             });
               
             $( "#detail" ).submit(function( event ) {
@@ -372,7 +409,7 @@
       </form>  
     </div> <!--panel-body-->     
   </div>
-  
+ 
   <script>
       var mID;
       var oTable;
@@ -454,7 +491,8 @@
                         $("#kegiatan_item_id").val(data[1]);
                         $("#kode1").val(data[4]);
                         $("#nama1").val(data[5]);
-                        $("#amount").val(data[6]);    
+                        $("#amount").val(data[6]);     
+                        $("#nilai").val(data[8]);   
 
                         oTable.$('tr.row_selected').removeClass('row_selected');
                         $(this).addClass('row_selected');

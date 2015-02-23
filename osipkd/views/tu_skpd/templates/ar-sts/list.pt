@@ -121,7 +121,7 @@
     </table>
     
     <script>
-      var mID, nilai;
+      var mID;
       var oTable;
       var iPos;
       var oTableUrl = "/ar-sts/act/grid";
@@ -132,6 +132,7 @@
           '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
           '	<button id="btn_print"  class="btn btn btn-primary" type="button">Cetak</button>',
           '	<button id="btn_posting" class="btn btn btn-success" type="button">Posting</button>',
+          '	<button id="btn_unposting" class="btn btn btn-info" type="button">UnPosting</button>',
           ' <button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
           '	&nbsp;',
           '</div>',
@@ -226,7 +227,7 @@
                 })
                 switch(aData[7]){
                     case '1' :
-                        $('td',nRow).css("background-color","#00FA9A")
+                        $('td',nRow).css("background-color","#ddffdd")
                         break;
                 }
             },
@@ -259,6 +260,14 @@
                 window.location = '/ar-sts/' + mID +'/posting';
             } else {
                 alert('Silahkan pilih data yang akan diposting');
+            }
+        });
+        
+        $('#btn_unposting').click(function () {
+            if (mID) {
+                window.location = '/ar-sts/' + mID +'/unposting';
+            } else {
+                alert('Silahkan pilih data yang akan diunposting');
             }
         });
         
