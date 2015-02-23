@@ -1,6 +1,6 @@
 import sys
 from sqlalchemy import (Column, Integer, String, SmallInteger, UniqueConstraint, 
-                        Date, BigInteger, ForeignKey, func)
+                        Date, BigInteger, ForeignKey, func, extract, case)
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql.functions import concat
 from osipkd.models import (DBSession,Base, DefaultModel)  
@@ -216,6 +216,7 @@ class Sp2d(NamaModel, Base):
     verified_nip   = Column(String(50), nullable=False)
     verified_nama  = Column(String(64), nullable=False)
     posted         = Column(SmallInteger, nullable=False, default=0)
+    disabled       = Column(SmallInteger, nullable=False, default=0)
     
     @classmethod
     def max_no_urut(cls, tahun):
@@ -227,7 +228,7 @@ class Sp2d(NamaModel, Base):
     def get_norut(cls, id):
         return DBSession.query(func.count(cls.id).label('no_urut'))\
                .scalar() or 0
-                
+ 
     @classmethod
     def get_periode(cls, id):
         return DBSession.query(extract('month',cls.tanggal).label('periode'))\
@@ -417,7 +418,7 @@ class ARInvoice(NamaModel, Base):
     def get_norut(cls, id):
         return DBSession.query(func.count(cls.id).label('no_urut'))\
                .scalar() or 0
-               
+    
     @classmethod
     def get_periode(cls, id):
         return DBSession.query(extract('month',cls.tgl_terima).label('periode'))\
@@ -485,6 +486,8 @@ class Sts(NamaModel, Base):
     tgl_sts        = Column(Date) 
     tgl_validasi   = Column(Date)
     posted         = Column(SmallInteger, nullable=False, default=0)
+    disabled       = Column(SmallInteger, nullable=False, default=0)
+    
     UniqueConstraint('tahun_id', 'unit_id', 'kode',
             name = 'ar_sts_kode_ukey')
     
@@ -500,7 +503,7 @@ class Sts(NamaModel, Base):
         return DBSession.query(func.sum(StsItem.amount).label('nilai')
                              ).filter(StsItem.ar_sts_id==ar_sts_id 
                                       ).first()   
-
+    
     @classmethod
     def get_periode(cls, id):
         return DBSession.query(extract('month',cls.tgl_sts).label('periode'))\
@@ -528,26 +531,26 @@ class StsItem(DefaultModel, Base):
 class AkJurnal(NamaModel, Base):
     __tablename__   = 'ak_jurnals'
     __table_args__  = {'extend_existing':True, 'schema' : 'apbd',}
-                    
+ 
+    units           = relationship("Unit",  backref=backref("ak_jurnals")) 
+    unit_id         = Column(Integer,       ForeignKey("admin.units.id"), nullable=False)  
+    tahun_id        = Column(BigInteger,    ForeignKey("apbd.tahuns.id"), nullable=False)
+    kode            = Column(String(32),    nullable=False)    
+    nama            = Column(String(128),   nullable=False)
+    jv_type         = Column(SmallInteger,  nullable=False, default=0)
     tanggal         = Column(Date) 
     tgl_transaksi   = Column(Date)
-    tahun_id        = Column(BigInteger,    ForeignKey("apbd.tahuns.id"), nullable=False)
-    unit_id         = Column(Integer,       ForeignKey("admin.units.id"),  nullable=False)                     
-    units           = relationship("Unit",  backref=backref("ak_jurnals"))
-    
-    #no_urut         = Column(Integer,       nullable=False)
     periode         = Column(Integer,       nullable=False)
-    jv_type         = Column(SmallInteger,  nullable=False, default=0)
     source          = Column(String(10),    nullable=False)
     source_no       = Column(String(30),    nullable=False)
-    tgl_source      = Column(Date)
+    tgl_source      = Column(Date)           
     posted          = Column(SmallInteger,  nullable=False)
-    posted_uid       = Column(Integer) 
+    posted_uid      = Column(Integer) 
     posted_date     = Column(Date) 
     notes           = Column(String(225),   nullable=False)
     is_skpd         = Column(SmallInteger,  nullable=False)
     disabled        = Column(SmallInteger,  nullable=False, default=0)
-    
+
     @classmethod
     def get_norut(cls, id):
         return DBSession.query(func.count(cls.id).label('no_urut'))\
@@ -565,18 +568,14 @@ class AkJurnalItem(DefaultModel, Base):
     __tablename__   ='ak_jurnal_items'
     __table_args__  = {'extend_existing':True,'schema' :'apbd'}
 
-    ak_jurnal_id    = Column(BigInteger,  ForeignKey("apbd.ak_jurnals.id"),      nullable=False)
-    ak_jurnals      = relationship("AkJurnal", backref="ak_jurnal_items")
+    ak_jurnal_id    = Column(BigInteger,  ForeignKey("apbd.ak_jurnals.id"),    nullable=False)
+    ak_jurnals      = relationship("AkJurnal",    backref="ak_jurnal_items")
 
     kegiatan_sub_id = Column(BigInteger,  ForeignKey("apbd.kegiatan_subs.id"), nullable=False)
     kegiatan_subs   = relationship("KegiatanSub", backref="ak_jurnal_items")
 
-    rekening_id     = Column(BigInteger,  ForeignKey("admin.rekenings.id"),     nullable=False)
+    rekening_id     = Column(BigInteger,  ForeignKey("admin.rekenings.id"),    nullable=False)
     rekenings       = relationship("Rekening",    backref="ak_jurnal_items")
 
-    #rate            = Column(BigInteger,  default=1)
-    #items           = Column(BigInteger,  default=1) 
-    #debet           = Column(BigInteger)
-    #kredit          = Column(BigInteger)
     amount          = Column(BigInteger,  default=0) 
     notes           = Column(String(225), nullable=True)
