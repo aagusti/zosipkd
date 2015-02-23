@@ -64,13 +64,13 @@ class Unit(Base, NamaModel):
     __table_args__ = {'extend_existing':True, 
                       'schema' : 'admin',}
                        
-    urusan_id = Column(Integer, ForeignKey('admin.urusans.id'))
+    #urusan_id = Column(Integer, ForeignKey('admin.urusans.id'))
     kategori = Column(String(32))
     singkat  = Column(String(32))
     level_id  = Column(SmallInteger)
     header_id = Column(SmallInteger)
     urusan_id = Column(Integer, ForeignKey('admin.urusans.id'))
-    units     = relationship("Urusan", backref="units")
+    urusans     = relationship("Urusan", backref="units")
 
 class UserUnit(Base, CommonModel):
     __tablename__  = 'user_units'
