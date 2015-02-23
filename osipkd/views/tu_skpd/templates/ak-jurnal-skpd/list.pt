@@ -162,11 +162,15 @@
                 "aTargets" : [3], // Untuk Jenis
                 "mRender"  : function (data, type, full) {
                     if (data == "1") {
-                        return 'LRA';
+                        return 'JT';
                     } else if (data == "2") {
-                        return 'LO';
+                        return 'JK';
                     } else if (data == "3") {
-                        return 'Jurnal Umum';
+                        return 'JU';
+                    } else if (data == "4") {
+                        return 'KR';
+                    } else if (data == "5") {
+                        return 'CL';
                     }
                 }
           },{
