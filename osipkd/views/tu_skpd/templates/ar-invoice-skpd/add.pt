@@ -3,7 +3,7 @@
     <script type='text/javascript'>
         $(document).ready(function () {
             $("#btn_close").click(function () {
-                window.location = '/ar-invoice-skpd-item';
+                window.location = '/ar-invoice-skpd';
                 return false;
             });
         });
@@ -286,6 +286,7 @@
           <!--REKENING------------------------------------------------------------->
           <input id="ar_invoice_item_id" type="hidden" value="" name="ar_invoice_item_id">
           <input id="kegiatan_item_id" type="hidden" value="" name="kegiatan_item_id">
+          <input id="nilai1" type="hidden" value="" name="nilai1">
           <div class="form-group">
             <label for="no_urut" class="control-label col-md-1" id="req-no_urut">
                     Item </label>
@@ -332,7 +333,7 @@
             <div class="col-md-3">
                   <button id="rekening_add" name="baru" type="button" class="btn btn-primary "
                         value="baru">Baru</button>
-                  <button id="rekening_save" name="simpan" type="submit" class="btn btn-primary "
+                  <button id="rekening_save" name="simpan" type="button" class="btn btn-primary "
                         value="simpan">Update</button>
                   <button id="rekening_cancel" name="batal" type="reset" class="btn btn-danger "
                         value="batal">Batal</button>
@@ -341,9 +342,45 @@
           <script>
            
           $('#rekening_add').click(function () {
+            var kegiatan_item_id;
+            var nilai1 = parseInt($('#nilai1').val());
+            var harga  = parseInt($('#harga').val());
+            kegiatan_item_id = $('#kegiatan_item_id').val();
+            
+            if (kegiatan_item_id==''){
+                alert('data untuk entry masih kosong');
+            }
+            else{
+            if(harga>nilai1){
+                alert('Harga tidak boleh besar dari anggaran');
+            }
+            else{
                 $('#ar_invoice_item_id').val('');
                 $('#detail').submit();
+            }
+            }
            })
+// save update
+          $('#rekening_save').click(function () {
+            var kegiatan_item_id;
+            var nilai1 = parseInt($('#nilai1').val());
+                    var harga  = parseInt($('#harga').val());
+            kegiatan_item_id = $('#kegiatan_item_id').val();
+            
+            if (kegiatan_item_id==''){
+                alert('data harus dipilih terlebih dahulu');
+            }
+            else{
+            if(harga>nilai1){
+                alert('harga tidak boleh besar dari anggaran');
+            }
+            else{
+                $('#ar_invoice_item_id').val();
+                $('#detail').submit();
+            }
+            }
+           })
+//
           $('#item_nm').typeahead({
               "hint"     : true,
               "highlight": true,
@@ -357,6 +394,7 @@
           $('#item_nm').bind('typeahead:selected', function(obj, datum, name) {  
                 $('#kegiatan_item_id').val(datum.id);
                 $('#nama').val(datum.nama);
+                $('#nilai1').val(datum.amount);
           });
             
           $( "#detail" ).submit(function( event ) {
@@ -487,6 +525,7 @@
                         $("#vol_2").val(data[6]);
                         $("#harga").val(data[7]);
                         $("#kegiatan_item_id").val(data[9]);
+                        $("#nilai1").val(data[10]);
 
                         oTable.$('tr.row_selected').removeClass('row_selected');
                         $(this).addClass('row_selected');
