@@ -19,7 +19,7 @@
           <li><a href="/program">Program</a></li>
           <li><a href="/kegiatan">Kegiatan</a></li>
           <li><a href="/fungsi">Fungsi</a></li>
-          <li><a href="/fungsi-urusan">Fungsi Urusan</a></li>
+          <!--li><a href="/fungsi-urusan">Fungsi Urusan</a></li-->
         </ul>
       </li>
       <li class="dropdown" tal:attributes="class request.matched_route.name in ['user', 'user-add', 'user-edit', 'user-delete'] and 'active'">
