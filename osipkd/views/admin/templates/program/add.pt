@@ -3,5 +3,10 @@
 <h4>${request.title}</h4>
 <hr>
 <div tal:content="structure form"/>
+<script>
+  $('#urusan_nm').bind('typeahead:selected', function(obj, datum, name) {      
+        $('#urusan_id').val(datum.id);
+  });
+</script>
 </div>
 </html>
