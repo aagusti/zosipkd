@@ -272,13 +272,14 @@
         });
         $('#btn_delete').click(function () {
             if (mID) {
-                //if(mID2=="0"){
-                    window.location = '/ap-invoice-skpd/' + mID +'/delete'; 
-                //    }
-                //else{alert('Data tidak dapat dihapus, karena masih mempunyai item.');}
+                    window.location = '/ap-invoice-skpd/' + mID +'/delete'; }
+				/**
+                if(mID2=="0"){
+                    window.location = '/ap-invoice-skpd/' + mID +'/delete'; }
+                else{alert('Data tidak dapat dihapus, karena masih mempunyai item.');}
             } else {
                 alert('Silahkan pilih data yang akan di hapus');
-            }
+            }*/
         });
         $('#btn_print').click(function () {
             url = "/ap-report-skpd/act/apinvoice?id="+mID;
