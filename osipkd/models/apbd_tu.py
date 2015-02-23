@@ -18,7 +18,7 @@ class Spd(NamaModel, Base):
 
     tahun_id    = Column(BigInteger,   ForeignKey("apbd.tahuns.id"), nullable=False)
     triwulan_id = Column(SmallInteger, nullable=False)
-    unit_id     = Column(Integer,      ForeignKey("admin.units.id"),  nullable=False) 
+    unit_id     = Column(Integer,      ForeignKey("admin.units.id"), nullable=False) 
     tanggal     = Column(Date,         nullable=False)
     is_bl       = Column(SmallInteger, nullable=False)
     
@@ -59,7 +59,7 @@ class SpdItem(DefaultModel, Base):
 
     kegiatansubs    = relationship("KegiatanSub", backref="spditems")
 
-    ap_spd_id          = Column(BigInteger, ForeignKey("apbd.ap_spds.id"),          nullable=False) 
+    ap_spd_id       = Column(BigInteger, ForeignKey("apbd.ap_spds.id"),       nullable=False) 
     kegiatan_sub_id = Column(BigInteger, ForeignKey("apbd.kegiatan_subs.id"), nullable=False)
     anggaran        = Column(BigInteger, nullable=False)
     lalu            = Column(BigInteger, nullable=False)
@@ -73,17 +73,19 @@ class Spp(NamaModel, Base):
     spds           = relationship("Spd", backref="spps")
     units          = relationship("Unit", backref="spps")
     
-    ap_spd_id         = Column(BigInteger, ForeignKey("apbd.ap_spds.id"),   nullable=True) 
-    tahun_id       = Column(BigInteger, ForeignKey("apbd.tahuns.id"), nullable=False)
+    ap_spd_id      = Column(BigInteger, ForeignKey("apbd.ap_spds.id"), nullable=True) 
+    tahun_id       = Column(BigInteger, ForeignKey("apbd.tahuns.id"),  nullable=False)
     unit_id        = Column(Integer,    ForeignKey("admin.units.id"),  nullable=False) 
     no_urut        = Column(BigInteger, nullable=False)
     tanggal        = Column(Date) 
     jenis          = Column(BigInteger, nullable=False)                 
     nominal        = Column(BigInteger, nullable=False)
+    #TTD
     ttd_uid        = Column(Integer)
     ttd_nip        = Column(String(32))
     ttd_nama       = Column(String(64))
     ttd_jab        = Column(String(64))
+    #Kontrak
     ap_nama        = Column(String(64), nullable=False)
     ap_bank        = Column(String(64), nullable=False)
     ap_rekening    = Column(String(32), nullable=False)
@@ -97,6 +99,10 @@ class Spp(NamaModel, Base):
     ap_uraian      = Column(String(64))
     ap_tgl_kontrak = Column(Date)
     ap_kegiatankd  = Column(String(32))
+    ap_nilai       = Column(BigInteger, default=0)
+    #BAP
+    ap_bap_no      = Column(String(64))
+    ap_bap_tgl     = Column(Date)
     #PPTK
     pptk_uid       = Column(Integer)
     pptk_nama      = Column(String(64))
@@ -112,7 +118,6 @@ class Spp(NamaModel, Base):
     kasi_nama      = Column(String(64))
     kasi_jab       = Column(String(64))
     verified_uid   = Column(Integer, nullable=True)
-
     posted         = Column(SmallInteger, default=0, nullable=False)
 
     @classmethod
@@ -147,7 +152,7 @@ class SppItem(DefaultModel, Base):
     spps           = relationship("Spp",       backref=backref("spps"))
     apinvoices     = relationship("APInvoice", backref=backref("apinvoices"))
 
-    ap_spp_id         = Column(BigInteger, ForeignKey("apbd.ap_spps.id"),       nullable=False)
+    ap_spp_id       = Column(BigInteger, ForeignKey("apbd.ap_spps.id"),     nullable=False)
     ap_invoice_id   = Column(BigInteger, ForeignKey("apbd.ap_invoices.id"), nullable=False)
 
 class Spm(NamaModel, Base):
@@ -217,6 +222,7 @@ class Sp2d(NamaModel, Base):
     verified_nama  = Column(String(64), nullable=False)
     posted         = Column(SmallInteger, nullable=False, default=0)
     disabled       = Column(SmallInteger, nullable=False, default=0)
+    status_giro    = Column(SmallInteger, default=0)
     
     @classmethod
     def max_no_urut(cls, tahun):
@@ -253,10 +259,10 @@ class APInvoice(NamaModel, Base):
 
     kegiatansubs   = relationship("KegiatanSub", backref="apinvoices")
     units          = relationship("Unit",        backref="apinvoices")
-    tahun_id        = Column(BigInteger, ForeignKey("apbd.tahuns.id"),        nullable=False)
-    unit_id         = Column(Integer,    ForeignKey("admin.units.id"),         nullable=False) 
+    tahun_id        = Column(BigInteger, ForeignKey("apbd.tahuns.id"), nullable=False)
+    unit_id         = Column(Integer,    ForeignKey("admin.units.id"), nullable=False) 
     no_urut         = Column(Integer, nullable=False)
-    tanggal         = Column(Date, nullable=False)
+    tanggal         = Column(Date,    nullable=False)
     
     kegiatan_sub_id = Column(BigInteger, ForeignKey("apbd.kegiatan_subs.id"), nullable=False)
     nama            = Column(String(255))
@@ -303,14 +309,14 @@ class APInvoiceItem(DefaultModel, Base):
     kegiatanitems  =  relationship("KegiatanItem", backref="apinvoiceitems")
     apinvoices     =  relationship("APInvoice",    backref="apinvoiceitems")
 
-    ap_invoice_id     = Column(BigInteger, ForeignKey("apbd.ap_invoices.id"),     nullable=False)
+    ap_invoice_id    = Column(BigInteger, ForeignKey("apbd.ap_invoices.id"),    nullable=False)
     kegiatan_item_id = Column(BigInteger, ForeignKey("apbd.kegiatan_items.id"), nullable=False)  
     no_urut          = Column(Integer) 
-    nama             = Column(String(200)) 
+    nama             = Column(String(64)) 
     vol_1            = Column(BigInteger,   nullable=False, default=0)
     vol_2            = Column(BigInteger,   nullable=False, default=0)
     harga            = Column(BigInteger,   nullable=False, default=0)
-    amount            = Column(BigInteger,   nullable=False, default=0)
+    amount           = Column(BigInteger,   nullable=False, default=0)
     ppn_prsn         = Column(SmallInteger, nullable=False, default=0)
     ppn              = Column(BigInteger,   nullable=False, default=0)
     pph_prsn         = Column(SmallInteger, nullable=False, default=0)
@@ -333,7 +339,7 @@ class Giro(NamaModel, Base):
     units    = relationship("Unit", backref="giros")
 
     tahun_id = Column(BigInteger, ForeignKey("apbd.tahuns.id"), nullable=False)
-    unit_id  = Column(Integer,    ForeignKey("admin.units.id"),  nullable=False)
+    unit_id  = Column(Integer,    ForeignKey("admin.units.id"), nullable=False)
     kode     = Column(String(50))
     nama     = Column(String(150))
     tanggal  = Column(Date,         nullable=False)
@@ -383,7 +389,7 @@ class ARInvoice(NamaModel, Base):
     units          = relationship("Unit",        backref="arinvoices")
 
     tahun_id        = Column(BigInteger, ForeignKey("apbd.tahuns.id"),        nullable=False)
-    unit_id         = Column(Integer,    ForeignKey("admin.units.id"),         nullable=False) 
+    unit_id         = Column(Integer,    ForeignKey("admin.units.id"),        nullable=False) 
     kegiatan_sub_id = Column(BigInteger, ForeignKey("apbd.kegiatan_subs.id"), nullable=False)
     kode            = Column(String(50))
     nama            = Column(String(255))
@@ -396,7 +402,7 @@ class ARInvoice(NamaModel, Base):
     tgl_terima      = Column(Date)    
     tgl_validasi    = Column(Date)
     posted          = Column(SmallInteger, nullable=False, default=0)
-    disabled        = Column(Integer, nullable=False, default=0)
+    disabled        = Column(Integer,      nullable=False, default=0)
 
     UniqueConstraint('tahun_id', 'unit_id', 'kode',
                 name = 'arinvoice_ukey')
@@ -433,7 +439,7 @@ class ARInvoiceItem(DefaultModel, Base):
     kegiatanitems  =  relationship("KegiatanItem", backref="arinvoiceitems")
     arinvoices     =  relationship("ARInvoice",    backref="arinvoiceitems")
 
-    ar_invoice_id     = Column(BigInteger, ForeignKey("apbd.ar_invoices.id"),     nullable=False)
+    ar_invoice_id    = Column(BigInteger, ForeignKey("apbd.ar_invoices.id"),    nullable=False)
     kegiatan_item_id = Column(BigInteger, ForeignKey("apbd.kegiatan_items.id"), nullable=False)  
     no_urut          = Column(Integer) 
     nama             = Column(String(64)) 
@@ -453,7 +459,7 @@ class ARInvoiceDetail(NamaModel, Base):
     __tablename__  ='ar_invoice_details'
     __table_args__ = {'extend_existing':True,'schema' :'apbd'}
 
-    tahun_id       = Column(BigInteger, ForeignKey("apbd.tahuns.id"),    nullable=False)
+    tahun_id       = Column(BigInteger, ForeignKey("apbd.tahuns.id"),     nullable=False)
     unit_id        = Column(Integer,    ForeignKey("admin.units.id"),     nullable=False) 
     rekening_id    = Column(Integer,    ForeignKey("admin.rekenings.id"), nullable=False)
     jumlah         = Column(BigInteger, nullable=False)
@@ -469,8 +475,8 @@ class Sts(NamaModel, Base):
     
     units          = relationship("Unit",        backref="sts")
    
-    tahun_id        = Column(BigInteger, ForeignKey("apbd.tahuns.id"),        nullable=False)
-    unit_id         = Column(Integer,    ForeignKey("admin.units.id"),        nullable=False)
+    tahun_id        = Column(BigInteger, ForeignKey("apbd.tahuns.id"), nullable=False)
+    unit_id         = Column(Integer,    ForeignKey("admin.units.id"), nullable=False)
     
     no_urut        = Column(BigInteger, nullable=False)
     kode           = Column(String(64), nullable=False)
@@ -558,8 +564,9 @@ class AkJurnal(NamaModel, Base):
                
     @classmethod
     def get_tipe(cls, jv_type):
-        return DBSession.query(case([(cls.jv_type==1,"LRA"),(cls.jv_type==2,"LO"),
-                          (cls.jv_type==3,"Jurnal Umum")], else_="").label('jv_type'))\
+        return DBSession.query(case([(cls.jv_type==1,"JT"),(cls.jv_type==2,"JK"),
+                          (cls.jv_type==3,"JU"),(cls.jv_type==4,"KR"),
+                          (cls.jv_type==5,"CL")], else_="").label('jv_type'))\
                 .filter(cls.jv_type==jv_type
                 ).group_by(cls.jv_type
                 ).scalar() or 0
