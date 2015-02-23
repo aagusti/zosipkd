@@ -36,7 +36,8 @@ PERM_CHOICE = ((None,'None'),
       ('add', 'Add'),
       ('edit', 'Edit'),
       ('delete', 'Delete'),
-      ('post', 'Posting'),
+      ('posting', 'Posting'),
+      ('unposting', 'UnPosting'),
       )
                 
 class AddSchema(colander.Schema):

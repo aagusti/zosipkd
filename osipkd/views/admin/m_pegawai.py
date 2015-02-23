@@ -100,6 +100,20 @@ class view_pegawai(BaseViews):
                 d['nama']        = k[2]
                 r.append(d)
             return r            
+        elif url_dict['act']=='headofnama1':
+            term = 'term' in params and params['term'] or '' 
+            rows = DBSession.query(Pegawai.id, Pegawai.kode, Pegawai.nama
+                      ).filter(
+                      Pegawai.nama.ilike('%%%s%%' % term) ).all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[2]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
+            return r            
                   
     #######    
     # Add #

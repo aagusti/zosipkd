@@ -82,8 +82,22 @@ class view_urusan(BaseViews):
                 ses['urusan_kd']=row.kode
                 ses['urusan_nm']=row.nama
                 return {'success':True}
+
+        elif url_dict['act']=='headofnama':
+            term = 'term' in params and params['term'] or '' 
+            rows = DBSession.query(Urusan.id, Urusan.kode, Urusan.nama
+                      ).filter(
+                      Urusan.nama.ilike('%%%s%%' % term) ).all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[2]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
+            return r            
                 
-            
 
     #######    
     # Add #

@@ -32,15 +32,21 @@ SESS_ADD_FAILED = 'Tambah program gagal'
 SESS_EDIT_FAILED = 'Edit program gagal'
 
 class AddSchema(colander.Schema):
-    choices = DBSession.query(Urusan.id,
-                  Urusan.nama).order_by(Urusan.nama).all()
+    urusan_widget = widget.AutocompleteInputWidget(
+            size=60,
+            values = '/urusan/act/headofnama',
+            min_length=1)
     kode = colander.SchemaNode(
                     colander.String(),
                     validator=colander.Length(max=18))
+    urusan_nm = colander.SchemaNode(
+                    colander.String(),
+                    widget=urusan_widget,
+                    oid = "urusan_nm")
     urusan_id = colander.SchemaNode(
                     colander.Integer(),
-                    widget = widget.SelectWidget(values=choices),
-                    titel="Urusan")
+                    widget=widget.HiddenWidget(),
+                    oid = "urusan_id")
     nama = colander.SchemaNode(
                     colander.String())
     disabled = colander.SchemaNode(
@@ -199,6 +205,8 @@ class view_program(BaseViews):
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
         values = row.to_dict()
+        values['urusan_nm'] = row.urusans.nama
+        
         return dict(form=form.render(appstruct=values))
     ##########
     # Delete #

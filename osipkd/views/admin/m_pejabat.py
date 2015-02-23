@@ -32,29 +32,52 @@ SESS_ADD_FAILED = 'Tambah pejabat gagal'
 SESS_EDIT_FAILED = 'Edit pejabat gagal'
 
 class AddSchema(colander.Schema):
-    unit_choices = DBSession.query(Unit.id,
-                  Unit.nama).order_by(Unit.nama).all()
+    unit_widget = widget.AutocompleteInputWidget(
+            size=60,
+            values = '/unit/act/headofnama',
+            min_length=1)
                   
-    jab_choices = DBSession.query(Jabatan.id,
-                  Jabatan.nama).order_by(Jabatan.nama).all()
-                  
-    peg_choices = DBSession.query(Pegawai.id,
-                  Pegawai.nama).order_by(Pegawai.nama).all()
-                  
-    unit_id = colander.SchemaNode(
+    pegawai_widget = widget.AutocompleteInputWidget(
+            size=60,
+            values = '/pegawai/act/headofnama1',
+            min_length=1)
+            
+    jabatan_widget = widget.AutocompleteInputWidget(
+            size=60,
+            values = '/jabatan/act/headofnama1',
+            min_length=1)
+
+    unit_nm = colander.SchemaNode(
                     colander.String(),
-                    widget = widget.SelectWidget(values=unit_choices),
-                    )
+                    widget=unit_widget,
+                    oid = "unit_nm")
                     
+    unit_id = colander.SchemaNode(
+                    colander.Integer(),
+                    widget=widget.HiddenWidget(),
+                    oid = "unit_id")
+
+    pegawai_nm = colander.SchemaNode(
+                    colander.String(),
+                    widget=pegawai_widget,
+                    oid = "pegawai_nm")
+
     pegawai_id = colander.SchemaNode(
                     colander.Integer(),
-                    widget = widget.SelectWidget(values=peg_choices),
-                    titel="Pegawai")
+                    widget=widget.HiddenWidget(),
+                    titel="Pegawai",
+                    oid = "pegawai_id")
                     
+    jabatan_nm = colander.SchemaNode(
+                    colander.String(),
+                    widget=jabatan_widget,
+                    oid = "jabatan_nm")
+
     jabatan_id = colander.SchemaNode(
                     colander.Integer(),
-                    widget = widget.SelectWidget(values=jab_choices),
-                    titel="Pegawai")
+                    widget=widget.HiddenWidget(),
+                    titel="Jabatan",
+                    oid = "jabatan_id")
                     
     uraian = colander.SchemaNode(
                     colander.String())
@@ -65,10 +88,12 @@ class AddSchema(colander.Schema):
                     colander.Date())
     disabled = colander.SchemaNode(
                     colander.Boolean())
+
 class EditSchema(AddSchema):
     id = colander.SchemaNode(colander.String(),
             missing=colander.drop,
             widget=widget.HiddenWidget(readonly=True))
+
 class view_pejabat(BaseViews):
     ########                    
     # List #
@@ -495,6 +520,10 @@ class view_pejabat(BaseViews):
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
         values = row.to_dict()
+        values['unit_nm'] = row.units.nama
+        values['pegawai_nm'] = row.pegawais.nama
+        values['jabatan_nm'] = row.jabatans.nama
+        
         return dict(form=form.render(appstruct=values))
     ##########
     # Delete #

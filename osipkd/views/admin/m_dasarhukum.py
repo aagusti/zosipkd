@@ -31,13 +31,20 @@ SESS_ADD_FAILED = 'Tambah dasar hukum gagal'
 SESS_EDIT_FAILED = 'Edit dasar hukum gagal'
 
 class AddSchema(colander.Schema):
-    rek_choices = DBSession.query(Rekening.id,
-                  Rekening.nama).order_by(Rekening.nama).all()
+    rek_widget = widget.AutocompleteInputWidget(
+            size=60,
+            values = '/rekening/act/headofnama',
+            min_length=1)
                   
-    rekening_id = colander.SchemaNode(
+    rekening_nm = colander.SchemaNode(
                     colander.String(),
-                    widget = widget.SelectWidget(values=rek_choices),
-                    title="Rekening")
+                    widget=rek_widget,
+                    oid = "rekening_nm")
+                    
+    rekening_id = colander.SchemaNode(
+                    colander.Integer(),
+                    widget=widget.HiddenWidget(),
+                    oid = "rekening_id")
                     
     no_urut = colander.SchemaNode(
                     colander.Integer(),
@@ -173,6 +180,8 @@ class view_dasarhukum(BaseViews):
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
         values = row.to_dict()
+        values['rekening_nm'] = row.rekenings.nama
+        
         return dict(form=form.render(appstruct=values))
     ##########
     # Delete #
