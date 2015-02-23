@@ -45,7 +45,7 @@ class view_ap_spd_ppkd(BaseViews):
         req = self.request
         params = req.params
         url_dict = req.matchdict
-        return dict(project='EIS', #row = row
+        return dict(project='EIS', 
         )
         
     ##########                    
@@ -71,7 +71,7 @@ class view_ap_spd_ppkd(BaseViews):
                 query = DBSession.query(Spd.id, Spd.kode,
                           Spd.nama, Spd.triwulan_id, Spd.units,
                           Unit.nama.label('unit_nm'),
-                         func.sum(SpdItem.nominal).label('nominal')
+                          func.sum(SpdItem.nominal).label('nominal')
                         ).join(Unit
                         ).outerjoin(SpdItem
                         ).filter(Spd.tahun_id==ses['tahun'],
@@ -203,8 +203,10 @@ class view_ap_spd_ppkd(BaseViews):
     def view_edit(self):
         request = self.request
         row = self.query_id().first()
+        
         if not row:
             return id_not_found(request)
+            
         form = self.get_form(EditSchema)
         if request.POST:
             if 'simpan' in request.POST:
@@ -231,13 +233,15 @@ class view_ap_spd_ppkd(BaseViews):
         q = self.query_id()
         row = q.first()
         request=self.request
+        
         if not row:
             return id_not_found(request)
+            
         form = Form(colander.Schema(), buttons=('hapus','cancel'))
         values= {}
         if request.POST:
             if 'hapus' in request.POST:
-                msg = '%s Kode %s  %s sudah dihapus.' % (request.title, row.kode, row.nama)
+                msg = '%s dengan kode %s telah berhasil.' % (request.title, row.kode)
                 DBSession.query(Spd).filter(Spd.id==request.matchdict['id']).delete()
                 DBSession.flush()
                 request.session.flash(msg)
@@ -273,7 +277,6 @@ class AddSchema(colander.Schema):
                           colander.Integer(),
                           title="Belanja",
                           oid = "is_bl",
-                          #validator=colander.Length(max=32),
                           widget=widget.SelectWidget(values=IS_BL))
 
 class EditSchema(AddSchema):

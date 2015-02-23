@@ -26,7 +26,7 @@ class view_ap_sp2d_ppkd(BaseViews):
         req = self.request
         params = req.params
         url_dict = req.matchdict
-        return dict(project='EIS', #row = row
+        return dict(project='EIS',
         )
         
     ##########                    
@@ -149,7 +149,7 @@ class view_ap_sp2d_ppkd(BaseViews):
                                 .outerjoin(Spp,)\
                                 .filter(Spp.unit_id == ses['unit_id'],
                                         Spp.tahun_id == ses['tahun'],
-                                        Sp2d.posted == 0,
+                                        Sp2d.disabled == 0,
                                         Sp2d.kode.ilike('%s%%' % term))
             rows = q.all()                               
             r = []
@@ -286,7 +286,7 @@ class view_ap_sp2d_ppkd(BaseViews):
        
     ##########
     # Delete #
-    ##########    
+    ##########  
     def save_request3(self, row=None):
         row = Spm()
         return row
@@ -308,7 +308,7 @@ class view_ap_sp2d_ppkd(BaseViews):
         values= {}
         if request.POST:
             if 'hapus' in request.POST:
-          
+            
                 #Untuk menghapus SP2D
                 msg = '%s dengan kode %s telah berhasil.' % (request.title, row.kode)
                 DBSession.query(Sp2d).filter(Sp2d.id==request.matchdict['id']).delete()
@@ -329,7 +329,7 @@ class view_ap_sp2d_ppkd(BaseViews):
     ###########     
     def save_request2(self, row=None):
         row = Sp2d()
-        self.request.session.flash('SP2D sudah diposting.')
+        self.request.session.flash('SP2D sudah diposting dan dibuat Jurnalnya.')
         return row
         
     @view_config(route_name='ap-sp2d-posting', renderer='templates/ap-sp2d/posting.pt',
@@ -393,6 +393,46 @@ class view_ap_sp2d_ppkd(BaseViews):
             return self.route_list()
         return dict(row=row, form=form.render()) 
 
+    #############
+    # UnPosting #
+    #############   
+    def save_request4(self, row=None):
+        row = Sp2d()
+        self.request.session.flash('SP2D sudah di UnPosting.')
+        return row
+        
+    @view_config(route_name='ap-sp2d-unposting', renderer='templates/ap-sp2d/unposting.pt',
+                 permission='unposting') 
+    def view_edit_unposting(self):
+        request = self.request
+        row = self.query_id().first()
+        
+        if not row:
+            return id_not_found(request)
+        if not row.posted:
+            request.session.flash('Data tidak dapat di Unposting, karena belum diposting.', 'error')
+            return self.route_list()
+        if row.disabled:
+            request.session.flash('Data jurnal SP2D sudah diposting.', 'error')
+            return self.route_list()
+            
+        form = Form(colander.Schema(), buttons=('unposting','cancel'))
+        
+        if request.POST:
+            if 'unposting' in request.POST: 
+            
+                #Update status posted pada SP2D
+                row.posted=0
+                self.save_request4(row)
+                
+                #Menghapus SP2D yang sudah menjadi jurnal
+                DBSession.query(AkJurnal).filter(AkJurnal.source_no==row.kode).delete()
+                DBSession.flush()
+                
+            return self.route_list()
+        return dict(row=row, form=form.render())    
+
+        
 class AddSchema(colander.Schema):
             
     ap_spm_id       = colander.SchemaNode(

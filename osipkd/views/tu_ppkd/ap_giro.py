@@ -26,7 +26,7 @@ class view_ap_giro_ppkd(BaseViews):
         req = self.request
         params = req.params
         url_dict = req.matchdict
-        return dict(project='EIS', #row = row
+        return dict(project='EIS',
         )
         
     ##########                    
@@ -55,8 +55,7 @@ class view_ap_giro_ppkd(BaseViews):
                            
                 rowTable = DataTables(req, Giro, query, columns)
                 return rowTable.output_result()
-                
-      
+                     
     #######    
     # Add #
     #######
@@ -65,7 +64,6 @@ class view_ap_giro_ppkd(BaseViews):
             raise colander.Invalid(form,
                 'Kegiatan dengan no urut tersebut sudah ada')
                     
-
     def get_form(self, class_form):
         schema = class_form(validator=self.form_validator)
         schema.request = self.request
@@ -144,8 +142,10 @@ class view_ap_giro_ppkd(BaseViews):
     def view_edit(self):
         request = self.request
         row = self.query_id().first()
+        
         if not row:
             return id_not_found(request)
+            
         form = self.get_form(EditSchema)
         if request.POST:
             if 'simpan' in request.POST:
@@ -159,7 +159,7 @@ class view_ap_giro_ppkd(BaseViews):
         elif SESS_EDIT_FAILED in request.session:
             del request.session[SESS_EDIT_FAILED]
             return dict(form=form)
-        values = row.to_dict() 
+        values = row.to_dict()
         form.set_appstruct(values) 
         return dict(form=form)
 
@@ -172,13 +172,15 @@ class view_ap_giro_ppkd(BaseViews):
         q = self.query_id()
         row = q.first()
         request=self.request
+        
         if not row:
             return id_not_found(request)
+            
         form = Form(colander.Schema(), buttons=('hapus','cancel'))
         values= {}
         if request.POST:
             if 'hapus' in request.POST:
-                msg = '%s Kode %s  %s sudah dihapus.' % (request.title, row.kode,  row.nama)
+                msg = '%s dengan kode %s telah berhasil.' % (request.title, row.kode)
                 DBSession.query(Giro).filter(Giro.id==request.matchdict['id']).delete()
                 DBSession.flush()
                 request.session.flash(msg)
@@ -208,11 +210,10 @@ class AddSchema(colander.Schema):
                           )
     nominal         = colander.SchemaNode(
                           colander.String(),
-                          default = 0,
+                          missing=colander.drop,
                           oid="jml_total",
                           title="Nominal"
                           )
-
 
 class EditSchema(AddSchema):
     id             = colander.SchemaNode(

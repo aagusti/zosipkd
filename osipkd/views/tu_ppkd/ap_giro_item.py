@@ -100,7 +100,7 @@ def view_add(request):
             
     row.ap_giro_id = ap_giro_id
     row.ap_sp2d_id = controls['ap_sp2d_id']
-    #try:
+
     DBSession.add(row)
     DBSession.flush()
     nominal = "%d" % Giro.get_nilai(row.ap_giro_id) 
@@ -128,8 +128,10 @@ def id_not_found(request):
              permission='edit')
 def view_edit(request):
     row = query_id(request).first()
+    
     if not row:
         return id_not_found(request)
+        
     form = get_form(request, EditSchema)
     if request.POST:
         if 'simpan' in request.POST:
@@ -155,12 +157,20 @@ def view_edit(request):
 def view_delete(request):
     q = query_id(request)
     row = q.first()
+    
     if not row:
         return {'success':False, "msg":self.id_not_found()}
 
     msg = 'Data sudah dihapus'
     query_id(request).delete()
     DBSession.flush()
+
+    nominal = "%s" % Giro.get_nilai(row.ap_giro_id)
     
-    nominal = "%d" % Giro.get_nilai(row.ap_giro_id) 
+    #Untuk update status disabled pada SP2D
+    row = DBSession.query(Sp2d).filter(Sp2d.id==row.ap_sp2d_id).first()   
+    row.disabled=0
+    save_request2(row)
+    
     return {'success':True, "msg":msg, 'jml_total':nominal}
+    

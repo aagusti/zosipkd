@@ -80,10 +80,6 @@ class view_ap_spd_item(BaseViews):
         url_dict = req.matchdict
         ap_spd_id = 'ap_spd_id' in url_dict and url_dict['ap_spd_id'] or 0
         controls = dict(req.POST.items())
-        
-        #kegiatan_sub_id = 'kegiatan_sub_id' in controls and controls['kegiatan_sub_id'] or None
-        #if not kegiatan_sub_id:
-        #    return {"success": False, 'msg':'Kegiatan belum dipilih'}
           
         ap_spd_item_id = 'ap_spd_item_id' in controls and controls['ap_spd_item_id'] or 0        
         #Cek dulu ada penyusup gak dengan mengecek sessionnya
@@ -137,8 +133,10 @@ class view_ap_spd_item(BaseViews):
         ses = self.session
         q = self.query_id().join(Spd).filter(Spd.unit_id==ses['unit_id'])
         row = q.first()
+        
         if not row:
             return self.id_not_found()
+            
         q = self.query_id()
         q.delete()
         DBSession.flush()
