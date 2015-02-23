@@ -86,6 +86,7 @@ class Pejabat(DefaultModel, Base):
     uraian     = Column(String(200))
     mulai      = Column(Date)
     selesai    = Column(Date)
+    
 
 """class Tapd(NamaModel, Base):
     __tablename__  = 'tapds'
