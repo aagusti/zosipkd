@@ -156,7 +156,7 @@ class ViewTUSKPDLap(BaseViews):
             return response
           
         ### AR PAYMENT
-        elif url_dict['act']=='arpayment' :
+        elif url_dict['act']=='ar-sts' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             query = DBSession.query(Sts
                 ).filter(Sts.unit_id==Unit.id, 
