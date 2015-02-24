@@ -4007,9 +4007,9 @@ class r2041Generator(JasperGeneratorWithSubreport):
             
             rowitems = DBSession.query(Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'),Rekening.level_id,
                     KegiatanItem.kode.label('item_kd'), KegiatanItem.nama.label('item_nm'),
-                    (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2).label('volume1'),
-                    KegiatanItem.hsat_2.label('harga1'),KegiatanItem.sat_2_1,KegiatanItem.sat_2_2,
-                    (KegiatanItem.vol_2_1* KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('jumlah1'),
+                    (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2).label('volume2'),
+                    KegiatanItem.hsat_2.label('harga2'),KegiatanItem.sat_2_1,KegiatanItem.sat_2_2,
+                    (KegiatanItem.vol_2_1* KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('jumlah2'),
                     ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                             KegiatanItem.rekening_id==Rekening.id,
                             KegiatanItem.kegiatan_sub_id==row.id
