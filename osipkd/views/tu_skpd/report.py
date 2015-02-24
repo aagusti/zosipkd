@@ -175,10 +175,9 @@ class ViewTUSKPDLap(BaseViews):
         if url_dict['act']=='2' :
             query = DBSession.query(Sts.tahun_id.label('tahun'), Unit.nama.label('unit_nm'),
                   Sts.kode, Sts.tgl_sts, Sts.tgl_validasi, Sts.jenis, Sts.nama.label('uraian'), 
-                  Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'), StsItem.amount.label('jumlah'
-                  )).filter(Sts.unit_id==Unit.id, StsItem.kegiatan_item_id==KegiatanItem.id,
-                  KegiatanItem.rekening_id==Rekening.id,
-                  StsItem.ar_sts_id==Sts.id, Sts.unit_id==self.session['unit_id'],
+                  Sts.nominal
+                  ).filter(Sts.unit_id==Unit.id, 
+                  Sts.unit_id==self.session['unit_id'],
                   Sts.tahun_id==self.session['tahun'],  
                   Sts.tgl_sts.between(mulai,selesai)
                   ).order_by(Sts.tgl_sts)
@@ -1135,9 +1134,7 @@ class b101r002Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "tgl_validasi").text = unicode(row.tgl_validasi)
             ET.SubElement(xml_greeting, "jenis").text = unicode(row.jenis)
             ET.SubElement(xml_greeting, "uraian").text = row.uraian
-            ET.SubElement(xml_greeting, "rek_kd").text = row.rek_kd
-            ET.SubElement(xml_greeting, "rek_nm").text = row.rek_nm
-            ET.SubElement(xml_greeting, "jumlah").text = unicode(row.jumlah)
+            ET.SubElement(xml_greeting, "nominal").text = unicode(row.nominal)
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
 
