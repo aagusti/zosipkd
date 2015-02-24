@@ -323,10 +323,10 @@ class view_kegiatan_sub(BaseViews):
             
             q = DBSession.query(KegiatanSub.id.label('kegiatan_sub_id'), Kegiatan.kode.label('kode'), KegiatanSub.nama.label('nama'),
                                 func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran'),
-                                func.sum(KegiatanItem.bln01+KegiatanItem.bln02*KegiatanItem.bln03).label('trw1'),
-                                func.sum(KegiatanItem.bln04+KegiatanItem.bln05*KegiatanItem.bln06).label('trw2'),
-                                func.sum(KegiatanItem.bln07+KegiatanItem.bln08*KegiatanItem.bln09).label('trw3'),
-                                func.sum(KegiatanItem.bln10+KegiatanItem.bln11*KegiatanItem.bln12).label('trw4')
+                                func.sum(KegiatanItem.bln01+KegiatanItem.bln02+KegiatanItem.bln03).label('trw1'),
+                                func.sum(KegiatanItem.bln04+KegiatanItem.bln05+KegiatanItem.bln06).label('trw2'),
+                                func.sum(KegiatanItem.bln07+KegiatanItem.bln08+KegiatanItem.bln09).label('trw3'),
+                                func.sum(KegiatanItem.bln10+KegiatanItem.bln11+KegiatanItem.bln12).label('trw4')
                         ).join(Kegiatan).join(KegiatanItem
                         ).filter(KegiatanSub.unit_id == ses['unit_id'],
                                KegiatanSub.tahun_id==ses['tahun'],
