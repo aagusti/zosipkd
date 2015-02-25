@@ -2331,16 +2331,20 @@ class ViewAnggaranLap(BaseViews):
                Urusan.nama.label('urusan_nm'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
                Program.kode.label('program_kd'), Program.nama.label('program_nm'),
                Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
-               Rekening.kode.label('rek_kd'),
-               (KegiatanItem.vol_1_1*KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('jumlah1'),
-               (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('jumlah2'),
-               (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('jumlah3'),
-               (KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('jumlah4'))\
-               .filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+               func.sum(case([(func.substr(Rekening.kode,1,5)=='5.1.1',(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2))], else_=0)).label('jml_btlpeg'),
+               func.sum(case([(and_(func.substr(Rekening.kode,1,3)=='5.1',func.substr(Rekening.kode,1,5)!='5.1.1'),(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2))], else_=0)).label('jml_btlnonpeg'),
+               func.sum(case([(func.substr(Rekening.kode,1,5)=='5.2.1',(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2))], else_=0)).label('jml_blpeg'),
+               func.sum(case([(func.substr(Rekening.kode,1,5)=='5.2.2',(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2))], else_=0)).label('jml_bljasa'),
+               func.sum(case([(func.substr(Rekening.kode,1,5)=='5.2.3',(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2))], else_=0)).label('jml_blmodal')
+               ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                    KegiatanSub.kegiatan_id==Kegiatan.id, Kegiatan.program_id==Program.id,
                    Program.urusan_id==Urusan.id, KegiatanSub.unit_id==Unit.id, 
                    KegiatanItem.rekening_id==Rekening.id,
-                   KegiatanSub.tahun_id==self.session['tahun'])      
+                   KegiatanSub.tahun_id==self.session['tahun']
+               ).group_by(KegiatanSub.tahun_id, Urusan.kode,
+               Urusan.nama, Unit.kode, Unit.nama,
+               Program.kode, Program.nama,
+               Kegiatan.kode, Kegiatan.nama)
 
             generator = r504Generator()
             pdf = generator.generate(query)
@@ -2646,16 +2650,25 @@ class ViewAnggaranLap(BaseViews):
                Urusan.nama.label('urusan_nm'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
                Program.kode.label('program_kd'), Program.nama.label('program_nm'),
                Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
-               Rekening.kode.label('rek_kd'),
-               (KegiatanItem.vol_1_1*KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('jumlah1'),
-               (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('jumlah2'),
-               (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('jumlah3'),
-               (KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('jumlah4'))\
-               .filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+               func.sum(case([(func.substr(Rekening.kode,1,5)=='5.1.1',(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2))], else_=0)).label('jml_btlpeg1'),
+               func.sum(case([(and_(func.substr(Rekening.kode,1,3)=='5.1',func.substr(Rekening.kode,1,5)!='5.1.1'),(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2))], else_=0)).label('jml_btlnonpeg1'),
+               func.sum(case([(func.substr(Rekening.kode,1,5)=='5.2.1',(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2))], else_=0)).label('jml_blpeg1'),
+               func.sum(case([(func.substr(Rekening.kode,1,5)=='5.2.2',(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2))], else_=0)).label('jml_bljasa1'),
+               func.sum(case([(func.substr(Rekening.kode,1,5)=='5.2.3',(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2))], else_=0)).label('jml_blmodal1'),
+               func.sum(case([(func.substr(Rekening.kode,1,5)=='5.1.1',(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4))], else_=0)).label('jml_btlpeg2'),
+               func.sum(case([(and_(func.substr(Rekening.kode,1,3)=='5.1',func.substr(Rekening.kode,1,5)!='5.1.1'),(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4))], else_=0)).label('jml_btlnonpeg2'),
+               func.sum(case([(func.substr(Rekening.kode,1,5)=='5.2.1',(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4))], else_=0)).label('jml_blpeg2'),
+               func.sum(case([(func.substr(Rekening.kode,1,5)=='5.2.2',(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4))], else_=0)).label('jml_bljasa2'),
+               func.sum(case([(func.substr(Rekening.kode,1,5)=='5.2.3',(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4))], else_=0)).label('jml_blmodal2')
+               ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                    KegiatanSub.kegiatan_id==Kegiatan.id, Kegiatan.program_id==Program.id,
                    Program.urusan_id==Urusan.id, KegiatanSub.unit_id==Unit.id, 
                    KegiatanItem.rekening_id==Rekening.id,
-                   KegiatanSub.tahun_id==self.session['tahun'])      
+                   KegiatanSub.tahun_id==self.session['tahun']
+               ).group_by(KegiatanSub.tahun_id, Urusan.kode,
+               Urusan.nama, Unit.kode, Unit.nama,
+               Program.kode, Program.nama,
+               Kegiatan.kode, Kegiatan.nama)
 
             generator = r604Generator()
             pdf = generator.generate(query)
@@ -5986,11 +5999,11 @@ class r504Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "program_nm").text = row.program_nm
             ET.SubElement(xml_greeting, "kegiatan_kd").text = row.kegiatan_kd
             ET.SubElement(xml_greeting, "kegiatan_nm").text = row.kegiatan_nm
-            ET.SubElement(xml_greeting, "rek_kd").text = row.rek_kd
-            ET.SubElement(xml_greeting, "jumlah1").text = unicode(row.jumlah1)
-            ET.SubElement(xml_greeting, "jumlah2").text = unicode(row.jumlah2)
-            ET.SubElement(xml_greeting, "jumlah3").text = unicode(row.jumlah3)
-            ET.SubElement(xml_greeting, "jumlah4").text = unicode(row.jumlah4)
+            ET.SubElement(xml_greeting, "jml_btlpeg").text = unicode(row.jml_btlpeg)
+            ET.SubElement(xml_greeting, "jml_btlnonpeg").text = unicode(row.jml_btlnonpeg)
+            ET.SubElement(xml_greeting, "jml_blpeg").text = unicode(row.jml_blpeg)
+            ET.SubElement(xml_greeting, "jml_bljasa").text = unicode(row.jml_bljasa)
+            ET.SubElement(xml_greeting, "jml_blmodal").text = unicode(row.jml_blmodal)
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
 
@@ -6389,27 +6402,17 @@ class r604Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "program_nm").text = row.program_nm
             ET.SubElement(xml_greeting, "kegiatan_kd").text = row.kegiatan_kd
             ET.SubElement(xml_greeting, "kegiatan_nm").text = row.kegiatan_nm
-            ET.SubElement(xml_greeting, "rek_kd").text = row.rek_kd
-            ET.SubElement(xml_greeting, "jumlah1").text = unicode(row.jumlah1)
-            ET.SubElement(xml_greeting, "jumlah2").text = unicode(row.jumlah2)
-            ET.SubElement(xml_greeting, "jumlah3").text = unicode(row.jumlah3)
-            ET.SubElement(xml_greeting, "jumlah4").text = unicode(row.jumlah4)
+            ET.SubElement(xml_greeting, "jml_btlpeg1").text = unicode(row.jml_btlpeg1)
+            ET.SubElement(xml_greeting, "jml_btlnonpeg1").text = unicode(row.jml_btlnonpeg1)
+            ET.SubElement(xml_greeting, "jml_blpeg1").text = unicode(row.jml_blpeg1)
+            ET.SubElement(xml_greeting, "jml_bljasa1").text = unicode(row.jml_bljasa1)
+            ET.SubElement(xml_greeting, "jml_blmodal1").text = unicode(row.jml_blmodal1)
+            ET.SubElement(xml_greeting, "jml_btlpeg2").text = unicode(row.jml_btlpeg2)
+            ET.SubElement(xml_greeting, "jml_btlnonpeg2").text = unicode(row.jml_btlnonpeg2)
+            ET.SubElement(xml_greeting, "jml_blpeg2").text = unicode(row.jml_blpeg2)
+            ET.SubElement(xml_greeting, "jml_bljasa2").text = unicode(row.jml_bljasa2)
+            ET.SubElement(xml_greeting, "jml_blmodal2").text = unicode(row.jml_blmodal2)
             ET.SubElement(xml_greeting, "customer").text = customer
-            """ET.SubElement(xml_greeting, "tahun").text = unicode(row.kegiatan_sub.tahun_id)
-            ET.SubElement(xml_greeting, "urusan_kd").text = row.kegiatan_sub.kegiatans.programs.urusans.kode
-            ET.SubElement(xml_greeting, "urusan_nm").text = row.kegiatan_sub.kegiatans.programs.urusans.nama
-            ET.SubElement(xml_greeting, "unit_kd").text = row.kegiatan_sub.units.kode
-            ET.SubElement(xml_greeting, "unit_nm").text = row.kegiatan_sub.units.nama
-            ET.SubElement(xml_greeting, "program_kd").text = row.kegiatan_sub.kegiatans.programs.kode
-            ET.SubElement(xml_greeting, "program_nm").text = row.kegiatan_sub.kegiatans.programs.nama
-            ET.SubElement(xml_greeting, "kegiatan_kd").text = row.kegiatan_sub.kegiatans.kode
-            ET.SubElement(xml_greeting, "kegiatan_nm").text = row.kegiatan_sub.kegiatans.nama
-            ET.SubElement(xml_greeting, "rek_kd").text = unicode(row.rekenings.kode)
-            ET.SubElement(xml_greeting, "jumlah1").text = unicode(row.vol_1_1*row.vol_1_2*row.hsat_1)
-            ET.SubElement(xml_greeting, "jumlah2").text = unicode(row.vol_2_1*row.vol_2_2*row.hsat_2)
-            ET.SubElement(xml_greeting, "jumlah3").text = unicode(row.vol_3_1*row.vol_3_2*row.hsat_3)
-            ET.SubElement(xml_greeting, "jumlah4").text = unicode(row.vol_4_1*row.vol_4_2*row.hsat_4)
-            """
         return self.root
 
 class r621Generator(JasperGenerator):
