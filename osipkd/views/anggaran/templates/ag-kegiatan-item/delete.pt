@@ -6,8 +6,9 @@
         <h3 class="panel-title">Peringatan</h3>
     </div>
     <div class="panel-body">
-        ${request.title} ?
+        ${request.title} # ${row.kode} ${row.nama}  ?
     </div>
 </div>
+<div tal:content="structure form"/>
 </div>
 </html>
