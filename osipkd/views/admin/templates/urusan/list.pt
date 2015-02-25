@@ -1,6 +1,6 @@
 <html metal:use-macro="load: ../base.pt">
   <div metal:fill-slot="content">
-    <h4>${request.title}</h4>
+    <h4>Urusan</h4>
     <hr>
     <table id="table1" class="table table-bordered table-hover table-condensed">
         <thead>
