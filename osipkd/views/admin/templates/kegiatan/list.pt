@@ -57,6 +57,12 @@
                         "bSearchable": false,
                         "bVisible": false,
                         "aTargets": [0]
+                    },{
+                        "bSearchable": true,
+                        "aTargets": [1,2]
+                    },{
+                        "bSearchable": false,
+                        "aTargets": [3,4]
                     }],
           "aoColumns": [
               null,
