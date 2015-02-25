@@ -105,8 +105,8 @@
         });
 
         $('#btn_print').click(function () {
-            //url = "/ag-report/r000/act/r041"
-            //window.open(url);
+            url = "/ag-report/r000/act/r017"
+            window.open(url);
         });
 
         $("#btn_close").click(function () {
