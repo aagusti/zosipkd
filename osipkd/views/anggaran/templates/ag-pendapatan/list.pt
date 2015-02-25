@@ -462,28 +462,9 @@
 
         $('#btn_delete').click(function () {
             if (mID) {
-              if (confirm('Yakin dihapus?')==true){
-                $.ajax({
-                type: "POST",
-                url : "/ag-kegiatan-item/"+$('#kegiatan_sub_id').val()+"/"+mID+"/delete",
-                success: function (html) {
-                  if (html.success == true) {
-                    $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                    oTable.fnReloadAjax("/ag-kegiatan-item/act/grid?type=4");
-                    alert('Silahkan refresh or tekan F5 !!');
-                  } else {
-                    $("#errors").css('display', 'inline', 'important');
-                    $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
-                  }
-                },
-                beforeSend: function () {
-                  $("#errors").css('display', 'inline', 'important');
-                  $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
-                }
-                });
-              } else {
-                  alert('Silahkan pilih data yang akan di hapus');
-              }
+                window.location = "/ag-kegiatan-item/"+$('#kegiatan_sub_id').val()+"/"+mID+"/delete";
+            } else {
+                alert('Silahkan pilih data yang akan di hapus');
             }
         });
         
