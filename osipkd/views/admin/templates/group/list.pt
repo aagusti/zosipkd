@@ -6,9 +6,9 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Kode</th>
-                <th>Uraian</th>
-                <th>Anggota</th>
+                <th>Nama Group</th>
+                <th>Deskripsi</th>
+                <th>Jml. Anggota</th>
             </tr>
         </thead>
         <tbody>
@@ -61,7 +61,7 @@
               null,
               {"width": "120px"},
               null,
-              {"width": "60px", "sClass":"center"},
+              {"width": "100px", "sClass":"center"},
           ]
         });
           
