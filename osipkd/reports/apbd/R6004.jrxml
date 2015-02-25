@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_lampiran_5" language="groovy" pageWidth="1008" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="972" leftMargin="18" rightMargin="18" topMargin="36" bottomMargin="72">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="27"/>
+	<property name="ireport.x" value="20"/>
 	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[apbd/perda/lamp5]]>
@@ -33,38 +33,53 @@
 	<field name="kegiatan_nm" class="java.lang.String">
 		<fieldDescription><![CDATA[kegiatan_nm]]></fieldDescription>
 	</field>
-	<field name="rek_kd" class="java.lang.String">
-		<fieldDescription><![CDATA[rek_kd]]></fieldDescription>
+	<field name="jml_btlpeg1" class="java.lang.String">
+		<fieldDescription><![CDATA[jml_btlpeg1]]></fieldDescription>
 	</field>
-	<field name="jumlah1" class="java.lang.String">
-		<fieldDescription><![CDATA[jumlah1]]></fieldDescription>
+	<field name="jml_btlnonpeg1" class="java.lang.String">
+		<fieldDescription><![CDATA[jml_btlnonpeg1]]></fieldDescription>
 	</field>
-	<field name="jumlah2" class="java.lang.String">
-		<fieldDescription><![CDATA[jumlah2]]></fieldDescription>
+	<field name="jml_blpeg1" class="java.lang.String">
+		<fieldDescription><![CDATA[jml_blpeg1]]></fieldDescription>
 	</field>
-	<field name="jumlah3" class="java.lang.String">
-		<fieldDescription><![CDATA[jumlah3]]></fieldDescription>
+	<field name="jml_bljasa1" class="java.lang.String">
+		<fieldDescription><![CDATA[jml_bljasa1]]></fieldDescription>
 	</field>
-	<field name="jumlah4" class="java.lang.String">
-		<fieldDescription><![CDATA[jumlah4]]></fieldDescription>
+	<field name="jml_blmodal1" class="java.lang.String">
+		<fieldDescription><![CDATA[jml_blmodal1]]></fieldDescription>
+	</field>
+	<field name="jml_btlpeg2" class="java.lang.String">
+		<fieldDescription><![CDATA[jml_btlpeg2]]></fieldDescription>
+	</field>
+	<field name="jml_btlnonpeg2" class="java.lang.String">
+		<fieldDescription><![CDATA[jml_btlnonpeg2]]></fieldDescription>
+	</field>
+	<field name="jml_blpeg2" class="java.lang.String">
+		<fieldDescription><![CDATA[jml_blpeg2]]></fieldDescription>
+	</field>
+	<field name="jml_bljasa2" class="java.lang.String">
+		<fieldDescription><![CDATA[jml_bljasa2]]></fieldDescription>
+	</field>
+	<field name="jml_blmodal2" class="java.lang.String">
+		<fieldDescription><![CDATA[jml_blmodal2]]></fieldDescription>
 	</field>
 	<field name="customer" class="java.lang.String">
 		<fieldDescription><![CDATA[customer]]></fieldDescription>
 	</field>
 	<variable name="btl_pegawai1" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{rek_kd}.substring( 0, 5 )=="5.1.1" ? Double.parseDouble($F{jumlah2}) : 0]]></variableExpression>
+		<variableExpression><![CDATA[Double.parseDouble($F{jml_btlpeg1})]]></variableExpression>
 	</variable>
 	<variable name="btl_nonpegawai1" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{rek_kd}.substring( 0, 3 )=="5.1" ? (!($F{rek_kd}.substring( 0, 5 ).equals("5.1.1")) ? Double.parseDouble($F{jumlah2}) : 0 ) : 0]]></variableExpression>
+		<variableExpression><![CDATA[Double.parseDouble($F{jml_btlnonpeg1})]]></variableExpression>
 	</variable>
 	<variable name="bl_pegawai1" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{rek_kd}.substring( 0, 5 )=="5.2.1" ? Double.parseDouble($F{jumlah2}) : 0]]></variableExpression>
+		<variableExpression><![CDATA[Double.parseDouble($F{jml_blpeg1})]]></variableExpression>
 	</variable>
 	<variable name="bl_jasa1" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{rek_kd}.substring( 0, 5 )=="5.2.2" ? Double.parseDouble($F{jumlah2}) : 0]]></variableExpression>
+		<variableExpression><![CDATA[Double.parseDouble($F{jml_bljasa1})]]></variableExpression>
 	</variable>
 	<variable name="bl_modal1" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{rek_kd}.substring( 0, 5 )=="5.2.3" ? Double.parseDouble($F{jumlah2}) : 0]]></variableExpression>
+		<variableExpression><![CDATA[Double.parseDouble($F{jml_blmodal1})]]></variableExpression>
 	</variable>
 	<variable name="btl_pegawai_u1" class="java.lang.Double" resetType="Group" resetGroup="unit_kd" calculation="Sum">
 		<variableExpression><![CDATA[$V{btl_pegawai1}]]></variableExpression>
@@ -112,19 +127,19 @@
 		<variableExpression><![CDATA[$V{bl_modal1}]]></variableExpression>
 	</variable>
 	<variable name="btl_pegawai2" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{rek_kd}.substring( 0, 5 )=="5.1.1" ? Double.parseDouble($F{jumlah4}) : 0]]></variableExpression>
+		<variableExpression><![CDATA[Double.parseDouble($F{jml_btlpeg2})]]></variableExpression>
 	</variable>
 	<variable name="btl_nonpegawai2" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{rek_kd}.substring( 0, 3 )=="5.1" ? (!($F{rek_kd}.substring( 0, 5 ).equals("5.1.1")) ? Double.parseDouble($F{jumlah4}) : 0 ) : 0]]></variableExpression>
+		<variableExpression><![CDATA[Double.parseDouble($F{jml_btlnonpeg2})]]></variableExpression>
 	</variable>
 	<variable name="bl_pegawai2" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{rek_kd}.substring( 0, 5 )=="5.2.1" ? Double.parseDouble($F{jumlah4}) : 0]]></variableExpression>
+		<variableExpression><![CDATA[Double.parseDouble($F{jml_blpeg2})]]></variableExpression>
 	</variable>
 	<variable name="bl_jasa2" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{rek_kd}.substring( 0, 5 )=="5.2.2" ? Double.parseDouble($F{jumlah4}) : 0]]></variableExpression>
+		<variableExpression><![CDATA[Double.parseDouble($F{jml_bljasa2})]]></variableExpression>
 	</variable>
 	<variable name="bl_modal2" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{rek_kd}.substring( 0, 5 )=="5.2.3" ? Double.parseDouble($F{jumlah4}) : 0]]></variableExpression>
+		<variableExpression><![CDATA[Double.parseDouble($F{jml_blmodal2})]]></variableExpression>
 	</variable>
 	<variable name="btl_pegawai_u2" class="java.lang.Double" resetType="Group" resetGroup="unit_kd" calculation="Sum">
 		<variableExpression><![CDATA[$V{btl_pegawai2}]]></variableExpression>
@@ -246,7 +261,7 @@ KETERPADUAN URUSAN PEMERINTAHAN DAERAH DAN FUNGSI DALAM]]></text>
 			</band>
 			<band height="54">
 				<staticText>
-					<reportElement x="0" y="0" width="45" height="54"/>
+					<reportElement x="0" y="0" width="32" height="54"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -259,7 +274,7 @@ KETERPADUAN URUSAN PEMERINTAHAN DAERAH DAN FUNGSI DALAM]]></text>
 					<text><![CDATA[Kode]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="45" y="0" width="100" height="54"/>
+					<reportElement x="32" y="0" width="113" height="54"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -605,7 +620,7 @@ Pegawai]]></text>
 					<text><![CDATA[3]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="45" y="0" width="100" height="14"/>
+					<reportElement x="32" y="0" width="113" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -618,7 +633,7 @@ Pegawai]]></text>
 					<text><![CDATA[2]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="0" y="0" width="45" height="14"/>
+					<reportElement x="0" y="0" width="32" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -768,24 +783,24 @@ Pegawai]]></text>
 		<groupHeader>
 			<band height="14" splitType="Stretch">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="45" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="32" height="14"/>
 					<box leftPadding="3">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement>
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{urusan_kd}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="45" y="0" width="100" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="32" y="0" width="113" height="14"/>
 					<box leftPadding="1">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement>
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{urusan_nm}]]></textFieldExpression>
 				</textField>
@@ -796,7 +811,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_ur1})]]></textFieldExpression>
 				</textField>
@@ -807,7 +822,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_pegawai_ur1})]]></textFieldExpression>
 				</textField>
@@ -818,7 +833,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_nonpegawai_ur1})]]></textFieldExpression>
 				</textField>
@@ -829,7 +844,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_pegawai_ur1})]]></textFieldExpression>
 				</textField>
@@ -840,7 +855,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_jasa_ur1})]]></textFieldExpression>
 				</textField>
@@ -851,7 +866,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_modal_ur1})]]></textFieldExpression>
 				</textField>
@@ -862,7 +877,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_jasa_ur2})]]></textFieldExpression>
 				</textField>
@@ -873,7 +888,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_pegawai_ur2})]]></textFieldExpression>
 				</textField>
@@ -884,7 +899,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_pegawai_ur2})]]></textFieldExpression>
 				</textField>
@@ -895,7 +910,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_nonpegawai_ur2})]]></textFieldExpression>
 				</textField>
@@ -906,7 +921,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_modal_ur2})]]></textFieldExpression>
 				</textField>
@@ -917,7 +932,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_ur2})]]></textFieldExpression>
 				</textField>
@@ -928,7 +943,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{jumlah_ur2}-$V{jumlah_ur1})<0 ? "("+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{jumlah_ur2}-$V{jumlah_ur1})*-1)+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_ur2}-$V{jumlah_ur1})]]></textFieldExpression>
 				</textField>
@@ -939,7 +954,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{jumlah_ur2}-$V{jumlah_ur1})*100/$V{jumlah_ur1}<0 ? "("+new DecimalFormat("0.00").format(($V{jumlah_ur2}-$V{jumlah_ur1})*100*-1/$V{jumlah_ur1})+")" : new DecimalFormat("0.00").format(($V{jumlah_ur2}-$V{jumlah_ur1})*100/$V{jumlah_ur1})]]></textFieldExpression>
 				</textField>
@@ -951,13 +966,13 @@ Pegawai]]></text>
 		<groupHeader>
 			<band height="14" splitType="Stretch">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="45" y="0" width="100" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="32" y="0" width="113" height="14"/>
 					<box leftPadding="1">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement>
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{unit_nm}]]></textFieldExpression>
 				</textField>
@@ -968,7 +983,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_u1})]]></textFieldExpression>
 				</textField>
@@ -979,7 +994,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_pegawai_u1})]]></textFieldExpression>
 				</textField>
@@ -990,7 +1005,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_nonpegawai_u1})]]></textFieldExpression>
 				</textField>
@@ -1001,7 +1016,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_pegawai_u1})]]></textFieldExpression>
 				</textField>
@@ -1012,7 +1027,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_jasa_u1})]]></textFieldExpression>
 				</textField>
@@ -1023,18 +1038,18 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_modal_u1})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="45" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="32" height="14"/>
 					<box leftPadding="3">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement>
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{unit_kd}]]></textFieldExpression>
 				</textField>
@@ -1045,7 +1060,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_nonpegawai_u2})]]></textFieldExpression>
 				</textField>
@@ -1056,7 +1071,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_jasa_u2})]]></textFieldExpression>
 				</textField>
@@ -1067,7 +1082,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_u2})]]></textFieldExpression>
 				</textField>
@@ -1078,7 +1093,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_pegawai_u2})]]></textFieldExpression>
 				</textField>
@@ -1089,7 +1104,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_pegawai_u2})]]></textFieldExpression>
 				</textField>
@@ -1100,7 +1115,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_modal_u2})]]></textFieldExpression>
 				</textField>
@@ -1111,7 +1126,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{jumlah_u2}-$V{jumlah_u1})<0 ? "("+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{jumlah_u2}-$V{jumlah_u1})*-1)+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_u2}-$V{jumlah_u1})]]></textFieldExpression>
 				</textField>
@@ -1122,7 +1137,7 @@ Pegawai]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="8"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{jumlah_u2}-$V{jumlah_u1})*100/$V{jumlah_u1}<0 ? "("+new DecimalFormat("0.00").format(($V{jumlah_u2}-$V{jumlah_u1})*100*-1/$V{jumlah_u1})+")" : new DecimalFormat("0.00").format(($V{jumlah_u2}-$V{jumlah_u1})*100/$V{jumlah_u1})]]></textFieldExpression>
 				</textField>
@@ -1185,7 +1200,7 @@ Pegawai]]></text>
 				<text><![CDATA[3]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="45" y="0" width="100" height="14"/>
+				<reportElement x="32" y="0" width="113" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -1198,7 +1213,7 @@ Pegawai]]></text>
 				<text><![CDATA[2]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="0" width="45" height="14"/>
+				<reportElement x="0" y="0" width="32" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -1356,11 +1371,11 @@ Pegawai]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8" isBold="true"/>
+					<font size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[JUMLAH]]></text>
 			</staticText>
-			<textField pattern="#,##0;(#,##0)">
+			<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)">
 				<reportElement x="445" y="0" width="60" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
@@ -1369,11 +1384,11 @@ Pegawai]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8" isBold="true"/>
+					<font size="6" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_t1})]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0;(#,##0)">
+			<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)">
 				<reportElement x="145" y="0" width="60" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
@@ -1382,11 +1397,11 @@ Pegawai]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8" isBold="true"/>
+					<font size="6" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_pegawai_t1})]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0;(#,##0)">
+			<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)">
 				<reportElement x="205" y="0" width="60" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
@@ -1395,11 +1410,11 @@ Pegawai]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8" isBold="true"/>
+					<font size="6" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_nonpegawai_t1})]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0;(#,##0)">
+			<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)">
 				<reportElement x="265" y="0" width="60" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
@@ -1408,11 +1423,11 @@ Pegawai]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8" isBold="true"/>
+					<font size="6" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_pegawai_t1})]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0;(#,##0)">
+			<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)">
 				<reportElement x="325" y="0" width="60" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
@@ -1421,11 +1436,11 @@ Pegawai]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8" isBold="true"/>
+					<font size="6" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_jasa_t1})]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0;(#,##0)">
+			<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)">
 				<reportElement x="385" y="0" width="60" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
@@ -1434,11 +1449,11 @@ Pegawai]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8" isBold="true"/>
+					<font size="6" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_modal_t1})]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0;(#,##0)">
+			<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)">
 				<reportElement x="565" y="0" width="60" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
@@ -1447,11 +1462,11 @@ Pegawai]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8" isBold="true"/>
+					<font size="6" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_nonpegawai_t2})]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0;(#,##0)">
+			<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)">
 				<reportElement x="805" y="0" width="60" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
@@ -1460,11 +1475,11 @@ Pegawai]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8" isBold="true"/>
+					<font size="6" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_t2})]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0;(#,##0)">
+			<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)">
 				<reportElement x="685" y="0" width="60" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
@@ -1473,11 +1488,11 @@ Pegawai]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8" isBold="true"/>
+					<font size="6" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_jasa_t2})]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0;(#,##0)">
+			<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)">
 				<reportElement x="745" y="0" width="60" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
@@ -1486,11 +1501,11 @@ Pegawai]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8" isBold="true"/>
+					<font size="6" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_modal_t2})]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0;(#,##0)">
+			<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)">
 				<reportElement x="505" y="0" width="60" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
@@ -1499,11 +1514,11 @@ Pegawai]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8" isBold="true"/>
+					<font size="6" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_pegawai_t2})]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0;(#,##0)">
+			<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)">
 				<reportElement x="625" y="0" width="60" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
@@ -1512,11 +1527,11 @@ Pegawai]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8" isBold="true"/>
+					<font size="6" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_pegawai_t2})]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0;(#,##0)">
+			<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)">
 				<reportElement x="865" y="0" width="60" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
@@ -1525,11 +1540,11 @@ Pegawai]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8" isBold="true"/>
+					<font size="6" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($V{jumlah_t2}-$V{jumlah_t1})<0 ? "("+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{jumlah_t2}-$V{jumlah_t1})*-1) : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_t2}-$V{jumlah_t1})]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0;(#,##0)">
+			<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)">
 				<reportElement x="925" y="0" width="29" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
@@ -1538,7 +1553,7 @@ Pegawai]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8" isBold="true"/>
+					<font size="6" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($V{jumlah_t2}-$V{jumlah_t1})*100/$V{jumlah_t1}<0 ? "("+new DecimalFormat("0.00").format(($V{jumlah_t2}-$V{jumlah_t1})*100*-1/$V{jumlah_t1})+")" : new DecimalFormat("0.00").format(($V{jumlah_t2}-$V{jumlah_t1})*100/$V{jumlah_t1})]]></textFieldExpression>
 			</textField>
