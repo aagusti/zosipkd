@@ -109,6 +109,7 @@ class view_ak_jurnal(BaseViews):
                                 Rekening.kode.label('rekening_kd'),
                                 Rekening.nama.label('rekening_nm'),
                                 KegiatanItem.no_urut.label('item_no'),
+                                cast(KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2,BigInteger).label('amount')
                                 ).\
                           join(KegiatanSub, Rekening).\
                           outerjoin(Kegiatan).\
@@ -133,9 +134,38 @@ class view_ak_jurnal(BaseViews):
                                 format(kegiatan_kd=k[1], kegiatan_no=k[3], 
                                        rekening_kd=k[4], item_no=k[6])
                 d['nama']    = k[5]
+                d['amount']  = k[7]
                 r.append(d)
             return r            
         
+        elif url_dict['act']=='headofnama3':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(KegiatanItem.id, KegiatanItem.nama.label('ap_kegiatankd'),KegiatanSub.id,KegiatanSub.nama).\
+                          join(KegiatanSub).\
+                          outerjoin(Kegiatan).\
+                          filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                                 KegiatanSub.unit_id == ses['unit_id'],
+                                 KegiatanSub.tahun_id == ses['tahun'],
+                                 KegiatanSub.kegiatan_id==Kegiatan.id,
+                                 Kegiatan.kode!='0.00.00.10', 
+                                 Kegiatan.kode!='0.00.00.21',
+                                 Kegiatan.kode!='0.00.00.31',
+                                 Kegiatan.kode!='0.00.00.32',
+                                 KegiatanItem.nama.ilike('%%%s%%' % term))\
+                                 
+            rows = q.all()                               
+            r = []
+            for k in rows:
+                d={}
+                d['id']      = k[0]
+                d['value']   = k[1]
+                d['nama']    = k[1]
+                d['nama1']   = k[3]
+                r.append(d)
+                print "XCXCXCXC",r
+            return r            
+
+
     ###############                    
     # Tambah  Data#
     ###############    
@@ -231,7 +261,7 @@ class AddSchema(colander.Schema):
                           missing=colander.drop,
                           )
     vol_1_1          = colander.SchemaNode(
-                          colander.String(),
+                          colander.Float(),
                           missing=colander.drop,
                           default=1,
                           oid="vol_1_1",
@@ -243,7 +273,7 @@ class AddSchema(colander.Schema):
                           title="Satuan 2"
                           )
     vol_1_2          = colander.SchemaNode(
-                          colander.String(),
+                          colander.Float(),
                           missing=colander.drop,
                           default=1,
                           oid="vol_1_2",
@@ -260,7 +290,7 @@ class AddSchema(colander.Schema):
                           oid="hsat_1",
                           title="Harga")
     vol_2_1          = colander.SchemaNode(
-                          colander.String(),
+                          colander.Float(),
                           missing=colander.drop,
                           default=1,
                           oid="vol_2_1",
@@ -271,7 +301,7 @@ class AddSchema(colander.Schema):
                           title="Satuan 1"
                           )
     vol_2_2          = colander.SchemaNode(
-                          colander.String(),
+                          colander.Float(),
                           missing=colander.drop,
                           default=1,
                           oid="vol_2_2",
@@ -288,7 +318,7 @@ class AddSchema(colander.Schema):
                           oid="hsat_2",
                           title="Harga")
     vol_3_1          = colander.SchemaNode(
-                          colander.String(),
+                          colander.Float(),
                           missing=colander.drop,
                           default=1,
                           oid="vol_3_1",
@@ -299,7 +329,7 @@ class AddSchema(colander.Schema):
                           title="Satuan 1"
                           )
     vol_3_2          = colander.SchemaNode(
-                          colander.String(),
+                          colander.Float(),
                           missing=colander.drop,
                           default=1,
                           oid="vol_3_2",
@@ -316,7 +346,7 @@ class AddSchema(colander.Schema):
                           oid="hsat_3",
                           title="Harga")
     vol_4_1          = colander.SchemaNode(
-                          colander.String(),
+                          colander.Float(),
                           missing=colander.drop,
                           default=1,
                           oid="vol_4_1",
@@ -327,7 +357,7 @@ class AddSchema(colander.Schema):
                           title="Satuan 1"
                           )
     vol_4_2          = colander.SchemaNode(
-                          colander.String(),
+                          colander.Float(),
                           missing=colander.drop,
                           default=1,
                           oid="vol_4_2",
@@ -477,20 +507,20 @@ def save_request(values, request, row=None):
     if 'id' in request.matchdict:
         values['id'] = request.matchdict['id']
 
-    values["vol_1_1"]=values["vol_1_1"].replace('.','') 
-    values["vol_1_2"]=values["vol_1_2"].replace('.','') 
+    #values["vol_1_1"]=values["vol_1_1"].replace('.','') 
+    #values["vol_1_2"]=values["vol_1_2"].replace('.','') 
     values["hsat_1"]=values["hsat_1"].replace('.','') 
 
-    values["vol_2_1"]=values["vol_2_1"].replace('.','') 
-    values["vol_2_2"]=values["vol_2_2"].replace('.','') 
+    #values["vol_2_1"]=values["vol_2_1"].replace('.','') 
+    #values["vol_2_2"]=values["vol_2_2"].replace('.','') 
     values["hsat_2"]=values["hsat_2"].replace('.','') 
 
-    values["vol_3_1"]=values["vol_3_1"].replace('.','') 
-    values["vol_3_2"]=values["vol_3_2"].replace('.','') 
+    #values["vol_3_1"]=values["vol_3_1"].replace('.','') 
+    #values["vol_3_2"]=values["vol_3_2"].replace('.','') 
     values["hsat_3"]=values["hsat_3"].replace('.','') 
 
-    values["vol_4_1"]=values["vol_4_1"].replace('.','') 
-    values["vol_4_2"]=values["vol_4_2"].replace('.','') 
+    #values["vol_4_1"]=values["vol_4_1"].replace('.','') 
+    #values["vol_4_2"]=values["vol_4_2"].replace('.','') 
     values["hsat_4"]=values["hsat_4"].replace('.','') 
 
     row = save(values, request, row)
@@ -553,14 +583,10 @@ def view_edit(request):
     if request.POST:
         if 'simpan' in request.POST:
             controls = request.POST.items()
-            
             try:
                 c = form.validate(controls)
             except ValidationFailure, e:
                 return dict(form=form, row=rows, rek_head=5)
-                #request.session[SESS_EDIT_FAILED] = e.render()               
-                #return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',
-                #                  id=row.id))
             save_request(dict(controls), request, row)
         return route_list(request,kegiatan_sub_id)
     elif SESS_EDIT_FAILED in request.session:
@@ -580,13 +606,20 @@ def view_edit(request):
 def view_delete(request):
     q = query_id(request)
     row = q.first()
+    kegiatan_sub_id = request.matchdict['kegiatan_sub_id']
     if not row:
         return {'success':False, "msg":self.id_not_found()}
-
-    msg = 'Data sudah dihapus'
-    query_id(request).delete()
-    DBSession.flush()
-    return {'success':True, "msg":msg}
+        
+    form = Form(colander.Schema(), buttons=('hapus','cancel'))
+    values= {}
+    if request.POST:
+        if 'hapus' in request.POST:
+            msg = 'Data sudah dihapus'
+            DBSession.query(KegiatanItem).filter(KegiatanItem.id==request.matchdict['id']).delete()
+            DBSession.flush()
+            request.session.flash(msg)
+        return route_list(request,kegiatan_sub_id)
+    return dict(row=row,form=form.render())
 
             
                         
