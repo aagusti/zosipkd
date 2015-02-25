@@ -136,6 +136,18 @@ class view_program(BaseViews):
             row.created = datetime.now()
             row.create_uid = user.id
         row.from_dict(values)
+
+        ##### Cek Kode Sama ato tidak
+        """ukode = row.kode
+        qcek = DBSession.query(func.count(Program.id).label('jumlah')).filter(Program.kode==ukode)
+        cek =qcek.first()
+        jmlcek = cek.jumlah
+        print "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP", jmlcek
+        if jmlcek>0 :
+           print "LEWATLEWATLEWATLEWATLEWATLEWATLEWAT"
+           self.request.session.flash('Kode sudah ada.')
+           return HTTPFound(location=self.request.route_url('program-add'))
+        """
         row.updated = datetime.now()
         row.update_uid = user.id
         row.disabled = 'disabled' in values and values['disabled'] and 1 or 0
@@ -162,11 +174,26 @@ class view_program(BaseViews):
         if req.POST:
             if 'simpan' in req.POST:
                 controls = req.POST.items()
+                #controls_dicted = dict(controls)
+                
+                ##### Cek Kode Sama ato tidak
+                """ck = form.validate(controls_dicted)
+                ukode = {"kode": ck['kode']}
+                print "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP", ukode
+                qcek = DBSession.query(func.count(Program.id).label('jumlah')).filter(Program.kode==ukode)
+                cek =qcek.first()
+                jmlcek = cek.jumlah
+                if jmlcek>0 :
+                   self.request.session.flash('Kode sudah ada.')
+                   return HTTPFound(location=req.route_url('program-add'))
+                """
+                
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
                     req.session[SESS_ADD_FAILED] = e.render()               
                     return HTTPFound(location=req.route_url('program-add'))
+          
                 self.save_request(dict(controls))
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
@@ -194,6 +221,17 @@ class view_program(BaseViews):
             if 'simpan' in request.POST:
                 controls = request.POST.items()
                 print controls
+                
+                ##### Cek Kode Sama ato tidak
+                ukode = row.kode
+                qcek = DBSession.query(func.count(Program.id).label('jumlah')).filter(Program.kode==ukode)
+                cek =qcek.first()
+                jmlcek = cek.jumlah
+                if jmlcek>0 :
+                   self.request.session.flash('Kode sudah ada.')
+                   return HTTPFound(location=request.route_url('program-edit',
+                                      id=row.id))
+                
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:

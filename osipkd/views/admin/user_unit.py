@@ -264,15 +264,22 @@ def view_edit(request):
 def view_delete(request):
     q = query_id(request)
     row = q.first()
+    user = row.id
+
     if not row:
         return id_not_found(request)
+
     form = Form(colander.Schema(), buttons=('delete','cancel'))
     if request.POST:
         if 'delete' in request.POST:
             msg = 'User ID %d %s has been deleted.' % (row.id, row.email)
-            q.units.delete()
+
+            DBSession.query(UserUnit).filter(UserUnit.user_id==user).delete()
+            DBSession.flush()
+
             q.delete()
             DBSession.flush()
+
             request.session.flash(msg)
         return route_list(request)
     return dict(row=row,

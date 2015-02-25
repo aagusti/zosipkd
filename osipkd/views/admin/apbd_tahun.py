@@ -26,8 +26,8 @@ from osipkd.models.pemda_model import  STATUS_APBD
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
 
-SESS_ADD_FAILED = 'Tambah tahun gagal'
-SESS_EDIT_FAILED = 'Edit tahun gagal'
+SESS_ADD_FAILED = 'Tambah Tahun gagal'
+SESS_EDIT_FAILED = 'Edit Tahun gagal'
 @colander.deferred
 def deferred_status_apbd(node, kw):
     values = kw.get('status_apbd', [])
@@ -192,7 +192,7 @@ class view_tahun(BaseViews):
     def query_id(self):
         return DBSession.query(Tahun).filter_by(id=self.request.matchdict['id'])
     def id_not_found(self):    
-        msg = 'tahun ID %s Tidak Ditemukan.' % self.request.matchdict['id']
+        msg = 'Tahun ID %s Tidak Ditemukan.' % self.request.matchdict['id']
         request.session.flash(msg, 'error')
         return route_list()
     @view_config(route_name='apbd-tahun-edit', renderer='templates/apbd-tahun/edit.pt',
@@ -233,12 +233,12 @@ class view_tahun(BaseViews):
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
-                msg = 'tahun ID %d %s sudah dihapus.' % (row.id, row.nama)
+                msg = 'Tahun %d %s sudah dihapus.' % (row.id, row.status_apbd)
                 try:
                   q.delete()
                   DBSession.flush()
                 except:
-                  msg = 'tahun ID %d %s tidak dapat dihapus.' % (row.id, row.nama)
+                  msg = 'Tahun %d %s tidak dapat dihapus.' % (row.id, row.status_apbd)
                 request.session.flash(msg)
             return self.route_list()
         return dict(row=row,

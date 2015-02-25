@@ -539,12 +539,12 @@ class view_pejabat(BaseViews):
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
-                msg = 'pejabat ID %d %s sudah dihapus.' % (row.id, row.nama)
+                msg = 'Pejabat ID %d %s %s sudah dihapus.' % (row.id, row.pegawais.nama, row.jabatans.nama)
                 try:
                   q.delete()
                   DBSession.flush()
                 except:
-                  msg = 'pejabat ID %d %s tidak dapat dihapus.' % (row.id, row.nama)
+                  msg = 'Pejabat ID %d %s %s tidak dapat dihapus.' % (row.id, row.pegawais.nama, row.jabatans.nama)
                 request.session.flash(msg)
             return self.route_list()
         return dict(row=row,

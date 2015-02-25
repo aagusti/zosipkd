@@ -259,12 +259,12 @@ class view_carousel(BaseViews):
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
-                msg = 'Carousel ID %d %s sudah dihapus.' % (row.id, row.description)
+                msg = 'Carousel ID %d %s sudah dihapus.' % (row.id, row.uraian)
                 try:
                   q.delete()
                   DBSession.flush()
                 except:
-                  msg = 'Carousel ID %d %s tidak dapat dihapus.' % (row.id, row.description)
+                  msg = 'Carousel ID %d %s tidak dapat dihapus.' % (row.id, row.uraian)
                 request.session.flash(msg)
             return self.route_list()
         return dict(row=row,
