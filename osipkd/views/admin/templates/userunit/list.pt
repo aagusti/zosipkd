@@ -124,8 +124,8 @@
             else alert('Pilih Baris yang akan di hapus');
         });
         $('#btn_print').click(function () {
-            //url = "/ag-report/r000/act/r041"
-            //window.open(url);
+            url = "/ag-report/r000/act/r016"
+            window.open(url);
         });
 
         $("#btn_close").click(function () {
