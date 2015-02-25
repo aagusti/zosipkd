@@ -158,7 +158,7 @@ RouteData = {
         id=23,
         kode='eis-chart-item-add',
         nama='Tambah eis-chart-item',
-        path='/eis-chart-item/{chart_id/add',
+        path='/eis-chart-item/{chart_id}/add',
         perm_name='add',
         ),
     dict(
