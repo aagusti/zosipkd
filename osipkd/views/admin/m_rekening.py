@@ -26,7 +26,7 @@ SESS_EDIT_FAILED = 'Edit rekening gagal'
 
 rek_widget = widget.AutocompleteInputWidget(
         size=60,
-        values = '/rekening/act/headof',
+        values = '/rekening/act/headofnama',
         min_length=1)
 
             
