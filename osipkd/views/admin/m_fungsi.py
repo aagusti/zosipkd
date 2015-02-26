@@ -76,6 +76,21 @@ class view_fungsi(BaseViews):
             rowTable = DataTables(req, Fungsi, query, columns)
             return rowTable.output_result()
             
+        elif url_dict['act']=='headofnama':
+            term = 'term' in params and params['term'] or '' 
+            rows = DBSession.query(Fungsi.id, Fungsi.kode, Fungsi.nama
+                      ).filter(
+                      Fungsi.nama.ilike('%%%s%%' % term) ).all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[2]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
+            return r
+            
         elif url_dict['act']=='changeid':
             row = Fungsi.get_by_id('fungsi_id' in params and params['fungsi_id'] or 0)
             if row:
