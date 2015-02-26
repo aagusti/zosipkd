@@ -661,7 +661,7 @@ RouteData = {
     dict(
         id=95,
         kode='urusan',
-        nama='urusans',
+        nama='Urusan',
         path='/urusan',
         perm_name='read',
         ),
@@ -2793,5 +2793,40 @@ RouteData = {
         path='/ak-jurnal-skpd/{id}/unposting',
         perm_name='unposting',
         ), 
+    dict(
+        id=400,
+        kode='fungsiurusan',
+        nama='Fungsi Urusan',
+        path='/fungsiurusan',
+        perm_name='read',
+        ),
+    dict(
+        id=401,
+        kode='fungsiurusan-act',
+        nama='Fungsi Urusan Act',
+        path='/fungsiurusan/act/{act}',
+        perm_name='read',
+        ),
+    dict(
+        id=402,
+        kode='fungsiurusan-add',
+        nama='Tambah Fungsi Urusan',
+        path='/fungsiurusan/add',
+        perm_name='add',
+        ),
+    dict(
+        id=403,
+        kode='fungsiurusan-edit',
+        nama='Edit Fungsi Urusan',
+        path='/fungsiurusan/{id}/edit',
+        perm_name='edit',
+        ),
+    dict(
+        id=404,
+        kode='fungsiurusan-delete',
+        nama='Hapus Fungsi Urusan',
+        path='/fungsiurusan/{id}/delete',
+        perm_name='delete',
+        ),
 ]}
 
