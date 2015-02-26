@@ -62,6 +62,9 @@ class Fungsi(NamaModel, Base):
 class FungsiUrusan(DefaultModel, Base):
     __tablename__  = 'fungsi_urusans'
     __table_args__ = {'extend_existing':True,'schema' : 'apbd'}
+
+    urusans   = relationship("Urusan", backref=backref('fungsi_urusans'))
+    fungsis   = relationship("Fungsi", backref=backref('fungsi_urusans'))
     urusan_id = Column(Integer, ForeignKey("admin.urusans.id"))
     fungsi_id = Column(Integer, ForeignKey("apbd.fungsis.id"))
     nama      = Column(String(128))
