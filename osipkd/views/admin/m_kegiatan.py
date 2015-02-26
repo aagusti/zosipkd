@@ -164,6 +164,16 @@ class view_kegiatan(BaseViews):
         if req.POST:
             if 'simpan' in req.POST:
                 controls = req.POST.items()
+
+                #Cek Kode Sama ato tidak
+                a = form.validate(controls)
+                b = a['kode']
+                c = "%s" % b
+                cek  = DBSession.query(Kegiatan).filter(Kegiatan.kode==c).first()
+                if cek :
+                    self.request.session.flash('Kode sudah ada.', 'error')
+                    return HTTPFound(location=self.request.route_url('kegiatan-add'))
+
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
@@ -188,6 +198,9 @@ class view_kegiatan(BaseViews):
     def view_edit(self):
         request = self.request
         row = self.query_id().first()
+        uid     = row.id
+        kode    = row.kode
+
         if not row:
             return id_not_found(request)
         form = self.get_form(EditSchema)
@@ -195,6 +208,19 @@ class view_kegiatan(BaseViews):
             if 'simpan' in request.POST:
                 controls = request.POST.items()
                 print controls
+
+                #Cek Kode Sama ato tidak
+                a = form.validate(controls)
+                b = a['kode']
+                c = "%s" % b
+                cek = DBSession.query(Kegiatan).filter(Kegiatan.kode==c).first()
+                if cek:
+                    kode1 = DBSession.query(Kegiatan).filter(Kegiatan.id==uid).first()
+                    d     = kode1.kode
+                    if d!=c:
+                        self.request.session.flash('Data sudah ada', 'error')
+                        return HTTPFound(location=request.route_url('kegiatan-edit',id=row.id))
+
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
