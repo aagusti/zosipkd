@@ -25,7 +25,7 @@ class BaseViews(object):
         self.context = context
         self.request = request
         self.session = request.session
-        self.cust_nm   = "PEMERINTAH KABUPATEN/KOTA DEMO"
+        self.cust_nm   = "PEMERINTAH KABUPATEN TANGERANG"
         self.datas = {}
         
         cday = datetime.today()    
