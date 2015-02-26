@@ -267,6 +267,17 @@ class ViewAnggaranLap(BaseViews):
             response.content_disposition='filename=output.pdf' 
             response.write(pdf)
             return response
+        elif url_dict['act']=='r018' :
+            query = DBSession.query(Urusan.nama.label('urusan_nm'),Fungsi.nama.label('fungsi_nm'),FungsiUrusan.nama
+               ).filter(Urusan.id==FungsiUrusan.urusan_id, Fungsi.id==FungsiUrusan.fungsi_id
+               ).order_by(Fungsi.nama,Urusan.nama,FungsiUrusan.nama).all()
+            generator = r018Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
         else:
             return HTTPNotFound() #TODO: Warning Hak Akses 
 
@@ -3115,6 +3126,23 @@ class r017Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root  
 
+class r018Generator(JasperGenerator):
+    def __init__(self):
+        super(r018Generator, self).__init__()
+        self.reportname = get_rpath('apbd/R0018.jrxml')
+        self.xpath = '/apbd/master/tahun'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'master')
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(xml_a, 'tahun')
+            ET.SubElement(xml_greeting, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_greeting, "fungsi_nm").text = row.fungsi_nm
+            ET.SubElement(xml_greeting, "nama").text = row.nama
+            ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root  
+
 class r100Generator(JasperGenerator):
     def __init__(self):
         super(r100Generator, self).__init__()
@@ -4004,11 +4032,12 @@ class r204Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "lokasi").text = row.lokasi
             ET.SubElement(xml_a, "target").text = row.target
             ET.SubElement(xml_a, "sasaran").text = row.sasaran
-            ET.SubElement(xml_a, "amt_lalu").text = row.amt_lalu
-            ET.SubElement(xml_a, "amt_yad").text = row.amt_yad
+            ET.SubElement(xml_a, "amt_lalu").text = unicode(row.amt_lalu)
+            ET.SubElement(xml_a, "amt_yad").text = unicode(row.amt_yad)
             
             ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
             ET.SubElement(xml_a, "customer").text = customer
+            
             rows = DBSession.query(KegiatanIndikator)\
               .filter(KegiatanIndikator.kegiatan_sub_id==row.id)\
               .order_by(KegiatanIndikator.tipe,KegiatanIndikator.no_urut)
@@ -4067,7 +4096,7 @@ class r204Generator(JasperGeneratorWithSubreport):
                 ET.SubElement(xml_d, "jmltrw2").text =unicode(row4.jmltrw2)
                 ET.SubElement(xml_d, "jmltrw3").text =unicode(row4.jmltrw3)
                 ET.SubElement(xml_d, "jmltrw4").text =unicode(row4.jmltrw4)
-
+            
         return self.root
 
 class r2041Generator(JasperGeneratorWithSubreport):
