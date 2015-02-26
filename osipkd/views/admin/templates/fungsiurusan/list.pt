@@ -6,9 +6,9 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Kode</th>
+                <th>Fungsi</th>
+                <th>Urusan</th>
                 <th>Nama</th>
-                <th>in-aktif</th>
             </tr>
         </thead>
         <tbody>
@@ -21,7 +21,7 @@
       var mThn;
       var oTable;
       var iPos;
-      var oTableUrl = "/program/act/grid";
+      var oTableUrl = "/fungsiurusan/act/grid";
       Number.prototype.formatMoney = function(decPlaces, thouSeparator, decSeparator) {
         var n = this,
             decPlaces = isNaN(decPlaces = Math.abs(decPlaces)) ? 2 : decPlaces,
@@ -36,42 +36,49 @@
         
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
-          "sDom": '<"toolbar">lfrtip',
-          "sAjaxSource": oTableUrl,
-          "bServerSide": true,
-          "bProcessing": true,
+          "sDom"           : '<"toolbar">lfrtip',
+          "sAjaxSource"    : oTableUrl,
+          "bServerSide"    : true,
+          "bProcessing"    : true,
           "bScrollCollapse": true,
-          "bSort": true,
-          "bInfo": false,
-          "bFilter": true,
-          "bAutoWidth": false,
-          "bPaginate": true,
+          "bSort"          : true,
+          "bInfo"          : false,
+          "bFilter"        : true,
+          "bAutoWidth"     : false,
+          "bPaginate"      : true,
           "sPaginationType": "full_numbers",
           
           "lengthMenu": [
               [10, 25, 50, 100],
               [10, 25, 50, 100]
           ],
-          "aoColumnDefs": [{
-                        "bSearchable": false,
-                        "bVisible": false,
-                        "aTargets": [0]
-                    }],
+          "aoColumnDefs": [
+          {
+              "bSearchable": false,
+              "bVisible"   : false,
+              "aTargets"   : [0]
+          },{
+              "bSearchable": true,
+              "aTargets"   : [3]
+          },{
+              "bSearchable": false,
+              "aTargets"   : [1,2]
+          }],
           "aoColumns": [
               null,
               {"width": "120px"},
-              null,
-              {"width": "60px", "sClass":"center"},
+              {"width": "120px"},
+              {"width": "120px"},
           ]
         });
           
         var tb_array = [
           '<div class="btn-group pull-left">',
-          '	<button id="btn_add" class="btn btn btn-primary" type="button">Tambah</button>',
-          '	<button id="btn_edit" class="btn btn btn-primary" type="button">Edit</button>',
-          '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',
-          '	<button id="btn_pdf" class="btn btn btn-warning" type="button">PDF</button>',
-          '	<button id="btn_csv" class="btn btn btn-default" type="button">CSV</button>',
+          '	<button id="btn_add"    class="btn btn btn-primary" type="button">Tambah</button>',
+          '	<button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button>',
+          '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
+          '	<button id="btn_print"  class="btn btn btn-primary" type="button">Cetak</button>',
+          '	<button id="btn_close"  class="btn btn btn-warning" type="button">Tutup</button>',
           '	&nbsp;',
           '</div>',
         ];
@@ -97,18 +104,29 @@
         });
         
         $('#btn_add').click(function () {
-            window.location = '/program/add';
+            window.location = '/fungsiurusan/add';
         });
 
         $('#btn_edit').click(function () {
-            if (mID) window.location = '/program/'+mID+'/edit';
+            if (mID) window.location = '/fungsiurusan/'+mID+'/edit';
             else alert('Pilih Baris yang akan di edit');
         });
 
         $('#btn_delete').click(function () {
-            if (mID) window.location = '/program/'+mID+'/delete';
+            if (mID) window.location = '/fungsiurusan/'+mID+'/delete';
             else alert('Pilih Baris yang akan di hapus');
         });
+
+        $('#btn_print').click(function () {
+            url = "/ag-report/r000/act/r018"
+            window.open(url);
+        });
+
+        $("#btn_close").click(function () {
+            window.location = '/admin';
+            return false;
+        });
+        
         })
     </script>
   </div>
