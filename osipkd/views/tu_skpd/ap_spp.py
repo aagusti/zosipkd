@@ -258,9 +258,10 @@ class view_ap_spp(BaseViews):
         values['spd_nm']=row.spds.nama
         values['spd_kd']=row.spds.kode
         values['spd_tgl']=row.spds.tanggal
-        row = DBSession.query(KegiatanItem).filter(KegiatanItem.id==row.ap_kegiatankd).first()
-        nama = row.nama
-        values['ap_kegiatannm']=nama
+        if row.ap_kegiatankd:
+            row = DBSession.query(KegiatanItem).filter(KegiatanItem.id==row.ap_kegiatankd).first()
+            nama = row.nama
+            values['ap_kegiatannm']=nama
         form.set_appstruct(values) 
         return dict(form=form)
 
