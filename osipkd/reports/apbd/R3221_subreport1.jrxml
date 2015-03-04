@@ -30,24 +30,6 @@
 	<field name="satuan_2" class="java.lang.String">
 		<fieldDescription><![CDATA[satuan_2]]></fieldDescription>
 	</field>
-	<field name="tolok_ukur_3" class="java.lang.String">
-		<fieldDescription><![CDATA[tolok_ukur_3]]></fieldDescription>
-	</field>
-	<field name="volume_3" class="java.lang.String">
-		<fieldDescription><![CDATA[volume_3]]></fieldDescription>
-	</field>
-	<field name="satuan_3" class="java.lang.String">
-		<fieldDescription><![CDATA[satuan_3]]></fieldDescription>
-	</field>
-	<field name="tolok_ukur_4" class="java.lang.String">
-		<fieldDescription><![CDATA[tolok_ukur_4]]></fieldDescription>
-	</field>
-	<field name="volume_4" class="java.lang.String">
-		<fieldDescription><![CDATA[volume_4]]></fieldDescription>
-	</field>
-	<field name="satuan_4" class="java.lang.String">
-		<fieldDescription><![CDATA[satuan_4]]></fieldDescription>
-	</field>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -72,21 +54,21 @@
 				<textElement>
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tolok_ukur_2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tolok_ukur_1}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="318" y="0" width="113" height="14"/>
 				<textElement>
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{volume_2}))+" "+$F{satuan_2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{volume_1}))+" "+$F{satuan_1}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="207" y="0" width="111" height="14"/>
 				<textElement>
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tolok_ukur_3}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tolok_ukur_2}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="197" y="0" width="10" height="14"/>
@@ -100,7 +82,7 @@
 				<textElement>
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{volume_3}))+" "+$F{satuan_3}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{volume_2}))+" "+$F{satuan_2}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

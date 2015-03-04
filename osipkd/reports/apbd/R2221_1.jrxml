@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RKA LAMP1" language="groovy" pageWidth="612" pageHeight="972" columnWidth="542" leftMargin="50" rightMargin="20" topMargin="60" bottomMargin="14">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="453"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["Z:\\py_os\\zosipkd\\osipkd\\reports\\apbd\\"]]></defaultValueExpression>
 	</parameter>
@@ -447,7 +447,7 @@ Sdana]]></text>
 					<textElement markup="none">
 						<font size="8" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Lampiran RKA - SKPD 2.2.1 (Ikhtisar)"]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Lampiran DPA - SKPD 2.2.1 (Ikhtisar)"]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="0" y="74" width="100" height="17"/>

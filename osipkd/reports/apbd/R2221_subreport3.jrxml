@@ -88,7 +88,7 @@
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{trw4})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="2" y="45" width="50" height="14"/>
+				<reportElement x="2" y="45" width="60" height="14"/>
 				<textElement>
 					<font size="9"/>
 				</textElement>

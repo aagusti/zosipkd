@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R1221_subreport2" language="groovy" pageWidth="555" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R1221_subreport2" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -15,59 +15,8 @@
 	<field name="level_id" class="java.lang.String">
 		<fieldDescription><![CDATA[level_id]]></fieldDescription>
 	</field>
-	<field name="item_kd" class="java.lang.String">
-		<fieldDescription><![CDATA[item_kd]]></fieldDescription>
-	</field>
-	<field name="item_nm" class="java.lang.String">
-		<fieldDescription><![CDATA[item_nm]]></fieldDescription>
-	</field>
-	<field name="volume1" class="java.lang.String">
-		<fieldDescription><![CDATA[volume1]]></fieldDescription>
-	</field>
-	<field name="volume2" class="java.lang.String">
-		<fieldDescription><![CDATA[volume2]]></fieldDescription>
-	</field>
-	<field name="volume3" class="java.lang.String">
-		<fieldDescription><![CDATA[volume3]]></fieldDescription>
-	</field>
-	<field name="volume4" class="java.lang.String">
-		<fieldDescription><![CDATA[volume4]]></fieldDescription>
-	</field>
-	<field name="harga1" class="java.lang.String">
-		<fieldDescription><![CDATA[harga1]]></fieldDescription>
-	</field>
-	<field name="harga2" class="java.lang.String">
-		<fieldDescription><![CDATA[harga2]]></fieldDescription>
-	</field>
-	<field name="harga3" class="java.lang.String">
-		<fieldDescription><![CDATA[harga3]]></fieldDescription>
-	</field>
-	<field name="harga4" class="java.lang.String">
-		<fieldDescription><![CDATA[harga4]]></fieldDescription>
-	</field>
-	<field name="satuan11" class="java.lang.String">
-		<fieldDescription><![CDATA[satuan11]]></fieldDescription>
-	</field>
-	<field name="satuan12" class="java.lang.String">
-		<fieldDescription><![CDATA[satuan12]]></fieldDescription>
-	</field>
-	<field name="satuan21" class="java.lang.String">
-		<fieldDescription><![CDATA[satuan21]]></fieldDescription>
-	</field>
-	<field name="satuan22" class="java.lang.String">
-		<fieldDescription><![CDATA[satuan22]]></fieldDescription>
-	</field>
-	<field name="satuan31" class="java.lang.String">
-		<fieldDescription><![CDATA[satuan31]]></fieldDescription>
-	</field>
-	<field name="satuan32" class="java.lang.String">
-		<fieldDescription><![CDATA[satuan32]]></fieldDescription>
-	</field>
-	<field name="satuan41" class="java.lang.String">
-		<fieldDescription><![CDATA[satuan41]]></fieldDescription>
-	</field>
-	<field name="satuan42" class="java.lang.String">
-		<fieldDescription><![CDATA[satuan42]]></fieldDescription>
+	<field name="keg_nm" class="java.lang.String">
+		<fieldDescription><![CDATA[keg_nm]]></fieldDescription>
 	</field>
 	<field name="jumlah1" class="java.lang.String">
 		<fieldDescription><![CDATA[jumlah1]]></fieldDescription>
@@ -75,147 +24,82 @@
 	<field name="jumlah2" class="java.lang.String">
 		<fieldDescription><![CDATA[jumlah2]]></fieldDescription>
 	</field>
-	<field name="jumlah3" class="java.lang.String">
-		<fieldDescription><![CDATA[jumlah3]]></fieldDescription>
-	</field>
-	<field name="jumlah4" class="java.lang.String">
-		<fieldDescription><![CDATA[jumlah4]]></fieldDescription>
-	</field>
 	<variable name="jumlah1" class="java.lang.Double">
-		<variableExpression><![CDATA[Double.parseDouble($F{jumlah3})]]></variableExpression>
-	</variable>
-	<variable name="jumlah_rek1" class="java.lang.Double" resetType="Group" resetGroup="rek_kd" calculation="Sum">
-		<variableExpression><![CDATA[$V{jumlah1}]]></variableExpression>
-	</variable>
-	<variable name="harga" class="java.lang.Double">
-		<variableExpression><![CDATA[Double.parseDouble($F{harga4})]]></variableExpression>
-	</variable>
-	<variable name="volume" class="java.lang.Double">
-		<variableExpression><![CDATA[Double.parseDouble($F{volume4})]]></variableExpression>
+		<variableExpression><![CDATA[Double.parseDouble($F{jumlah1})]]></variableExpression>
 	</variable>
 	<variable name="jumlah2" class="java.lang.Double">
-		<variableExpression><![CDATA[Double.parseDouble($F{jumlah4})]]></variableExpression>
+		<variableExpression><![CDATA[Double.parseDouble($F{jumlah2})]]></variableExpression>
 	</variable>
-	<variable name="jumlah_rek2" class="java.lang.Double" resetType="Group" resetGroup="rek_kd" calculation="Sum">
-		<variableExpression><![CDATA[$V{jumlah2}]]></variableExpression>
-	</variable>
-	<group name="rek_kd">
-		<groupExpression><![CDATA[$F{rek_kd}]]></groupExpression>
-		<groupHeader>
-			<band height="14">
-				<textField isStretchWithOverflow="true">
-					<reportElement x="2" y="0" width="54" height="14"/>
-					<textElement>
-						<font size="9"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{rek_kd}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true">
-					<reportElement x="56" y="0" width="246" height="14"/>
-					<textElement>
-						<font size="9"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{rek_nm}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="rek_kd">
-					<reportElement x="512" y="0" width="30" height="14"/>
-					<textElement textAlignment="Right">
-						<font size="9"/>
-					</textElement>
-					<textFieldExpression><![CDATA[(($V{jumlah_rek2}-$V{jumlah_rek1})*100/$V{jumlah_rek2})<0 ? "("+new DecimalFormat("0.00").format(($V{jumlah_rek2}-$V{jumlah_rek1})*100*-1/$V{jumlah_rek2})+")" : new DecimalFormat("0.00").format(($V{jumlah_rek2}-$V{jumlah_rek1})*100/$V{jumlah_rek2})]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="rek_kd">
-					<reportElement x="300" y="0" width="70" height="14"/>
-					<textElement textAlignment="Right">
-						<font size="9"/>
-					</textElement>
-					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_rek1})]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="rek_kd">
-					<reportElement x="370" y="0" width="70" height="14"/>
-					<textElement textAlignment="Right">
-						<font size="9"/>
-					</textElement>
-					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_rek2})]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="rek_kd">
-					<reportElement x="440" y="0" width="70" height="14"/>
-					<textElement textAlignment="Right">
-						<font size="9"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($V{jumlah_rek2}-$V{jumlah_rek1})<0 ? "("+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{jumlah_rek2}-$V{jumlah_rek1})*-1)+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_rek2}-$V{jumlah_rek1})]]></textFieldExpression>
-				</textField>
-			</band>
-		</groupHeader>
-	</group>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
 		<band height="14">
-			<printWhenExpression><![CDATA[$F{level_id}=="4"]]></printWhenExpression>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="56" y="0" width="13" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="14"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
 				<textElement>
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{item_kd}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{rek_kd}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="69" y="0" width="108" height="14"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="50" y="0" width="385" height="14"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
 				<textElement>
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{item_nm}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{rek_nm}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="300" y="0" width="70" height="14"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="720" y="0" width="34" height="14"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($V{jumlah2}-$V{jumlah1})*100/$V{jumlah2})<0 ? "("+new DecimalFormat("0.00").format(($V{jumlah2}-$V{jumlah1})*100*-1/$V{jumlah2})+")" : new DecimalFormat("0.00").format(($V{jumlah2}-$V{jumlah1})*100/$V{jumlah2})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="435" y="0" width="95" height="14"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
 				<textElement textAlignment="Right">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah1})]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="177" y="0" width="31" height="14"/>
-				<textElement textAlignment="Right">
-					<font size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{volume})]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="208" y="0" width="43" height="14"/>
-				<textElement>
-					<font size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{satuan31}==null ? "" : $F{satuan31}+" "+($F{satuan32}==null ? "" : "/"+$F{satuan32})]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="251" y="0" width="49" height="14"/>
-				<textElement textAlignment="Right">
-					<font size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{harga})]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="370" y="0" width="70" height="14"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="530" y="0" width="95" height="14"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
 				<textElement textAlignment="Right">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah2})]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="440" y="0" width="70" height="14"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="625" y="0" width="95" height="14"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
 				<textElement textAlignment="Right">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($V{jumlah2}-$V{jumlah1})<0 ? "("+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{jumlah2}-$V{jumlah1})*-1)+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah2}-$V{jumlah1})]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="512" y="0" width="30" height="14"/>
-				<textElement textAlignment="Right">
-					<font size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[(($V{jumlah2}-$V{jumlah1})*100/$V{jumlah2})<0 ? "("+new DecimalFormat("0.00").format(($V{jumlah2}-$V{jumlah1})*100*-1/$V{jumlah2})+")" : new DecimalFormat("0.00").format(($V{jumlah2}-$V{jumlah1})*100/$V{jumlah2})]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
