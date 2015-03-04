@@ -2701,6 +2701,49 @@ class ViewAnggaranLap(BaseViews):
             response.write(pdf)
             return response
 
+    ###### KAS BUDGET
+    @view_config(route_name="anggaran_r700", renderer="templates/ag-report/r700.pt", permission="read")
+    def anggaran_r700(self):
+        params = self.request.params
+        return dict(datas=self.datas,)
+
+    @view_config(route_name="anggaran_r700_act")
+    def anggaran_r700_act(self):
+        req    = self.request
+        params = req.params
+        url_dict = req.matchdict
+
+        ## SKPD All 
+        if url_dict['act']=='r711' :
+            subq1 = DBSession.query(Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
+                KegiatanSub.tahun_id,
+                (KegiatanItem.vol_1_1* KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('jml1'),
+                (KegiatanItem.vol_2_1* KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('jml2'),
+                (KegiatanItem.vol_3_1* KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('jml3'),
+                (KegiatanItem.vol_4_1* KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('jml4'))\
+                .filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                        KegiatanItem.rekening_id==Rekening.id,
+                        KegiatanSub.tahun_id==self.session['tahun'])\
+                .subquery()
+
+            query = DBSession.query(Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
+                Rekening.level_id, Rekening.defsign, subq1.c.tahun_id, 
+                func.sum(subq1.c.jml1).label('jumlah1'),func.sum(subq1.c.jml2).label('jumlah2'),
+                func.sum(subq1.c.jml3).label('jumlah3'),func.sum(subq1.c.jml4).label('jumlah4'))\
+                .filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode)),
+                Rekening.level_id<4)\
+                .group_by(Rekening.kode, Rekening.nama,
+                Rekening.level_id, Rekening.defsign, subq1.c.tahun_id)\
+                .order_by(Rekening.kode).all()                    
+
+            generator = r700Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
 class r001Generator(JasperGenerator):
     """Jasper-Generator for Greetingcards"""
     def __init__(self):
@@ -5462,6 +5505,31 @@ class r622Generator(JasperGeneratorWithSubreport):
                 ET.SubElement(xml_d, "satuan41").text = row4.satuan41
                 ET.SubElement(xml_d, "satuan42").text = row4.satuan42
                 
+        return self.root
+
+class r700Generator(JasperGenerator):
+    """Jasper-Generator for Greetingcards"""
+    def __init__(self):
+        super(r700Generator, self).__init__()
+        self.reportname = get_rpath('apbd/R7000.jrxml')
+        self.xpath = '/apbd/perda/lamp1'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        """Generates the XML File used by Jasperreports"""
+        xml_a  =  ET.SubElement(self.root, 'perda')
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(xml_a, 'lamp1')
+            ET.SubElement(xml_greeting, "rek_kd").text = row.rek_kd
+            ET.SubElement(xml_greeting, "rek_nm").text = row.rek_nm
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "defsign").text = unicode(row.defsign)
+            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_greeting, "jumlah1").text = unicode(row.jumlah1)
+            ET.SubElement(xml_greeting, "jumlah2").text = unicode(row.jumlah2)
+            ET.SubElement(xml_greeting, "jumlah3").text = unicode(row.jumlah3)
+            ET.SubElement(xml_greeting, "jumlah4").text = unicode(row.jumlah4)
+            ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
 
 if __name__ == '__main__':
