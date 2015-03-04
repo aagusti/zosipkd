@@ -7,8 +7,8 @@
             <tr>
                 <th>ID</th>
                 <th>Tahun</th>
-                <th>Kode</th>
-                <th>Nama</th>
+                <th>No. Kategori</th>
+                <th>Uraian</th>
                 <th>Masa Guna</th>
                 <th>Minimum</th>
                 <th>in-aktif</th>

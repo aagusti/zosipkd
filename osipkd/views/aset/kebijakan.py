@@ -34,26 +34,22 @@ kat_widget = widget.AutocompleteInputWidget(
         min_length=1)
                 
 class AddSchema(colander.Schema):
-    tahun = colander.SchemaNode(
+    tahun       = colander.SchemaNode(
                     colander.Integer())
-                    
-    kategori_id  = colander.SchemaNode(
+    kategori_id = colander.SchemaNode(
                     colander.String(),
                     widget = widget.HiddenWidget(),
-                    oid = "kategori_id"
-                    )
+                    oid = "kategori_id")
     kategori_nm = colander.SchemaNode(
                     colander.String(),
                     widget = kat_widget,
                     oid = "kategori_nm",
-                    title = "Kategori"
-                    )
-    masa_guna = colander.SchemaNode(
+                    title = "Kategori")
+    masa_guna   = colander.SchemaNode(
                     colander.Integer())
-    minimum = colander.SchemaNode(
+    minimum     = colander.SchemaNode(
                     colander.Integer())
-                    
-    disabled = colander.SchemaNode(
+    disabled    = colander.SchemaNode(
                     colander.Boolean())
                     
 class EditSchema(AddSchema):
@@ -72,8 +68,8 @@ class view_aset_kebijakan(BaseViews):
     @view_config(route_name="aset-kebijakan-act", renderer="json",
                  permission="read")
     def aset_kebijakan_act(self):
-        req    = self.request
-        params = req.params
+        req      = self.request
+        params   = req.params
         url_dict = req.matchdict
 
         pk_id = 'id' in params and int(params['id']) or 0
@@ -87,6 +83,7 @@ class view_aset_kebijakan(BaseViews):
             columns.append(ColumnDT('masa_guna'))
             columns.append(ColumnDT('minimum'))
             columns.append(ColumnDT('disabled'))
+            
             query = DBSession.query(AsetKebijakan).\
                     join(AsetKategori).\
                     filter(AsetKebijakan.kategori_id==AsetKategori.id)
@@ -116,12 +113,12 @@ class view_aset_kebijakan(BaseViews):
     def save(self, values, user, row=None):
         if not row:
             row = AsetKebijakan()
-            row.created = datetime.now()
+            row.created    = datetime.now()
             row.create_uid = user.id
         row.from_dict(values)
-        row.updated = datetime.now()
+        row.updated    = datetime.now()
         row.update_uid = user.id
-        row.disabled = 'disabled' in values and values['disabled'] and 1 or 0
+        row.disabled   = 'disabled' in values and values['disabled'] and 1 or 0
         DBSession.add(row)
         DBSession.flush()
         return row
@@ -143,8 +140,8 @@ class view_aset_kebijakan(BaseViews):
     @view_config(route_name='aset-kebijakan-add', renderer='templates/kebijakan/add.pt',
                  permission='add')
     def view_kebijakan_add(self):
-        req = self.request
-        ses = self.session
+        req  = self.request
+        ses  = self.session
         form = self.get_form(AddSchema)
         if req.POST:
             if 'simpan' in req.POST:
@@ -168,7 +165,7 @@ class view_aset_kebijakan(BaseViews):
         return DBSession.query(AsetKebijakan).filter_by(id=self.request.matchdict['id'])
         
     def id_not_found(self):    
-        msg = 'Kebijakan ID %s Tidak Ditemukan.' % self.request.matchdict['id']
+        msg = 'Kebijakan ID %s tidak ditemukan.' % self.request.matchdict['id']
         request.session.flash(msg, 'error')
         return route_list()
 
@@ -177,8 +174,10 @@ class view_aset_kebijakan(BaseViews):
     def view_kebijakan_edit(self):
         request = self.request
         row = self.query_id().first()
+        
         if not row:
             return id_not_found(request)
+            
         form = self.get_form(EditSchema)
         if request.POST:
             if 'simpan' in request.POST:
@@ -205,22 +204,19 @@ class view_aset_kebijakan(BaseViews):
                  permission='delete')
     def view_delete(self):
         request = self.request
-        q = self.query_id()
-        row = q.first()
+        q       = self.query_id()
+        row     = q.first()
         
         if not row:
             return self.id_not_found(request)
+            
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
-                msg = 'Kebijakan ID %d %s sudah dihapus.' % (row.id, row.uraian)
-                try:
-                  q.delete()
-                  DBSession.flush()
-                except:
-                  msg = 'Kebijakan ID %d %s tidak dapat dihapus.' % (row.id, row.uraian)
+                msg = 'Kebijakan ID %d sudah dihapus.' % (row.id)
+                q.delete()
+                DBSession.flush()
                 request.session.flash(msg)
             return self.route_list()
-        return dict(row=row,
-                     form=form.render())
+        return dict(row=row, form=form.render())
                         

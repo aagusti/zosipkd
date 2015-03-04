@@ -6,8 +6,8 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Kode</th>
-                <th>Nama</th>
+                <th>No. Kategori</th>
+                <th>Uraian</th>
                 <th>Induk</th>
                 <th>Level</th>
                 <th>in-aktif</th>

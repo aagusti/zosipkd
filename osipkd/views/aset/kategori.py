@@ -34,26 +34,23 @@ kat_widget = widget.AutocompleteInputWidget(
         min_length=1)
                 
 class AddSchema(colander.Schema):
-    parent_id  = colander.SchemaNode(
+    parent_id   = colander.SchemaNode(
                     colander.String(),
                     widget = widget.HiddenWidget(),
                     missing = colander.drop,
-                    oid = "parent_id"
-                    )
-    parent_nm = colander.SchemaNode(
+                    oid = "parent_id")
+    parent_nm   = colander.SchemaNode(
                     colander.String(),
                     widget = kat_widget,
                     missing = colander.drop,
                     oid = "parent_nm",
-                    title = "Header"
-                    )
-    kode = colander.SchemaNode(
+                    title = "Header")
+    kode        = colander.SchemaNode(
                     colander.String(),
                     validator=colander.Length(max=18))
-                    
-    uraian = colander.SchemaNode(
+    uraian      = colander.SchemaNode(
                     colander.String())
-    disabled = colander.SchemaNode(
+    disabled    = colander.SchemaNode(
                     colander.Boolean())
                     
 class EditSchema(AddSchema):
@@ -78,7 +75,7 @@ class view_kategori(BaseViews):
     def view_act(self):
         ses = self.request.session
         req = self.request
-        params = req.params
+        params   = req.params
         url_dict = req.matchdict
         
         if url_dict['act']=='grid':
@@ -95,7 +92,7 @@ class view_kategori(BaseViews):
             return rowTable.output_result()
             
         elif url_dict['act']=='headofkode':
-            term = 'term' in params and params['term'] or '' 
+            term   = 'term'   in params and params['term']   or '' 
             prefix = 'prefix' in params and params['prefix'] or '' 
             q = DBSession.query(AsetKategori.id,AsetKategori.kode,AsetKategori.uraian).\
                     filter(AsetKategori.kode.ilike('%%%s%%' % term)).\
@@ -113,7 +110,7 @@ class view_kategori(BaseViews):
             return r
             
         elif url_dict['act']=='headofnama':
-            term = 'term' in params and params['term'] or '' 
+            term   = 'term'   in params and params['term']   or '' 
             prefix = 'prefix' in params and params['prefix'] or '' 
             q = DBSession.query(AsetKategori.id,AsetKategori.kode,AsetKategori.uraian).\
                     filter(AsetKategori.uraian.ilike('%%%s%%' % term)).\
@@ -162,13 +159,14 @@ class view_kategori(BaseViews):
     def save(self, values, user, row=None):
         if not row:
             row = AsetKategori()
-            row.created = datetime.now()
+            row.created    = datetime.now()
             row.create_uid = user.id
         row.from_dict(values)
-        row.updated = datetime.now()
+        row.updated    = datetime.now()
         row.update_uid = user.id
         row.disabled = 'disabled' in values and values['disabled'] and 1 or 0
         row.level_id =  AsetKategori.get_next_level(row.parent_id) or 1
+        
         DBSession.add(row)
         DBSession.flush()
         return row
@@ -177,7 +175,7 @@ class view_kategori(BaseViews):
         if 'id' in self.request.matchdict:
             values['id'] = self.request.matchdict['id']
         row = self.save(values, self.request.user, row)
-        self.request.session.flash('kategori sudah disimpan.')
+        self.request.session.flash('Kategori sudah disimpan.')
             
     def route_list(self):
         return HTTPFound(location=self.request.route_url('aset-kategori'))
@@ -190,8 +188,8 @@ class view_kategori(BaseViews):
     @view_config(route_name='aset-kategori-add', renderer='templates/kategori/add.pt',
                  permission='add')
     def view_kategori_add(self):
-        req = self.request
-        ses = self.session
+        req  = self.request
+        ses  = self.session
         form = self.get_form(AddSchema)
         if req.POST:
             if 'simpan' in req.POST:
@@ -215,7 +213,7 @@ class view_kategori(BaseViews):
         return DBSession.query(AsetKategori).filter_by(id=self.request.matchdict['id'])
         
     def id_not_found(self):    
-        msg = 'kategori ID %s Tidak Ditemukan.' % self.request.matchdict['id']
+        msg = 'Kategori ID %s tidak ditemukan.' % self.request.matchdict['id']
         request.session.flash(msg, 'error')
         return route_list()
 
@@ -223,9 +221,11 @@ class view_kategori(BaseViews):
                  permission='edit')
     def view_kategori_edit(self):
         request = self.request
-        row = self.query_id().first()
+        row     = self.query_id().first()
+        
         if not row:
             return id_not_found(request)
+            
         form = self.get_form(EditSchema)
         if request.POST:
             if 'simpan' in request.POST:
@@ -235,8 +235,7 @@ class view_kategori(BaseViews):
                     c = form.validate(controls)
                 except ValidationFailure, e:
                     request.session[SESS_EDIT_FAILED] = e.render()               
-                    return HTTPFound(location=request.route_url('kategori-edit',
-                                      id=row.id))
+                    return HTTPFound(location=request.route_url('kategori-edit', id=row.id))
                 self.save_request(dict(controls), row)
             return self.route_list()
         elif SESS_EDIT_FAILED in request.session:
@@ -252,24 +251,24 @@ class view_kategori(BaseViews):
                  permission='delete')
     def view_delete(self):
         request = self.request
-        q = self.query_id()
-        row = q.first()
+        q       = self.query_id()
+        row     = q.first()
         
         if not row:
             return self.id_not_found(request)
+            
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
-                msg = 'kategori ID %d %s sudah dihapus.' % (row.id, row.uraian)
+                msg = 'Kategori ID %d %s sudah dihapus.' % (row.id, row.uraian)
                 try:
                   q.delete()
                   DBSession.flush()
                 except:
-                  msg = 'kategori ID %d %s tidak dapat dihapus.' % (row.id, row.uraian)
+                  msg = 'Kategori ID %d %s tidak dapat dihapus.' % (row.id, row.uraian)
                 request.session.flash(msg)
             return self.route_list()
-        return dict(row=row,
-                     form=form.render())
+        return dict(row=row, form=form.render())
                      
 """
     @view_config(route_name="aset-kategori", renderer="templates/aset/kategori.pt")

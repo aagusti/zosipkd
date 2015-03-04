@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, or_
 from pyramid.view import (
     view_config,
     )
@@ -32,7 +32,17 @@ kat_widget = widget.AutocompleteInputWidget(
         size=60,
         values = '/aset/kiba/headofnama/act',
         min_length=1)
-                
+
+def deferred_kondisi(node, kw):
+    values = kw.get('kondisi', [])
+    return widget.SelectWidget(values=values)
+    
+KONDISI = (
+    ('B', 'Baik'),
+    ('KB', 'Kurang Baik'),
+    ('RB', 'Rusak Berat'),
+    )
+    
 class AddSchema(KibSchema):
     kib                   = colander.SchemaNode(
                               colander.String(),
@@ -75,8 +85,8 @@ class view_aset_kiba(BaseViews):
                  permission="read")
     def aset_kiba_act(self):
         ses      = self.request.session
-        req    = self.request
-        params = req.params
+        req      = self.request
+        params   = req.params
         url_dict = req.matchdict
 
         pk_id = 'id' in params and int(params['id']) or 0
@@ -92,14 +102,40 @@ class view_aset_kiba(BaseViews):
             columns.append(ColumnDT('th_beli'))
             columns.append(ColumnDT('harga'))
             columns.append(ColumnDT('kondisi'))
+            
             query = DBSession.query(AsetKib).\
                     join(AsetKategori).\
-                    filter(AsetKib.unit_id == ses['unit_id'],  
+                    filter(AsetKib.unit_id == ses['unit_id'], 
                            AsetKib.kategori_id==AsetKategori.id,
                            AsetKib.kib=='A')
             rowTable = DataTables(req, AsetKib, query, columns)
             return rowTable.output_result()
-
+         
+        elif url_dict['act']=='headofkode':
+            term   = 'term' in params and params['term'] or '' 
+            q = DBSession.query(AsetKib.id,
+                                AsetKategori.kode,
+                                AsetKib.no_register,
+                                AsetKib.uraian,
+                                AsetKib.tgl_perolehan).\
+                    join(AsetKategori).\
+                    filter(AsetKib.unit_id == ses['unit_id'], 
+                           AsetKib.kategori_id == AsetKategori.id,
+                           or_(AsetKategori.kode.ilike('%%%s%%' % term),
+                               AsetKib.uraian.ilike('%%%s%%' % term))).\
+                    order_by(AsetKib.no_register)
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = ''.join([k[1],'-',str(k[2]),'-',str(k[3])])
+                d['kode']        = ''.join([k[1],'-',str(k[2]),'-',str(k[3])])
+                d['uraian']      = k[3]
+                d['tanggal']     = "%s" % k[4]
+                r.append(d)    
+            return r
+            
     #######    
     # Add #
     #######
@@ -122,13 +158,19 @@ class view_aset_kiba(BaseViews):
     def save(self, values, user, row=None):
         if not row:
             row = AsetKib()
-            row.created = datetime.now()
+            row.created    = datetime.now()
             row.create_uid = user.id
-            values['no_register'] = AsetKib.get_no_register(values) or 1
         row.from_dict(values)
-        row.updated = datetime.now()
+        row.updated    = datetime.now()
         row.update_uid = user.id
-        row.disabled = 'disabled' in values and values['disabled'] and 1 or 0
+        row.disabled   = 'disabled' in values and values['disabled'] and 1 or 0
+        
+        a = row.tahun
+        b = row.unit_id
+        c = row.kategori_id
+        if not row.no_register:
+            row.no_register = AsetKib.get_no_register(a,b,c)+1;
+                
         DBSession.add(row)
         DBSession.flush()
         return row
@@ -137,7 +179,7 @@ class view_aset_kiba(BaseViews):
         if 'id' in self.request.matchdict:
             values['id'] = self.request.matchdict['id']
         row = self.save(values, self.request.user, row)
-        self.request.session.flash('Kebijakan sudah disimpan.')
+        self.request.session.flash('KIB sudah disimpan.')
             
     def route_list(self):
         return HTTPFound(location=self.request.route_url('aset-kiba'))
@@ -150,8 +192,9 @@ class view_aset_kiba(BaseViews):
     @view_config(route_name='aset-kiba-add', renderer='templates/kibs/add_kiba.pt',
                  permission='add')
     def view_kebijakan_add(self):
-        req = self.request
-        ses = self.session
+        req  = self.request
+        ses  = self.session
+        
         form = self.get_form(AddSchema)
         if req.POST:
             if 'simpan' in req.POST:
@@ -160,8 +203,6 @@ class view_aset_kiba(BaseViews):
                     c = form.validate(controls)
                 except ValidationFailure, e:
                     return dict(form=form, kat_prefix=KAT_PREFIX)
-                    #req.session[SESS_ADD_FAILED] = e.render()               
-                    #return HTTPFound(location=req.route_url('aset-kiba-add', kat_prefix=KAT_PREFIX))
                 self.save_request(dict(controls))
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
@@ -176,35 +217,63 @@ class view_aset_kiba(BaseViews):
         return DBSession.query(AsetKib).filter_by(id=self.request.matchdict['id'])
         
     def id_not_found(self):    
-        msg = 'Kebijakan ID %s Tidak Ditemukan.' % self.request.matchdict['id']
+        msg = 'KIB ID %s Tidak Ditemukan.' % self.request.matchdict['id']
         request.session.flash(msg, 'error')
         return route_list()
 
-    @view_config(route_name='aset-kiba-edit', renderer='templates/kibs/edit.pt',
+    @view_config(route_name='aset-kiba-edit', renderer='templates/kibs/add_kiba.pt',
                  permission='edit')
     def view_kebijakan_edit(self):
         request = self.request
-        row = self.query_id().first()
+        row     = self.query_id().first()
+        
         if not row:
             return id_not_found(request)
+            
+        rowd={}
+        rowd['id']              = row.id
+        rowd['unit_id']         = row.units.id
+        rowd['unit_nm']         = row.units.nama
+        rowd['unit_kd']         = row.units.kode
+        rowd['kategori_id']     = row.kats.id
+        rowd['kategori_kd']     = row.kats.kode
+        rowd['kategori_nm']     = row.kats.uraian
+        rowd['no_register']     = row.no_register
+        rowd['pemilik_id']      = row.pemiliks.id
+        rowd['pemilik_nm']      = row.pemiliks.uraian
+        rowd['uraian']          = row.uraian
+        rowd['tgl_perolehan']   = row.tgl_perolehan
+        rowd['cara_perolehan']  = row.cara_perolehan
+        rowd['th_beli']         = row.th_beli
+        rowd['asal_usul']       = row.asal_usul
+        rowd['harga']           = row.harga
+        rowd['jumlah']          = row.jumlah
+        rowd['satuan']          = row.satuan
+        rowd['kondisi']         = row.kondisi
+        rowd['keterangan']      = row.keterangan
+
+        rowd['kib']                     = row.kib
+        rowd['a_luas_m2']               = row.a_luas_m2
+        rowd['a_alamat']                = row.a_alamat
+        rowd['a_hak_tanah']             = row.a_hak_tanah
+        rowd['a_sertifikat_tanggal']    = row.a_sertifikat_tanggal
+        rowd['a_sertifikat_nomor']      = row.a_sertifikat_nomor
+        rowd['a_penggunaan']            = row.a_penggunaan
+
         form = self.get_form(EditSchema)
+        form.set_appstruct(rowd)
         if request.POST:
             if 'simpan' in request.POST:
                 controls = request.POST.items()
-                print controls
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    request.session[SESS_EDIT_FAILED] = e.render()               
-                    return HTTPFound(location=request.route_url('aset-kiba-edit', #'kebijakan-edit',
-                                      id=row.id))
+                    return dict(form=form)
                 self.save_request(dict(controls), row)
             return self.route_list()
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
-        values = row.to_dict()
-        #values['kiba_nm']= row.kibas and row.kibas.uraian or ""
-        return dict(form=form.render(appstruct=values))
+        return dict(form=form)
 
     ##########
     # Delete #
@@ -213,21 +282,22 @@ class view_aset_kiba(BaseViews):
                  permission='delete')
     def view_delete(self):
         request = self.request
-        q = self.query_id()
-        row = q.first()
+        q       = self.query_id()
+        row     = q.first()
         
         if not row:
             return self.id_not_found(request)
+            
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
-                msg = 'Kebijakan ID %d %s sudah dihapus.' % (row.id, row.uraian)
+                msg = 'KIB ID %d %s sudah dihapus.' % (row.id, row.uraian)
                 try:
                   q.delete()
                   DBSession.flush()
                 except:
-                  msg = 'Kebijakan ID %d %s tidak dapat dihapus.' % (row.id, row.uraian)
+                  msg = 'KIB ID %d %s tidak dapat dihapus.' % (row.id, row.uraian)
                 request.session.flash(msg)
             return self.route_list()
-        return dict(row=row,
-                     form=form.render())
+        return dict(row=row, form=form.render())
+        

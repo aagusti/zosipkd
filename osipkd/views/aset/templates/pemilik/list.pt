@@ -6,8 +6,8 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Kode</th>
-                <th>Nama</th>
+                <th>No. Pemilik</th>
+                <th>Uraian</th>
                 <th>in-aktif</th>
             </tr>
         </thead>
