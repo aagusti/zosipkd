@@ -6,7 +6,7 @@
       <li class="dropdown" tal:attributes="class request.path in ['/password'] and 'active'">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Pendapatan<b class="caret"></b></a>
         <ul class="dropdown-menu">
-          <li><a href="">Anggaran</a></li>
+          <!--li><a href="">Anggaran</a></li-->
           <li><a href="/ar-invoice-skpd">Tagihan/Piutang/Ketetapan</a></li>
           <li><a href="/ar-sts">Realisasi</a></li>
           <li><a href="/ar-report-skpd">Laporan</a></li>
