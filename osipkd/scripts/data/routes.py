@@ -2828,5 +2828,19 @@ RouteData = {
         path='/fungsiurusan/{id}/delete',
         perm_name='delete',
         ),
+    dict(
+        id=405,
+        kode='anggaran_r700',
+        nama='Report Kas Budget',
+        path='/ag-report/r700',
+        perm_name='read',
+        ),
+    dict(
+        id=406,
+        kode='anggaran_r700_act',
+        nama='Report Kas Budget Act',
+        path='/ag-report/r700/act/{act}',
+        perm_name='read',
+        ),
 ]}
 
