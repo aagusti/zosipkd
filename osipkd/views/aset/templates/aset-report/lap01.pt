@@ -1,7 +1,8 @@
 <html metal:use-macro="load: ../base.pt">
-  <div metal:fill-slot="content">
-        <h4>Laporan SKPD</h4>
-    <hr>
+  <div metal:fill-slot="content" class="panel panel-default ">
+    <div class="panel-heading">
+        <h4 class="panel-title">Laporan SKPD</h4>
+    </div>
     <script type='text/javascript'>
       $(document).ready(function () {
         $("#btn_save").click(function () {
@@ -155,119 +156,55 @@
           </script> 
         </div>
 
-
-        <div class="panel panel-default col-md-12">
-          <div class="panel-heading">
-            Jenis Report
-          </div>
-          <div class="panel-body">
-            <div class="row">
-              <div class="col-lg-6">
-                <div class="input-group">
-                  <span class="input-group-addon">
-                    <input type="radio" name="kib" id="kib01" value="kiba">
-                  </span>
-                  <input type="text" class="form-control" aria-label="..." readonly value="KIB A (TANAH)">
-                </div><!-- /input-group -->
-              </div><!-- /.col-lg-6 -->
-
-              <div class="col-lg-6">
-                <div class="input-group">
-                  <span class="input-group-addon">
-                    <input type="radio" name="kib" id="kib06" value="kibf">
-                  </span> 
-                  <input type="text" class="form-control" aria-label="..." readonly value="KIB F (KONTRUKSI DALAM PEKERJAAN)">
-                </div><!-- /input-group -->
-              </div><!-- /.col-lg-6 -->
-            </div><!-- /.row -->
-            <div class="row">
-              <div class="col-lg-6">
-                <div class="input-group">
-                  <span class="input-group-addon">
-                    <input type="radio" name="kib" id="kib02" value="kibb">
-                  </span>
-                  <input type="text" class="form-control" aria-label="..." readonly value="KIB B (PERALATAN DAN MESIN)">
-                </div><!-- /input-group -->
-              </div><!-- /.col-lg-6 -->
-
-              <div class="col-lg-6">
-                <div class="input-group">
-                  <span class="input-group-addon">
-                    <input type="radio" name="kib" id="kib07" value="10">
-                  </span> 
-                  <input type="text" class="form-control" aria-label="..." readonly value="RUSAK BERAT">
-                </div><!-- /input-group -->
-              </div><!-- /.col-lg-6 -->
-            </div><!-- /.row -->
-            <div class="row">
-              <div class="col-lg-6">
-                <div class="input-group">
-                  <span class="input-group-addon">
-                    <input type="radio" name="kib" id="kib03" value="kibc">
-                  </span>  
-                  <input type="text" class="form-control" aria-label="..." readonly value="KIB C (BANGUNAN)">
-                </div><!-- /input-group -->
-              </div><!-- /.col-lg-6 -->
-
-              <div class="col-lg-6">
-                <div class="input-group">
-                  <span class="input-group-addon">
-                    <input type="radio" name="kib" id="kib08" value="11">
-                  </span> 
-                  <input type="text" class="form-control" aria-label="..." readonly value="BUKU INVENTARIS">
-                </div><!-- /input-group -->
-              </div><!-- /.col-lg-6 -->
-            </div><!-- /.row -->
-            <div class="row">
-              <div class="col-lg-6">
-                <div class="input-group">
-                  <span class="input-group-addon">
-                    <input type="radio" name="kib" id="kib04" value="kibd">
-                  </span> 
-                  <input type="text" class="form-control" aria-label="..." readonly value="KIB D (JALAN JARINGAN DAN IRIGASI)">
-                </div><!-- /input-group -->
-              </div><!-- /.col-lg-6 -->
-
-              <div class="col-lg-6">
-                <div class="input-group">
-                  <span class="input-group-addon">
-                    <input type="radio" name="kib" id="kib09" value="12">
-                  </span> 
-                  <input type="text" class="form-control" aria-label="..." readonly value="PENGHAPUSAN">
-                </div><!-- /input-group -->
-              </div><!-- /.col-lg-6 -->
-            </div><!-- /.row -->
-            <div class="row">
-              <div class="col-lg-6">
-                <div class="input-group">
-                  <span class="input-group-addon">
-                    <input type="radio" name="kib" id="kib05" value="kibe">
-                  </span> 
-                  <input type="text" class="form-control" aria-label="..." readonly value="KIB E (ASET LAINNYA)">
-                </div><!-- /input-group -->
-              </div><!-- /.col-lg-6 -->
-
-              <div class="col-lg-6">
-                <div class="input-group">
-                  <span class="input-group-addon">
-                    <input type="radio" name="kib" id="kib10" value="13">
-                  </span> 
-                  <input type="text" class="form-control" aria-label="..." readonly value="NERACA">
-                </div><!-- /input-group -->
-              </div><!-- /.col-lg-6 -->
-            </div><!-- /.row -->
-
-          </div><!-- /.col-lg-4 -->
-        </div><!-- /.row -->
-
-        <div class="row">
-          <div class="col-lg-5">
-            <div class="input-group">
+        <div class="form-group">
+        <label class="control-label col-xs-2" for="jenis">Jenis Laporan</label>
+        <div class="col-sm-4">
+            <div class="radio">
+                <label><input type="radio" name="kib" id="kib01" value="kiba">KIB A (Tanah)</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="kib" id="kib02" value="kibb">KIB B (Peralatan dan Mesin)</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="kib" id="kib03" value="kibc">KIB C (Bangunan)</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="kib" id="kib04" value="kibd">KIB D (Jalan, Jaringan dan Irigasi)</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="kib" id="kib05" value="kibe">KIB E (Aset Lainnya)</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="kib" id="kib06" value="kibf">KIB F (Konstruksi dalam Pengerjaan)</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="kib" id="kib07" value="10">RUSAK BERAT</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="kib" id="kib08" value="11">BUKU INVENTARIS</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="kib" id="kib09" value="12">PENGHAPUSAN</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="kib" id="kib10" value="13">NERACA</label>
+            </div>
+        </div>
+        </div>
+        
+        <div class="form-group">
+            <div class="col-md-3">
+              <div id="item-tahun">
+                <label class="control-label col-md" >
+                        </label>
+                <div class="col-md-9">
               <button class="btn btn-primary" type="button" name="btn_report" id="btn_report">Cetak</button>
               <button class="btn btn-warning" type="button" name="btn_close" id="btn_close">Tutup</button>
-            </div><!-- /input-group -->
-          </div><!-- /.col-lg-6 -->
-        </div><!-- /.row -->
+
+                </div>
+              </div>
+            </div>
+        </div><br>
       </fieldset>
     </form>
   </div> 
