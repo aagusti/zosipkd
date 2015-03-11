@@ -11,7 +11,9 @@
 	<queryString language="xPath">
 		<![CDATA[/apbd/spm]]>
 	</queryString>
-	<field name="tahun" class="java.lang.String"/>
+	<field name="tahun" class="java.lang.String">
+		<fieldDescription><![CDATA[tahun]]></fieldDescription>
+	</field>
 	<field name="unit_kd" class="java.lang.String">
 		<fieldDescription><![CDATA[unit_kd]]></fieldDescription>
 	</field>
@@ -30,36 +32,39 @@
 	<field name="spm_tgl" class="java.lang.String">
 		<fieldDescription><![CDATA[spm_tgl]]></fieldDescription>
 	</field>
-	<field name="spp_id" class="java.lang.String">
-		<fieldDescription><![CDATA[spp_id]]></fieldDescription>
-	</field>
-	<field name="jenis" class="java.lang.String">
-		<fieldDescription><![CDATA[jenis]]></fieldDescription>
-	</field>
-	<field name="nilai" class="java.lang.String">
-		<fieldDescription><![CDATA[nilai]]></fieldDescription>
-	</field>
 	<field name="ttd_nip" class="java.lang.String">
 		<fieldDescription><![CDATA[ttd_nip]]></fieldDescription>
 	</field>
 	<field name="ttd_nama" class="java.lang.String">
 		<fieldDescription><![CDATA[ttd_nama]]></fieldDescription>
 	</field>
+	<field name="spp_id" class="java.lang.String">
+		<fieldDescription><![CDATA[spp_id]]></fieldDescription>
+	</field>
+	<field name="jenis" class="java.lang.String">
+		<fieldDescription><![CDATA[jenis]]></fieldDescription>
+	</field>
+	<field name="kode" class="java.lang.String">
+		<fieldDescription><![CDATA[kode]]></fieldDescription>
+	</field>
 	<field name="customer" class="java.lang.String">
 		<fieldDescription><![CDATA[customer]]></fieldDescription>
 	</field>
-	<field name="jab_nm" class="java.lang.String">
-		<fieldDescription><![CDATA[jab_nm]]></fieldDescription>
-	</field>
-	<variable name="nilai" class="java.lang.Double">
-		<variableExpression><![CDATA[Double.parseDouble($F{nilai})]]></variableExpression>
-	</variable>
 	<variable name="nm_bulan" class="java.lang.String">
 		<variableExpression><![CDATA[$F{spm_tgl}.substring(5,7)=="01" ? "Januari" : $F{spm_tgl}.substring(5,7)=="02" ? "Februari" : $F{spm_tgl}.substring(5,7)=="03" ? "Maret" : $F{spm_tgl}.substring(5,7)=="04" ? "April" : $F{spm_tgl}.substring(5,7)=="05" ? "Mei" : $F{spm_tgl}.substring(5,7)=="06" ? "Juni" : $F{spm_tgl}.substring(5,7)=="07" ? "Juli" : $F{spm_tgl}.substring(5,7)=="08" ? "Agustus" : $F{spm_tgl}.substring(5,7)=="09" ? "September" : $F{spm_tgl}.substring(5,7)=="10" ? "Oktober" : $F{spm_tgl}.substring(5,7)=="11" ? "November" : $F{spm_tgl}.substring(5,7)=="12" ? "Desember" : ""]]></variableExpression>
 		<initialValueExpression><![CDATA[$F{spm_tgl}.substring(5,7)=="01" ? "Januari" : $F{spm_tgl}.substring(5,7)=="02" ? "Februari" : $F{spm_tgl}.substring(5,7)=="03" ? "Maret" : $F{spm_tgl}.substring(5,7)=="04" ? "April" : $F{spm_tgl}.substring(5,7)=="05" ? "Mei" : $F{spm_tgl}.substring(5,7)=="06" ? "Juni" : $F{spm_tgl}.substring(5,7)=="07" ? "Juli" : $F{spm_tgl}.substring(5,7)=="08" ? "Agustus" : $F{spm_tgl}.substring(5,7)=="09" ? "September" : $F{spm_tgl}.substring(5,7)=="10" ? "Oktober" : $F{spm_tgl}.substring(5,7)=="11" ? "November" : $F{spm_tgl}.substring(5,7)=="12" ? "Desember" : ""]]></initialValueExpression>
 	</variable>
 	<variable name="jenis" class="java.lang.String">
-		<initialValueExpression><![CDATA[$F{jenis}=='1' ? "UP" : $F{jenis}=='2' ? "TU" : $F{jenis}=='3' ? "GU" : $F{jenis}=='4' ? "LS" : ""]]></initialValueExpression>
+		<variableExpression><![CDATA[$F{jenis}=='1' ? "UP" : $F{jenis}=='2' ? "TU" : $F{jenis}=='3' ? "GU" : ($F{jenis}=='4' && $F{kode}=='0.00.00.21') ? "LS-GJ" : ($F{jenis}=='4' && $F{kode}!='0.00.00.21') ? "LS" : ""]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{jenis}=='1' ? "UP" : $F{jenis}=='2' ? "TU" : $F{jenis}=='3' ? "GU" : ($F{jenis}=='4' && $F{kode}=='0.00.00.21') ? "LS-GJ" : ($F{jenis}=='4' && $F{kode}!='0.00.00.21') ? "LS" : ""]]></initialValueExpression>
+	</variable>
+	<variable name="jenis_nm" class="java.lang.String">
+		<variableExpression><![CDATA[$F{kode}=="0.00.00.21" ? "Belanja Tidak Langsung" : "Belanja Langsung"]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{kode}=="0.00.00.21" ? "Belanja Tidak Langsung" : "Belanja Langsung"]]></initialValueExpression>
+	</variable>
+	<variable name="jenis_1" class="java.lang.String">
+		<variableExpression><![CDATA[$F{jenis}=='1' ? "UP" : $F{jenis}=='2' ? "TU" : $F{jenis}=='3' ? "GU" : ($F{jenis}=='4' && $F{kode}=='0.00.00.21') ? "BTL.LS" : ($F{jenis}=='4' && $F{kode}!='0.00.00.21') ? "LS" : ""]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{jenis}=='1' ? "UP" : $F{jenis}=='2' ? "TU" : $F{jenis}=='3' ? "GU" : ($F{jenis}=='4' && $F{kode}=='0.00.00.21') ? "BTL.LS" : ($F{jenis}=='4' && $F{kode}!='0.00.00.21') ? "LS" : ""]]></initialValueExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -113,7 +118,7 @@
 				<textElement verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{spm_kd}+"/"+$F{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{spm_kd}.substring(13)+"/"+$V{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="63" y="87" width="13" height="14"/>
@@ -160,37 +165,37 @@
 			<staticText>
 				<reportElement x="295" y="87" width="192" height="14"/>
 				<textElement verticalAlignment="Top" markup="none">
-					<font isBold="false"/>
+					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Yth. Kepala BPKAD Kabupaten Tangerang]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="319" y="101" width="168" height="14"/>
 				<textElement verticalAlignment="Top" markup="none">
-					<font isBold="false"/>
+					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[selaku Bendahara Umum Daerah]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="295" y="115" width="192" height="14"/>
 				<textElement verticalAlignment="Top" markup="none">
-					<font isBold="false"/>
+					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[di]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="319" y="129" width="168" height="14"/>
 				<textElement verticalAlignment="Top" markup="none">
-					<font isBold="false" isUnderline="true"/>
+					<font isBold="true" isUnderline="true"/>
 				</textElement>
 				<text><![CDATA[Tangerang]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="2" y="206" width="485" height="53"/>
-				<textElement verticalAlignment="Top" markup="none">
+				<textElement textAlignment="Justified" verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["       Bersama ini kami sampaikan permohonan penerbitan Surat Perintah Pencairan Dana (SP2D-"+$V{jenis}+") pada SKPD "+$F{unit_nm}+" Kabupaten Tangerang dengan perincian sebagai berikut :"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["       Bersama ini kami sampaikan permohonan penerbitan Surat Perintah Pencairan Dana (SP2D-"+$V{jenis_1}+") "+$V{jenis_nm}+" Pada SKPD "+$F{unit_nm}+" Kabupaten Tangerang dengan perincian sebagai berikut :"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="2" y="192" width="164" height="14"/>
@@ -204,7 +209,7 @@
 	<pageHeader>
 		<band height="14">
 			<staticText>
-				<reportElement x="0" y="0" width="87" height="14"/>
+				<reportElement x="0" y="0" width="100" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -212,12 +217,12 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
-					<font isBold="false"/>
+					<font size="9" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Kode Rekening]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="87" y="0" width="315" height="14"/>
+				<reportElement x="100" y="0" width="302" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -225,7 +230,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
-					<font isBold="false"/>
+					<font size="9" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Uraian Kegiatan]]></text>
 			</staticText>
@@ -238,7 +243,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
-					<font isBold="false"/>
+					<font size="9" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Jumlah]]></text>
 			</staticText>
@@ -247,7 +252,7 @@
 	<detail>
 		<band height="14">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="87" y="0" width="315" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="100" y="0" width="302" height="14"/>
 				<box leftPadding="3">
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -257,7 +262,7 @@
 				</textElement>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="87" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="100" height="14"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -296,28 +301,28 @@
 				<text><![CDATA[Demikian agar maklum dan atas perhatian serta bantuannya kami ucapkan terima kasih.]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="325" y="53" width="161" height="14"/>
+				<reportElement x="251" y="53" width="235" height="14"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
-					<font isBold="false"/>
+					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{jab_nm}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["PENGGUNA ANGGARAN"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="325" y="67" width="161" height="14"/>
+				<reportElement x="251" y="67" width="235" height="14"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
-					<font isBold="false"/>
+					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{unit_nm}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="325" y="128" width="161" height="14"/>
+				<reportElement x="251" y="128" width="235" height="14"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
-					<font isBold="false"/>
+					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ttd_nama}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="325" y="142" width="161" height="14"/>
+				<reportElement x="251" y="142" width="235" height="14"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>

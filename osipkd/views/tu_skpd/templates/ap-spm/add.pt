@@ -76,7 +76,22 @@
                    tal:repeat="error field.error.messages()">
                    ${error}</p>
           </div>          
-          <script>
+        </div>
+
+        <!--Uraian-------------------------------------------------------------------->
+        <div class="form-group"> 
+          <div tal:define="field form['nama']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-8">
+               ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
+          </div>
+        </div>
+        <script>
             $('#spp_kd').typeahead({
                 "hint"     : true,
                 "highlight": true,
@@ -97,34 +112,19 @@
             });
           
             $('#spp_kd').bind('typeahead:selected', function(obj, datum, name) {  
-                  $('#nama').val(datum.nama);
+                  $('#nama').val(datum.urai);
                   $('#spp_nm').val(datum.nama);
                   $('#ap_spp_id').val(datum.id);
                   $('#spp_n').val(datum.nilai);
             });
             $('#spp_nm').bind('typeahead:selected', function(obj, datum, name) {  
-                  $('#nama').val(datum.nama);
+                  $('#nama').val(datum.urai);
+                  $('#spp_kd').val(datum.kode);
                   $('#ap_spp_id').val(datum.id);
                   $('#spp_n').val(datum.nilai);
             });
             $("#spp_n").attr('readonly',true);
           </script>
-        </div>
-
-        <!--Uraian-------------------------------------------------------------------->
-        <div class="form-group"> 
-          <div tal:define="field form['nama']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
-                    ${field.title}</label>
-            <div class="col-md-8">
-               ${structure:field.serialize()}
-              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                 tal:repeat="error field.error.messages()">
-                 ${error}</p>
-            </div>
-          </div>
-        </div>
-
         <!--nip------------------------------------------------------------------------>
         <div class="form-group"> 
           <div tal:define="field form['ttd_uid']" style="display: none;">
@@ -277,7 +277,6 @@
         </script>
           <div class="col-md-4"> 
             <button type="submit" class="btn btn-primary" id="simpan" name="simpan">Simpan</button>
-            <button type="submit" class="btn btn-danger"  id="batal"  name="batal">Batal</button>
             <button type="submit" class="btn btn-warning" id="tutup"  name="tutup">Tutup</button>
           </div>
         </div>              
@@ -428,7 +427,7 @@
         </thead>
         <tbody>
         </tbody>
-    </table>
+    </table><br><br>
 
   <div  class="panel panel-default">
     <div class="panel-heading">
@@ -480,7 +479,7 @@
                 "hint"     : true,
                 "highlight": true,
                 "minLength": 1,
-                "remote"   : "/rekening/act/headofkode11?term=%QUERY", 
+                "remote"   : "/rekening/act/headofkode2?term=%QUERY", 
             },{
                "name"      : 'kode1',
                "displayKey": 'value',

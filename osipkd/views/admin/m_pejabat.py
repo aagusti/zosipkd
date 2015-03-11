@@ -188,7 +188,7 @@ class view_pejabat(BaseViews):
 
         elif url_dict['act']=='headofkode2':
             term = 'term' in params and params['term'] or ''
-            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama, 
+            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama,Jabatan.nama, 
                       ).join(Pegawai,Jabatan).filter(Pejabat.unit_id == ses['unit_id'],
                            Jabatan.kode.ilike('23%'),
                            Pegawai.kode.ilike('%s%%' % term))   
@@ -201,12 +201,13 @@ class view_pejabat(BaseViews):
                 d['kode']        = k[1]
                 d['nama']        = k[3]
                 d['nip']         = k[2]
+                d['jab']         = k[4]
                 r.append(d)    
             return r
 
         elif url_dict['act']=='headofnip2':
             term = 'term' in params and params['term'] or ''
-            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama
+            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama,Jabatan.nama,
                       ).join(Pegawai,Jabatan).filter(Pejabat.unit_id == ses['unit_id'],
                            Jabatan.kode.ilike('23%'),
                            Pegawai.nama.ilike('%s%%' % term))
@@ -219,12 +220,13 @@ class view_pejabat(BaseViews):
                 d['kode']        = k[1]
                 d['nama']        = k[3]
                 d['nip']         = k[2]
+                d['jab']         = k[4]
                 r.append(d)    
             return r
             
         elif url_dict['act']=='headofnama2':
             term = 'term' in params and params['term'] or ''
-            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama
+            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama,Jabatan.nama,
                       ).join(Pegawai,Jabatan).filter(Pejabat.unit_id == ses['unit_id'],
                            Jabatan.kode.ilike('23%'),
                            Pegawai.nama.ilike('%%%s%%' % term))
@@ -237,6 +239,7 @@ class view_pejabat(BaseViews):
                 d['kode']        = k[1]
                 d['nama']        = k[3]
                 d['nip']         = k[2]
+                d['jab']         = k[4]
                 r.append(d)    
             return r
 

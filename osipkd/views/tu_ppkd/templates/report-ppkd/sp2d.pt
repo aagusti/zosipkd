@@ -1,9 +1,8 @@
 <html metal:use-macro="load: ../base.pt">
-  <div metal:fill-slot="content" class="panel panel-default ">
-    <h4>LAPORAN REGISTER SP2D</h4>
+  <div metal:fill-slot="content" class="container">
+    <h4>Laporan Register SP2D</h4>
     <hr>
     <script>
-	
     $(document).ready(function(){
         //$('#div_jenis').hide();
         //$('input[name="rpt"]').click(function(){
@@ -243,12 +242,10 @@
                 </div>
             </div>
         </div>
-
-        
     </div>
     
     <div class="form-group">
-        <div class="col-xs-3">
+        <div class="col-md-9">
             <button id="btn_cetak" name="btn_cetak" type="button" class="btn btn-primary "
           value="btn_cetak">Cetak</button>
             <button id="btn_close" name="btn_close" type="button" class="btn btn-warning"

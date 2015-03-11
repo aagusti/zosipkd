@@ -1,8 +1,7 @@
 <html metal:use-macro="load: ../base.pt">
-  <div metal:fill-slot="content" class="panel panel-default ">
-    <div class="panel-heading">
-        <h4 class="panel-title">Laporan Pendapatan</h4>
-    </div>
+  <div metal:fill-slot="content" class="container">
+        <h4>Laporan Pendapatan</h4>
+    <hr>
     <script>
     $(document).ready(function(){
         $('#tanggal').click(
@@ -186,12 +185,12 @@
     <div class="panel-body">
         <div class="form-group">
         <label class="control-label col-xs-2" for="rpt">Jenis Laporan</label>
-        <div class="col-sm-2">
+        <div class="col-xs-2">
             <div class="radio">
-                <label><input type="radio" name="rpt" value="1">Tagihan/Piutang</label>
+                <label><input type="radio" name="rpt" value="1">Register Tagihan/Piutang</label>
             </div>
             <div class="radio">
-                <label><input type="radio" name="rpt" value="2">STS</label>
+                <label><input type="radio" name="rpt" value="2">Register STS</label>
             </div>
         </div>
 

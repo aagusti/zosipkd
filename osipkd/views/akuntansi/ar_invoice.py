@@ -115,7 +115,8 @@ class AddSchema(colander.Schema):
     sumber_id  =  colander.SchemaNode(
                     colander.String(),
                     validator=colander.Length(max=32),
-                    widget=widget.SelectWidget(values=SUMBER_ID)) # deferred_source_type)
+                    widget=widget.SelectWidget(values=SUMBER_ID),
+                    title = "Sumber") # deferred_source_type)
     ############## DI DROP DULU                
     kecamatan_kd = colander.SchemaNode(
                     colander.String(),
@@ -216,18 +217,19 @@ class view_ar_invoice_item(BaseViews):
     def save(self, values, user, row=None):
         if not row:
             row = ARItem()
-            row.created = datetime.now()
+            row.created    = datetime.now()
             row.create_uid = user.id
         row.from_dict(values)
-        row.updated = datetime.now()
+        row.updated    = datetime.now()
         row.update_uid = user.id
-        tanggal = datetime.strptime(values['tanggal'], '%Y-%m-%d') 
-        row.tahun = tanggal.year
-        row.bulan = tanggal.month
-        row.hari  = tanggal.day
+        tanggal    = datetime.strptime(values['tanggal'], '%Y-%m-%d') 
+        row.tahun  = tanggal.year
+        row.bulan  = tanggal.month
+        row.hari   = tanggal.day
         row.minggu = tanggal.isocalendar()[1]
         row.disable   = 'disable' in values and values['disable'] and 1 or 0
         row.is_kota   = 'is_kota' in values and values['is_kota'] and 1 or 0
+
         DBSession.add(row)
         DBSession.flush()
         return row
@@ -236,7 +238,7 @@ class view_ar_invoice_item(BaseViews):
         if 'id' in self.request.matchdict:
             values['id'] = self.request.matchdict['id']
         row = self.save(values, self.request.user, row)
-        self.request.session.flash('ARItem sudah disimpan.')
+        self.request.session.flash('Penetapan / Tagihan sudah disimpan.')
             
     def route_list(self):
         return HTTPFound(location=self.request.route_url('ar-invoice-item') )
@@ -252,6 +254,7 @@ class view_ar_invoice_item(BaseViews):
     def view_ar_invoice_item_add(self):
         req = self.request
         ses = self.session
+        
         form = self.get_form(AddSchema)
         if req.POST:
             if 'simpan' in req.POST:
@@ -282,7 +285,7 @@ class view_ar_invoice_item(BaseViews):
         return DBSession.query(ARItem).filter_by(id=self.request.matchdict['id'])
         
     def id_not_found(self):    
-        msg = 'ARItem ID %s Tidak Ditemukan.' % self.request.matchdict['id']
+        msg = 'Penetapan / Tagihan ID %s Tidak Ditemukan.' % self.request.matchdict['id']
         request.session.flash(msg, 'error')
         return route_list()
 
@@ -290,11 +293,15 @@ class view_ar_invoice_item(BaseViews):
                  permission='edit')
     def view_ar_invoice_item_edit(self):
         request = self.request
-        row = self.query_id().first()
+        row     = self.query_id().first()
+        
         if not row:
             return id_not_found(request)
+        if row.posted:
+            request.session.flash('Data sudah diposting', 'error')
+            return self.route_list()
+            
         form = self.get_form(EditSchema)
-
         if request.POST:
             if 'simpan' in request.POST:
                 controls = request.POST.items()
@@ -340,15 +347,19 @@ class view_ar_invoice_item(BaseViews):
         
         if not row:
             return self.id_not_found(request)
+        if row.posted:
+            request.session.flash('Data sudah diposting', 'error')
+            return self.route_list()
+            
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
-                msg = 'ARItem ID %d %s sudah dihapus.' % (row.id, row.nama)
+                msg = 'Penetapan / Tagihan ID %d %s sudah dihapus.' % (row.id, row.nama)
                 try:
                   q.delete()
                   DBSession.flush()
                 except:
-                  msg = 'ARItem ID %d %s tidak dapat dihapus.' % (row.id, row.nama)
+                  msg = 'Penetapan / Tagihan ID %d %s tidak dapat dihapus.' % (row.id, row.nama)
                 request.session.flash(msg)
             return self.route_list()
         return dict(row=row,

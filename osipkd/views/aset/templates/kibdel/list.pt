@@ -100,7 +100,7 @@
       var mID, mID2;
       var oTable;
       var iPos;
-      var oTableUrl = "/aset/kibdel/act/grid";
+      var oTableUrl = "/aset/kibdel/grid/act";
       var tb_array = [
           '<div class="btn-group pull-left">',
           '	<button id="btn_tambah" class="btn btn btn-primary" type="button">Tambah</button>',

@@ -1,8 +1,7 @@
 <html metal:use-macro="load: ../base.pt">
-  <div metal:fill-slot="content" class="panel panel-default ">
-    <div class="panel-heading">
-        <h4 class="panel-title">Laporan Belanja</h4>
-    </div>
+  <div metal:fill-slot="content" class="container">
+        <h4>Laporan Belanja</h4>
+    <hr>
     <script>
     $(document).ready(function(){
         $('#div_jenis').hide();
@@ -96,6 +95,7 @@
         });
         
         $('#btn_cetak').click(function () {
+            alert('lewat');
             if($('#unit_nm').val()=='Pilih Unit') {
                 alert('Silahkan pilih Unit terlebih dahulu!');
                 return;
@@ -347,7 +347,7 @@
                 <label class="control-label col-md" >
                         </label>
                 <div class="col-md-9">
-              <button class="btn btn-primary" type="button" name="btn_report" id="btn_report">Cetak</button>
+              <button class="btn btn-primary" type="button" name="btn_cetak" id="btn_cetak">Cetak</button>
               <button class="btn btn-warning" type="button" name="btn_close" id="btn_close">Tutup</button>
 
                 </div>

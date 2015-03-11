@@ -136,7 +136,9 @@ class view_aset_kibdel(BaseViews):
             tahun    = self.session['tahun']
             unit_kd  = self.session['unit_kd']
             no_urut  = AsetDel.get_norut(row.id)+1
-            row.kode = "Del%s" % tahun + "-%s" % unit_kd + "-%d" % no_urut
+            no       = "0000%d" % no_urut
+            nomor    = no[-5:]
+            row.kode = "KIBDel%s" % tahun + "-%s" % unit_kd + "-%s" % nomor
             
         DBSession.add(row)
         DBSession.flush()

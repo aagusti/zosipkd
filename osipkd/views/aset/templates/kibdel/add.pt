@@ -230,7 +230,7 @@
       var oTable;
       var iPos;
       var delete_id = $('#id').val();
-      var oTableUrl = "/aset/kibdel/item/"+delete_id+"/act/grid";
+      var oTableUrl = "/aset/kibdel/item/"+delete_id+"/grid/act";
       var tb_array = [
           '<div class="btn-group pull-left">',
           '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',

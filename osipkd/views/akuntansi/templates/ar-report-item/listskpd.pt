@@ -131,7 +131,7 @@
                 value="${request.session['tanggal2']}" name="tanggal"/>
       </div>
       <button id="btn_pdf" class="btn btn-success" type="button"
-              name="btn_pdf">Print</button>
+              name="btn_pdf">Cetak</button>
       <button id="btn_csv" class="btn btn-warning" type="button"
               name="btn_csv">CSV</button>
     </div>

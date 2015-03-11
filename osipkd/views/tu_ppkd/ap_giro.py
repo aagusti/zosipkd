@@ -84,7 +84,9 @@ class view_ap_giro_ppkd(BaseViews):
             tahun    = self.session['tahun']
             unit_kd  = self.session['unit_kd']
             no_urut  = Giro.get_norut(row.id)+1
-            row.kode = "GIRO%d" % tahun + "-%s" % unit_kd + "-%d" % no_urut
+            no       = "0000%d" % no_urut
+            nomor    = no[-5:]
+            row.kode = "%d" % tahun + "-%s" % unit_kd + "-%s" % nomor
             
         DBSession.add(row)
         DBSession.flush()

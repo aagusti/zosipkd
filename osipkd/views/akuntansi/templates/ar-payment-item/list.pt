@@ -207,41 +207,72 @@
         
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
-          "sDom": '<"toolbar">lfrtip',
-          "sAjaxSource": oTableUrl,
-          "bServerSide": true,
-          "bProcessing": true,
+          "sDom"           : '<"toolbar">lfrtip',
+          "sAjaxSource"    : oTableUrl,
+          "bServerSide"    : true,
+          "bProcessing"    : true,
           "bScrollCollapse": true,
-          "bSort": true,
-          "bInfo": false,
-          "bFilter": true,
-          "bAutoWidth": false,
-          "bPaginate": true,
+          "bSort"          : true,
+          "bInfo"          : false,
+          "bFilter"        : true,
+          "bAutoWidth"     : false,
+          "bPaginate"      : true,
           "sPaginationType": "full_numbers",
           
           "lengthMenu": [
               [10, 25, 50, 100],
               [10, 25, 50, 100]
           ],
-          "aoColumnDefs": [{
-                        "bSearchable": false,
-                        "bVisible": false,
-                        "aTargets": [0]
-                    }],
+          "aoColumnDefs": [
+          {
+                "bSearchable": false,
+                "bVisible"   : false,
+                "aTargets"   : [0]
+          },{
+                "aTargets" : [7], // Untuk Posting
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return 'N';
+                    } else if (data == "1") {
+                        return 'Y';
+                    }
+                }
+          }],
           "aoColumns": [
               null,
-              {"width": "75px"},
-              null,
-               {"width": "150px", "sClass":"left"},
-              null,
-              {"width": "75px", "sClass":"center"},
-              {"width": "100px", "sClass":"right"},
-              {"width": "50px", "sClass":"center"},
-              ]
+              {"width": "40px"},
+              {"width": "100px"},
+              {"width": "40px", "sClass":"left"},
+              {"width": "100px"},
+              {"width": "40px", "sClass":"center"},
+              {"width": "60px", "sClass":"right"},
+              {"width": "30px", "sClass":"center"},
+          ],
+          "fnRowCallback": function (nRow, aData, iDisplayIndex) {
+                $(nRow).on("click", function (event) {
+                    if ($(this).hasClass('row_selected')) {
+                        /* mID = '';
+                        $(this).removeClass('row_selected'); */
+                    } else {
+
+                        var data = oTable.fnGetData(this);
+                        mID = data[0];
+
+                        oTable.$('tr.row_selected').removeClass('row_selected');
+                        $(this).addClass('row_selected');
+                    }
+                })
+
+                switch(aData[7]){
+                    case '1' :
+                        $('td',nRow).css("background-color","#ddffdd")
+                        break;
+                }
+            },
         });
           
         var tb_array = [
-          '<div class="btn pull-left">',
+          '<div class="btn-group pull-left">',
           '	<button id="btn_add" class="btn btn btn-primary" type="button">Tambah</button>',
           '	<button id="btn_edit" class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',

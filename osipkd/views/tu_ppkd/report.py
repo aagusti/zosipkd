@@ -99,6 +99,139 @@ class ViewTUPPKDLap(BaseViews):
         customer = self.cust_nm
         #bulan = 'bulan' in request.params and request.params['bulan'] and int(request.params['bulan']) or 0
 
+    # SPD
+    @view_config(route_name="ap-report-spd", renderer="templates/report-ppkd/spd.pt", permission="read")
+    def ap_report_spd(self):
+        params = self.request.params
+        return dict(datas=self.datas,)
+
+    @view_config(route_name="ap-report-spd-act", renderer="json", permission="read")
+    def ap_report_spd_act(self):
+        req    = self.request
+        params = req.params
+        url_dict = req.matchdict
+
+        mulai = 'mulai' in params and params['mulai'] or 0
+        selesai = 'selesai' in params and params['selesai'] or 0
+        if url_dict['act']=='1' :
+            query = DBSession.query(Spd.tahun_id, Spd.kode, Spd.tanggal, Unit.kode.label('unit_kd'), 
+               Unit.nama.label('unit_nm'), Urusan.kode.label('urusan_kd'),
+               func.sum(case([(Kegiatan.kode=='0.00.00.21',SpdItem.nominal)], else_=0)).label('btl'),
+               func.sum(case([(Kegiatan.kode<>'0.00.00.21',SpdItem.nominal)], else_=0)).label('bl'),
+               ).join(Unit).join(Urusan).join(SpdItem).join(KegiatanSub).join(Kegiatan
+               ).filter(Spd.tahun_id==self.session['tahun'], 
+               Spd.tanggal.between(mulai,selesai),
+               ).group_by(Spd.tahun_id, Spd.kode, Spd.tanggal, Unit.kode, 
+               Unit.nama, Urusan.kode,
+               ).order_by(Spd.tanggal)
+                 
+            generator = b203r0034Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        elif url_dict['act']=='2' :
+            query = DBSession.query(Spd.tahun_id, Spd.kode, Spd.tanggal, Unit.kode.label('unit_kd'), 
+               Unit.nama.label('unit_nm'), Urusan.kode.label('urusan_kd'),
+               func.sum(case([(Kegiatan.kode=='0.00.00.21',SpdItem.nominal)], else_= 0)).label('btl'),
+               func.sum(case([(Kegiatan.kode<>'0.00.00.21',SpdItem.nominal)], else_= 0)).label('bl'),
+               ).join(Unit).join(Urusan).join(SpdItem).join(KegiatanSub).join(Kegiatan
+               ).filter(Spd.tahun_id==self.session['tahun'], 
+               Spd.tanggal.between(mulai,selesai),
+               ).group_by(Spd.tahun_id, Spd.kode, Spd.tanggal, Unit.kode, 
+               Unit.nama, Urusan.kode,
+               ).order_by(Spd.tanggal)
+                 
+            generator = b203r0035Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+            
+        ### SPD 1
+        elif url_dict['act']=='spd1' :
+            mulai = 'spd1' in params and params['spd1'] 
+            selesai = 'spd2' in params and params['spd2'] 
+            query = DBSession.query(Spd.kode, Spd.nama, Spd.tahun_id,
+               Spd.triwulan_id, Spd.tanggal, Spd.is_bl, Unit.nama.label('unit_nm'),
+               Tahun.no_perda, Tahun.tgl_perda, Tahun.no_perkdh, Tahun.tgl_perkdh,
+               Tahun.no_perda_rev, Tahun.tgl_perda_rev, Tahun.no_perkdh_rev, Tahun.tgl_perkdh_rev,
+               func.sum(SpdItem.nominal).label('nominal'), func.sum(SpdItem.anggaran).label('anggaran'),
+               func.sum(SpdItem.lalu).label('lalu')
+               ).filter(Spd.unit_id==Unit.id, Spd.id==SpdItem.ap_spd_id,
+               Spd.tahun_id==Tahun.id, Spd.tahun_id==self.session['tahun'], 
+               func.substr(Spd.kode,6,5).between(mulai,selesai),
+               ).group_by(Spd.kode, Spd.nama, Spd.tahun_id,
+               Spd.triwulan_id, Spd.tanggal, Spd.is_bl, Unit.nama,
+               Tahun.no_perda, Tahun.tgl_perda, Tahun.no_perkdh, Tahun.tgl_perkdh,
+               Tahun.no_perda_rev, Tahun.tgl_perda_rev, Tahun.no_perkdh_rev, Tahun.tgl_perkdh_rev
+               ).order_by(Spd.kode)
+               
+            generator = b203r0031Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ### SPD 2
+        elif url_dict['act']=='spd2' :
+            mulai = 'spd1' in params and params['spd1'] 
+            selesai = 'spd2' in params and params['spd2'] 
+            query = DBSession.query(Spd.kode, Spd.nama, Spd.tahun_id,
+               Spd.triwulan_id, Spd.tanggal, Unit.nama.label('unit_nm'),
+               Urusan.kode.label('urusan_kd'), Unit.kode.label('unit_kd'), Kegiatan.kode.label('keg_kd'), 
+               SpdItem.anggaran, SpdItem.nominal, SpdItem.lalu
+               ).join(Unit).join(Urusan).join(SpdItem).join(KegiatanSub).join(Kegiatan
+               ).filter(Spd.tahun_id==self.session['tahun'], 
+               func.substr(Spd.kode,6,5).between(mulai,selesai),
+               Kegiatan.kode=='0.00.00.21'
+               ).order_by(Spd.kode)
+               
+            generator = b203r0032Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ### SPD 3
+        elif url_dict['act']=='spd3' :
+            mulai = 'spd1' in params and params['spd1'] 
+            selesai = 'spd2' in params and params['spd2'] 
+            query = DBSession.query(Spd.kode, Spd.nama, Spd.tahun_id,
+               Spd.triwulan_id, Spd.tanggal, Unit.nama.label('unit_nm'),
+               Urusan.kode.label('urusan_kd'), Unit.kode.label('unit_kd'), Kegiatan.kode.label('keg_kd'), 
+               SpdItem.anggaran, SpdItem.nominal, SpdItem.lalu
+               ).join(Unit).join(Urusan).join(SpdItem).join(KegiatanSub).join(Kegiatan
+               ).filter(Spd.tahun_id==self.session['tahun'], 
+               func.substr(Spd.kode,6,5).between(mulai,selesai),
+               Kegiatan.kode<>'0.00.00.21'
+               ).order_by(Spd.kode)
+               
+            generator = b203r0033Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+               
+            generator = b203r0033Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
     # SP2D
     @view_config(route_name="ap-report-sp2d", renderer="templates/report-ppkd/sp2d.pt", permission="read")
     def ap_report_sp2d(self):
@@ -209,31 +342,6 @@ class ViewTUPPKDLap(BaseViews):
                   ).order_by(Sp2d.tanggal).all()
 
             generator = b204r0001Generator()
-            pdf = generator.generate(query)
-            response=req.response
-            response.content_type="application/pdf"
-            response.content_disposition='filename=output.pdf' 
-            response.write(pdf)
-            return response
-
-        elif url_dict['act']=='spd' :
-            pk_id = 'id' in params and params['id'] and int(params['id']) or 0
-            query = DBSession.query(Spd.kode, Spd.nama, Spd.tahun_id,
-               Spd.triwulan_id, Spd.tanggal, Spd.is_bl, Unit.nama.label('unit_nm'),
-               Tahun.no_perda, Tahun.tgl_perda, Tahun.no_perkdh, Tahun.tgl_perkdh,
-               Tahun.no_perda_rev, Tahun.tgl_perda_rev, Tahun.no_perkdh_rev, Tahun.tgl_perkdh_rev,
-               func.sum(SpdItem.nominal).label('nominal'), func.sum(SpdItem.anggaran).label('anggaran'),
-               func.sum(SpdItem.lalu).label('lalu')
-               ).filter(Spd.unit_id==Unit.id, Spd.id==SpdItem.ap_spd_id,
-               Spd.tahun_id==Tahun.id, Spd.tahun_id==self.session['tahun'], 
-               Spd.unit_id==self.session['unit_id'], Spd.id==pk_id
-               ).group_by(Spd.kode, Spd.nama, Spd.tahun_id,
-               Spd.triwulan_id, Spd.tanggal, Spd.is_bl, Unit.nama,
-               Tahun.no_perda, Tahun.tgl_perda, Tahun.no_perkdh, Tahun.tgl_perkdh,
-               Tahun.no_perda_rev, Tahun.tgl_perda_rev, Tahun.no_perkdh_rev, Tahun.tgl_perkdh_rev
-               )
-               
-            generator = b203r003Generator()
             pdf = generator.generate(query)
             response=req.response
             response.content_type="application/pdf"
@@ -514,11 +622,11 @@ class ViewTUPPKDLap(BaseViews):
             response.write(pdf)
             return response
 
-#SPD
-class b203r003Generator(JasperGenerator):
+#SPD 1
+class b203r0031Generator(JasperGenerator):
     def __init__(self):
-        super(b203r003Generator, self).__init__()
-        self.reportname = get_rpath('apbd/tuppkd/R203003.jrxml')
+        super(b203r0031Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuppkd/R2030031.jrxml')
         self.xpath = '/apbd/spd'
         self.root = ET.Element('apbd') 
     
@@ -545,6 +653,104 @@ class b203r003Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "lalu").text = unicode(row.lalu)
             ET.SubElement(xml_greeting, "customer").text = customer
             
+        return self.root
+
+#SPD 2
+class b203r0032Generator(JasperGenerator):
+    def __init__(self):
+        super(b203r0032Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuppkd/R2030032.jrxml')
+        self.xpath = '/apbd/spd'
+        self.root = ET.Element('apbd') 
+    
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'spd')
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "nama").text = row.nama
+            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_greeting, "triwulan_id").text = unicode(row.triwulan_id)
+            ET.SubElement(xml_greeting, "tanggal").text = unicode(row.tanggal)
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_greeting, "keg_kd").text = row.keg_kd
+            ET.SubElement(xml_greeting, "anggaran").text = unicode(row.anggaran)
+            ET.SubElement(xml_greeting, "nominal").text = unicode(row.nominal)
+            ET.SubElement(xml_greeting, "lalu").text = unicode(row.lalu)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            
+        return self.root
+
+#SPD 3
+class b203r0033Generator(JasperGenerator):
+    def __init__(self):
+        super(b203r0033Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuppkd/R2030033.jrxml')
+        self.xpath = '/apbd/spd'
+        self.root = ET.Element('apbd') 
+    
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'spd')
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "nama").text = row.nama
+            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_greeting, "triwulan_id").text = unicode(row.triwulan_id)
+            ET.SubElement(xml_greeting, "tanggal").text = unicode(row.tanggal)
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_greeting, "keg_kd").text = row.keg_kd
+            ET.SubElement(xml_greeting, "anggaran").text = unicode(row.anggaran)
+            ET.SubElement(xml_greeting, "nominal").text = unicode(row.nominal)
+            ET.SubElement(xml_greeting, "lalu").text = unicode(row.lalu)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            
+        return self.root
+
+#Register SPD 1
+class b203r0034Generator(JasperGenerator):
+    def __init__(self):
+        super(b203r0034Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuppkd/R2030034.jrxml')
+        self.xpath = '/apbd/spd'
+        self.root = ET.Element('apbd') 
+    
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'spd')
+            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "tanggal").text = unicode(row.tanggal)
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_greeting, "btl").text = unicode(row.btl)
+            ET.SubElement(xml_greeting, "bl").text = unicode(row.bl)
+            ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root
+
+#Register SPD 2
+class b203r0035Generator(JasperGenerator):
+    def __init__(self):
+        super(b203r0035Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuppkd/R2030035.jrxml')
+        self.xpath = '/apbd/spd'
+        self.root = ET.Element('apbd') 
+    
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'spd')
+            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "tanggal").text = unicode(row.tanggal)
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_greeting, "btl").text = unicode(row.btl)
+            ET.SubElement(xml_greeting, "bl").text = unicode(row.bl)
+            ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
 
 #SP2D

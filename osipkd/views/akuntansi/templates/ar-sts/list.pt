@@ -109,7 +109,7 @@
             <th>Index</th>
             <th>No. STS</th>
             <th>Tgl. STS</th>
-            <th>Validasi</th>
+            <th>Tgl. Validasi</th>
             <th>Jenis</th>
             <th>Uraian</th>
             <th>Nilai</th>
@@ -181,6 +181,15 @@
                         return 'Lainnya';
                     } 
                 }
+            },{
+                "aTargets" : [7], // Column number which needs to be modified
+                "mRender"  : function (data, type, full) {
+                    if (data == "1") {
+                        return 'Y';
+                    } else if (data == "0") {
+                        return 'N';
+                    } 
+                }
             }],
             "aoColumns": [
                 null, {
@@ -191,10 +200,12 @@
                     "sWidth": "30px",
                 }, {
                     "sWidth": "10px",
-                },null, {
-                    "sWidth": "100px",
-                },{
+                }, {
+                    "sWidth": "120px",
+                }, {
                     "sWidth": "60px",
+                }, {
+                    "sWidth": "30px","class":"right"
                 }
             ],
             
@@ -212,6 +223,11 @@
                         $(this).addClass('row_selected');
                     }
                 })
+                switch(aData[7]){
+                    case '1' :
+                        $('td',nRow).css("background-color","#ddffdd")
+                        break;
+                }
             },
         });
 

@@ -5,8 +5,8 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql.functions import concat
 from osipkd.models import (DBSession,Base, DefaultModel)  
 from osipkd.models.base_model import (NamaModel)  
-from osipkd.models.apbd_anggaran import (KegiatanSub, KegiatanItem,Pegawai)  
-from osipkd.models.pemda_model import (Unit)  
+from osipkd.models.apbd_anggaran import (Kegiatan, KegiatanSub, KegiatanItem,Pegawai)  
+from osipkd.models.pemda_model import (Rekening,Unit)  
 
 #from osipkd.tools import FixLength
 
@@ -20,7 +20,7 @@ class Spd(NamaModel, Base):
     triwulan_id = Column(SmallInteger, nullable=False)
     unit_id     = Column(Integer,      ForeignKey("admin.units.id"), nullable=False) 
     tanggal     = Column(Date,         nullable=False)
-    is_bl       = Column(SmallInteger, nullable=False)
+    is_bl       = Column(SmallInteger, nullable=False, default=0)
     
     @classmethod
     def max_no_urut(cls, tahun):
@@ -32,7 +32,27 @@ class Spd(NamaModel, Base):
     def get_norut(cls, id):
         return DBSession.query(func.count(cls.id).label('no_urut'))\
                .scalar() or 0 
-               
+    
+    @classmethod
+    def get_nilai1(cls, ap_spd_id):
+        return DBSession.query(func.sum(SpdItem.nominal).label('nominal')
+                             ).filter(SpdItem.ap_spd_id==Spd.id,
+                                      Spd.id==ap_spd_id,
+                                      SpdItem.kegiatan_sub_id==KegiatanSub.id,
+                                      KegiatanSub.kegiatan_id==Kegiatan.id,
+                                      Kegiatan.kode!='0.00.00.21'                                      
+                                      ).first()
+                                     
+    @classmethod
+    def get_nilai2(cls, ap_spd_id):
+        return DBSession.query(func.sum(SpdItem.nominal).label('nominal')
+                             ).filter(SpdItem.ap_spd_id==Spd.id,
+                                      Spd.id==ap_spd_id,
+                                      SpdItem.kegiatan_sub_id==KegiatanSub.id,
+                                      KegiatanSub.kegiatan_id==Kegiatan.id,
+                                      Kegiatan.kode=='0.00.00.21'                                      
+                                      ).first()
+                                      
     @classmethod
     def get_kode(cls, p):
         spd_kode = FixLength(SPD_KODE)
@@ -65,7 +85,6 @@ class SpdItem(DefaultModel, Base):
     lalu            = Column(BigInteger, nullable=False)
     nominal         = Column(BigInteger, nullable=False)
 
-
 class Spp(NamaModel, Base):
     __tablename__  = 'ap_spps'
     __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}
@@ -91,29 +110,17 @@ class Spp(NamaModel, Base):
     ap_rekening    = Column(String(32), nullable=False)
     ap_npwp        = Column(String(32), nullable=False)
     ap_nip         = Column(String(32))
-    ap_bentuk      = Column(String(64))
-    ap_alamat      = Column(String(64))
-    ap_pemilik     = Column(String(64))
-    ap_kontrak     = Column(String(64))
-    ap_waktu       = Column(String(64))
-    ap_uraian      = Column(String(64))
-    ap_tgl_kontrak = Column(Date)
-    ap_kegiatankd  = Column(String(32))
-    ap_nilai       = Column(BigInteger, default=0)
-    #BAP
-    ap_bap_no      = Column(String(64))
-    ap_bap_tgl     = Column(Date)
     #PPTK
-    pptk_uid       = Column(Integer)
+    pptk_uid       = Column(Integer, nullable=True)
     pptk_nama      = Column(String(64))
     pptk_nip       = Column(String(32))
     #Bendahara
-    barang_uid     = Column(Integer)
+    barang_uid     = Column(Integer, nullable=True)
     barang_nip     = Column(String(32))
     barang_nama    = Column(String(64))
     barang_jab     = Column(String(64))
     #Kasi
-    kasi_uid       = Column(Integer)
+    kasi_uid       = Column(Integer, nullable=True)
     kasi_nip       = Column(String(32))
     kasi_nama      = Column(String(64))
     kasi_jab       = Column(String(64))
@@ -164,7 +171,7 @@ class Spm(NamaModel, Base):
     ap_spp_id      = Column(BigInteger,   ForeignKey("apbd.ap_spps.id"), nullable=False)
     kode           = Column(String(50),   nullable=False)
     nama           = Column(String(250),  nullable=False)
-    tanggal        = Column(Date,   nullable=False) 
+    tanggal        = Column(Date,         nullable=False) 
     ttd_uid        = Column(BigInteger,   nullable=False)
     ttd_nip        = Column(String(50),   nullable=False)
     ttd_nama       = Column(String(64),   nullable=False)
@@ -212,14 +219,14 @@ class Sp2d(NamaModel, Base):
     spms  = relationship("Spm", backref="sp2ds")
 
     ap_spm_id      = Column(BigInteger, ForeignKey("apbd.ap_spms.id"), nullable=False)
-    kode           = Column(String(50), nullable=False)
-    tanggal        = Column(Date) 
-    bud_uid        = Column(BigInteger, nullable=False)
-    bud_nip        = Column(String(50), nullable=False)
-    bud_nama       = Column(String(64), nullable=False)
-    verified_uid   = Column(BigInteger, nullable=False)
-    verified_nip   = Column(String(50), nullable=False)
-    verified_nama  = Column(String(64), nullable=False)
+    tanggal        = Column(Date)
+    kode           = Column(String(50),   nullable=False) 
+    bud_uid        = Column(BigInteger,   nullable=False)
+    bud_nip        = Column(String(50),   nullable=False)
+    bud_nama       = Column(String(64),   nullable=False)
+    verified_uid   = Column(BigInteger,   nullable=False)
+    verified_nip   = Column(String(50),   nullable=False)
+    verified_nama  = Column(String(64),   nullable=False)
     posted         = Column(SmallInteger, nullable=False, default=0)
     disabled       = Column(SmallInteger, nullable=False, default=0)
     status_giro    = Column(SmallInteger, default=0)
@@ -253,12 +260,77 @@ class Sp2d(NamaModel, Base):
                         Spp.id==Spm.ap_spp_id,
                 ).scalar() or 0
      
+    @classmethod
+    def get_sub(cls, id_sp2d):
+        return DBSession.query(APInvoice.kegiatan_sub_id.label('sub')
+                ).filter(cls.id==id_sp2d,
+                        Spm.id==cls.ap_spm_id,
+                        Spp.id==Spm.ap_spp_id,
+                        SppItem.ap_spp_id==Spp.id,
+                        SppItem.ap_invoice_id==APInvoice.id,
+                        APInvoice.kegiatan_sub_id==KegiatanSub.id,
+                        APInvoiceItem.ap_invoice_id==APInvoice.id,
+                        APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                        KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                        KegiatanItem.rekening_id==Rekening.id
+                ).group_by(APInvoice.kegiatan_sub_id.label('sub')
+                ).first() or 0
+                
+    @classmethod
+    def get_rek(cls, id_sp2d):
+        return DBSession.query(Rekening.id.label('rek')
+                ).filter(cls.id==id_sp2d,
+                        Spm.id==cls.ap_spm_id,
+                        Spp.id==Spm.ap_spp_id,
+                        SppItem.ap_spp_id==Spp.id,
+                        SppItem.ap_invoice_id==APInvoice.id,
+                        APInvoice.kegiatan_sub_id==KegiatanSub.id,
+                        APInvoiceItem.ap_invoice_id==APInvoice.id,
+                        APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                        KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                        KegiatanItem.rekening_id==Rekening.id
+                ).group_by(Rekening.id.label('rek')
+                ).first() or 0
+
+    @classmethod
+    def get_mon(cls, id_sp2d):
+        return DBSession.query(APInvoiceItem.amount.label('mon')
+                ).filter(cls.id==id_sp2d,
+                        Spm.id==cls.ap_spm_id,
+                        Spp.id==Spm.ap_spp_id,
+                        SppItem.ap_spp_id==Spp.id,
+                        SppItem.ap_invoice_id==APInvoice.id,
+                        APInvoice.kegiatan_sub_id==KegiatanSub.id,
+                        APInvoiceItem.ap_invoice_id==APInvoice.id,
+                        APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                        KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                        KegiatanItem.rekening_id==Rekening.id
+                ).group_by(APInvoiceItem.amount.label('mon')
+                ).first() or 0   
+
+    @classmethod
+    def get_note(cls, id_sp2d):
+        return DBSession.query(KegiatanItem.nama.label('note')
+                ).filter(cls.id==id_sp2d,
+                        Spm.id==cls.ap_spm_id,
+                        Spp.id==Spm.ap_spp_id,
+                        SppItem.ap_spp_id==Spp.id,
+                        SppItem.ap_invoice_id==APInvoice.id,
+                        APInvoice.kegiatan_sub_id==KegiatanSub.id,
+                        APInvoiceItem.ap_invoice_id==APInvoice.id,
+                        APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                        KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                        KegiatanItem.rekening_id==Rekening.id
+                ).group_by(KegiatanItem.nama.label('note')
+                ).first() or 0
+
 class APInvoice(NamaModel, Base):
     __tablename__  = 'ap_invoices'
     __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}
 
     kegiatansubs   = relationship("KegiatanSub", backref="apinvoices")
     units          = relationship("Unit",        backref="apinvoices")
+    
     tahun_id        = Column(BigInteger, ForeignKey("apbd.tahuns.id"), nullable=False)
     unit_id         = Column(Integer,    ForeignKey("admin.units.id"), nullable=False) 
     no_urut         = Column(Integer, nullable=False)
@@ -267,13 +339,32 @@ class APInvoice(NamaModel, Base):
     kegiatan_sub_id = Column(BigInteger, ForeignKey("apbd.kegiatan_subs.id"), nullable=False)
     nama            = Column(String(255))
     jenis           = Column(SmallInteger, nullable=False, default=0) #1 up 2 tu 3 gu 4 LS
-    ap_nomor        = Column(String(32))
+    #ap_nomor        = Column(String(32))
+    #ap_tanggal      = Column(Date)
     ap_nama         = Column(String(64))
-    ap_tanggal      = Column(Date)
     ap_rekening     = Column(String(32))
     ap_npwp         = Column(String(16))
     amount          = Column(BigInteger, nullable=False)
-                    
+    no_bast         = Column(String(64))
+    tgl_bast        = Column(Date)
+    no_bku          = Column(String(64))
+    tgl_bku         = Column(Date)
+    ap_bentuk      = Column(String(64))
+    ap_alamat      = Column(String(64))
+    ap_pemilik     = Column(String(64))
+    ap_kontrak     = Column(String(64))
+    ap_waktu       = Column(String(64))
+    ap_uraian      = Column(String(64))
+    ap_tgl_kontrak = Column(Date)
+    ap_nilai       = Column(BigInteger, default=0)
+    #BAP
+    ap_bap_no      = Column(String(64))
+    ap_bap_tgl     = Column(Date)
+    #Kwitansi
+    ap_kwitansi_nilai = Column(BigInteger, default=0)
+    ap_kwitansi_no    = Column(String(64))
+    ap_kwitansi_tgl   = Column(Date)
+     
     disabled        = Column(SmallInteger, nullable=False, default=0)
     posted          = Column(SmallInteger, nullable=False, default=0)
     status_spp      = Column(SmallInteger, nullable=False, default=0)
@@ -301,7 +392,7 @@ class APInvoice(NamaModel, Base):
         return DBSession.query(func.sum(APInvoiceItem.amount).label('amount')
                              ).filter(APInvoiceItem.ap_invoice_id==ap_invoice_id 
                                       ).first()
-                                      
+
 class APInvoiceItem(DefaultModel, Base):
     __tablename__  = 'ap_invoice_items'
     __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}
@@ -350,6 +441,7 @@ class Giro(NamaModel, Base):
 
     UniqueConstraint('tahun_id', 'unit_id', 'kode',
                 name = 'giro_ukey')
+                
     @classmethod
     def max_no_urut(cls, tahun, unit_id):
         return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
@@ -370,7 +462,7 @@ class Giro(NamaModel, Base):
     def get_norut(cls, id):
         return DBSession.query(func.count(cls.id).label('no_urut'))\
                .scalar() or 0     
-               
+
 class GiroItem(DefaultModel, Base):
     __tablename__  ='ap_giro_items'
     __table_args__ = {'extend_existing':True,'schema' :'apbd'}
@@ -394,7 +486,8 @@ class ARInvoice(NamaModel, Base):
     kode            = Column(String(50))
     nama            = Column(String(255))
     nilai           = Column(BigInteger, nullable=False)
-    bendahara_uid   = Column(Integer,    nullable=False)
+    jenis           = Column(BigInteger, nullable=False) 
+    bendahara_uid   = Column(Integer)
     bendahara_nm    = Column(String(64))
     bendahara_nip   = Column(String(64))
     penyetor        = Column(String(64))
@@ -431,7 +524,62 @@ class ARInvoice(NamaModel, Base):
                 .filter(cls.id==id,)\
                 .group_by(extract('month',cls.tgl_terima)
                 ).scalar() or 0
+    
+    @classmethod
+    def get_tipe(cls, id):
+        return DBSession.query(case([(Sts.jenis==1,"T"),(Sts.jenis==2,"P"),
+                          (Sts.jenis==3,"K")], else_="").label('jenis'))\
+                .filter(cls.id==id,
+                ).scalar() or 0 
+    
+    @classmethod
+    def get_sub(cls, id_inv):
+        return DBSession.query(ARInvoice.kegiatan_sub_id.label('sub')
+                ).filter(cls.id==id_inv,
+                         cls.kegiatan_sub_id==KegiatanSub.id,
+                         ARInvoiceItem.ar_invoice_id==cls.id,
+                         ARInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                         KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                         KegiatanItem.rekening_id==Rekening.id
+                ).group_by(ARInvoice.kegiatan_sub_id.label('sub')
+                ).first() or 0
                 
+    @classmethod
+    def get_rek(cls, id_inv):
+        return DBSession.query(Rekening.id.label('rek')
+                ).filter(cls.id==id_inv,
+                         cls.kegiatan_sub_id==KegiatanSub.id,
+                         ARInvoiceItem.ar_invoice_id==cls.id,
+                         ARInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                         KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                         KegiatanItem.rekening_id==Rekening.id
+                ).group_by(Rekening.id.label('rek')
+                ).first() or 0
+
+    @classmethod
+    def get_mon(cls, id_inv):
+        return DBSession.query(ARInvoiceItem.nilai.label('mon')
+                ).filter(cls.id==id_inv,
+                         cls.kegiatan_sub_id==KegiatanSub.id,
+                         ARInvoiceItem.ar_invoice_id==cls.id,
+                         ARInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                         KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                         KegiatanItem.rekening_id==Rekening.id
+                ).group_by(ARInvoiceItem.nilai.label('mon')
+                ).first() or 0   
+
+    @classmethod
+    def get_note(cls, id_inv):
+        return DBSession.query(KegiatanItem.nama.label('note')
+                ).filter(cls.id==id_inv,
+                         cls.kegiatan_sub_id==KegiatanSub.id,
+                         ARInvoiceItem.ar_invoice_id==cls.id,
+                         ARInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                         KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                         KegiatanItem.rekening_id==Rekening.id
+                ).group_by(KegiatanItem.nama.label('note')
+                ).first() or 0
+
 class ARInvoiceItem(DefaultModel, Base):
     __tablename__  = 'ar_invoice_items'
     __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}
@@ -454,7 +602,7 @@ class ARInvoiceItem(DefaultModel, Base):
         return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
                 .filter(cls.ar_invoice_id==ar_invoice_id
                 ).scalar() or 0 
-    
+
 class ARInvoiceDetail(NamaModel, Base):
     __tablename__  ='ar_invoice_details'
     __table_args__ = {'extend_existing':True,'schema' :'apbd'}
@@ -466,6 +614,7 @@ class ARInvoiceDetail(NamaModel, Base):
     tgl_ketetapan  = Column(Date)    
     units          = relationship("Unit",     backref=backref("arinvoicedetails"))
     rekenings      = relationship("Rekening", backref=backref("arinvoicedetails"))
+    
     UniqueConstraint('tahun_id', 'unit_id', 'kode',
                 name = 'ar_invoice_detail_ukey')
 
@@ -523,7 +672,51 @@ class Sts(NamaModel, Base):
                           (Sts.jenis==3,"L")], else_="").label('jenis'))\
                 .filter(cls.id==id,
                 ).scalar() or 0        
+     
+    @classmethod
+    def get_sub(cls, id_inv):
+        return DBSession.query(KegiatanItem.kegiatan_sub_id.label('sub')
+                ).filter(cls.id==id_inv,
+                         StsItem.ar_sts_id==cls.id,
+                         StsItem.kegiatan_item_id==KegiatanItem.id,
+                         KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                         KegiatanItem.rekening_id==Rekening.id
+                ).group_by(KegiatanItem.kegiatan_sub_id.label('sub')
+                ).first() or 0
                 
+    @classmethod
+    def get_rek(cls, id_inv):
+        return DBSession.query(Rekening.id.label('rek')
+                ).filter(cls.id==id_inv,
+                         StsItem.ar_sts_id==cls.id,
+                         StsItem.kegiatan_item_id==KegiatanItem.id,
+                         KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                         KegiatanItem.rekening_id==Rekening.id
+                ).group_by(Rekening.id.label('rek')
+                ).first() or 0
+
+    @classmethod
+    def get_mon(cls, id_inv):
+        return DBSession.query(StsItem.amount.label('mon')
+                ).filter(cls.id==id_inv,
+                         StsItem.ar_sts_id==cls.id,
+                         StsItem.kegiatan_item_id==KegiatanItem.id,
+                         KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                         KegiatanItem.rekening_id==Rekening.id
+                ).group_by(StsItem.amount.label('mon')
+                ).first() or 0   
+
+    @classmethod
+    def get_note(cls, id_inv):
+        return DBSession.query(KegiatanItem.nama.label('note')
+                ).filter(cls.id==id_inv,
+                         StsItem.ar_sts_id==cls.id,
+                         StsItem.kegiatan_item_id==KegiatanItem.id,
+                         KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                         KegiatanItem.rekening_id==Rekening.id
+                ).group_by(KegiatanItem.nama.label('note')
+                ).first() or 0
+
 class StsItem(DefaultModel, Base):
     __tablename__      = 'ar_sts_items'
     __table_args__     = {'extend_existing':True,'schema' :'apbd'}
@@ -570,7 +763,7 @@ class AkJurnal(NamaModel, Base):
                 .filter(cls.jv_type==jv_type
                 ).group_by(cls.jv_type
                 ).scalar() or 0
-                
+
 class AkJurnalItem(DefaultModel, Base):
     __tablename__   ='ak_jurnal_items'
     __table_args__  = {'extend_existing':True,'schema' :'apbd'}

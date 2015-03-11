@@ -262,9 +262,7 @@
         
         $('#btn_posting').click(function () {
             if (mID) {
-                if(mID2=="0"){
-                    alert('Data tidak dapat diposting, karena bernilai 0.'); }
-                else{window.location = '/ak-jurnal-skpd/' + mID +'/posting';}
+                window.location = '/ak-jurnal-skpd/' + mID +'/posting';
             } else {
                 alert('Silahkan pilih data yang akan diposting');
             }
@@ -280,10 +278,7 @@
         
         $('#btn_delete').click(function () {
             if (mID){ 
-                if(mID2=="0"){
-                    window.location = '/ak-jurnal-skpd/'+mID+'/delete'; }
-                else{alert('Data tidak dapat dihapus, karena masih mempunyai items.');}
-                
+                window.location = '/ak-jurnal-skpd/'+mID+'/delete'; 
             }else{ 
                 alert('Pilih Baris yang akan di hapus');
             }

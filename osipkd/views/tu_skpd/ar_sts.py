@@ -10,7 +10,7 @@ from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
 from osipkd.models.pemda_model import Unit
-from osipkd.models.apbd_tu import Sts, StsItem, AkJurnal
+from osipkd.models.apbd_tu import Sts, StsItem, AkJurnal, AkJurnalItem
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -24,8 +24,9 @@ def deferred_jenis_id(node, kw):
     
 JENIS_ID = (
     (1, 'Penerimaan'),
-    (2, 'Kontra Pos'),
-    (3, 'Lainnya'))
+    (2, 'Pendapatan'),
+    (3, 'Kontra Pos'),
+    (4, 'Lainnya'))
     
 class view_ar_sts(BaseViews):
 
@@ -89,82 +90,82 @@ class AddSchema(colander.Schema):
             min_length=1)
             
 
-    tahun_id         = colander.SchemaNode(
+    tahun_id      = colander.SchemaNode(
                           colander.String(),
                           oid = "tahun_id",
                           title="Tahun")
-    unit_id  = colander.SchemaNode(
-                    colander.Integer(),
-                    oid='unit_id',
-                    title="SKPD")
-    unit_kd  = colander.SchemaNode(
-                    colander.String(),
-                    oid='unit_kd',
-                    title="SKPD",
-                    widget = unit_kd_widget,)
-    unit_nm  = colander.SchemaNode(
-                    colander.String(),
-                    oid='unit_nm',
-                    title="SKPD",
-                    widget = unit_nm_widget)
+    unit_id       = colander.SchemaNode(
+                          colander.Integer(),
+                          oid='unit_id',
+                          title="SKPD")
+    unit_kd       = colander.SchemaNode(
+                          colander.String(),
+                          oid='unit_kd',
+                          title="SKPD",
+                          widget = unit_kd_widget,)
+    unit_nm       = colander.SchemaNode(
+                          colander.String(),
+                          oid='unit_nm',
+                          title="SKPD",
+                          widget = unit_nm_widget)
 
-    no_urut         = colander.SchemaNode(
+    no_urut       = colander.SchemaNode(
                           colander.Integer(),
                           missing=colander.drop,
                           )
-    kode            = colander.SchemaNode(
+    kode          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
                           title = "No. STS"
                           )
-    nama            = colander.SchemaNode(
+    nama          = colander.SchemaNode(
                           colander.String(),
                           title = "Uraian"
                           )
-    jenis  =  colander.SchemaNode(
-                    colander.String(),
-                    validator=colander.Length(max=32),
-                    widget=widget.SelectWidget(values=JENIS_ID)) 
+    jenis         =  colander.SchemaNode(
+                          colander.String(),
+                          validator=colander.Length(max=32),
+                          widget=widget.SelectWidget(values=JENIS_ID)) 
                     
-    nominal         = colander.SchemaNode(
+    nominal       = colander.SchemaNode(
                           colander.String(),
                           default = 0,
                           oid="jml_total",
                           title="Nominal"
                           )
-    ttd_uid         = colander.SchemaNode(
+    ttd_uid       = colander.SchemaNode(
                           colander.Integer(),
                           missing=colander.drop,
                           oid="ttd_uid"
                           )
-    ttd_nip         = colander.SchemaNode(
+    ttd_nip       = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
                           oid="ttd_nip",
-                          title="TTD"
+                          title="Bendahara"
                           )
-    ttd_nama        = colander.SchemaNode(
+    ttd_nama      = colander.SchemaNode(
                           colander.String(),
                           #missing=colander.drop,
                           oid="ttd_nama",
                           title="Nama")
-    ttd_jab         = colander.SchemaNode(
+    ttd_jab       = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
                           oid="ttd_jab",
                           title="Jabatan")
-    bank_nama         = colander.SchemaNode(
+    bank_nama     = colander.SchemaNode(
                           colander.String(),
                           title="Bank"
                           )
-    bank_account     = colander.SchemaNode(
+    bank_account  = colander.SchemaNode(
                           colander.String(),
                           title="Rekening"
                           )
     tgl_sts       = colander.SchemaNode(
                           colander.Date(),
                           title="Tgl.STS")
-    tgl_validasi     = colander.SchemaNode(
+    tgl_validasi  = colander.SchemaNode(
                           colander.Date(),
                           title="Validasi")
 
@@ -193,7 +194,9 @@ def save(request, values, row=None):
         tahun    = request.session['tahun']
         unit_kd  = request.session['unit_kd']
         no_urut  = row.no_urut
-        row.kode = "STS%d" % tahun + "-%s" % unit_kd + "-%d" % no_urut
+        no       = "0000%d" % no_urut
+        nomor    = no[-5:]     
+        row.kode = "%d" % tahun + "-%s" % unit_kd + "-%s" % nomor
             
     DBSession.add(row)
     DBSession.flush()
@@ -313,7 +316,8 @@ def save_request2(request, row=None):
 @view_config(route_name='ar-sts-posting', renderer='templates/ar-sts/posting.pt',
              permission='posting')
 def view_edit_posting(request):
-    row = query_id(request).first()
+    row    = query_id(request).first()
+    id_inv = row.id
     
     if not row:
         return id_not_found(request)
@@ -365,7 +369,26 @@ def view_edit_posting(request):
                 is_skpd  = row.is_skpd
                 tipe     = AkJurnal.get_tipe(row.jv_type)
                 no_urut  = AkJurnal.get_norut(row.id)+1
-                row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%d" % no_urut
+                no       = "0000%d" % no_urut
+                nomor    = no[-5:]     
+                row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
+            
+            DBSession.add(row)
+            DBSession.flush()
+            
+            #Tambah ke Item Jurnal SKPD
+            jui   = row.id
+            sub   = "%d" % Sts.get_sub(id_inv)
+            rek   = "%d" % Sts.get_rek(id_inv)
+            mon   = "%d" % Sts.get_mon(id_inv)
+            note  = "%s" % Sts.get_note(id_inv)
+            
+            row = AkJurnalItem()
+            row.ak_jurnal_id    = "%d" % jui
+            row.kegiatan_sub_id = sub
+            row.rekening_id     = rek
+            row.amount          = mon
+            row.notes           = note
             
             DBSession.add(row)
             DBSession.flush()
@@ -403,6 +426,11 @@ def view_edit_unposting(request):
             #Update status posted pada STS
             row.posted=0
             save_request3(request, row)
+            
+            r = DBSession.query(AkJurnal.id).filter(AkJurnal.source_no==row.kode).first()
+            #Menghapus Item Jurnal
+            DBSession.query(AkJurnalItem).filter(AkJurnalItem.ak_jurnal_id==r).delete()
+            DBSession.flush()
             
             #Menghapus STS yang sudah menjadi jurnal
             DBSession.query(AkJurnal).filter(AkJurnal.source_no==row.kode).delete()

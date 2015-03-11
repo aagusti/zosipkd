@@ -10,7 +10,7 @@ from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem, Pegawai, Pejabat, Jabatan
 from osipkd.models.pemda_model import Unit
-from osipkd.models.apbd_tu import ARInvoice, ARInvoiceItem, AkJurnal
+from osipkd.models.apbd_tu import ARInvoice, ARInvoiceItem, AkJurnal, AkJurnalItem
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -18,6 +18,14 @@ from osipkd.views.base_view import BaseViews
 SESS_ADD_FAILED  = 'Tambah ar-invoice-skpd gagal'
 SESS_EDIT_FAILED = 'Edit ar-invoice-skpd gagal'
 
+def deferred_jenis_id(node, kw):
+    values = kw.get('jenis_id', [])
+    return widget.SelectWidget(values=values)
+    
+JENIS_ID = (
+    (1, 'Tagihan'),
+    (2, 'Piutang'),
+    (3, 'Ketetapan'))
 
 class view_ar_invoice_skpd(BaseViews):
 
@@ -50,8 +58,9 @@ class view_ar_invoice_skpd(BaseViews):
                 columns.append(ColumnDT('kode'))
                 columns.append(ColumnDT('tgl_terima', filter=self._DTstrftime))
                 columns.append(ColumnDT('tgl_validasi', filter=self._DTstrftime))
-                columns.append(ColumnDT('bendahara_nm'))
-                columns.append(ColumnDT('penyetor'))
+                #columns.append(ColumnDT('jenis'))
+                #columns.append(ColumnDT('bendahara_nm'))
+                #columns.append(ColumnDT('penyetor'))
                 columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('nilai'))
                 columns.append(ColumnDT('posted'))
@@ -60,8 +69,9 @@ class view_ar_invoice_skpd(BaseViews):
                           ARInvoice.kode,
                           ARInvoice.tgl_terima,
                           ARInvoice.tgl_validasi,
-                          ARInvoice.bendahara_nm,
-                          ARInvoice.penyetor,
+                          #ARInvoice.jenis,
+                          #ARInvoice.bendahara_nm,
+                          #ARInvoice.penyetor,
                           ARInvoice.nama,
                           ARInvoice.nilai,
                           ARInvoice.posted,
@@ -100,10 +110,30 @@ class AddSchema(colander.Schema):
     kegiatan_nm      = colander.SchemaNode(
                           colander.String(),
                           oid="kegiatan_nm")
- 
+    
+    nama             = colander.SchemaNode(
+                          colander.String(),
+                          title="Uraian")
+    kode             = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          title="No. Piutang")
+    tgl_terima       = colander.SchemaNode(
+                          colander.Date(),
+                          title="Tgl.Ketetapan")
+    tgl_validasi     = colander.SchemaNode(
+                          colander.Date(),
+                          title="Validasi") 
+    nilai            = colander.SchemaNode(
+                          colander.String(),
+                          default=0,
+                          oid="jml_total",
+                          title="Nilai")
+    '''                          
     bendahara_uid    = colander.SchemaNode(
                           colander.Integer(),
                           oid="bendahara_uid",
+                          missing=colander.drop,
                           title="Bendahara") 
     bendahara_nip    = colander.SchemaNode(
                           colander.String(),
@@ -112,32 +142,25 @@ class AddSchema(colander.Schema):
                           title="Bendahara")                          
     bendahara_nm     = colander.SchemaNode(
                           colander.String(),
+                          missing=colander.drop,
                           oid="bendahara_nm") 
 
-    nama             = colander.SchemaNode(
-                          colander.String(),
-                          title="Uraian")
-    kode             = colander.SchemaNode(
+    
+    jenis            =  colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="No. Piutang")
+                          validator=colander.Length(max=32),
+                          widget=widget.SelectWidget(values=JENIS_ID)) 
     penyetor         = colander.SchemaNode(
                           colander.String(),
+                          missing=colander.drop,
                           title="Penyetor")
-    tgl_terima       = colander.SchemaNode(
-                          colander.Date(),
-                          title="Tgl.Terima")
-    tgl_validasi     = colander.SchemaNode(
-                          colander.Date(),
-                          title="Validasi")
+    
     alamat           = colander.SchemaNode(
                           colander.String(),
+                          missing=colander.drop,
                           title="Alamat")
-    nilai            = colander.SchemaNode(
-                          colander.String(),
-                          default=0,
-                          oid="jml_total",
-                          title="Nilai")
+    '''
 
 class EditSchema(AddSchema):
     id             = colander.SchemaNode(
@@ -146,7 +169,7 @@ class EditSchema(AddSchema):
 
 def get_form(request, class_form):
     schema = class_form(validator=form_validator)
-    schema = schema.bind()
+    schema = schema.bind(jenis_id=JENIS_ID)
     schema.request = request
     return Form(schema, buttons=('simpan','batal'))
     
@@ -159,7 +182,9 @@ def save(request, values, row=None):
         tahun    = request.session['tahun']
         unit_kd  = request.session['unit_kd']
         no_urut  = ARInvoice.get_norut(row.id)+1
-        row.kode = "PIUTANG%d" % tahun + "-%s" % unit_kd + "-%d" % no_urut
+        no       = "0000%d" % no_urut
+        nomor    = no[-5:]     
+        row.kode = "%d" % tahun + "-%s" % unit_kd + "-%s" % nomor
         
     DBSession.add(row)
     DBSession.flush()
@@ -286,7 +311,8 @@ def save_request2(request, row=None):
 @view_config(route_name='ar-invoice-skpd-posting', renderer='templates/ar-invoice-skpd/posting.pt',
              permission='posting')
 def view_edit_posting(request):
-    row = query_id(request).first()
+    row    = query_id(request).first()
+    id_inv = row.id
     
     if not row:
         return id_not_found(request)
@@ -309,6 +335,7 @@ def view_edit_posting(request):
             nama    = row.nama
             kode    = row.kode
             tanggal = row.tgl_terima
+            #tipe    = ARInvoice.get_tipe(row.id)
             periode = ARInvoice.get_periode(row.id)
             
             row = AkJurnal()
@@ -318,7 +345,7 @@ def view_edit_posting(request):
             row.update_uid = request.user.id
             row.tahun_id   = request.session['tahun']
             row.unit_id    = request.session['unit_id']
-            row.nama       = "Diterima Piutang %s" % nama
+            row.nama       = "Diterima PIUTANG %s" % nama
             row.notes      = nama
             row.periode    = periode
             row.posted     = 0
@@ -337,7 +364,26 @@ def view_edit_posting(request):
                 is_skpd  = row.is_skpd
                 tipe     = AkJurnal.get_tipe(row.jv_type)
                 no_urut  = AkJurnal.get_norut(row.id)+1
-                row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%d" % no_urut
+                no       = "0000%d" % no_urut
+                nomor    = no[-5:]     
+                row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
+            
+            DBSession.add(row)
+            DBSession.flush()
+            
+            #Tambah ke Item Jurnal SKPD
+            jui   = row.id
+            sub   = "%d" % ARInvoice.get_sub(id_inv)
+            rek   = "%d" % ARInvoice.get_rek(id_inv)
+            mon   = "%d" % ARInvoice.get_mon(id_inv)
+            note  = "%s" % ARInvoice.get_note(id_inv)
+            
+            row = AkJurnalItem()
+            row.ak_jurnal_id    = "%d" % jui
+            row.kegiatan_sub_id = sub
+            row.rekening_id     = rek
+            row.amount          = mon
+            row.notes           = note
             
             DBSession.add(row)
             DBSession.flush()
@@ -376,6 +422,11 @@ def view_edit_unposting(request):
             row.posted=0
             save_request3(request, row)
             
+            r = DBSession.query(AkJurnal.id).filter(AkJurnal.source_no==row.kode).first()
+            #Menghapus Item Jurnal
+            DBSession.query(AkJurnalItem).filter(AkJurnalItem.ak_jurnal_id==r).delete()
+            DBSession.flush()
+                
             #Menghapus PIUTANG yang sudah menjadi jurnal
             DBSession.query(AkJurnal).filter(AkJurnal.source_no==row.kode).delete()
             DBSession.flush()

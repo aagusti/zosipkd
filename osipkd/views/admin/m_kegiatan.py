@@ -114,6 +114,21 @@ class view_kegiatan(BaseViews):
                 r.append(d)
             return r            
                   
+        elif url_dict['act']=='headofnama1':
+            term = 'term' in params and params['term'] or '' 
+            rows = DBSession.query(Kegiatan.id, Kegiatan.kode, Kegiatan.nama
+                      ).join(Program).filter( #Program.kode!="0.00.00",
+                      Kegiatan.nama.ilike('%%%s%%' % term) ).all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[2]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
+            return r            
+            
     #######    
     # Add #
     #######

@@ -199,7 +199,9 @@ class view_ap_spm(BaseViews):
             tahun    = self.session['tahun']
             unit_kd  = self.session['unit_kd']
             no_urut  = Spm.get_norut(row.id)+1
-            row.kode = "SPM%d" % tahun + "-%s" % unit_kd + "-%d" % no_urut
+            no       = "0000%d" % no_urut
+            nomor    = no[-5:]     
+            row.kode = "%d" % tahun + "-%s" % unit_kd + "-%s" % nomor
             
         DBSession.add(row)
         DBSession.flush()
@@ -411,8 +413,8 @@ class AddSchema(colander.Schema):
                           title="No. SPM")
     nama            = colander.SchemaNode(
                           colander.String(),
-                          title = "Uraian"
-                          )
+                          title = "Uraian",
+                          oid = "nama")
     tanggal         = colander.SchemaNode(
                           colander.Date(),
                           )
@@ -423,7 +425,7 @@ class AddSchema(colander.Schema):
     ttd_uid         = colander.SchemaNode(
                           colander.Integer(),
                           missing=colander.drop,
-                          title = "TTD",
+                          title = "PA",
                           oid = "ttd_uid"
                           )
     ttd_nip         = colander.SchemaNode(
@@ -445,7 +447,7 @@ class AddSchema(colander.Schema):
     verified_nip    = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title = "Verified",
+                          title = "PPK",
                           oid = "verified_nip"
                           )
     verified_nama   = colander.SchemaNode(

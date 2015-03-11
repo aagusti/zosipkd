@@ -185,12 +185,15 @@ class view_kegiatan_sub(BaseViews):
             
         elif url_dict['act']=='headofkode1':
             term = 'term' in params and params['term'] or ''
-            q = DBSession.query(KegiatanSub.id, KegiatanSub.kode, KegiatanSub.no_urut,
+            q = DBSession.query(KegiatanSub.id, Kegiatan.kode, KegiatanSub.no_urut,
                                 KegiatanSub.nama
                         ).join(Kegiatan
                         ).filter(KegiatanSub.unit_id == ses['unit_id'],
                                  KegiatanSub.tahun_id==ses['tahun'],
-                                 KegiatanSub.kode.ilike('%%%s%%' % term))
+                                 Kegiatan.kode!='0.00.00.10',
+                                 Kegiatan.kode!='0.00.00.31',
+                                 Kegiatan.kode!='0.00.00.32',
+                                 Kegiatan.kode.ilike('%%%s%%' % term))
                            
             rows = q.all()
             r = []
@@ -206,11 +209,14 @@ class view_kegiatan_sub(BaseViews):
 
         elif url_dict['act']=='headofnama1':
             term = 'term' in params and params['term'] or ''
-            q = DBSession.query(KegiatanSub.id, KegiatanSub.kode, KegiatanSub.no_urut,
+            q = DBSession.query(KegiatanSub.id, Kegiatan.kode, KegiatanSub.no_urut,
                                 KegiatanSub.nama
                         ).join(Kegiatan
                         ).filter(KegiatanSub.unit_id ==ses['unit_id'],
                                  KegiatanSub.tahun_id==ses['tahun'],
+                                 Kegiatan.kode!='0.00.00.10',
+                                 Kegiatan.kode!='0.00.00.31',
+                                 Kegiatan.kode!='0.00.00.32',
                                  KegiatanSub.nama.ilike('%%%s%%' % term))
                            
             rows = q.all()

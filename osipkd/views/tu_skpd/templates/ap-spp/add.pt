@@ -111,11 +111,13 @@
                     $('#ap_spd_id').val(datum.id);
                     $('#spd_nm').val(datum.nama);
                     $('#spd_tgl').val(datum.tanggal);
+                    $('#nilai').val(datum.nominal);
               });
               $('#spd_nm').bind('typeahead:selected', function(obj, datum, name) {      
                     $('#ap_spd_id').val(datum.id);
                     $('#spd_nm').val(datum.nama);
                     $('#spd_tgl').val(datum.tanggal);
+                    $('#nilai').val(datum.nominal);
               });
               $("#spd_nm").attr('readonly',true);
               $("#spd_tgl").attr('readonly',true);
@@ -314,21 +316,11 @@
             </div>
           </div>
            <script>
-           $('#ttd_uid').typeahead({
-              "hint"     : true,
-              "highlight": true,
-              "minLength": 1,
-              "remote"   : "/pejabat/act/headofkode4?term=%QUERY",
-            },
-            {
-            "name"      : 'ttd_uid',
-            "displayKey": 'value',
-          });
           $('#ttd_nip').typeahead({
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
-              "remote"   : "/pejabat/act/headofnip4?term=%QUERY",
+              "remote"   : "/pejabat/act/headofnip2?term=%QUERY",
             },
             {
               "name"      : 'ttd_nip',
@@ -338,29 +330,13 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
-              "remote"   : "/pejabat/act/headofnama4?term=%QUERY",
+              "remote"   : "/pejabat/act/headofnama2?term=%QUERY",
             },
             {
               "name"      : 'ttd_nama',
               "displayKey": 'value',
             });
-          $('#ttd_nip').typeahead({
-              "hint"     : true,
-              "highlight": true,
-              "minLength": 1,
-              "remote"   : "/pejabat/act/headofnip4?term=%QUERY",
-            },
-            {
-              "name"      : 'ttd_nip',
-              "displayKey": 'value',
-            });
         
-        $('#ttd_uid').bind('typeahead:selected', function(obj, datum, name) {  
-              $('#ttd_nama').val(datum.nama);
-              $('#ttd_nip').val(datum.nip);
-              $('#pejabat_id').val(datum.id);
-              $('#ttd_jab').val(datum.jab);
-        });
         $('#ttd_nama').bind('typeahead:selected', function(obj, datum, name) {  
               $('#ttd_uid').val(datum.kode);
               $('#ttd_nip').val(datum.nip);
@@ -368,198 +344,17 @@
               $('#ttd_jab').val(datum.jab);
         });
         $('#ttd_nip').bind('typeahead:selected', function(obj, datum, name) {  
-              $('#ttd_nama').val(datum.nama);
               $('#ttd_uid').val(datum.kode);
+              $('#ttd_nama').val(datum.nama);
               $('#pejabat_id').val(datum.id);
               $('#ttd_jab').val(datum.jab);
         });
-        $('#ttd_jab').bind('typeahead:selected', function(obj, datum, name) {  
-              $('#ttd_nama').val(datum.nama);
-              $('#ttd_uid').val(datum.kode);
-              $('#pejabat_id').val(datum.id);
-              $('#ttd_nip').val(datum.nip);
-        });
+
         $("#ttd_jab").attr('readonly',true);
         $("#ttd_nip").attr('readonly',true);
         </script>
         </div>
-        <br>
-        <!---ap_pemilik------------------------------------------------------------------->
-        <div class="panel panel-default">
-            <div class="panel-heading">
-               <h5 class="panel-title">Kontrak</h5>
-            </div>
-        <br>
-
-        <!---ap_kegiatankd------------------------------------------------------------------->
-        <div class="form-group"> 
-          <div tal:define="field form['ap_kegiatankd']" style="display: none;">
-            ${structure:field.serialize()}
-          </div>
-          <div tal:define="field form['ap_kegiatannm']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
-                    ${field.title}</label>
-            <div class="col-md-3">
-               ${structure:field.serialize()}
-              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                 tal:repeat="error field.error.messages()">
-                 ${error}</p>
-            </div>
-          </div>
-          <script>
-            $('#ap_kegiatannm').typeahead({
-              "hint"     : true,
-              "highlight": true,
-              "minLength": 1,
-              "remote"   : "/ag-kegiatan-item/act/headofnama3?term=%QUERY",
-            },{
-             "name"      : 'ap_kegiatannm',
-             "displayKey": 'value',
-            });
-
-            $('#ap_kegiatannm').bind('typeahead:selected', function(obj, datum, name) {  
-                $('#ap_kegiatankd').val(datum.id);
-            });
-          </script>
-          <!---ap_uraian------------------------------------------------------------------->
-          <div class="col-md-8"> 
-            <div tal:define="field form['ap_uraian']" id="item-${field.oid}">
-              <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
-                      ${field.title}</label>
-              <div class="col-md-11">
-                 ${structure:field.serialize()}
-                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                   tal:repeat="error field.error.messages()">
-                   ${error}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group"> 
-          <div tal:define="field form['ap_pemilik']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
-                    ${field.title}</label>
-            <div class="col-md-3">
-               ${structure:field.serialize()}
-              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                 tal:repeat="error field.error.messages()">
-                 ${error}</p>
-            </div>
-          </div>
-
-          <!---ap_alamat------------------------------------------------------------------->
-          <div class="col-md-5"> 
-            <div tal:define="field form['ap_alamat']" id="item-${field.oid}">
-              <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
-                      ${field.title}</label>
-              <div class="col-md-12">
-                 ${structure:field.serialize()}
-                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                   tal:repeat="error field.error.messages()">
-                   ${error}</p>
-              </div>
-            </div>
-          </div>
-
-          <!---ap_bentuk------------------------------------------------------------------->
-          <div class="col-md-3"> 
-            <div tal:define="field form['ap_bentuk']" id="item-${field.oid}">
-              <label for="${field.oid}" class="control-label col-md-5" id="req-${field.oid}">
-                      ${field.title}</label>
-              <div class="col-md-7">
-                 ${structure:field.serialize()}
-                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                   tal:repeat="error field.error.messages()">
-                   ${error}</p>
-              </div>
-            </div>
-          </div>
-      </div>
-
-        <!---ap_kontrak------------------------------------------------------------------->
-        <div class="form-group"> 
-          <div tal:define="field form['ap_kontrak']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
-                    ${field.title}</label>
-            <div class="col-md-3">
-               ${structure:field.serialize()}
-              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                 tal:repeat="error field.error.messages()">
-                 ${error}</p>
-            </div>
-          </div>
-
-          <!---ap_tgl_kontrak------------------------------------------------------------------->
-          <div class="col-md-4"> 
-            <div tal:define="field form['ap_tgl_kontrak']" id="item-${field.oid}">
-              <label for="${field.oid}" class="control-label col-md-3" id="req-${field.oid}">
-                      ${field.title}</label>
-              <div class="col-md-9">
-                 ${structure:field.serialize()}
-                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                   tal:repeat="error field.error.messages()">
-                   ${error}</p>
-              </div>
-            </div>
-          </div>
-
-          <!---ap_waktu------------------------------------------------------------------->
-          <div class="col-md-4"> 
-            <div tal:define="field form['ap_waktu']" id="item-${field.oid}">
-              <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
-                      ${field.title}</label>
-              <div class="col-md-10">
-                 ${structure:field.serialize()}
-                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                   tal:repeat="error field.error.messages()">
-                   ${error}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!---ap_bap_no------------------------------------------------------------------->
-        <div class="form-group"> 
-          <div tal:define="field form['ap_bap_no']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
-                    ${field.title}</label>
-            <div class="col-md-3">
-               ${structure:field.serialize()}
-              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                 tal:repeat="error field.error.messages()">
-                 ${error}</p>
-            </div>
-          </div>
-
-          <!---ap_bap_tanggal------------------------------------------------------------------->
-          <div class="col-md-4"> 
-            <div tal:define="field form['ap_bap_tgl']" id="item-${field.oid}">
-              <label for="${field.oid}" class="control-label-left col-md-3" id="req-${field.oid}">
-                      ${field.title}</label>
-              <div class="col-md-9">
-                 ${structure:field.serialize()}
-                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                   tal:repeat="error field.error.messages()">
-                   ${error}</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4"> 
-            <div tal:define="field form['ap_nilai']" id="item-${field.oid}">
-              <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
-                      ${field.title}</label>
-              <div class="col-md-10">
-                 ${structure:field.serialize()}
-                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                   tal:repeat="error field.error.messages()">
-                   ${error}</p>
-              </div>
-            </div>
-          </div>
-        </div><br> 
-        </div>        
-        <hr>
+        
         <!----barang_nip------------------------------------------------------------------>
         <div class="form-group"> 
           <div tal:define="field form['barang_uid']" style="display: none;">
@@ -871,7 +666,6 @@
         </script>
           <div class="col-md-4"> 
             <button type="submit" class="btn btn-primary" id="simpan" name="simpan" >Simpan</button>
-            <button type="submit" class="btn btn-danger" id="batal" name="batal">Batal</button>
             <button type="submit" class="btn btn-warning" id="tutup" name="tutup">Tutup</button>
           </div>
         </div>         
@@ -905,6 +699,7 @@
               <!--APIncoice------------------------------------------------------------->
           <input id="ap_spp_item_id" type="hidden" value="" name="ap_spp_item_id">
           <input id="ap_invoice_id" type="hidden" value="" name="ap_invoice_id">
+          <input id="nilai" type="hidden" value="" name="nilai">
           <div class="form-group">
             <label for="kode1" class="control-label col-md-1" id="req-kode1">
                     Tagihan </label>
@@ -921,15 +716,19 @@
             <div class="col-md-2">
                 <button id="rekening_add" name="baru" type="button" class="btn btn-primary "
                     value="baru">Baru</button>
-                <button id="rekening_save" name="simpan" type="submit" class="btn btn-primary "
-                    value="simpan">Update</button>
                 <button id="rekening_cancel" name="batal" type="reset" class="btn btn-danger "
                     value="batal">Batal</button>
             </div> 
           </div>
           <script>
             $('#rekening_add').click(function () {
-                  $('#ap_spp_item_id').val('');
+                /**var jenis = $('#jenis').val();
+                var jml_total = parseInt($('#jml_total').val());
+                var amount1 = parseInt($('#amount1').val());
+                var hasil = jml_total+amount1;
+                alert(hasil);*/
+
+                $('#ap_spp_item_id').val('');
                   $('#detail').submit();
              })
             $('#kode1').typeahead({
@@ -1141,6 +940,8 @@
             window.location = '/ap-spp';
             return false;
         });
+        
+        $("#no_urut").attr('readonly',true);
         $("#jml_total").attr('readonly',true);
         jml_total=$("#jml_total").val();
         $("#jml_total").val(formatNumber(jml_total));

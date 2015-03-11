@@ -108,8 +108,10 @@
             <tr>
                 <th>ID</th>
                 <th>Tanggal</th>
-                <th>Kode</th>
+                <th>No. Jurnal</th>
+                <th>Tipe</th>
                 <th>Uraian</th>
+                <th>Referensi</th>
                 <th>Nilai</th>
                 <th>Posted</th>
             </tr>
@@ -121,7 +123,7 @@
   
   <div metal:fill-slot="scripts">
     <script>
-      var mID;
+      var mID,mID2;
       var mThn;
       var oTable;
       var iPos;
@@ -129,44 +131,102 @@
         
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
-          "sDom": '<"toolbar">lfrtip',
-          "sAjaxSource": oTableUrl,
-          "bServerSide": true,
-          "bProcessing": true,
+          "sDom"           : '<"toolbar">lfrtip',
+          "sAjaxSource"    : oTableUrl,
+          "bServerSide"    : true,
+          "bProcessing"    : true,
           "bScrollCollapse": true,
-          "bSort": true,
-          "bInfo": false,
-          "bFilter": true,
-          "bAutoWidth": false,
-          "bPaginate": true,
+          "bSort"          : true,
+          "bInfo"          : false,
+          "bFilter"        : true,
+          "bAutoWidth"     : false,
+          "bPaginate"      : true,
           "sPaginationType": "full_numbers",
           
           "lengthMenu": [
               [10, 25, 50, 100],
               [10, 25, 50, 100]
           ],
-          "aoColumnDefs": [{
-                        "bSearchable": false,
-                        "bVisible": false,
-                        "aTargets": [0]
-                    }],
+          "aoColumnDefs": [
+                    {
+              "bSearchable": false,
+              "bVisible"   : false,
+              "aTargets"   : [0]
+          },{
+              "bSearchable": true,
+              "bSortable"  : false,
+              "aTargets"   : [2,4]
+          },{
+              "bSearchable": false,
+              "bSortable"  : false,
+              "aTargets"   : [3,5,6,7]
+          },{
+                "aTargets" : [3], // Untuk Jenis
+                "mRender"  : function (data, type, full) {
+                    if (data == "1") {
+                        return 'JT';
+                    } else if (data == "2") {
+                        return 'JK';
+                    } else if (data == "3") {
+                        return 'JU';
+                    } else if (data == "4") {
+                        return 'KR';
+                    } else if (data == "5") {
+                        return 'CL';
+                    }
+                }
+          },{
+                "aTargets" : [7], // Untuk Posting
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return 'N';
+                    } else if (data == "1") {
+                        return 'Y';
+                    }
+                }
+          }],
           "aoColumns": [
               null,
               {"width": "75px"},
               {"width": "75px"},
-              null,
-              {"width": "100px", "sClass":"right"},
-              {"width": "75px", "sClass":"right"},
-          ]
+              {"width": "60px"},
+              {"width": "300px"},
+              {"width": "75px"},
+              {"width": "80px", "sClass":"right"},
+              {"width": "30px",  "sClass":"right"},
+          ],
+          "fnRowCallback": function (nRow, aData, iDisplayIndex) {
+                $(nRow).on("click", function (event) {
+                    if ($(this).hasClass('row_selected')) {
+                        /* mID = '';
+                        $(this).removeClass('row_selected'); */
+                        
+                    } else {
+
+                        var data = oTable.fnGetData(this);
+                        mID = data[0];
+
+                        oTable.$('tr.row_selected').removeClass('row_selected');
+                        $(this).addClass('row_selected');
+                    }
+                })
+                
+                switch(aData[7]){
+                    case '1' :
+                        $('td',nRow).css("background-color","#ddffdd")
+                        break;
+                }
+            },
         });
           
         var tb_array = [
-          '<div class="btn pull-left">',
-          '	<button id="btn_add" class="btn btn btn-primary" type="button">Tambah</button>',
-          '	<button id="btn_edit" class="btn btn btn-primary" type="button">Edit</button>',
-          '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',
+          '<div class="btn-group pull-left">',
+          '	<button id="btn_add"    class="btn btn btn-primary" type="button">Tambah</button>',
+          '	<button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button>',
+          '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
           '	<!--button id="btn_pdf" class="btn btn btn-warning" type="button">PDF</button-->',
-          '	<button id="btn_csv" class="btn btn btn-default" type="button">CSV</button>',
+          '	<!--button id="btn_csv"    class="btn btn btn-default" type="button">CSV</button-->',
+          '	<button id="btn_close"  class="btn btn btn-warning" type="button">Tutup</button>',
           '	&nbsp;',
           '</div>',
         ];
@@ -203,7 +263,10 @@
             if (mID) window.location = '/ak-jurnal/'+mID+'/delete';
             else alert('Pilih Baris yang akan di hapus');
         });        
-
+        $("#btn_close").click(function () {
+            window.location = '/skpd';
+            return false;
+        });
         })
     </script>
   </div>

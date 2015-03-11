@@ -29,17 +29,6 @@ AP_TYPE = (
     ('4', 'LS'),
     )
 
-def deferred_kontrak_type(node, kw):
-    values = kw.get('kontrak_type', [])
-    return widget.SelectWidget(values=values)
-    
-KONTRAK_TYPE = (
-    ('1', 'PT / NV'),
-    ('2', 'CV'),
-    ('3', 'FIRMA'),
-    ('4', 'Lain-lain'),
-    )
-
 class view_ap_spp(BaseViews):
 
     @view_config(route_name="ap-spp", renderer="templates/ap-spp/list.pt")
@@ -107,7 +96,7 @@ class view_ap_spp(BaseViews):
             
         elif url_dict['act']=='headofkode1':
             term = 'term' in params and params['term'] or ''
-            q = DBSession.query(Spp.id, Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm'), Spp.nominal.label('spp_n')
+            q = DBSession.query(Spp.id, Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm'), Spp.nominal.label('spp_n'),Spp.nama.label('nama'),
                       ).filter(Spp.unit_id == ses['unit_id'],
                                Spp.tahun_id==ses['tahun'],
                                Spp.posted==1,
@@ -122,12 +111,13 @@ class view_ap_spp(BaseViews):
                 d['kode']        = k[1]
                 d['nama']        = k[2]
                 d['nilai']       = k[3]
+                d['urai']        = k[4]
                 r.append(d)               
             return r
             
         elif url_dict['act']=='headofnama1':
             term = 'term' in params and params['term'] or ''
-            q = DBSession.query(Spp.id, Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm'), Spp.nominal.label('spp_n')
+            q = DBSession.query(Spp.id, Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm'), Spp.nominal.label('spp_n'),Spp.nama.label('nama'),
                       ).filter(Spp.unit_id == ses['unit_id'],
                                Spp.tahun_id==ses['tahun'],
                                Spp.posted==1,
@@ -138,10 +128,11 @@ class view_ap_spp(BaseViews):
             for k in rows:
                 d={}
                 d['id']          = k[0]
-                d['value']       = k[1]
+                d['value']       = k[2]
                 d['kode']        = k[1]
                 d['nama']        = k[2]
                 d['nilai']       = k[3]
+                d['urai']        = k[4]
                 r.append(d)               
             return r
             
@@ -154,10 +145,12 @@ class view_ap_spp(BaseViews):
                 'Kegiatan dengan no urut tersebut sudah ada')
                     
 
-    def get_form(self, class_form):
+    def get_form(self, class_form, row=None):
         schema = class_form(validator=self.form_validator)
-        schema = schema.bind(ap_type=AP_TYPE,kontrak_type=KONTRAK_TYPE)
+        schema = schema.bind(ap_type=AP_TYPE)
         schema.request = self.request
+        if row:
+          schema.deserialize(row)
         return Form(schema, buttons=('simpan','batal'))
         
     def save(self, values, row=None):
@@ -176,7 +169,9 @@ class view_ap_spp(BaseViews):
             tahun    = self.session['tahun']
             unit_kd  = self.session['unit_kd']
             no_urut  = row.no_urut
-            row.kode = "SPP%d" % tahun + "-%s" % unit_kd + "-%d" % no_urut
+            no       = "0000%d" % no_urut
+            nomor    = no[-5:]     
+            row.kode = "%d" % tahun + "-%s" % unit_kd + "-%s" % nomor
         
         row.disabled = 'disabled' in values and 1 or 0      
         DBSession.add(row)
@@ -258,10 +253,6 @@ class view_ap_spp(BaseViews):
         values['spd_nm']=row.spds.nama
         values['spd_kd']=row.spds.kode
         values['spd_tgl']=row.spds.tanggal
-        if row.ap_kegiatankd:
-            row = DBSession.query(KegiatanItem).filter(KegiatanItem.id==row.ap_kegiatankd).first()
-            nama = row.nama
-            values['ap_kegiatannm']=nama
         form.set_appstruct(values) 
         return dict(form=form)
 
@@ -389,10 +380,12 @@ class AddSchema(colander.Schema):
                           title="Tgl. SPD")
     no_urut         = colander.SchemaNode(
                           colander.Integer(),
+                          oid='no_urut',
                           missing=colander.drop,
                           )
     jenis           = colander.SchemaNode(
                           colander.String(),
+                          oid='jenis',
                           widget=widget.SelectWidget(values=AP_TYPE),
                           )
     tanggal         = colander.SchemaNode(
@@ -405,7 +398,7 @@ class AddSchema(colander.Schema):
                           )
     ap_nama         = colander.SchemaNode(
                           colander.String(),
-                          title="Penerima"
+                          title="Kepada"
                           )
     ap_bank         = colander.SchemaNode(
                           colander.String(),
@@ -438,7 +431,7 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           missing=colander.drop,
                           oid="ttd_nip",
-                          title="TTD"
+                          title="Bendahara"
                           )
     ttd_nama        = colander.SchemaNode(
                           colander.String(),
@@ -450,74 +443,12 @@ class AddSchema(colander.Schema):
                           missing=colander.drop,
                           oid="ttd_jab",
                           title="Jabatan")
-    ap_bentuk       = colander.SchemaNode(
-                          colander.String(),
-                          widget=widget.SelectWidget(values=KONTRAK_TYPE),
-                          title="Bentuk"
-                          )
-    ap_alamat       = colander.SchemaNode(
-                          colander.String(),
-                          missing=colander.drop,
-                          title="Alamat"
-                          )
-    ap_pemilik      = colander.SchemaNode(
-                          colander.String(),
-                          missing=colander.drop,
-                          title="Pemilik"
-                          )
-    ap_kontrak      = colander.SchemaNode(
-                          colander.String(),
-                          missing=colander.drop,
-                          title="Kontrak"
-                          )
-    ap_waktu        = colander.SchemaNode(
-                          colander.String(),
-                          missing=colander.drop,
-                          title="Waktu"
-                          )
-    ap_nilai        = colander.SchemaNode(
-                          colander.Integer(),
-                          oid="ap_nilai",
-                          missing=colander.drop,
-                          title="Nilai"
-                          )
-    ap_tgl_kontrak  = colander.SchemaNode(
-                          colander.Date(),
-                          missing=colander.drop,
-                          title="Tgl.Kontrak"
-                          )
-    ap_kegiatankd   = colander.SchemaNode(
-                          colander.String(),
-                          missing=colander.drop,
-                          oid="ap_kegiatankd"
-                          )
-    ap_kegiatannm   = colander.SchemaNode(
-                          colander.String(),
-                          missing=colander.drop,
-                          oid="ap_kegiatannm",
-                          title="Kegiatan"
-                          )
-    ap_uraian       = colander.SchemaNode(
-                          colander.String(),
-                          missing=colander.drop,
-                          title="Pekerjaan"
-                          )
-
-    ap_bap_no       = colander.SchemaNode(
-                          colander.String(),
-                          missing=colander.drop,
-                          title="No. BAP"
-                          )
-    ap_bap_tgl      = colander.SchemaNode(
-                          colander.Date(),
-                          missing=colander.drop,
-                          title="Tgl.BAP"
-                          )
-
+    
     pptk_uid        = colander.SchemaNode(
                           colander.Integer(),
                           missing=colander.drop,
-                          oid="pptk_uid"
+                          oid="pptk_uid",
+                          default = 0,
                           )
     pptk_nip        = colander.SchemaNode(
                           colander.String(),
@@ -527,13 +458,14 @@ class AddSchema(colander.Schema):
                           )
     pptk_nama       = colander.SchemaNode(
                           colander.String(),
-                          #missing=colander.drop,
+                          missing=colander.drop,
                           oid="pptk_nama",
                           title="Nama")
     barang_uid      = colander.SchemaNode(
                           colander.Integer(),
                           missing=colander.drop,
-                          oid="barang_uid"
+                          oid="barang_uid",
+                          default = 0,
                           )
     barang_nip      = colander.SchemaNode(
                           colander.String(),
@@ -543,7 +475,7 @@ class AddSchema(colander.Schema):
                           )
     barang_nama     = colander.SchemaNode(
                           colander.String(),
-                          #missing=colander.drop,
+                          missing=colander.drop,
                           oid="barang_nama",
                           title="Nama")
     barang_jab      = colander.SchemaNode(
@@ -554,7 +486,8 @@ class AddSchema(colander.Schema):
     kasi_uid        = colander.SchemaNode(
                           colander.Integer(),
                           missing=colander.drop,
-                          oid="kasi_uid"
+                          oid="kasi_uid",
+                          default = 0,
                           )
     kasi_nip        = colander.SchemaNode(
                           colander.String(),
@@ -564,7 +497,7 @@ class AddSchema(colander.Schema):
                           )
     kasi_nama       = colander.SchemaNode(
                           colander.String(),
-                          #missing=colander.drop,
+                          missing=colander.drop,
                           oid="kasi_nama",
                           title="Nama")
     kasi_jab        = colander.SchemaNode(

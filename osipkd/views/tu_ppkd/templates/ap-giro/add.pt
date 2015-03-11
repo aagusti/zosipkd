@@ -109,7 +109,6 @@
           <!--Button-------------------------------------------------------------------->
           <div class="col-md-4"> 
             <button type="submit" class="btn btn-primary" id="simpan" name="simpan">Simpan</button>
-            <button type="submit" class="btn btn-danger"  id="batal"  name="batal">Batal</button>
             <button type="submit" class="btn btn-warning" id="tutup"  name="tutup">Tutup</button>
           </div>
         </div>

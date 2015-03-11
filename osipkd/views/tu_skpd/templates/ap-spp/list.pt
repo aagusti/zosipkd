@@ -331,7 +331,7 @@
         $('#btn_pil_rpt').click(function () {
             var rpt = $('input[name="rpt"]:checked').val();
             if (mID) {
-                if(rpt==1){
+                /*if(rpt==1){
                     url = "/ap-report-skpd/act/spp"+rpt+"?id="+mID;
                 }
                 else if(rpt==2){
@@ -362,6 +362,8 @@
                     url = "/ap-report-skpd/act/spp"+rpt+"3?id="+mID;
                   }
                 }
+                */
+                url = "/ap-report-skpd/act/spp"+rpt+"?id="+mID;
                 window.open(url);
             } else {
                 alert('Silahkan pilih Kegiatan ID');
@@ -391,20 +393,36 @@
                   </div>
           </div>
 
-            <div class="modal-body">
+          <div class="modal-body">
           <label class="control-label col-md-3" for="rpt">Jenis Laporan</label>
           <div class="modal-body">
             <div class="radio">
-                      <label class="col-md-6"><input type="radio" name="rpt" value="1">Pengantar</label>
-                  </div>
-                  <div class="radio">
-                      <label class="col-md-6"><input type="radio" name="rpt" value="2">Ringkasan</label>
-                  </div>
-                  <div class="radio">
-                      <label class="col-md-6"><input type="radio" name="rpt" value="3">Rincian</label>
-                  </div>
-          </div>
+                <label class="col-md-4"><input type="radio" name="rpt" value="11">SPP-UP 1</label>
+                <label class="col-md-4"><input type="radio" name="rpt" value="12">SPP-UP 2</label>
+                <label class="col-md-4"><input type="radio" name="rpt" value="13">SPP-UP 3</label>
             </div>
+            <div class="radio">
+                <label class="col-md-4"><input type="radio" name="rpt" value="21">SPP-TU 1</label>
+                <label class="col-md-4"><input type="radio" name="rpt" value="22">SPP-TU 2</label>
+                <label class="col-md-4"><input type="radio" name="rpt" value="23">SPP-TU 3</label>
+            </div>
+            <div class="radio">
+                <label class="col-md-4"><input type="radio" name="rpt" value="51">SPP-LS 1</label>
+                <label class="col-md-4"><input type="radio" name="rpt" value="52">SPP-LS 2</label>
+                <label class="col-md-4"><input type="radio" name="rpt" value="53">SPP-LS 3</label>
+            </div>
+            <div class="radio">
+                <label class="col-md-4"><input type="radio" name="rpt" value="31">SPP-LS.G 1</label>
+                <label class="col-md-4"><input type="radio" name="rpt" value="32">SPP-LS.G 2</label>
+                <label class="col-md-4"><input type="radio" name="rpt" value="33">SPP-LS.G 3</label>
+            </div>
+            <div class="radio">
+                <label class="col-md-4"><input type="radio" name="rpt" value="41">SPP-GU / LSB 1</label>
+                <label class="col-md-4"><input type="radio" name="rpt" value="42">SPP-GU / LSB 2</label>
+                <label class="col-md-4"><input type="radio" name="rpt" value="43">SPP-GU / LSB 3</label>
+            </div>
+          </div>
+          </div>
 
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>

@@ -1,8 +1,7 @@
 <html metal:use-macro="load: ../base.pt">
-  <div metal:fill-slot="content" class="panel panel-default ">
-    <div class="panel-heading">
-        <h4 class="panel-title">Laporan Realisasi</h4>
-    </div>
+  <div metal:fill-slot="content" class="container">
+        <h4>Laporan Realisasi</h4>
+        <hr>
     <script>
     $(document).ready(function(){
         $('#div_skpd').hide();
@@ -148,7 +147,6 @@
         </div>
         </div>
     </div>
-    </div><br>
 
       <!--Priode S/d Bulan---------------------------------------------------------------->
       <div class="form-group">
@@ -169,7 +167,7 @@
                       <option value="12" >Desember</option>
                   </select>
               </div>
-      </div>       
+      </div><br>
     
     <div class="form-group">
         <div class="col-md-9">

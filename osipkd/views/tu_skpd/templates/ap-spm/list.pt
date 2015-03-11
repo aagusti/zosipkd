@@ -165,6 +165,12 @@
                 "bVisible"   : false,
                 "aTargets"   : [0,7]
             },{
+                "bSearchable": true,
+                "aTargets"   : [1,2,4]
+            },{
+                "bSearchable": false,
+                "aTargets"   : [3,5,6]
+            },{
                 "sClass"   : "right",
                 "aTargets" : [5],
                 "mRender"  : function (data, type, full) {
@@ -319,7 +325,7 @@
         $('#btn_pil_rpt').click(function () {
           var rpt = $('input[name="rpt"]:checked').val();
           if (mID) {
-            if(rpt==1){
+            /*if(rpt==1){
               url = "/ap-report-skpd/act/spm"+rpt+"?id="+mID;
               window.open(url);
             }
@@ -339,10 +345,10 @@
               url = "/ap-report-skpd/act/spm"+rpt+"?id="+mID;
     					window.open(url);
 				    }
-				    else if(rpt==6){
-					//alert('3');
+				    else if(rpt==6){*/
+              url = "/ap-report-skpd/act/spm"+rpt+"?id="+mID;
 					    window.open(url);
-				    }
+				    /*}*/
 
           } else {
                 alert('Silahkan pilih Kegiatan ID');
@@ -379,19 +385,37 @@
         <label class="control-label col-md-3" for="rpt">Jenis Laporan</label>
         <div class="modal-body">
           <div class="radio">
-            <label class="col-md-6"><input type="radio" name="rpt" value="1">Surat Pengantar</label>
+            <label class="col-md-6"><input type="radio" name="rpt" value="01">Surat Pengantar</label>
                 </div>
                 <div class="radio">
-                    <label class="col-md-6"><input type="radio" name="rpt" value="2">Surat Pernyataan</label>
+                    <label class="col-md-6"><input type="radio" name="rpt" value="02">Surat Pernyataan</label>
                 </div>
                 <div class="radio">
-                    <label class="col-md-6"><input type="radio" name="rpt" value="3">Checklist</label>
+                    <label class="col-md-6"><input type="radio" name="rpt" value="03">Format SPM</label>
                 </div>
                 <div class="radio">
-                    <label class="col-md-6"><input type="radio" name="rpt" value="4">Format SPM</label>
+                    <label class="col-md-6"><input type="radio" name="rpt" value="04">SPTJM Pihak Ketiga 1</label>
                 </div>
                 <div class="radio">
-                    <label class="col-md-6"><input type="radio" name="rpt" value="5">SPTJB</label>
+                    <label class="col-md-6"><input type="radio" name="rpt" value="05">SPTJM Pihak Ketiga 2</label>
+                </div>
+                <div class="radio">
+                    <label class="col-md-6"><input type="radio" name="rpt" value="06">SPTJM LS</label>
+                </div>
+                <div class="radio">
+                    <label class="col-md-6"><input type="radio" name="rpt" value="07">SPTJM GU</label>
+                </div>
+                <div class="radio">
+                    <label class="col-md-6"><input type="radio" name="rpt" value="08">SPTJB GU</label>
+                </div>
+                <div class="radio">
+                    <label class="col-md-6"><input type="radio" name="rpt" value="09">SPTJB LS</label>
+                </div>
+                <div class="radio">
+                    <label class="col-md-6"><input type="radio" name="rpt" value="10">SPTJB LS Pihak Ketiga</label>
+                </div>
+                <div class="radio">
+                    <label class="col-md-6"><input type="radio" name="rpt" value="11">Checklist</label>
                 </div>
                 <!--div class="radio">
                     <label class="col-md-6"><input type="radio" name="rpt" value="6">SPTJM</label>

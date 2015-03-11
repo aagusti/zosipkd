@@ -25,84 +25,6 @@
         
       </div>
 
-      <!----------------------------------------------------------------------->
-      <input id="unit_id" type="hidden" value="${request.session['unit_id']}" name="unit_id">
-      <div class="form-group"><!--SKPD-->
-        <div class="col-md-3">
-          <div id="item-unit_kd">
-            <label for="unit_kd" class="control-label col-md-3" id="req-unit_kd">
-                    SKPD</label>
-            <div class="col-md-9">
-               <input id="unit_kd" class="form-control typeahead" type="text" value="${request.session['unit_kd']}" name="unit_kd">
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-md-5">
-           <input id="unit_nm" class=" form-control " type="text" value="${request.session['unit_nm']}" name="unit_nm">
-        </div>
-      <script>
-
-        $('#unit_kd').typeahead({
-            "hint": true,
-            "highlight": true,
-            "minLength": 1,
-            "remote": "/unit/act/headofkode?term=%QUERY", 
-        },
-        {
-          "name": 'unit_kd',
-          "displayKey": 'value',
-        }); 
-                
-        $('#unit_nm').typeahead({
-            "hint": true,
-            "highlight": true,
-            "minLength": 1,
-            "remote": "/unit/act/headofnama?term=%QUERY", 
-        },
-        {
-          "name": 'unit_nm',
-          "displayKey": 'value',
-        }); 
-        
-         function change_unit(){
-            $.ajax({
-              type: "POST",
-              url: "/unit/act/changeid",
-              data: "unit_id="+$('#unit_id').val(),
-              success: function (html) {
-                if (html.success == true) {
-                  $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                  oTable.fnReloadAjax(oTableUrl);
-                } else {
-                  $("#errors").css('display', 'inline', 'important');
-                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
-                  $('#unit_kd').val('');
-                  $('#unit_nm').val('');
-                  $('#unit_id').val('');
-                }
-              },
-              beforeSend: function () {
-                $("#errors").css('display', 'inline', 'important');
-                $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
-              }
-            });
-        }
-        
-        $('#unit_kd').bind('typeahead:selected', function(obj, datum, name) {  
-              $('#unit_nm').val(datum.nama);
-              $('#unit_id').val(datum.id);
-              change_unit();
-        });
-
-        $('#unit_nm').bind('typeahead:selected', function(obj, datum, name) {      
-              $('#unit_kd').val(datum.kode);
-              $('#unit_id').val(datum.id);
-              change_unit()
-        });
-      </script> 
-        
-      </div>
     </fieldset>
     </form>
     
@@ -210,6 +132,9 @@
                 var aData = oTable.fnGetData(iPos);
                 mID = aData[0];
                 mID2 = aData[5];
+                No_Spd1 = aData[1];
+                No_Spd2 = aData[1];
+
                 oTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
             }
@@ -235,20 +160,91 @@
             }
         });
         $('#btn_print').click(function () {
-            url = "/ap-report-sp2d/act/spd?id="+mID;
+            /**url = "/ap-report-sp2d/act/spd?id="+mID;
             if (mID) {
                    window.open(url);
+            } else {
+                alert('Silahkan pilih Kegiatan ID');
+            }*/
+            if (mID) {
+            $('#No_Spd1').val(No_Spd1);
+            $('#No_Spd2').val(No_Spd2);
+
+            $('#dlgRpt').modal('show');
             } else {
                 alert('Silahkan pilih Kegiatan ID');
             }
         });
         
+        $('#btn_pil_rpt').click(function () {
+            var rpt = $('input[name="rpt"]:checked').val();
+            var nospd1 = $('#No_Spd1').val();
+            var nospd2 = $('#No_Spd2').val();
+            var spd1 = nospd1.substr(5,5);
+            var spd2 = nospd2.substr(5,5);
+            url = "/ap-report-spd/act/spd"+rpt+"?spd1="+spd1+"&spd2="+spd2;
+            if (mID) {
+                window.open(url);
+            } else {
+                alert('Silahkan pilih Kegiatan ID');
+            }
+        });
+
         $("#btn_close").click(function () {
             window.location = '/tu-ppkd';
             return false;
         });
+
      });
     </script>
-    
+      <!-- Modal Report -->
+      <div class="modal fade" id="dlgRpt">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              <h4 class="modal-title">Pilih No SPD</h4>
+            </div>
+
+            <div class="modal-body">
+            <label class="control-label col-md-3" for="rpt">Mulai</label>
+                <div class="col-xs-4">
+                    <input id="No_Spd1" class="form-control" type="text"  
+                           value="No_Spd1" name="No_Spd1"/>
+                </div>
+                <div class="col-xs-4">
+                  <div class="input-group">
+                    <span class="input-group-addon">s.d</span>
+                    <input id="No_Spd2" class="form-control" type="text"  
+                            value="No_Spd2" name="No_Spd2"/>
+                  </div>
+                </div>
+            </div>
+
+            <div class="modal-body">
+            <label class="control-label col-md-3" for="rpt">Jenis Laporan</label>
+            <div class="modal-body">
+              <div class="radio">
+                        <label class="col-md-6"><input type="radio" name="rpt" value="1">Format</label>
+                    </div>
+                    <div class="radio">
+                        <label class="col-md-6"><input type="radio" name="rpt" value="2">Lamp 1</label>
+                    </div>
+                    <div class="radio">
+                        <label class="col-md-6"><input type="radio" name="rpt" value="3">Lamp 2</label>
+                    </div>
+            </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+              <button type="button" class="btn btn-primary" id="btn_pil_rpt" name="btn_pil_rpt">Cetak</button>
+            </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- End Modal -->
+
   </div> <!--End Metal-->
 </html>

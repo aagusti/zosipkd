@@ -270,10 +270,11 @@
       </div>
       <div metal:define-slot="content"></div> 
       <div class="form-group">
-              <div class="col-xs-3">
-                  <button type="submit" class="btn btn-primary" id="simpan" name="simpan" >Simpan</button>
-                  <button type="submit" class="btn btn-danger" id="batal" name="batal">Batal</button>
-              </div>
+            <label class="control-label col-md-1"></label>
+            <div class="col-xs-3">
+                <button type="submit" class="btn btn-primary" id="simpan" name="simpan" >Simpan</button>
+                <button type="submit" class="btn btn-danger" id="batal" name="batal">Batal</button>
+            </div>
       </div>
   </div>
       <script>

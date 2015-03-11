@@ -106,7 +106,7 @@
             });
         </script>
       </div>
-      <!--Uraian-------------------------------------------------------------------->
+      <!--kode-------------------------------------------------------------------->
       <div class="form-group"> 
         <div tal:define="field form['kode']" id="item-${field.oid}">
           <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
@@ -118,6 +118,9 @@
                ${error}</p>
           </div>
         </div>
+      <!--Jenis-------------------------------------------------------------------->
+
+      <!--Tanggal Terima/ Ketetapan--------------------------------------------------------->
         <div tal:define="field form['tgl_terima']" id="item-${field.oid}">
           <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                   ${field.title}</label>
@@ -128,8 +131,9 @@
              tal:repeat="error field.error.messages()">
              ${error}</p>
         </div>
+      <!--Tanggal Validasi------------------------------------------------------------------->
         <div tal:define="field form['tgl_validasi']" id="item-${field.oid}">
-          <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
+          <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                   ${field.title}</label>
           <div class="col-md-2">
              ${structure:field.serialize()}
@@ -152,82 +156,8 @@
                ${error}</p>
           </div>
         </div>
-      </div>
-      
-      <!--Bendahara-------------------------------------------------------------------->
-      <div class="form-group"> 
-          <div tal:define="field form['bendahara_uid']" style="display: none;">
-              ${structure:field.serialize()}
-          </div>
-          <div tal:define="field form['bendahara_nip']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
-                    ${field.title}</label>
-            <div class="col-md-2">
-               ${structure:field.serialize()}
-              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                 tal:repeat="error field.error.messages()">
-                 ${error}</p>
-            </div>
-          </div>
-          <div tal:define="field form['bendahara_nm']" id="item-${field.oid}">
-            <div class="col-md-4">
-               ${structure:field.serialize()}
-              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                 tal:repeat="error field.error.messages()">
-                 ${error}</p>
-            </div>
-          </div>
-          <script>
-           $('#bendahara_uid').typeahead({
-              "hint"     : true,
-              "highlight": true,
-              "minLength": 1,
-              "remote"   : "/pejabat/act/headofkode2?term=%QUERY",
-            },
-            {
-            "name"      : 'bendahara_uid',
-            "displayKey": 'value',
-          });
-         
-          $('#bendahara_nm').typeahead({
-              "hint"     : true,
-              "highlight": true,
-              "minLength": 1,
-              "remote"   : "/pejabat/act/headofnama2?term=%QUERY",
-            },
-            {
-              "name"      : 'bendahara_nm',
-              "displayKey": 'value',
-            });
-        
-        $('#bendahara_uid').bind('typeahead:selected', function(obj, datum, name) {  
-              $('#bendahara_nm').val(datum.nama);
-              $('#bendahara_nip').val(datum.nip);
-              $('#pejabat_id').val(datum.id);
-        });
-        $('#bendahara_nm').bind('typeahead:selected', function(obj, datum, name) {  
-              $('#bendahara_uid').val(datum.kode);
-              $('#bendahara_nip').val(datum.nip);
-              $('#pejabat_id').val(datum.id);
-        });
-        
-        $("#bendahara_uid").attr('readonly',true);
-        $("#bendahara_nip").attr('readonly',true);
-        </script>
-        </div>
- 
-      <!--Penyetor--------------------------------------------------------------------> 
-      <div class="form-group"> 
-        <div tal:define="field form['penyetor']" id="item-${field.oid}">
-          <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
-                  ${field.title}</label>
-          <div class="col-md-3">
-              ${structure:field.serialize()}
-          </div>
-          <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-             tal:repeat="error field.error.messages()">
-             ${error}</p>
-        </div>
+
+      <!--Nilai-------------------------------------------------------------------->
         <div tal:define="field form['nilai']" id="item-${field.oid}">
           <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                   ${field.title}</label>
@@ -239,21 +169,12 @@
           </div>
         </div>
       </div>
-  
+      
+      <!--Button--------------------------------------------------------------------> 
       <div class="form-group"> 
-        <div tal:define="field form['alamat']" id="item-${field.oid}">
-          <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
-                  ${field.title}</label>
-          <div class="col-md-6">
-             ${structure:field.serialize()}
-            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-               tal:repeat="error field.error.messages()">
-               ${error}</p>
-          </div>
-        </div>
         <div class="col-md-3">
           <button type="submit" class="btn btn-primary" id="simpan" name="simpan">Simpan</button>
-          <button type="submit" class="btn btn-danger"  id="batal"  name="batal">Batal</button>
+          <!--button type="submit" class="btn btn-danger"  id="batal"  name="batal">Batal</button-->
           <button type="submit" class="btn btn-warning" id="tutup" name="tutup">Tutup</button>
         </div>
       </div>

@@ -142,7 +142,8 @@ class view_ak_jurnal_skpd_item(BaseViews):
                  permission='delete')
     def view_delete(self):
         request = self.request
-        ses = self.session
+        ses     = self.session
+        
         q = self.query_id().join(AkJurnal).filter(AkJurnal.unit_id==ses['unit_id'])
         row = q.first()
         if not row:

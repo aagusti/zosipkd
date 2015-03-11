@@ -75,7 +75,7 @@ class view_ap_spd_ppkd(BaseViews):
                         ).join(Unit
                         ).outerjoin(SpdItem
                         ).filter(Spd.tahun_id==ses['tahun'],
-                                 Spd.unit_id==ses['unit_id'],
+                                 #Spd.unit_id==ses['unit_id'],
                         ).group_by(Spd.id, Spd.kode,
                           Spd.nama, Spd.triwulan_id,
                           Unit.id, Unit.nama)
@@ -135,18 +135,21 @@ class view_ap_spd_ppkd(BaseViews):
     def save(self, values, row=None):
         if not row:
             row = Spd()
-            row.created = datetime.now()
+            row.created    = datetime.now()
             row.create_uid = self.request.user.id
         row.from_dict(values)
-        row.updated = datetime.now()
+        row.updated    = datetime.now()
         row.update_uid = self.request.user.id
-        row.disabled = 'disabled' in values and 1 or 0     
+        row.disabled   = 'disabled' in values and 1 or 0 
+        row.is_bl      = 'is_bl' in values and 1 or 0         
 
         if not row.kode:
             tahun    = self.session['tahun']
             unit_kd  = self.session['unit_kd']
             no_urut  = Spd.get_norut(row.id)+1
-            row.kode = "SPD%d" % tahun + "-%s" % unit_kd + "-%d" % no_urut
+            no       = "0000%d" % no_urut
+            nomor    = no[-5:]          
+            row.kode = "%d" % tahun + "-%s" % nomor
             
         DBSession.add(row)
         DBSession.flush()
@@ -155,6 +158,8 @@ class view_ap_spd_ppkd(BaseViews):
     def save_request(self, values, row=None):
         if 'id' in self.request.matchdict:
             values['id'] = self.request.matchdict['id']
+        values["bl"]=values["bl"].replace('.','') 
+        values["btl"]=values["btl"].replace('.','') 
         row = self.save(values, row)
         self.request.session.flash('SPD sudah disimpan.')
         return row
@@ -221,6 +226,13 @@ class view_ap_spd_ppkd(BaseViews):
             del request.session[SESS_EDIT_FAILED]
             return dict(form=form)
         values = row.to_dict() 
+        
+        bl  = "%s" % Spd.get_nilai1(row.id) 
+        btl = "%s" % Spd.get_nilai2(row.id)
+        
+        values['bl']=bl
+        values['btl']=btl
+        
         form.set_appstruct(values) 
         return dict(form=form)
 
@@ -265,7 +277,7 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           title = "Uraian"
                           )
-    tanggal         = colander.SchemaNode(
+    tanggal          = colander.SchemaNode(
                           colander.Date(),
                           title = "Tanggal"
                           )
@@ -273,11 +285,20 @@ class AddSchema(colander.Schema):
                           colander.Integer(),
                           title="Triwulan",
                           widget=widget.SelectWidget(values=TRW))
-    is_bl            = colander.SchemaNode(
-                          colander.Integer(),
-                          title="Belanja",
-                          oid = "is_bl",
-                          widget=widget.SelectWidget(values=IS_BL))
+    bl               = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          oid="jml_total1",
+                          title="BL",
+                          default=0
+                          )
+    btl              = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          oid="jml_total2",
+                          title="BTL",
+                          default=0
+                          )
 
 class EditSchema(AddSchema):
     id             = colander.SchemaNode(

@@ -9,11 +9,12 @@ import colander
 from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
-from osipkd.models.pemda_model import Unit
-from osipkd.models.apbd_tu import Sp2d, Spm, Spp, AkJurnal
+from osipkd.models.pemda_model import Unit,Rekening
+from osipkd.models.apbd_tu import Sp2d, Spm, Spp, AkJurnal, AkJurnalItem, SppItem, APInvoice, APInvoiceItem
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
+from array import *
 
 SESS_ADD_FAILED = 'Tambah ap-sp2d gagal'
 SESS_EDIT_FAILED = 'Edit ap-sp2d gagal'
@@ -194,7 +195,9 @@ class view_ap_sp2d_ppkd(BaseViews):
             tahun    = self.session['tahun']
             unit_kd  = self.session['unit_kd']
             no_urut  = Sp2d.get_norut(row.id)+1
-            row.kode = "SP2D%d" % tahun + "-%s" % unit_kd + "-%d" % no_urut
+            no       = "0000%d" % no_urut
+            nomor    = no[-5:]
+            row.kode = "%d" % tahun + "-%s" % unit_kd + "-%s" % nomor
             
         DBSession.add(row)
         DBSession.flush()
@@ -340,7 +343,8 @@ class view_ap_sp2d_ppkd(BaseViews):
                  permission='posting')
     def view_edit_posting(self):
         request = self.request
-        row = self.query_id().first()
+        row     = self.query_id().first()
+        id_sp2d = row.id
         
         if not row:
             return id_not_found(request)
@@ -389,7 +393,26 @@ class view_ap_sp2d_ppkd(BaseViews):
                     is_skpd  = row.is_skpd
                     tipe     = AkJurnal.get_tipe(row.jv_type)
                     no_urut  = AkJurnal.get_norut(row.id)+1
-                    row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%d" % no_urut
+                    no       = "0000%d" % no_urut
+                    nomor    = no[-5:]     
+                    row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
+                
+                DBSession.add(row)
+                DBSession.flush()
+                
+                #Tambah ke Item Jurnal SKPD
+                jui   = row.id
+                sub   = "%d" % Sp2d.get_sub(id_sp2d)
+                rek   = "%d" % Sp2d.get_rek(id_sp2d)
+                mon   = "%d" % Sp2d.get_mon(id_sp2d)
+                note  = "%s" % Sp2d.get_note(id_sp2d)
+                
+                row = AkJurnalItem()
+                row.ak_jurnal_id    = "%d" % jui
+                row.kegiatan_sub_id = sub
+                row.rekening_id     = rek
+                row.amount          = mon
+                row.notes           = note
                 
                 DBSession.add(row)
                 DBSession.flush()
@@ -409,7 +432,8 @@ class view_ap_sp2d_ppkd(BaseViews):
                  permission='unposting') 
     def view_edit_unposting(self):
         request = self.request
-        row = self.query_id().first()
+        row     = self.query_id().first()
+        kode    = row.kode
         
         if not row:
             return id_not_found(request)
@@ -429,8 +453,13 @@ class view_ap_sp2d_ppkd(BaseViews):
                 row.posted=0
                 self.save_request4(row)
                 
+                r = DBSession.query(AkJurnal.id).filter(AkJurnal.source_no==row.kode).first()
+                #Menghapus Item Jurnal
+                DBSession.query(AkJurnalItem).filter(AkJurnalItem.ak_jurnal_id==r).delete()
+                DBSession.flush()
+                
                 #Menghapus SP2D yang sudah menjadi jurnal
-                DBSession.query(AkJurnal).filter(AkJurnal.source_no==row.kode).delete()
+                DBSession.query(AkJurnal).filter(AkJurnal.source_no==kode).delete()
                 DBSession.flush()
                 
             return self.route_list()

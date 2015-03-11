@@ -186,7 +186,7 @@ class view_ak_jurnal_skpd(BaseViews):
     def save(self, values, user, row=None):
         if not row:
             row = AkJurnal()
-            row.created = datetime.now()
+            row.created    = datetime.now()
             row.create_uid = user.id
         row.from_dict(values)
         tanggal           = datetime.strptime(values['tanggal'], '%Y-%m-%d')
@@ -194,7 +194,7 @@ class view_ak_jurnal_skpd(BaseViews):
         row.periode       = tanggal.month
         row.updated       = datetime.now()
         row.update_uid    = user.id
-        row.disable       = 'disable' in values and values['disable'] and 1 or 0
+        row.disabled      = 'disabled' in values and values['disabled'] and 1 or 0
         row.posted        = 'posted'  in values and values['posted']  and 1 or 0
         row.tgl_transaksi = datetime.now()
         
@@ -205,7 +205,9 @@ class view_ak_jurnal_skpd(BaseViews):
             jv_type  = row.jv_type
             tipe     = AkJurnal.get_tipe(jv_type)
             no_urut  = AkJurnal.get_norut(row.id)+1
-            row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%d" % no_urut
+            no       = "0000%d" % no_urut
+            nomor    = no[-5:]     
+            row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
         
         DBSession.add(row)
         DBSession.flush()
@@ -306,13 +308,18 @@ class view_ak_jurnal_skpd(BaseViews):
                  permission='delete')
     def view_ak_jurnal_skpd_delete(self):
         request = self.request
-        q = self.query_id()
-        row = q.first()
-        kode = row.source_no
+        q       = self.query_id()
+        row     = q.first()
+        kode    = row.source_no
         
         if not row:
             return self.id_not_found(request)
-            
+        
+        i = DBSession.query(AkJurnalItem).filter(AkJurnalItem.ak_jurnal_id==row.id).first()         
+        if i:
+            request.session.flash('Hapus data item dahulu', 'error')
+            return self.route_list()
+        
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
@@ -375,6 +382,10 @@ class view_ak_jurnal_skpd(BaseViews):
         if row.posted:
             request.session.flash('Data sudah diposting', 'error')
             return self.route_list()
+        i = DBSession.query(AkJurnalItem).filter(AkJurnalItem.ak_jurnal_id==row.id).first()         
+        if not i:
+            request.session.flash('Data item kosong', 'error')
+            return self.route_list()
             
         form = Form(colander.Schema(), buttons=('posting','cancel'))
         
@@ -423,6 +434,10 @@ class view_ak_jurnal_skpd(BaseViews):
             return id_not_found(request)
         if not row.posted:
             request.session.flash('Data tidak dapat di Unposting, karena belum diposting.', 'error')
+            return self.route_list()
+        i = DBSession.query(AkJurnalItem).filter(AkJurnalItem.ak_jurnal_id==row.id).first()         
+        if not i:
+            request.session.flash('Data item kosong', 'error')
             return self.route_list()
             
         form = Form(colander.Schema(), buttons=('unposting','cancel'))

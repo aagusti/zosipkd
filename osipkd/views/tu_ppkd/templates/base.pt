@@ -2,7 +2,7 @@
 <div metal:fill-slot="nav">
     <ul class="nav navbar-nav">
       <li tal:attributes="class request.path == '/app' and 'active'">
-          <a href="/ppkd"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+          <a href="/tu-ppkd"><span class="glyphicon glyphicon-home"></span> Home</a></li>
       <li class="dropdown" tal:attributes="class request.path in ['/password'] and 'active'">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Belanja<b class="caret"></b></a>
         <ul class="dropdown-menu">
@@ -16,6 +16,7 @@
       <li class="dropdown" tal:attributes="class request.path in ['/password'] and 'active'">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Laporan<b class="caret"></b></a>
         <ul class="dropdown-menu">
+          <li><a href="/ap-report-spd">Register SPD</a></li>
           <li><a href="/ap-report-sp2d">Register SP2D</a></li>
           <li><a href="/ap-report-real">Realisasi Anggaran</a></li>
         </ul>

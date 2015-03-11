@@ -29,6 +29,17 @@ AP_TYPE = (
     ('4', 'LS'),
     )
 
+def deferred_kontrak_type(node, kw):
+    values = kw.get('kontrak_type', [])
+    return widget.SelectWidget(values=values)
+    
+KONTRAK_TYPE = (
+    ('1', 'PT / NV'),
+    ('2', 'CV'),
+    ('3', 'FIRMA'),
+    ('4', 'Lain-lain'),
+    )
+    
 class view_ap_invoice_skpd(BaseViews):
 
     @view_config(route_name="ap-invoice-skpd", renderer="templates/ap-invoice-skpd/list.pt")
@@ -158,14 +169,17 @@ class AddSchema(colander.Schema):
                           title="Tahun")
     no_urut         = colander.SchemaNode(
                           colander.Integer(),
+                          oid = "no_urut",
                           missing=colander.drop)
     kode            = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="No. Utang")
+                          title="Kode")
     jenis           = colander.SchemaNode(
                           colander.String(),
+                          missing=colander.drop,
                           widget=widget.SelectWidget(values=AP_TYPE),
+                          oid="jenis",
                           title="Jenis")
     tanggal         = colander.SchemaNode(
                           colander.Date())
@@ -185,16 +199,17 @@ class AddSchema(colander.Schema):
     nama            = colander.SchemaNode(
                           colander.String(),
                           title="Uraian")
-
+    """
     ap_nomor        = colander.SchemaNode(
                           colander.String(),
-                          title="Nomor")
+                          title="No.Kwitansi")
+    ap_tanggal      = colander.SchemaNode(
+                          colander.Date(),
+                          title="Tgl. Kwitansi")
+    """
     ap_nama         = colander.SchemaNode(
                           colander.String(),
                           title="Nama")
-    ap_tanggal      = colander.SchemaNode(
-                          colander.Date(),
-                          title="Tgl.Tagihan")
     ap_rekening     = colander.SchemaNode(
                           colander.String(),
                           title="Rekening")
@@ -205,9 +220,107 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           default=0,
                           oid="jml_total",
-                          title="Jml. Tagihan"
+                          title="Jml. Tagihan")
+    no_bast         = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          title="No. BAST")
+    tgl_bast        = colander.SchemaNode(
+                          colander.Date(),
+                          missing=colander.drop,
+                          title="Tgl. BAST")
+    no_bku          = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          title="No. BKU")
+    tgl_bku         = colander.SchemaNode(
+                          colander.Date(),
+                          missing=colander.drop, 
+                          title="Tgl. BKU")
+    ap_bentuk       = colander.SchemaNode(
+                          colander.String(),
+                          widget=widget.SelectWidget(values=KONTRAK_TYPE),
+                          title="Bentuk"
+                          )
+    ap_alamat       = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          title="Alamat"
+                          )
+    ap_pemilik      = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          title="Pemilik"
+                          )
+    ap_kontrak      = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          title="No Kontrak"
+                          )
+    ap_waktu        = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          title="Waktu"
+                          )
+    ap_nilai        = colander.SchemaNode(
+                          colander.Integer(),
+                          oid="ap_nilai",
+                          missing=colander.drop,
+                          title="Nilai Kontrak",
+                          default=0
+                          )
+    ap_tgl_kontrak  = colander.SchemaNode(
+                          colander.Date(),
+                          missing=colander.drop,
+                          title="Tgl Kontrak"
+                          )
+    """
+    ap_kegiatankd   = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          oid="ap_kegiatankd"
+                          )
+    ap_kegiatannm   = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          oid="ap_kegiatannm",
+                          title="Kegiatan"
+                          )
+    """
+    ap_uraian       = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          title="Pekerjaan"
                           )
 
+    ap_bap_no       = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          title="No BAP"
+                          )
+    ap_bap_tgl      = colander.SchemaNode(
+                          colander.Date(),
+                          missing=colander.drop,
+                          title="Tgl BAP"
+                          )
+    ap_kwitansi_no  = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          title="No.Kwitansi"
+                          )
+    ap_kwitansi_tgl = colander.SchemaNode(
+                          colander.Date(),
+                          missing=colander.drop,
+                          title="Tgl Kwitansi"
+                          )
+    ap_kwitansi_nilai        = colander.SchemaNode(
+                          colander.Integer(),
+                          oid="ap_kwitansi_nilai",
+                          missing=colander.drop,
+                          title="Nilai Kwitansi",
+                          default=0
+                          )      
+      
 class EditSchema(AddSchema):
     id             = colander.SchemaNode(
                           colander.Integer(),
@@ -215,7 +328,7 @@ class EditSchema(AddSchema):
 
 def get_form(request, class_form):
     schema = class_form(validator=form_validator)
-    schema = schema.bind()
+    schema = schema.bind(kontrak_type=KONTRAK_TYPE)
     schema.request = request
     return Form(schema, buttons=('simpan','batal'))
     
@@ -231,7 +344,9 @@ def save(request, values, row=None):
         tahun    = request.session['tahun']
         unit_kd  = request.session['unit_kd']
         no_urut  = row.no_urut
-        row.kode = "UTANG%d" % tahun + "-%s" % unit_kd + "-%d" % no_urut
+        no       = "0000%d" % no_urut
+        nomor    = no[-5:]     
+        row.kode = "%d" % tahun + "-%s" % unit_kd + "-%s" % nomor
         
     DBSession.add(row)
     DBSession.flush()
@@ -308,13 +423,19 @@ def view_edit(request):
         del request.session[SESS_EDIT_FAILED]
         return dict(form=form)
     values = row.to_dict()
-    
+
     #Ketika pas edit, kode sama nama muncul sesuai id kegiatansub
     values['kegiatan_nm']=row.kegiatansubs.nama
     kd=row.kegiatansubs.kode
     ur=row.kegiatansubs.no_urut
     values['kegiatan_kd']="%s" % kd + "-%d" % ur
     
+    """
+    if values['ap_kegiatankd']:
+        r = DBSession.query(Kegiatan).filter(Kegiatan.id==values['ap_kegiatankd']).first()
+        nama = r.nama
+        values['ap_kegiatannm']=nama
+    """   
     form.set_appstruct(values) 
     return dict(form=form)
 
@@ -345,5 +466,6 @@ def view_delete(request):
             DBSession.flush()
             request.session.flash(msg)
         return route_list(request)
-    return dict(row=row,
-                 form=form.render())
+    return dict(row=row, form=form.render())
+    
+    

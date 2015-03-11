@@ -2718,6 +2718,8 @@ class ViewAnggaranLap(BaseViews):
             query = DBSession.query(KegiatanSub.tahun_id,
                 case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),"1 Pendapatan")], 
                 else_="2 Belanja").label('urut1'),                    
+                case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),1)], 
+                else_=-1).label('defsign'),                    
                 case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),"1 Pendapatan dan Penerimaan"),
                 (Kegiatan.kode.in_(["0.00.00.21","0.00.00.32"]),"2 Belanja Tidak Langsung dan Pengeluaran")], 
                 else_="3 Belanja Langsung").label('urut2'),
@@ -2731,7 +2733,8 @@ class ViewAnggaranLap(BaseViews):
                 ).filter(KegiatanSub.tahun_id==self.session['tahun']
                 ).group_by(KegiatanSub.tahun_id,
                 case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),"1 Pendapatan")], 
-                else_="2 Belanja"),                    
+                else_="2 Belanja"), case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),1)], 
+                else_=-1),                   
                 case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),"1 Pendapatan dan Penerimaan"),
                 (Kegiatan.kode.in_(["0.00.00.21","0.00.00.32"]),"2 Belanja Tidak Langsung dan Pengeluaran")], 
                 else_="3 Belanja Langsung"),
@@ -2750,6 +2753,48 @@ class ViewAnggaranLap(BaseViews):
             response.write(pdf)
             return response
             
+        ## Per SKPD 
+        if url_dict['act']=='r712' :
+            query = DBSession.query(KegiatanSub.tahun_id,
+                case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),"1 Pendapatan")], 
+                else_="2 Belanja").label('urut1'),                    
+                case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),1)], 
+                else_=-1).label('defsign'),                    
+                case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),"1 Pendapatan dan Penerimaan"),
+                (Kegiatan.kode.in_(["0.00.00.21","0.00.00.32"]),"2 Belanja Tidak Langsung dan Pengeluaran")], 
+                else_="3 Belanja Langsung").label('urut2'),
+                Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), 
+                Program.kode.label('program_kd'), Program.nama.label('program_nm'), Kegiatan.kode.label('keg_kd'), Kegiatan.nama.label('keg_nm'),
+                func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran'),
+                func.sum(KegiatanItem.bln01).label('bln01'), func.sum(KegiatanItem.bln02).label('bln02'), func.sum(KegiatanItem.bln03).label('bln03'),
+                func.sum(KegiatanItem.bln04).label('bln04'), func.sum(KegiatanItem.bln05).label('bln05'), func.sum(KegiatanItem.bln06).label('bln06'),
+                func.sum(KegiatanItem.bln07).label('bln07'), func.sum(KegiatanItem.bln08).label('bln08'), func.sum(KegiatanItem.bln09).label('bln09'),
+                func.sum(KegiatanItem.bln10).label('bln10'), func.sum(KegiatanItem.bln11).label('bln11'), func.sum(KegiatanItem.bln12).label('bln12')
+                ).join(Unit).join(Urusan).join(KegiatanItem).join(Kegiatan).join(Program
+                ).filter(KegiatanSub.tahun_id==self.session['tahun'], KegiatanSub.unit_id==self.session['unit_id']
+                ).group_by(KegiatanSub.tahun_id,
+                case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),"1 Pendapatan")], 
+                else_="2 Belanja"), case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),1)], 
+                else_=-1),                   
+                case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),"1 Pendapatan dan Penerimaan"),
+                (Kegiatan.kode.in_(["0.00.00.21","0.00.00.32"]),"2 Belanja Tidak Langsung dan Pengeluaran")], 
+                else_="3 Belanja Langsung"),
+                Urusan.kode, Urusan.nama, Unit.kode, Unit.nama, 
+                Program.kode, Program.nama, Kegiatan.kode, Kegiatan.nama
+                ).order_by(case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),"1 Pendapatan")], 
+                else_="2 Belanja"),case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),"1 Pendapatan dan Penerimaan"),
+                (Kegiatan.kode.in_(["0.00.00.21","0.00.00.32"]),"2 Belanja Tidak Langsung dan Pengeluaran")], 
+                else_="3 Belanja Langsung"), Program.kode, Kegiatan.kode
+                )
+
+            generator = r701Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
 class r001Generator(JasperGenerator):
     def __init__(self):
         super(r001Generator, self).__init__()
@@ -5524,6 +5569,45 @@ class r700Generator(JasperGenerator):
             ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
             ET.SubElement(xml_a, "urut1").text = unicode(row.urut1)
             ET.SubElement(xml_a, "urut2").text = unicode(row.urut2)
+            ET.SubElement(xml_a, "defsign").text = unicode(row.defsign)
+            ET.SubElement(xml_a, "program_kd").text = row.program_kd
+            ET.SubElement(xml_a, "program_nm").text = row.program_nm
+            ET.SubElement(xml_a, "keg_kd").text = row.keg_kd
+            ET.SubElement(xml_a, "keg_nm").text = row.keg_nm
+            ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)
+            ET.SubElement(xml_a, "bln01").text = unicode(row.bln01)
+            ET.SubElement(xml_a, "bln02").text = unicode(row.bln02)
+            ET.SubElement(xml_a, "bln03").text = unicode(row.bln03)
+            ET.SubElement(xml_a, "bln04").text = unicode(row.bln04)
+            ET.SubElement(xml_a, "bln05").text = unicode(row.bln05)
+            ET.SubElement(xml_a, "bln06").text = unicode(row.bln06)
+            ET.SubElement(xml_a, "bln07").text = unicode(row.bln07)
+            ET.SubElement(xml_a, "bln08").text = unicode(row.bln08)
+            ET.SubElement(xml_a, "bln09").text = unicode(row.bln09)
+            ET.SubElement(xml_a, "bln10").text = unicode(row.bln10)
+            ET.SubElement(xml_a, "bln11").text = unicode(row.bln11)
+            ET.SubElement(xml_a, "bln12").text = unicode(row.bln12)
+            ET.SubElement(xml_a, "customer").text = customer
+        return self.root
+
+class r701Generator(JasperGenerator):
+    def __init__(self):
+        super(r701Generator, self).__init__()
+        self.reportname = get_rpath('apbd/R7001.jrxml')
+        self.xpath = '/apbd/budget'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_a  =  ET.SubElement(self.root, 'budget')
+            ET.SubElement(xml_a, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_a, "urut1").text = unicode(row.urut1)
+            ET.SubElement(xml_a, "urut2").text = unicode(row.urut2)
+            ET.SubElement(xml_a, "defsign").text = unicode(row.defsign)
+            ET.SubElement(xml_a, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_a, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
             ET.SubElement(xml_a, "program_kd").text = row.program_kd
             ET.SubElement(xml_a, "program_nm").text = row.program_nm
             ET.SubElement(xml_a, "keg_kd").text = row.keg_kd

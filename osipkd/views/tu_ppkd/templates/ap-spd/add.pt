@@ -41,13 +41,50 @@
                     SKPD</label>
             <div class="col-md-2">
              <input type="text" class="form-control" id="unit_kd" 
-                    name="unit_kd" value="${request.session.unit_kd}" readonly>
+                    name="unit_kd" value="${request.session.unit_kd}" >
             </div>
           </div>
           <div class="col-md-6" id="item-unit_nm">
             <input type="text" class="form-control" id="unit_nm" 
-                   name="unit_nm" value="${request.session.unit_nm}" readonly>
+                   name="unit_nm" value="${request.session.unit_nm}" >
           </div>
+
+      <script>
+        $('#unit_kd').typeahead({
+            "hint": true,
+            "highlight": true,
+            "minLength": 1,
+            "remote": "/unit/act/headofkode?term=%QUERY", 
+        },
+        {
+          "name": 'unit_kd',
+          "displayKey": 'value',
+        }); 
+                
+        $('#unit_nm').typeahead({
+            "hint": true,
+            "highlight": true,
+            "minLength": 1,
+            "remote": "/unit/act/headofnama?term=%QUERY", 
+        },
+        {
+          "name": 'unit_nm',
+          "displayKey": 'value',
+        }); 
+        
+        $('#unit_kd').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#unit_nm').val(datum.nama);
+              $('#unit_id').val(datum.id);
+              change_unit();
+        });
+
+        $('#unit_nm').bind('typeahead:selected', function(obj, datum, name) {      
+              $('#unit_kd').val(datum.kode);
+              $('#unit_id').val(datum.id);
+              change_unit()
+        });
+      </script> 
+
         </div>
         <!--Kode-------------------------------------------------------------------->
         <div class="form-group"> 
@@ -61,6 +98,7 @@
                  ${error}</p>
             </div>
           </div>
+        <!--Tanggal-------------------------------------------------------------------->
           <div tal:define="field form['tanggal']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
@@ -71,31 +109,29 @@
                  ${error}</p>
             </div>
           </div>
-          <div tal:define="field form['triwulan_id']" id="item-${field.oid}">
+        <!--BTL-------------------------------------------------------------------->
+          <div tal:define="field form['btl']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
-            <div class="col-md-1">
+            <div class="col-md-2">
                ${structure:field.serialize()}
               <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                  tal:repeat="error field.error.messages()">
                  ${error}</p>
             </div>
           </div>
-          <div tal:define="field form['is_bl']" id="item-${field.oid}">
+        <!--BL-------------------------------------------------------------------->
+          <div tal:define="field form['bl']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
-            <div class="col-md-1">
+            <div class="col-md-2">
                ${structure:field.serialize()}
               <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                  tal:repeat="error field.error.messages()">
                  ${error}</p>
             </div>
           </div>
-          <!--div class="col-sm-2">
-            <input type="checkbox" name="is_bl" id="is_bl" 
-                tal:attributes="checked 'checked' if form['is_bl']==1 else 0">&nbsp; is_BL
-          </div-->
-        </div>
+        </div> 
         <div class="form-group">   
           <!--Uraian-------------------------------------------------------------------->
           <div tal:define="field form['nama']" id="item-${field.oid}">
@@ -108,12 +144,24 @@
                  ${error}</p>
             </div>
           </div>
+
+        <!--Triwulan-------------------------------------------------------------------->
+          <div tal:define="field form['triwulan_id']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-1">
+               ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
+          </div>
+
           <div class="col-md-4"> 
             <button type="submit" class="btn btn-primary" id="simpan" name="simpan" >Simpan</button>
-            <button type="submit" class="btn btn-danger" id="batal" name="batal">Batal</button>
             <button type="submit" class="btn btn-warning" id="tutup" name="tutup">Tutup</button>
           </div>
-        </div>       
+        </div>   
       </form>
     </div>  
   </div>  
@@ -151,11 +199,15 @@
                 <div class="col-md-6">
                    <input id="kegiatan_nm" class=" form-control " type="text" value="" name="kegiatan_nm">
                 </div>
-                <!--Button----------------------------------------------------------->
+
                 <div class="col-md-1">
-                      <button id="rekening_add" name="baru" type="button" class="btn btn-primary "
-                            value="baru">Baru</button>
+                   <label for="jumlah" class="control-label col-md-1" id="req-jumlah">
+                        Jumlah</label>
                 </div>
+                <div class="col-md-2">
+                   <input id="jumlah" class=" form-control " type="text" value="0" name="jumlah" readonly>
+                </div>
+
               </div>
               <div class="form-group">
                 <div class="col-md-1">
@@ -179,12 +231,13 @@
                 <div class="col-md-2">
                    <input id="nominal" class=" form-control " type="text" value="0" name="nominal" readonly>
                 </div>
-                <div class="col-md-1">
-                   <label for="jumlah" class="control-label col-md-1" id="req-jumlah">
-                        Jumlah</label>
-                </div>
+
+                <!--Button----------------------------------------------------------->
                 <div class="col-md-2">
-                   <input id="jumlah" class=" form-control " type="text" value="0" name="jumlah" readonly>
+                      <button id="rekening_add" name="baru" type="button" class="btn btn-primary "
+                            value="baru">Baru</button>
+                      <button id="rekening_cancel" name="batal" type="reset" class="btn btn-danger "
+                                          value="batal">Batal</button>
                 </div>
               </div>
         <script>
@@ -239,7 +292,7 @@
                 $("#errors").css('display', 'inline', 'important');
                 $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + 'Simpan Dulu Headernya');
             }
-
+            
             if (is_success){
               $.ajax({
                 type: "POST",
@@ -254,7 +307,17 @@
                     $('#lalu').val(0);
                     $('#nominal').val(0);
                     $('#kegiatan_sub_id').val('');
-                    $('#jml_total').val(formatNumber(html.jml_total)); 
+                    
+                    if(html.jml_total1=="None"){
+                      $('#jml_total1').val(0);}
+                    else{
+                      $('#jml_total1').val(formatNumber(html.jml_total1));}
+                      
+                    if(html.jml_total2=="None"){
+                      $('#jml_total2').val(0);}
+                    else{
+                      $('#jml_total2').val(formatNumber(html.jml_total2));}
+                      
                     oTable.fnReloadAjax(oTableUrl);
                   } else {
                     $("#errors").css('display', 'inline', 'important');
@@ -292,9 +355,10 @@
       ];
 
       var tb = tb_array.join(' ');
-        function formatNumber(n) {
-                 return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-                 }
+      
+      function formatNumber(n) {
+         return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      }
 
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
@@ -364,9 +428,7 @@
                     }
                 })
             },
-            "formatNumber": function ( toFormat ) {
-                 return toFormat.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'");
-            }
+            
         });
 
         $("div.toolbar").html(tb);
@@ -384,7 +446,6 @@
         });
         /**********************************************************************/
         $('#btn_delete').click(function () {
-            
             if (mID) {
               if (confirm('Yakin dihapus?')==true){
                 $.ajax({
@@ -400,6 +461,17 @@
                     $('#nominal').val(0);
                     $('#jumlah').val(0);
                     $('#kegiatan_sub_id').val('');
+                    
+                    if(html.jml_total1=="None"){
+                      $('#jml_total1').val(0);}
+                    else{
+                      $('#jml_total1').val(formatNumber(html.jml_total1));}
+                      
+                    if(html.jml_total2=="None"){
+                      $('#jml_total2').val(0);}
+                    else{
+                      $('#jml_total2').val(formatNumber(html.jml_total2));}
+                      
                     oTable.fnReloadAjax(oTableUrl);
                   } else {
                     $("#errors").css('display', 'inline', 'important');
@@ -426,7 +498,13 @@
             return false;
         });
 
-        //$("#kegiatan_nm").attr('readonly',true);
+        $("#jml_total1").attr('readonly',true);
+        jml_total1=$("#jml_total1").val();
+        $("#jml_total1").val(formatNumber(jml_total1));
+        
+        $("#jml_total2").attr('readonly',true);
+        jml_total2=$("#jml_total2").val();
+        $("#jml_total2").val(formatNumber(jml_total2));
      });
     </script>
   

@@ -152,26 +152,6 @@
             </div>
           </div>
           <script>
-           $('#bud_uid').typeahead({
-              "hint"     : true,
-              "highlight": true,
-              "minLength": 1,
-              "remote"   : "/pejabat/act/headofkode2?term=%QUERY",
-            },
-            {
-            "name"      : 'bud_uid',
-            "displayKey": 'value',
-          });
-          $('#bud_nip').typeahead({
-              "hint"     : true,
-              "highlight": true,
-              "minLength": 1,
-              "remote"   : "/pejabat/act/headofnip2?term=%QUERY",
-            },
-            {
-              "name"      : 'bud_nip',
-              "displayKey": 'value',
-            });
           $('#bud_nama').typeahead({
               "hint"     : true,
               "highlight": true,
@@ -183,21 +163,13 @@
               "displayKey": 'value',
             });
         
-        $('#bud_uid').bind('typeahead:selected', function(obj, datum, name) {  
-              $('#bud_nama').val(datum.nama);
-              $('#bud_nip').val(datum.nip);
-              $('#pejabat_id').val(datum.id);
-        });
+
         $('#bud_nama').bind('typeahead:selected', function(obj, datum, name) {  
               $('#bud_uid').val(datum.kode);
               $('#bud_nip').val(datum.nip);
               $('#pejabat_id').val(datum.id);
         });
-        $('#bud_nip').bind('typeahead:selected', function(obj, datum, name) {  
-              $('#bud_nama').val(datum.nama);
-              $('#bud_uid').val(datum.kode);
-              $('#pejabat_id').val(datum.id);
-        });
+
         $("#bud_uid").attr('readonly',true);
         $("#bud_nip").attr('readonly',true);
         </script>
@@ -226,7 +198,6 @@
           </div>
           <div class="col-md-4"> 
             <button type="submit" class="btn btn-primary" id="simpan" name="simpan" >Simpan</button>
-            <button type="submit" class="btn btn-danger" id="batal" name="batal">Batal</button>
             <button type="submit" class="btn btn-warning" id="tutup" name="tutup">Tutup</button>
           </div>
         <script>

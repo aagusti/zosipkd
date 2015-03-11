@@ -133,22 +133,58 @@ class Rekening(NamaModel, Base):
     __table_args__= (UniqueConstraint('kode', 'tahun', name='rekening_uq'),
                       {'extend_existing':True, 
                       'schema' : 'admin',})
-    tahun = Column(Integer)
-    nama  = Column(String(256))
+                      
+    tahun     = Column(Integer)
+    nama      = Column(String(256))
     level_id  = Column(SmallInteger, default=1)
-    parent_id  = Column(BigInteger, ForeignKey('admin.rekenings.id'))
-    disabled = Column(SmallInteger, default=0)
-    defsign = Column(SmallInteger, default=1)
-    children   = relationship("Rekening", backref=backref('parent', remote_side='Rekening.id'))
+    parent_id = Column(BigInteger,   ForeignKey('admin.rekenings.id'))
+    disabled  = Column(SmallInteger, default=0)
+    defsign   = Column(SmallInteger, default=1)
+    children  = relationship("Rekening", backref=backref('parent', remote_side='Rekening.id'))
     
     @classmethod
     def get_next_level(cls,id):
         return cls.query_id(id).first().level_id+1
         
+class Sap(NamaModel, Base):
+    __tablename__ = 'saps'
+    __table_args__= (UniqueConstraint('kode', 'tahun', name='sap_uq'),
+                      {'extend_existing':True, 
+                      'schema' : 'admin',})
+                      
+    tahun     = Column(Integer)
+    nama      = Column(String(256))
+    level_id  = Column(SmallInteger, default=1)
+    parent_id = Column(BigInteger,   ForeignKey('admin.saps.id'))
+    disabled  = Column(SmallInteger, default=0)
+    defsign   = Column(SmallInteger, default=1)
+    children  = relationship("Sap", backref=backref('parent', remote_side='Sap.id'))
+    
+    @classmethod
+    def get_next_level(cls,id):
+        return cls.query_id(id).first().level_id+1
+
+class RekeningSap(DefaultModel, Base):
+    __tablename__  = 'rekenings_saps'
+    __table_args__ = {'extend_existing':True,'schema' : 'admin'}
+    
+    rekening_id = Column(Integer, ForeignKey("admin.rekenings.id"))        
+    lo_sap_id   = Column(Integer, ForeignKey("admin.saps.id"))
+    lra_sap_id  = Column(Integer, ForeignKey("admin.saps.id"))
+    aset_sap_id = Column(Integer, ForeignKey("admin.saps.id"))
+    pph_id      = Column(String(64))
+    
+    rekenings   = relationship("Rekening", backref="rekenings_saps")
+    losaps      = relationship("Sap",      foreign_keys=[lo_sap_id])
+    lrasaps     = relationship("Sap",      foreign_keys=[lra_sap_id])
+    asetsaps    = relationship("Sap",      foreign_keys=[aset_sap_id])
+    
+        
 class DasarHukum(DefaultModel, Base):
     __tablename__  = 'dasar_hukums'
     __table_args__ = {'extend_existing':True,'schema' : 'admin'}
+    
     rekenings   = relationship("Rekening", backref="dasar_hukums")
-    no_urut     = Column(Integer)
-    rekening_id = Column(Integer, ForeignKey("admin.rekenings.id"))        
+    rekening_id = Column(Integer, ForeignKey("admin.rekenings.id"))   
+    no_urut     = Column(Integer)     
     nama        = Column(String(256))

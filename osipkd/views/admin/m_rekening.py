@@ -130,6 +130,15 @@ class view_rekening(BaseViews):
             return self.get_kode_dict(term)
             
         #######################################################################
+        # ASET 
+        elif url_dict['act']=='headofnama2':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_nama_dict(term,'2')
+        elif url_dict['act']=='headofkode2':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_kode_dict(term,'2')
+			
+        #######################################################################
         # PENDAPATAN 
         elif url_dict['act']=='headofnama4':
             term = 'term' in params and params['term'] or '' 
@@ -243,6 +252,24 @@ class view_rekening(BaseViews):
                 d={}
                 d['id']          = k[0]
                 d['value']       = k[1]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
+            print '****----****',r                
+            return r
+        
+        elif url_dict['act']=='headofnama11':
+            term = 'term' in params and params['term'] or ''            
+            q = DBSession.query(Rekening.id, 
+                                Rekening.kode, 
+                                Rekening.nama, 
+                      ).filter(Rekening.nama.ilike('%%%s%%' % term))
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[2]
                 d['kode']        = k[1]
                 d['nama']        = k[2]
                 r.append(d)

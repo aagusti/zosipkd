@@ -130,7 +130,8 @@ class AddSchema(colander.Schema):
     sumber_id  =  colander.SchemaNode(
                     colander.String(),
                     validator=colander.Length(max=32),
-                    widget=widget.SelectWidget(values=SUMBER_ID)) 
+                    widget=widget.SelectWidget(values=SUMBER_ID),
+                    title = "Sumber") 
                     # deferred_source_type)
                     
     ############## DI DROP DULU                
@@ -234,18 +235,19 @@ class view_ar_payment_item(BaseViews):
     def save(self, values, user, row=None):
         if not row:
             row = ARPaymentItem()
-            row.created = datetime.now()
+            row.created    = datetime.now()
             row.create_uid = user.id
         row.from_dict(values)
-        row.updated = datetime.now()
+        row.updated    = datetime.now()
         row.update_uid = user.id
-        tanggal    = datetime.strptime(values['tanggal'], '%Y-%m-%d')
-        row.tahun  = tanggal.year
-        row.bulan  = tanggal.month
-        row.hari   = tanggal.day
-        row.minggu = tanggal.isocalendar()[1]
-        row.disable   = 'disable' in values and values['disable'] and 1 or 0
-        row.is_kota   = 'is_kota' in values and values['is_kota'] and 1 or 0
+        tanggal     = datetime.strptime(values['tanggal'], '%Y-%m-%d')
+        row.tahun   = tanggal.year
+        row.bulan   = tanggal.month
+        row.hari    = tanggal.day
+        row.minggu  = tanggal.isocalendar()[1]
+        row.disable = 'disable' in values and values['disable'] and 1 or 0
+        row.is_kota = 'is_kota' in values and values['is_kota'] and 1 or 0
+        
         DBSession.add(row)
         DBSession.flush()
         return row
@@ -254,7 +256,7 @@ class view_ar_payment_item(BaseViews):
         if 'id' in self.request.matchdict:
             values['id'] = self.request.matchdict['id']
         row = self.save(values, self.request.user, row)
-        self.request.session.flash('ARPaymentItem sudah disimpan.')
+        self.request.session.flash('Realisasi / STS sudah disimpan.')
             
     def route_list(self):
         return HTTPFound(location=self.request.route_url('ar-payment-item') )
@@ -302,7 +304,7 @@ class view_ar_payment_item(BaseViews):
         return DBSession.query(ARPaymentItem).filter_by(id=self.request.matchdict['id'])
         
     def id_not_found(self):    
-        msg = 'ARPaymentItem ID %s Tidak Ditemukan.' % self.request.matchdict['id']
+        msg = 'Realisasi / STS ID %s Tidak Ditemukan.' % self.request.matchdict['id']
         request.session.flash(msg, 'error')
         return route_list()
 
@@ -310,10 +312,14 @@ class view_ar_payment_item(BaseViews):
                  permission='edit')
     def view_ar_payment_item_edit(self):
         request = self.request
-        row = self.query_id().first()
+        row     = self.query_id().first()
+        
         if not row:
             return id_not_found(request)
-        
+        if row.posted:
+            request.session.flash('Data sudah diposting', 'error')
+            return self.route_list()
+            
         form = self.get_form(EditSchema)
         if request.POST:
             if 'simpan' in request.POST:
@@ -363,20 +369,24 @@ class view_ar_payment_item(BaseViews):
                  permission='delete')
     def view_ar_payment_item_delete(self):
         request = self.request
-        q = self.query_id()
-        row = q.first()
+        q       = self.query_id()
+        row     = q.first()
         
         if not row:
             return self.id_not_found(request)
+        if row.posted:
+            request.session.flash('Data sudah diposting', 'error')
+            return self.route_list()
+            
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
-                msg = 'ARPaymentItem ID %d %s sudah dihapus.' % (row.id, row.nama)
+                msg = 'Realisasi / STS ID %d %s sudah dihapus.' % (row.id, row.nama)
                 try:
                   q.delete()
                   DBSession.flush()
                 except:
-                  msg = 'ARPaymentItem ID %d %s tidak dapat dihapus.' % (row.id, row.nama)
+                  msg = 'Realisasi / STS ID %d %s tidak dapat dihapus.' % (row.id, row.nama)
                 request.session.flash(msg)
             return self.route_list()
         return dict(row=row,

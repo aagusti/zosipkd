@@ -26,6 +26,8 @@
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b></a>
         <ul class="dropdown-menu">
           <li><a href="/rekening">Rekening</a></li>
+          <li><a href="/sap">Sap</a></li>
+          <li><a href="/rekening-sap">Rekening Sap</a></li>
           <li><a href="/urusan">Urusan</a></li>
           <li><a href="/unit">Unit</a></li>
           <li><a href="/user/unit">User Unit</a></li>
