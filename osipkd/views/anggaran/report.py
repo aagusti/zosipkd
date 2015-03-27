@@ -51,10 +51,76 @@ def get_rpath(filename):
     resolver = a.resolve(''.join(['reports/',filename]))
     return resolver.abspath()
     
+angka = {1:'satu',2:'dua',3:'tiga',4:'empat',5:'lima',6:'enam',7:'tujuh',\
+         8:'delapan',9:'sembilan'}
+b = ' puluh '
+c = ' ratus '
+d = ' ribu '
+e = ' juta '
+f = ' miliyar '
+g = ' triliun '
+def Terbilang(x):   
+    y = str(x)         
+    n = len(y)        
+    if n <= 3 :        
+        if n == 1 :   
+            if y == '0' :   
+                return ''   
+            else :         
+                return angka[int(y)]   
+        elif n == 2 :
+            if y[0] == '1' :                
+                if y[1] == '1' :
+                    return 'sebelas'
+                elif y[0] == '0':
+                    x = y[1]
+                    return Terbilang(x)
+                elif y[1] == '0' :
+                    return 'sepuluh'
+                else :
+                    return angka[int(y[1])] + ' belas'
+            elif y[0] == '0' :
+                x = y[1]
+                return Terbilang(x)
+            else :
+                x = y[1]
+                return angka[int(y[0])] + b + Terbilang(x)
+        else :
+            if y[0] == '1' :
+                x = y[1:]
+                return 'seratus ' + Terbilang(x)
+            elif y[0] == '0' : 
+                x = y[1:]
+                return Terbilang(x)
+            else :
+                x = y[1:]
+                return angka[int(y[0])] + c + Terbilang(x)
+    elif 3< n <=6 :
+        p = y[-3:]
+        q = y[:-3]
+        if q == '1' :
+            return 'seribu' + Terbilang(p)
+        elif q == '000' :
+            return Terbilang(p)
+        else:
+            return Terbilang(q) + d + Terbilang(p)
+    elif 6 < n <= 9 :
+        r = y[-6:]
+        s = y[:-6]
+        return Terbilang(s) + e + Terbilang(r)
+    elif 9 < n <= 12 :
+        t = y[-9:]
+        u = y[:-9]
+        return Terbilang(u) + f + Terbilang(t)
+    else:
+        v = y[-12:]
+        w = y[:-12]
+        return Terbilang(w) + g + Terbilang(v)
 
 class ViewAnggaranLap(BaseViews):
     def __init__(self, context, request):
         global customer
+        global logo
         BaseViews.__init__(self, context, request)
         self.app = 'anggaran'
 
@@ -80,6 +146,7 @@ class ViewAnggaranLap(BaseViews):
 
         self.cust_nm = 'cust_nm' in self.session and self.session['cust_nm'] or 'PEMERINTAH KABUPATEN TANGERANG'
         customer = self.cust_nm
+        logo = self.request.static_url('osipkd:static/img/logo.png')
         
     @view_config(route_name="anggaran_r000", renderer="templates/ag-report/r000.pt", permission="read")
     def anggaran_r000(self):
@@ -278,6 +345,15 @@ class ViewAnggaranLap(BaseViews):
             response.content_disposition='filename=output.pdf' 
             response.write(pdf)
             return response
+        elif url_dict['act']=='r019' :
+            query = DBSession.query(Sap.kode, Sap.nama, Sap.level_id).order_by(Sap.kode).all()
+            generator = r019Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
         else:
             return HTTPNotFound() #TODO: Warning Hak Akses 
 
@@ -323,7 +399,7 @@ class ViewAnggaranLap(BaseViews):
                 .join(Kegiatan).join(Program)\
                 .filter(KegiatanSub.tahun_id==self.session['tahun'],
                         KegiatanSub.unit_id==self.session['unit_id'],
-                        not_(Kegiatan.kode.in_(('0.00.00.10','0.00.00.21','0.00.00.31','0.00.00.41'))))
+                        not_(Kegiatan.kode.in_(('0.00.00.10','0.00.00.21','0.00.00.31','0.00.00.41','0.00.00.99'))))
             rowTable = DataTables(req, KegiatanSub, query, columns)
             return rowTable.output_result()
 
@@ -410,7 +486,7 @@ class ViewAnggaranLap(BaseViews):
                    KegiatanSub.unit_id==self.session['unit_id'], 
                    Kegiatan.kode=='0.00.00.10'
                  ).order_by(KegiatanSub.tahun_id, Urusan.kode, Unit.kode, Kegiatan.kode, KegiatanSub.id, Rekening.kode, KegiatanItem.no_urut)
-				         
+
             generator = r1011Generator()
             pdf = generator.generate(query)
             response=req.response
@@ -534,8 +610,8 @@ class ViewAnggaranLap(BaseViews):
                  KegiatanItem.vol_1_2.label('volume2'), KegiatanItem.sat_1_2.label('satuan2'), KegiatanItem.hsat_1.label('harga'), 
                  Tahun.tanggal_1.label('tanggal'),                 
                  (KegiatanItem.vol_1_1*KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('anggaran')
-                 ).filter(Program.id==Kegiatan.program_id, Kegiatan.id==KegiatanSub.kegiatan_id, KegiatanSub.unit_id==Unit.id, 
-                   Unit.urusan_id==Urusan.id, KegiatanSub.id==KegiatanItem.kegiatan_sub_id, Rekening.id==KegiatanItem.rekening_id, 
+                 ).filter(KegiatanSub.unit_id==Unit.id, Kegiatan.id==KegiatanSub.kegiatan_id, KegiatanSub.id==KegiatanItem.kegiatan_sub_id, 
+                   Rekening.id==KegiatanItem.rekening_id, Unit.urusan_id==Urusan.id, Program.id==Kegiatan.program_id, Tahun.id==KegiatanSub.tahun_id,
                    KegiatanSub.tahun_id==self.session['tahun'],
                    KegiatanSub.unit_id==self.session['unit_id'], 
                    KegiatanSub.id==self.request.params['id']
@@ -746,7 +822,7 @@ class ViewAnggaranLap(BaseViews):
                 .join(Kegiatan).join(Program)\
                 .filter(KegiatanSub.tahun_id==self.session['tahun'],
                         KegiatanSub.unit_id==self.session['unit_id'],
-                        not_(Kegiatan.kode.in_(('0.00.00.10','0.00.00.21','0.00.00.31','0.00.00.41'))))
+                        not_(Kegiatan.kode.in_(('0.00.00.10','0.00.00.21','0.00.00.31','0.00.00.41','0.00.00.99'))))
             rowTable = DataTables(req, KegiatanSub, query, columns)
             return rowTable.output_result()
 
@@ -969,6 +1045,7 @@ class ViewAnggaranLap(BaseViews):
                  (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('anggaran')
                  ).filter(Program.id==Kegiatan.program_id, Kegiatan.id==KegiatanSub.kegiatan_id, KegiatanSub.unit_id==Unit.id, 
                    Unit.urusan_id==Urusan.id, KegiatanSub.id==KegiatanItem.kegiatan_sub_id, Rekening.id==KegiatanItem.rekening_id, 
+                   Tahun.id==KegiatanSub.tahun_id,
                    KegiatanSub.tahun_id==self.session['tahun'],
                    KegiatanSub.unit_id==self.session['unit_id'], 
                    KegiatanSub.id==self.request.params['id']
@@ -1192,7 +1269,7 @@ class ViewAnggaranLap(BaseViews):
                 .join(Kegiatan).join(Program)\
                 .filter(KegiatanSub.tahun_id==self.session['tahun'],
                         KegiatanSub.unit_id==self.session['unit_id'],
-                        not_(Kegiatan.kode.in_(('0.00.00.10','0.00.00.21','0.00.00.31','0.00.00.41'))))
+                        not_(Kegiatan.kode.in_(('0.00.00.10','0.00.00.21','0.00.00.31','0.00.00.41','0.00.00.99'))))
             rowTable = DataTables(req, KegiatanSub, query, columns)
             return rowTable.output_result()
 
@@ -1418,7 +1495,7 @@ class ViewAnggaranLap(BaseViews):
                  (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('anggaran2')
                  ).filter(Program.id==Kegiatan.program_id, Kegiatan.id==KegiatanSub.kegiatan_id, KegiatanSub.unit_id==Unit.id, 
                    Unit.urusan_id==Urusan.id, KegiatanSub.id==KegiatanItem.kegiatan_sub_id, Rekening.id==KegiatanItem.rekening_id, 
-                   KegiatanSub.tahun_id==self.session['tahun'],
+                   Tahun.id==KegiatanSub.tahun_id, KegiatanSub.tahun_id==self.session['tahun'],
                    KegiatanSub.unit_id==self.session['unit_id'], 
                    KegiatanSub.id==self.request.params['id']
                  ).order_by(KegiatanSub.tahun_id, Urusan.kode, Unit.kode, Program.kode, Kegiatan.kode, KegiatanSub.id, Rekening.kode, KegiatanItem.no_urut)
@@ -1644,7 +1721,7 @@ class ViewAnggaranLap(BaseViews):
                 .join(Kegiatan).join(Program)\
                 .filter(KegiatanSub.tahun_id==self.session['tahun'],
                         KegiatanSub.unit_id==self.session['unit_id'],
-                        not_(Kegiatan.kode.in_(('0.00.00.10','0.00.00.21','0.00.00.31','0.00.00.41'))))
+                        not_(Kegiatan.kode.in_(('0.00.00.10','0.00.00.21','0.00.00.31','0.00.00.41','0.00.00.99'))))
             rowTable = DataTables(req, KegiatanSub, query, columns)
             return rowTable.output_result()
 
@@ -1880,7 +1957,7 @@ class ViewAnggaranLap(BaseViews):
                  (KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran2')
                  ).filter(Program.id==Kegiatan.program_id, Kegiatan.id==KegiatanSub.kegiatan_id, KegiatanSub.unit_id==Unit.id, 
                    Unit.urusan_id==Urusan.id, KegiatanSub.id==KegiatanItem.kegiatan_sub_id, Rekening.id==KegiatanItem.rekening_id, 
-                   KegiatanSub.tahun_id==self.session['tahun'],
+                   Tahun.id==KegiatanSub.tahun_id, KegiatanSub.tahun_id==self.session['tahun'],
                    KegiatanSub.unit_id==self.session['unit_id'], 
                    KegiatanSub.id==self.request.params['id']
                  ).order_by(KegiatanSub.tahun_id, Urusan.kode, Unit.kode, Program.kode, Kegiatan.kode, KegiatanSub.id, Rekening.kode, KegiatanItem.no_urut)
@@ -3131,6 +3208,23 @@ class r018Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root  
 
+class r019Generator(JasperGenerator):
+    def __init__(self):
+        super(r019Generator, self).__init__()
+        self.reportname = get_rpath('apbd/R0019.jrxml')
+        self.xpath = '/apbd/master/rekangg'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'master')
+        for kode, uraian, level_id in tobegreeted:
+            xml_greeting  =  ET.SubElement(xml_a, 'rekangg')
+            ET.SubElement(xml_greeting, "kode").text = unicode(kode)
+            ET.SubElement(xml_greeting, "uraian").text = unicode(uraian)
+            ET.SubElement(xml_greeting, "level_id").text = unicode(level_id)
+            ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root
+
 class r100Generator(JasperGenerator):
     def __init__(self):
         super(r100Generator, self).__init__()
@@ -3565,6 +3659,7 @@ class r201Generator(JasperGenerator):
             ET.SubElement(xml_a, "trw4").text = unicode(row.trw4)
             ET.SubElement(xml_a, "tanggal").text = unicode(row.tanggal)
             ET.SubElement(xml_a, "customer").text = customer
+            ET.SubElement(xml_a, "logo").text = logo
         return self.root
 
 class r2011Generator(JasperGeneratorWithSubreport):
@@ -3635,6 +3730,7 @@ class r202Generator(JasperGenerator):
             ET.SubElement(xml_a, "trw4").text = unicode(row.trw4)
             ET.SubElement(xml_a, "tanggal").text = unicode(row.tanggal)
             ET.SubElement(xml_a, "customer").text = customer
+            ET.SubElement(xml_a, "logo").text = logo
         return self.root
 
 class r203Generator(JasperGenerator):
@@ -3704,6 +3800,7 @@ class r204Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.id)
             ET.SubElement(xml_a, "tanggal").text = unicode(row.tanggal)
             ET.SubElement(xml_a, "anggaran").text = unicode(row.anggaran)
+            ET.SubElement(xml_a, "logo").text = logo
             
             ET.SubElement(xml_a, "customer").text = customer
             rows = DBSession.query(KegiatanIndikator)\
@@ -3858,6 +3955,7 @@ class r206Generator(JasperGenerator):
             ET.SubElement(xml_a, "trw4").text = unicode(row.trw4)
             ET.SubElement(xml_a, "tanggal").text = unicode(row.tanggal)
             ET.SubElement(xml_a, "customer").text = customer
+            ET.SubElement(xml_a, "logo").text = logo
         return self.root
 
 class r207Generator(JasperGenerator):
@@ -3888,6 +3986,7 @@ class r207Generator(JasperGenerator):
             ET.SubElement(xml_a, "trw4").text = unicode(row.trw4)
             ET.SubElement(xml_a, "tanggal").text = unicode(row.tanggal)
             ET.SubElement(xml_a, "customer").text = customer
+            ET.SubElement(xml_a, "logo").text = logo
         return self.root
 
 class r300Generator(JasperGeneratorWithSubreport):
@@ -4414,6 +4513,7 @@ class r401Generator(JasperGenerator):
             ET.SubElement(xml_a, "trw3").text = unicode(row.trw3)
             ET.SubElement(xml_a, "trw4").text = unicode(row.trw4)
             ET.SubElement(xml_a, "customer").text = customer
+            ET.SubElement(xml_a, "logo").text = logo
         return self.root
 
 class r4011Generator(JasperGeneratorWithSubreport):
@@ -4489,6 +4589,7 @@ class r402Generator(JasperGenerator):
             ET.SubElement(xml_a, "trw3").text = unicode(row.trw3)
             ET.SubElement(xml_a, "trw4").text = unicode(row.trw4)
             ET.SubElement(xml_a, "customer").text = customer
+            ET.SubElement(xml_a, "logo").text = logo
         return self.root
 
 class r403Generator(JasperGenerator):
@@ -4556,6 +4657,7 @@ class r404Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "tanggal").text = unicode(row.tanggal)
             ET.SubElement(xml_a, "anggaran1").text = unicode(row.anggaran1)
             ET.SubElement(xml_a, "anggaran2").text = unicode(row.anggaran2)
+            ET.SubElement(xml_a, "logo").text = logo
             
             ET.SubElement(xml_a, "customer").text = customer
             rows = DBSession.query(KegiatanIndikator)\
@@ -4728,6 +4830,7 @@ class r406Generator(JasperGenerator):
             ET.SubElement(xml_a, "trw3").text = unicode(row.trw3)
             ET.SubElement(xml_a, "trw4").text = unicode(row.trw4)
             ET.SubElement(xml_a, "customer").text = customer
+            ET.SubElement(xml_a, "logo").text = logo
         return self.root
 
 class r407Generator(JasperGenerator):
@@ -4761,6 +4864,7 @@ class r407Generator(JasperGenerator):
             ET.SubElement(xml_a, "trw3").text = unicode(row.trw3)
             ET.SubElement(xml_a, "trw4").text = unicode(row.trw4)
             ET.SubElement(xml_a, "customer").text = customer
+            ET.SubElement(xml_a, "logo").text = logo
         return self.root
 
 class r500Generator(JasperGenerator):

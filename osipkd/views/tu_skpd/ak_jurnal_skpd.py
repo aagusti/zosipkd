@@ -8,7 +8,7 @@ from pyramid.httpexceptions import ( HTTPFound, )
 import colander
 from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
-from osipkd.models.apbd_tu import AkJurnal, AkJurnalItem, Sp2d, ARInvoice, Sts
+from osipkd.models.apbd_tu import AkJurnal, AkJurnalItem, Sp2d, ARInvoice, Sts, APInvoice
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -21,11 +21,12 @@ def deferred_jv_type(node, kw):
     return widget.SelectWidget(values=values)
     
 JV_TYPE = (
-    (1, 'Jurnal Penerimaan'),
+    (1, 'Jurnal Pendapatan'),
     (2, 'Jurnal Pengeluaran'),
     (3, 'Jurnal Umum'),
     (4, 'Jurnal Koreksi'),
     (5, 'Jurnal Penutup'),
+    (6, 'Jurnal LO'),
     )
     
 def deferred_is_skpd(node, kw):
@@ -149,15 +150,15 @@ class view_ak_jurnal_skpd(BaseViews):
             columns.append(ColumnDT('jv_type'))
             columns.append(ColumnDT('nama'))
             columns.append(ColumnDT('source'))
-            columns.append(ColumnDT('amount',  filter=self._number_format))
+            columns.append(ColumnDT('source_no'))
+            columns.append(ColumnDT('is_skpd'))
             columns.append(ColumnDT('posted'))
             
             query = DBSession.query(AkJurnal.id, AkJurnal.tanggal, AkJurnal.kode, AkJurnal.jv_type,
-                      AkJurnal.nama, AkJurnal.source, AkJurnal.posted,
-                      func.coalesce(func.sum(AkJurnalItem.amount),0).label('amount')).\
+                      AkJurnal.nama, AkJurnal.source, AkJurnal.source_no, AkJurnal.is_skpd, AkJurnal.posted).\
                     outerjoin(AkJurnalItem).\
                     group_by(AkJurnal.id, AkJurnal.tanggal, AkJurnal.kode, AkJurnal.jv_type,
-                             AkJurnal.nama, AkJurnal.source, ).\
+                             AkJurnal.nama, AkJurnal.source,  AkJurnal.source_no, AkJurnal.is_skpd, AkJurnal.posted).\
                     filter(AkJurnal.tahun_id == ses['tahun'],
                            AkJurnal.unit_id == ses['unit_id'],)
                       
@@ -204,7 +205,7 @@ class view_ak_jurnal_skpd(BaseViews):
             is_skpd  = row.is_skpd
             jv_type  = row.jv_type
             tipe     = AkJurnal.get_tipe(jv_type)
-            no_urut  = AkJurnal.get_norut(row.id)+1
+            no_urut  = AkJurnal.get_norut(row.tahun_id,row.unit_id)+1
             no       = "0000%d" % no_urut
             nomor    = no[-5:]     
             row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
@@ -235,11 +236,24 @@ class view_ak_jurnal_skpd(BaseViews):
         if req.POST:
             if 'simpan' in req.POST:
                 controls = req.POST.items()
+                controls_dicted = dict(controls)
+                
+                #Cek Kode Sama ato tidak
+                if not controls_dicted['kode']=='':
+                    a = form.validate(controls)
+                    b = a['kode']
+                    c = "%s" % b
+                    cek  = DBSession.query(AkJurnal).filter(AkJurnal.kode==c).first()
+                    if cek :
+                        self.request.session.flash('Kode Jurnal sudah ada.', 'error')
+                        return HTTPFound(location=self.request.route_url('ak-jurnal-skpd-add'))
+
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
                     return dict(form=form)
-                id = self.save_request(dict(controls))
+                row = self.save_request(controls_dicted)
+                return HTTPFound(location=req.route_url('ak-jurnal-skpd-edit',id=row.id))
             return self.route_list()  
         elif SESS_ADD_FAILED in req.session:
             return dict(form=form)
@@ -262,6 +276,8 @@ class view_ak_jurnal_skpd(BaseViews):
     def view_ak_jurnal_skpd_edit(self):
         request = self.request
         row = self.query_id().first()
+        uid     = row.id
+        kode    = row.kode
         
         if not row:
             return id_not_found(request)
@@ -291,6 +307,19 @@ class view_ak_jurnal_skpd(BaseViews):
             if 'simpan' in request.POST:
                 controls = request.POST.items()
                 print controls
+
+                #Cek Kode Sama ato tidak
+                a = form.validate(controls)
+                b = a['kode']
+                c = "%s" % b
+                cek = DBSession.query(AkJurnal).filter(AkJurnal.kode==c).first()
+                if cek:
+                    kode1 = DBSession.query(AkJurnal).filter(AkJurnal.id==uid).first()
+                    d     = kode1.kode
+                    if d!=c:
+                        self.request.session.flash('Kode Jurnal sudah ada', 'error')
+                        return HTTPFound(location=request.route_url('ak-jurnal-skpd-edit',id=row.id))
+
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
@@ -339,7 +368,13 @@ class view_ak_jurnal_skpd(BaseViews):
                         #Untuk update status disabled dan posted STS
                         row = DBSession.query(Sts).filter(Sts.kode==kode).first()
                         if not row:
-                            return self.route_list()
+                            #Untuk update status disabled dan posted Tagihan
+                            row = DBSession.query(APInvoice).filter(APInvoice.kode==kode).first()
+                            if not row:
+                                return self.route_list()
+                            row.disabled=0
+                            row.posted=0
+                            self.save_request7(row)
                         row.disabled=0
                         row.posted=0
                         self.save_request6(row)
@@ -368,6 +403,9 @@ class view_ak_jurnal_skpd(BaseViews):
         return row
     def save_request6(self, row=None):
         row = Sts()
+        return row
+    def save_request7(self, row=None):
+        row = APInvoice()
         return row
         
     @view_config(route_name='ak-jurnal-skpd-posting', renderer='templates/ak-jurnal-skpd/posting.pt',
@@ -405,6 +443,11 @@ class view_ak_jurnal_skpd(BaseViews):
                     if not row:  
                         #Untuk update status disabled STS
                         row = DBSession.query(Sts).filter(Sts.kode==kode).first()
+                        if not row:
+                            #Untuk update status disabled dan posted Tagihan
+                            row = DBSession.query(APInvoice).filter(APInvoice.kode==kode).first()
+                            row.disabled=1
+                            self.save_request7(row)
                         row.disabled=1
                         self.save_request6(row)
                     row.disabled=1
@@ -459,6 +502,11 @@ class view_ak_jurnal_skpd(BaseViews):
                     if not row:  
                         #Untuk update status disabled STS
                         row = DBSession.query(Sts).filter(Sts.kode==kode).first()
+                        if not row:
+                            #Untuk update status disabled dan posted Tagihan
+                            row = DBSession.query(APInvoice).filter(APInvoice.kode==kode).first()
+                            row.disabled=0
+                            self.save_request7(row)
                         row.disabled=0
                         self.save_request6(row)
                     row.disabled=0

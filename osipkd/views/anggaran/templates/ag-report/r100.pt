@@ -81,7 +81,7 @@
                 $(this).addClass('selected');
             }
         });
-		
+
         $('#btn_cetak').click(function () {
             if($('#unit_nm').val()=='Pilih Unit') {
                 alert('Silahkan pilih Unit terlebih dahulu!');

@@ -402,8 +402,8 @@
                 <label class="col-md-4"><input type="radio" name="rpt" value="13">SPP-UP 3</label>
             </div>
             <div class="radio">
-                <label class="col-md-4"><input type="radio" name="rpt" value="21">SPP-TU 1</label>
-                <label class="col-md-4"><input type="radio" name="rpt" value="22">SPP-TU 2</label>
+                <label class="col-md-4"><input type="radio" name="rpt" value="11">SPP-TU 1</label>
+                <label class="col-md-4"><input type="radio" name="rpt" value="12">SPP-TU 2</label>
                 <label class="col-md-4"><input type="radio" name="rpt" value="23">SPP-TU 3</label>
             </div>
             <div class="radio">
@@ -412,13 +412,13 @@
                 <label class="col-md-4"><input type="radio" name="rpt" value="53">SPP-LS 3</label>
             </div>
             <div class="radio">
-                <label class="col-md-4"><input type="radio" name="rpt" value="31">SPP-LS.G 1</label>
+                <label class="col-md-4"><input type="radio" name="rpt" value="11">SPP-LS.G 1</label>
                 <label class="col-md-4"><input type="radio" name="rpt" value="32">SPP-LS.G 2</label>
                 <label class="col-md-4"><input type="radio" name="rpt" value="33">SPP-LS.G 3</label>
             </div>
             <div class="radio">
-                <label class="col-md-4"><input type="radio" name="rpt" value="41">SPP-GU / LSB 1</label>
-                <label class="col-md-4"><input type="radio" name="rpt" value="42">SPP-GU / LSB 2</label>
+                <label class="col-md-4"><input type="radio" name="rpt" value="11">SPP-GU / LSB 1</label>
+                <label class="col-md-4"><input type="radio" name="rpt" value="32">SPP-GU / LSB 2</label>
                 <label class="col-md-4"><input type="radio" name="rpt" value="43">SPP-GU / LSB 3</label>
             </div>
           </div>

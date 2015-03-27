@@ -1,5 +1,5 @@
 from email.utils import parseaddr
-from sqlalchemy import not_
+from sqlalchemy import not_, or_
 from pyramid.view import (
     view_config,
     )
@@ -59,7 +59,32 @@ def usr_unit_act(request):
         
         query = DBSession.query(User.id, User.user_name, User.email, User.status,
                                 User.last_login_date, User.registered_date,
-                                Unit.nama).outerjoin(UserUnit).outerjoin(Unit)
+                                Unit.nama
+                               ).outerjoin(UserUnit
+                               ).outerjoin(Unit)
+        
+        rowTable = DataTables(req, User, query, columns)
+        return rowTable.output_result()
+    
+    elif url_dict['act']=='grid1':
+        cari = 'cari' in params and params['cari'] or ''
+        columns = []
+        columns.append(ColumnDT('id'))
+        columns.append(ColumnDT('email'))
+        columns.append(ColumnDT('user_name'))
+        columns.append(ColumnDT('status'))
+        columns.append(ColumnDT('last_login_date'))
+        columns.append(ColumnDT('registered_date'))
+        columns.append(ColumnDT('nama'))
+        
+        query = DBSession.query(User.id, User.user_name, User.email, User.status,
+                                User.last_login_date, User.registered_date,
+                                Unit.nama
+                               ).outerjoin(UserUnit
+                               ).outerjoin(Unit
+                               ).filter(or_(Unit.nama.ilike('%%%s%%' % cari),
+                                            User.user_name.ilike('%%%s%%' % cari),
+                                            User.email.ilike('%%%s%%' % cari),))
         
         rowTable = DataTables(req, User, query, columns)
         return rowTable.output_result()

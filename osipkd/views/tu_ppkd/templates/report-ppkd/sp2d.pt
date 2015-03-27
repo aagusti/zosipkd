@@ -4,6 +4,12 @@
     <hr>
     <script>
     $(document).ready(function(){
+	
+		$("#tipe").change(function(){
+		var prop = $("#tipe").val();
+		//alert(prop);
+		});
+		
         //$('#div_jenis').hide();
         //$('input[name="rpt"]').click(function(){
         //    if($(this).val()=="1"){
@@ -236,7 +242,16 @@
                             <label><input type="radio" name="jenis" value="1">Standard</label>
                         </div>
                         <div class="radio">
-                            <label><input type="radio" name="jenis" value="2">SKPD</label>
+                            <label><input type="radio" name="jenis" value="2">Custom</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="jenis" value="3">SKPD</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="jenis" value="4">Gaji</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="jenis" value="5">PPN/PPH</label>
                         </div>
                     </div>
                 </div>

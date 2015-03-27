@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, or_
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
@@ -10,7 +10,7 @@ from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
 from osipkd.models.pemda_model import Unit
-from osipkd.models.apbd_tu import Giro, GiroItem, Sp2d, Spm, Spp
+from osipkd.models.apbd_tu import Giro, GiroItem, Sp2d, Spm, SpmPotongan, Spp
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -18,7 +18,7 @@ from osipkd.views.base_view import BaseViews
 SESS_ADD_FAILED = 'Tambah ap-giro-item gagal'
 SESS_EDIT_FAILED = 'Edit ap-giro-item gagal'
 
-class view_ap_spp_item(BaseViews):
+class view_ap_giro_item(BaseViews):
     ##########                    
     # Action #
     ##########    
@@ -42,13 +42,18 @@ class view_ap_spp_item(BaseViews):
                 columns.append(ColumnDT('tanggal'))
                 columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('nominal',filter=self._number_format))
+                #columns.append(ColumnDT('nominal1',filter=self._number_format))
+                columns.append(ColumnDT('no_validasi'))
                 query = DBSession.query(GiroItem.id,
                                         GiroItem.ap_sp2d_id,
                                         Sp2d.kode.label('kode'),
                                         Sp2d.tanggal.label('tanggal'),
                                         Sp2d.nama.label('nama'),
                                         Spp.nominal.label('nominal'),
+                                        #func.sum(SpmPotongan.nilai).label('nominal1'),
+                                        Sp2d.no_validasi.label('no_validasi'),
                           ).join(Sp2d, Spm, Spp,
+                          #).outerjoin(Spm, SpmPotongan.ap_spm_id==Spm.id
                           ).filter(GiroItem.ap_giro_id==ap_giro_id,
                                    GiroItem.ap_sp2d_id==Sp2d.id,
                                    Sp2d.ap_spm_id==Spm.id,
@@ -58,9 +63,52 @@ class view_ap_spp_item(BaseViews):
                                      Sp2d.kode.label('kode'),
                                      Sp2d.tanggal.label('tanggal'),
                                      Sp2d.nama.label('nama'),
-                                     Spp.nominal.label('nominal'))
+                                     Spp.nominal.label('nominal'),
+                                     Sp2d.no_validasi.label('no_validasi'),
+                          )
                 rowTable = DataTables(req, GiroItem, query, columns)
                 return rowTable.output_result()
+
+        elif url_dict['act']=='grid1':
+            # defining columns
+            ap_giro_id = url_dict['ap_giro_id'].isdigit() and url_dict['ap_giro_id'] or 0
+            cari = 'cari' in params and params['cari'] or ''
+            columns = []
+            columns.append(ColumnDT('id'))
+            columns.append(ColumnDT('ap_sp2d_id'))
+            columns.append(ColumnDT('kode'))
+            columns.append(ColumnDT('tanggal'))
+            columns.append(ColumnDT('nama'))
+            columns.append(ColumnDT('nominal',filter=self._number_format))
+            #columns.append(ColumnDT('nominal1',filter=self._number_format))
+            columns.append(ColumnDT('no_validasi'))
+            query = DBSession.query(GiroItem.id,
+                                    GiroItem.ap_sp2d_id,
+                                    Sp2d.kode.label('kode'),
+                                    Sp2d.tanggal.label('tanggal'),
+                                    Sp2d.nama.label('nama'),
+                                    Spp.nominal.label('nominal'),
+                                    #func.sum(SpmPotongan.nilai).label('nominal1'),
+                                    Sp2d.no_validasi.label('no_validasi'),
+                      ).join(Sp2d, Spm, Spp,
+                      #).outerjoin(Spm, SpmPotongan.ap_spm_id==Spm.id
+                      ).group_by(GiroItem.id, 
+                                 GiroItem.ap_sp2d_id,
+                                 Sp2d.kode.label('kode'),
+                                 Sp2d.tanggal.label('tanggal'),
+                                 Sp2d.nama.label('nama'),
+                                 Spp.nominal.label('nominal'),
+                                 Sp2d.no_validasi.label('no_validasi'),
+                      ).filter(GiroItem.ap_giro_id==ap_giro_id,
+                               GiroItem.ap_sp2d_id==Sp2d.id,
+                               Sp2d.ap_spm_id==Spm.id,
+                               Spm.ap_spp_id==Spp.id,
+                               or_(Sp2d.kode.ilike('%%%s%%' % cari),
+                                   Sp2d.nama.ilike('%%%s%%' % cari))
+                      )
+            rowTable = DataTables(req, GiroItem, query, columns)
+            return rowTable.output_result()
+
 #######    
 # Add #
 #######
@@ -107,7 +155,8 @@ def view_add(request):
     
     #Untuk update status disabled pada SP2D
     row = DBSession.query(Sp2d).filter(Sp2d.id==controls['ap_sp2d_id']).first()   
-    row.status_giro=1
+    row.status_giro = 1
+    row.no_validasi = controls['no_validasi']
     save_request2(row)
     
     return {"success": True, 'id': row.id, "msg":'Success Tambah SP2D', 'jml_total':nominal}

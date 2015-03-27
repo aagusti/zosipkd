@@ -25,7 +25,7 @@ cara = (
     )
     
 class KibSchema(colander.Schema):
-    kat_widget = widget.AutocompleteInputWidget(
+    """kat_widget = widget.AutocompleteInputWidget(
         size=60,
         values = '/aset/kategori/headofnama/act',
         min_length=1)
@@ -36,7 +36,7 @@ class KibSchema(colander.Schema):
     pemilik_widget = widget.AutocompleteInputWidget(
         size=60,
         values = '/aset/pemilik/headofnama/act',
-        min_length=1)
+        min_length=1)"""
     unit_nm_widget = widget.AutocompleteInputWidget(
         values = '/unit/act/headofnama',
         min_length=1)
@@ -67,12 +67,12 @@ class KibSchema(colander.Schema):
                         oid = "kategori_id")
     kategori_kd     = colander.SchemaNode(
                         colander.String(),
-                        widget = katkode_widget,
+                        #widget = katkode_widget,
                         oid = "kategori_kd",
                         title = "Kategori")
     kategori_nm     = colander.SchemaNode(
                         colander.String(),
-                        widget = kat_widget,
+                        #widget = kat_widget,
                         oid = "kategori_nm",
                         title = "Kategori Uraian")
     no_register     = colander.SchemaNode(
@@ -85,7 +85,7 @@ class KibSchema(colander.Schema):
                         oid = "pemilik_id",)
     pemilik_nm      = colander.SchemaNode(
                         colander.String(),
-                        widget = pemilik_widget,
+                        #widget = pemilik_widget,
                         oid = "pemilik_nm",
                         title = "Pemilik")                      
     uraian          = colander.SchemaNode(

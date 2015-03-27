@@ -8,5 +8,5 @@ esppt_route = (
   ('es_reg_act','/reg/{act}'),
 
   ('es_reg', '/'),
-     
+      
 )

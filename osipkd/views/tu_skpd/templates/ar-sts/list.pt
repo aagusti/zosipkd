@@ -131,8 +131,8 @@
           '	<button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
           '	<button id="btn_print"  class="btn btn btn-primary" type="button">Cetak</button>',
-          '	<button id="btn_posting" class="btn btn btn-success" type="button">Posting</button>',
-          '	<button id="btn_unposting" class="btn btn btn-info" type="button">UnPosting</button>',
+          //'	<button id="btn_posting" class="btn btn btn-success" type="button">Posting</button>',
+          //'	<button id="btn_unposting" class="btn btn btn-info" type="button">UnPosting</button>',
           ' <button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
           '	&nbsp;',
           '</div>',
@@ -176,7 +176,7 @@
                 "aTargets" : [4], // Column number which needs to be modified
                 "mRender"  : function (data, type, full) {
                     if (data == "1") {
-                        return 'Penerimaan';
+                        return 'Pendapatan';
                     } else if (data == "2") {
                         return 'Kontra Pos';
                     } else if (data == "3") {

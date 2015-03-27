@@ -273,7 +273,7 @@
             }
             else{
             if(harga>nilai1){
-                alert('Harga tidak boleh besar dari anggaran');
+                alert('Harga tidak boleh besar dari anggaran Rp.'+$('#nilai1').val());
             }
             else{
                 $('#ar_invoice_item_id').val('');
@@ -293,7 +293,7 @@
             }
             else{
             if(harga>nilai1){
-                alert('harga tidak boleh besar dari anggaran');
+                alert('Harga tidak boleh besar dari anggaran Rp.'+$('#nilai1').val());
             }
             else{
                 $('#ar_invoice_item_id').val();

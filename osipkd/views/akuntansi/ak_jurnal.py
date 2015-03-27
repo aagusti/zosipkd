@@ -8,7 +8,8 @@ from pyramid.httpexceptions import ( HTTPFound, )
 import colander
 from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
-from osipkd.models.apbd import Jurnal, JurnalItem
+from osipkd.models.apbd import Jurnal, JurnalItem, ARInvoiceItem, ARPaymentItem
+from osipkd.models.apbd_tu import Sts, StsItem
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -21,20 +22,21 @@ def deferred_jv_type(node, kw):
     return widget.SelectWidget(values=values)
     
 JV_TYPE = (
-    (1, 'Jurnal Penerimaan'),
+    (1, 'Jurnal Pendapatan'),
     (2, 'Jurnal Pengeluaran'),
     (3, 'Jurnal Umum'),
     (4, 'Jurnal Koreksi'),
     (5, 'Jurnal Penutup'),
+    (6, 'Jurnal LO'),
     )
-
+    
 def deferred_is_skpd(node, kw):
     values = kw.get('is_skpd', [])
     return widget.SelectWidget(values=values)
     
 IS_SKPD = (
     (0, 'PPKD'),
-    (1, 'SKPD'))   
+    (1, 'SKPD'))      
     
 class AddSchema(colander.Schema):
     unit_kd_widget = widget.AutocompleteInputWidget(
@@ -149,15 +151,15 @@ class view_ak_jurnal(BaseViews):
             columns.append(ColumnDT('jv_type'))
             columns.append(ColumnDT('nama'))
             columns.append(ColumnDT('source'))
-            columns.append(ColumnDT('amount',  filter=self._number_format))
+            columns.append(ColumnDT('source_no'))
+            columns.append(ColumnDT('is_skpd'))
             columns.append(ColumnDT('posted'))
             
             query = DBSession.query(Jurnal.id, Jurnal.tanggal, Jurnal.kode, Jurnal.jv_type,
-                      Jurnal.nama, Jurnal.source, Jurnal.posted,
-                      func.coalesce(func.sum(JurnalItem.amount),0).label('amount')).\
+                      Jurnal.nama, Jurnal.source, Jurnal.source_no, Jurnal.is_skpd, Jurnal.posted).\
                     outerjoin(JurnalItem).\
                     group_by(Jurnal.id, Jurnal.tanggal, Jurnal.kode, Jurnal.jv_type,
-                             Jurnal.nama, Jurnal.source, ).\
+                             Jurnal.nama, Jurnal.source, Jurnal.source_no, Jurnal.is_skpd, Jurnal.posted).\
                     filter(Jurnal.tahun_id == ses['tahun'],
                            Jurnal.unit_id == ses['unit_id'],)
                       
@@ -186,7 +188,7 @@ class view_ak_jurnal(BaseViews):
     def save(self, values, user, row=None):
         if not row:
             row = Jurnal()
-            row.created = datetime.now()
+            row.created    = datetime.now()
             row.create_uid = user.id
         row.from_dict(values)
         tanggal           = datetime.strptime(values['tanggal'], '%Y-%m-%d')
@@ -204,7 +206,7 @@ class view_ak_jurnal(BaseViews):
             is_skpd  = row.is_skpd
             jv_type  = row.jv_type
             tipe     = Jurnal.get_tipe(jv_type)
-            no_urut  = Jurnal.get_norut(row.id)+1
+            no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
             no       = "0000%d" % no_urut
             nomor    = no[-5:]     
             row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
@@ -235,11 +237,24 @@ class view_ak_jurnal(BaseViews):
         if req.POST:
             if 'simpan' in req.POST:
                 controls = req.POST.items()
+                controls_dicted = dict(controls)
+                
+                #Cek Kode Sama ato tidak
+                if not controls_dicted['kode']=='':
+                    a = form.validate(controls)
+                    b = a['kode']
+                    c = "%s" % b
+                    cek  = DBSession.query(Jurnal).filter(Jurnal.kode==c).first()
+                    if cek :
+                        self.request.session.flash('Kode Jurnal sudah ada.', 'error')
+                        return HTTPFound(location=self.request.route_url('ak-jurnal-add'))
+
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
                     return dict(form=form)
-                id = self.save_request(dict(controls))
+                row = self.save_request(controls_dicted)
+                return HTTPFound(location=req.route_url('ak-jurnal-edit',id=row.id))
             return self.route_list()  
         elif SESS_ADD_FAILED in req.session:
             return dict(form=form)
@@ -261,14 +276,16 @@ class view_ak_jurnal(BaseViews):
                  permission='edit')
     def view_ak_jurnal_edit(self):
         request = self.request
-        row     = self.query_id().first()
+        row = self.query_id().first()
+        uid     = row.id
+        kode    = row.kode
         
         if not row:
             return id_not_found(request)
         if row.posted:
             request.session.flash('Data sudah diposting', 'error')
             return self.route_list()
-            
+
         rowd={}
         rowd['id']            = row.id
         rowd['unit_id']       = row.unit_id
@@ -291,6 +308,19 @@ class view_ak_jurnal(BaseViews):
             if 'simpan' in request.POST:
                 controls = request.POST.items()
                 print controls
+
+                #Cek Kode Sama ato tidak
+                a = form.validate(controls)
+                b = a['kode']
+                c = "%s" % b
+                cek = DBSession.query(Jurnal).filter(Jurnal.kode==c).first()
+                if cek:
+                    kode1 = DBSession.query(Jurnal).filter(Jurnal.id==uid).first()
+                    d     = kode1.kode
+                    if d!=c:
+                        self.request.session.flash('Kode Jurnal sudah ada', 'error')
+                        return HTTPFound(location=request.route_url('ak-jurnal-edit',id=row.id))
+
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
@@ -300,16 +330,27 @@ class view_ak_jurnal(BaseViews):
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
         return dict(form=form)
-
+    
     ##########
     # Delete #
     ##########    
+    def save_request5(self, row=None):
+        row = ARInvoiceItem()
+        return row
+    def save_request6(self, row=None):
+        row = Sts()
+        return row
+    def save_request7(self, row=None):
+        row = ARPaymentItem()
+        return row
+        
     @view_config(route_name='ak-jurnal-delete', renderer='templates/ak-jurnal/delete.pt',
                  permission='delete')
     def view_ak_jurnal_delete(self):
         request = self.request
         q       = self.query_id()
         row     = q.first()
+        kode    = row.source_no
         
         if not row:
             return self.id_not_found(request)
@@ -326,7 +367,28 @@ class view_ak_jurnal(BaseViews):
                 msg = '%s dengan kode %s telah berhasil.' % (request.title, row.kode)
                 q.delete()
                 DBSession.flush()
-                request.session.flash(msg)  
+                request.session.flash(msg) 
+                
+                #Untuk update status disabled dan posted PIUTANG
+                row = DBSession.query(ARInvoiceItem).filter(ARInvoiceItem.ref_kode==kode).first()
+                if not row:  
+                    #Untuk update status disabled dan posted STS
+                    row = DBSession.query(Sts).filter(Sts.kode==kode).first()
+                    if not row:
+                        #Untuk update status disabled dan posted Tagihan
+                        row = DBSession.query(ARPaymentItem).filter(ARPaymentItem.ref_kode==kode).first()
+                        if not row:
+                            return self.route_list()
+                        row.disabled=0
+                        row.posted=0
+                        self.save_request7(row)
+                    row.disabled=0
+                    row.posted=0
+                    self.save_request6(row)
+                row.disabled=0
+                row.posted=0
+                self.save_request5(row)
+                
             return self.route_list()
         return dict(row=row, form=form.render())
 

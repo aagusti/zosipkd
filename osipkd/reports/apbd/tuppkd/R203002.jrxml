@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R00001" language="groovy" pageWidth="595" pageHeight="842" columnWidth="525" leftMargin="50" rightMargin="20" topMargin="20" bottomMargin="20">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R00001" language="groovy" pageWidth="612" pageHeight="972" columnWidth="542" leftMargin="50" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.3310000000000013"/>
-	<property name="ireport.x" value="262"/>
+	<property name="ireport.x" value="59"/>
 	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[/apbd/giro]]>
@@ -42,6 +42,9 @@
 	<field name="customer" class="java.lang.String">
 		<fieldDescription><![CDATA[customer]]></fieldDescription>
 	</field>
+	<field name="logo" class="java.lang.String">
+		<fieldDescription><![CDATA[logo]]></fieldDescription>
+	</field>
 	<variable name="nominal" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{nominal})]]></variableExpression>
 	</variable>
@@ -52,28 +55,32 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="79" splitType="Stretch">
+		<band height="94" splitType="Stretch">
 			<textField>
-				<reportElement x="1" y="0" width="514" height="16"/>
+				<reportElement x="1" y="50" width="514" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["REGISTER GIRO"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="30" width="514" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unit_nm}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1" y="10" width="514" height="16"/>
 				<textElement textAlignment="Center" markup="none">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="1" y="16" width="514" height="16"/>
-				<textElement textAlignment="Center" markup="none">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["GIRO"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="1" y="32" width="514" height="16"/>
-				<textElement textAlignment="Center" markup="none">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{unit_nm}.toUpperCase()]]></textFieldExpression>
-			</textField>
+			<image>
+				<reportElement x="1" y="0" width="62" height="74"/>
+				<imageExpression><![CDATA[$F{logo}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
@@ -165,7 +172,13 @@
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="54" splitType="Stretch"/>
+		<band height="44" splitType="Stretch">
+			<textField>
+				<reportElement x="415" y="10" width="100" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{unit_kd}+" - "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
 	</pageFooter>
 	<summary>
 		<band height="42" splitType="Stretch">

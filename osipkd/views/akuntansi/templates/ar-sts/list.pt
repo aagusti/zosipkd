@@ -130,7 +130,9 @@
           '	<button id="btn_tambah" class="btn btn btn-primary" type="button">Tambah</button>',
           '	<button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
-          '	<button id="btn_print"  class="btn btn btn-primary" type="button">Cetak</button>',
+          '	<button id="btn_posting"   class="btn btn btn-success" type="button">Posting Transaksi</button>',
+          '	<button id="btn_unposting" class="btn btn btn-info" type="button">Un-Jurnal</button>',
+          //'	<button id="btn_print"  class="btn btn btn-primary" type="button">Cetak</button>',
           ' <button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
           '	&nbsp;',
           '</div>',
@@ -174,7 +176,7 @@
                 "aTargets" : [4], // Column number which needs to be modified
                 "mRender"  : function (data, type, full) {
                     if (data == "1") {
-                        return 'Penerimaan';
+                        return 'Pendapatan';
                     } else if (data == "2") {
                         return 'Kontra Pos';
                     } else if (data == "3") {
@@ -266,6 +268,40 @@
                 alert('Silahkan pilih data yang akan di hapus');
             }
         });
+        $('#btn_posting').click(function () {
+            if (mID) {
+                window.location = '/ar/payment/sts/' + mID +'/posting';
+            } else {
+                alert('Silahkan pilih data yang akan diposting jurnal');
+            }
+        });
+        $('#btn_unposting').click(function () {
+            if (mID) {
+                window.location = '/ar/payment/sts/' + mID +'/unposting';
+            } else {
+                alert('Silahkan pilih data yang akan diunposting jurnal');
+            }
+        });
+        
+        $('#btn_post').click(function () {
+           $.ajax({
+              type: "POST",
+              url: "/ag-payment-item/detail/post",
+              //data: "unit_kd="+$('#kegiatan_kd').val(),
+              success: function (html) {
+                if (html.success == true) {
+                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                  oTable.fnReloadAjax(oTableUrl);
+                } else {
+                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                }
+              },
+              beforeSend: function () {
+                $("#errors").css('display', 'inline', 'important');
+                $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+              }
+            });
+        });       
         $('#btn_print').click(function () {
             url = "/ar-report-skpd/act/arinvoice?id="+mID;
             if (mID) {

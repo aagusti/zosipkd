@@ -47,15 +47,17 @@ class view_ap_sp2d_ppkd(BaseViews):
                 columns.append(ColumnDT('id'))
                 columns.append(ColumnDT('kode'))
                 columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
-                columns.append(ColumnDT('kode1'))
                 columns.append(ColumnDT('nama'))
+                columns.append(ColumnDT('no_validasi'))
+                columns.append(ColumnDT('kode1'))
                 columns.append(ColumnDT('nominal1'))
                 columns.append(ColumnDT('posted'))
                 query = DBSession.query(Sp2d.id, 
                                         Sp2d.kode, 
                                         Sp2d.tanggal,
-                                        Spm.kode.label('kode1'), 
                                         Sp2d.nama, 
+                                        Sp2d.no_validasi, 
+                                        Spm.kode.label('kode1'), 
                                         Spp.nominal.label('nominal1'),
                                         Sp2d.posted,
                         ).join(Spm 
@@ -144,7 +146,7 @@ class view_ap_sp2d_ppkd(BaseViews):
             
         elif url_dict['act']=='headofkode1':
             term = 'term' in params and params['term'] or ''
-            q = DBSession.query(Sp2d.id, Sp2d.kode.label('kode1'),Sp2d.nama.label('nama1'),Spp.nominal.label('amount1'),
+            q = DBSession.query(Sp2d.id, Sp2d.kode.label('kode1'),Sp2d.nama.label('nama1'),Spp.nominal.label('amount1'),Sp2d.no_validasi.label('validasi'),
                                 )\
                                 .join(Spm,)\
                                 .outerjoin(Spp,)\
@@ -156,11 +158,36 @@ class view_ap_sp2d_ppkd(BaseViews):
             r = []
             for k in rows:
                 d={}
-                d['id']      = k[0]
-                d['value']   = k[1]
-                d['kode']    = k[1]
-                d['nama']    = k[2]
-                d['amount']  = k[3]
+                d['id']       = k[0]
+                d['value']    = k[1]
+                d['kode']     = k[1]
+                d['nama']     = k[2]
+                d['amount']   = k[3]
+                d['validasi'] = k[4]
+                r.append(d)
+            print '---****----',r              
+            return r
+            
+        elif url_dict['act']=='headofkode2':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Sp2d.id, Sp2d.kode.label('kode1'),Sp2d.nama.label('nama1'),Spp.nominal.label('amount1'),Sp2d.no_validasi.label('validasi'),
+                                )\
+                                .join(Spm,)\
+                                .outerjoin(Spp,)\
+                                .filter(Spp.unit_id == ses['unit_id'],
+                                        Spp.tahun_id == ses['tahun'],
+                                        Sp2d.status_advist == 0,
+                                        Sp2d.kode.ilike('%s%%' % term))
+            rows = q.all()                               
+            r = []
+            for k in rows:
+                d={}
+                d['id']       = k[0]
+                d['value']    = k[1]
+                d['kode']     = k[1]
+                d['nama']     = k[2]
+                d['amount']   = k[3]
+                d['validasi'] = k[4]
                 r.append(d)
             print '---****----',r              
             return r
@@ -187,14 +214,16 @@ class view_ap_sp2d_ppkd(BaseViews):
         row.from_dict(values)
         row.updated = datetime.now()
         row.update_uid = self.request.user.id
-        row.posted=0
-        row.disabled = 'disabled' in values and 1 or 0  
-        row.status_giro = 0  
+        row.posted        = 0
+        row.disabled      = 'disabled' in values and 1 or 0  
+        row.status_giro   = 0  
+        row.status_advist = 0  
 
         if not row.kode:
             tahun    = self.session['tahun']
             unit_kd  = self.session['unit_kd']
-            no_urut  = Sp2d.get_norut(row.id)+1
+            unit_id  = self.session['unit_id']
+            no_urut  = Sp2d.get_norut(tahun, unit_id)+1
             no       = "0000%d" % no_urut
             nomor    = no[-5:]
             row.kode = "%d" % tahun + "-%s" % unit_kd + "-%s" % nomor
@@ -203,9 +232,9 @@ class view_ap_sp2d_ppkd(BaseViews):
         DBSession.flush()
         
         #Untuk update status disabled pada SPM
-        row = DBSession.query(Spm).filter(Spm.id==row.ap_spm_id).first()   
-        row.disabled=1
-        self.save_request3(row)
+        row1 = DBSession.query(Spm).filter(Spm.id==row.ap_spm_id).first()   
+        row1.disabled=1
+        self.save_request3(row1)
                 
         return row
                                           
@@ -233,12 +262,23 @@ class view_ap_sp2d_ppkd(BaseViews):
             if 'simpan' in request.POST:
                 controls = request.POST.items()
                 controls_dicted = dict(controls)
+
+                #Cek Kode Sama ato tidak
+                if not controls_dicted['kode']=='':
+                    a = form.validate(controls)
+                    b = a['kode']
+                    c = "%s" % b
+                    cek  = DBSession.query(Sp2d).filter(Sp2d.kode==c).first()
+                    if cek :
+                        self.request.session.flash('Kode Sp2d sudah ada.', 'error')
+                        return HTTPFound(location=self.request.route_url('ap-sp2d-add'))
+
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
                     return dict(form=form)
                 row = self.save_request(controls_dicted)
-                return self.route_list()
+                return HTTPFound(location=request.route_url('ap-sp2d-edit',id=row.id))
             return self.route_list()
         elif SESS_ADD_FAILED in request.session:
             del request.session[SESS_ADD_FAILED]
@@ -260,6 +300,8 @@ class view_ap_sp2d_ppkd(BaseViews):
     def view_edit(self):
         request = self.request
         row = self.query_id().first()
+        uid     = row.id
+        kode    = row.kode
         
         if not row:
             return id_not_found(request)
@@ -271,6 +313,19 @@ class view_ap_sp2d_ppkd(BaseViews):
         if request.POST:
             if 'simpan' in request.POST:
                 controls = request.POST.items()
+
+                #Cek Kode Sama ato tidak
+                a = form.validate(controls)
+                b = a['kode']
+                c = "%s" % b
+                cek = DBSession.query(Sp2d).filter(Sp2d.kode==c).first()
+                if cek:
+                    kode1 = DBSession.query(Sp2d).filter(Sp2d.id==uid).first()
+                    d     = kode1.kode
+                    if d!=c:
+                        self.request.session.flash('Kode Sp2d sudah ada', 'error')
+                        return HTTPFound(location=request.route_url('ap-sp2d-edit',id=row.id))
+
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
@@ -490,7 +545,8 @@ class AddSchema(colander.Schema):
                           title="No. SP2D")
     nama            = colander.SchemaNode(
                           colander.String(),
-                          title = "Uraian"
+                          title = "Uraian",
+                          oid="sp2d_nm"
                           )
     tanggal         = colander.SchemaNode(
                           colander.Date(),
@@ -531,6 +587,12 @@ class AddSchema(colander.Schema):
                           #missing=colander.drop,
                           title="Verified Nama",
                           oid="verified_nama")
+    no_validasi     = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          title = "No.Validasi",
+                          oid="no_validasi"
+                          )
 
 class EditSchema(AddSchema):
     id             = colander.SchemaNode(

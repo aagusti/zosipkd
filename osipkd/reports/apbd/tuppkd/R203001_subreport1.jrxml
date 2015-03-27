@@ -15,6 +15,15 @@
 	<field name="jumlah" class="java.lang.String">
 		<fieldDescription><![CDATA[jumlah]]></fieldDescription>
 	</field>
+	<field name="unit_kd" class="java.lang.String">
+		<fieldDescription><![CDATA[unit_kd]]></fieldDescription>
+	</field>
+	<field name="keg_kd" class="java.lang.String">
+		<fieldDescription><![CDATA[keg_kd]]></fieldDescription>
+	</field>
+	<field name="prg_kd" class="java.lang.String">
+		<fieldDescription><![CDATA[prg_kd]]></fieldDescription>
+	</field>
 	<variable name="jumlah" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{jumlah})]]></variableExpression>
 	</variable>
@@ -27,25 +36,25 @@
 	<detail>
 		<band height="14" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="20" y="0" width="102" height="14"/>
+				<reportElement x="20" y="0" width="125" height="14"/>
 				<box leftPadding="3"/>
 				<textElement>
-					<font size="9"/>
+					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{rek_kd}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{unit_kd}.substring(0,4)+" "+$F{unit_kd}+" "+$F{keg_kd}.substring(5)+" "+$F{rek_kd}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="122" y="0" width="322" height="14"/>
+				<reportElement x="145" y="0" width="299" height="14"/>
 				<box leftPadding="3"/>
 				<textElement>
-					<font size="9"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rek_nm}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="444" y="0" width="101" height="14"/>
 				<textElement textAlignment="Right">
-					<font size="9"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah})]]></textFieldExpression>
 			</textField>
@@ -53,7 +62,7 @@
 				<reportElement x="0" y="0" width="20" height="14"/>
 				<box leftPadding="3"/>
 				<textElement textAlignment="Center">
-					<font size="9"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
@@ -62,7 +71,7 @@
 	<summary>
 		<band height="14">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="20" y="0" width="102" height="14"/>
+				<reportElement x="20" y="0" width="125" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -70,7 +79,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement>
-					<font size="9"/>
+					<font size="8"/>
 				</textElement>
 			</textField>
 			<textField isBlankWhenNull="true">
@@ -82,20 +91,20 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="9" isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_1})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="122" y="0" width="322" height="14"/>
-				<box>
+				<reportElement x="145" y="0" width="299" height="14"/>
+				<box rightPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
-				<textElement textAlignment="Center">
-					<font size="9" isBold="true"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Jumlah"]]></textFieldExpression>
 			</textField>
@@ -108,7 +117,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement>
-					<font size="9"/>
+					<font size="8"/>
 				</textElement>
 			</textField>
 		</band>

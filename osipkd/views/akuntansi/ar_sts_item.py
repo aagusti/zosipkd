@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, cast, BigInteger
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
@@ -38,32 +38,42 @@ class view_ar_sts_item(BaseViews):
                 columns = []
                 columns.append(ColumnDT('id'))
                 columns.append(ColumnDT('kegiatan_item_id'))
-                columns.append(ColumnDT('kegiatan_kd'))
-                columns.append(ColumnDT('kegiatan_no'))
-                columns.append(ColumnDT('rekening_kd'))
-                columns.append(ColumnDT('item_no'))
-                columns.append(ColumnDT('rekening_nm'))
-                columns.append(ColumnDT('amount',  filter=self._number_format))
+                columns.append(ColumnDT('kode1'))
+                columns.append(ColumnDT('no_urut1'))
+                columns.append(ColumnDT('kode_rek'))
+                columns.append(ColumnDT('nama_rek'))
+                columns.append(ColumnDT('amount'))
                 columns.append(ColumnDT('nama'))
+                columns.append(ColumnDT('nilai1'))
 
                 query = DBSession.query(StsItem.id,
                                         StsItem.kegiatan_item_id,
+                                        Kegiatan.kode.label('kode1'),
+                                        KegiatanSub.no_urut.label('no_urut1'),
+                                        Rekening.kode.label('kode_rek'),
+                                        Rekening.nama.label('nama_rek'),
                                         StsItem.amount.label('amount'),
-                                        Kegiatan.kode.label('kegiatan_kd'),
-                                        KegiatanSub.no_urut.label('kegiatan_no'),
-                                        Rekening.kode.label('rekening_kd'),
-                                        Rekening.nama.label('rekening_nm'),
-                                        KegiatanItem.no_urut.label('item_no'),
-                                        KegiatanItem.nama.label('nama'),).\
-                          join(KegiatanItem).\
-                          outerjoin(KegiatanSub, Rekening, Kegiatan).\
-                          filter(  StsItem.kegiatan_item_id==KegiatanItem.id,
+                                        KegiatanSub.nama.label('nama'),
+                                        cast(KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2,BigInteger).label('nilai1'),
+                          ).join(KegiatanItem
+                          ).outerjoin(KegiatanSub, Rekening, Kegiatan
+                          ).filter(StsItem.ar_sts_id==ar_sts_id,
+                                   StsItem.kegiatan_item_id==KegiatanItem.id,
                                    KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                                    KegiatanItem.rekening_id==Rekening.id,
                                    KegiatanSub.kegiatan_id==Kegiatan.id,
-                                   StsItem.ar_sts_id==ar_sts_id,)
+                          ).group_by(StsItem.id,
+                                     StsItem.kegiatan_item_id,
+                                     Kegiatan.kode.label('kode1'),
+                                     KegiatanSub.no_urut.label('no_urut1'),
+                                     Rekening.kode.label('kode_rek'),
+                                     Rekening.nama.label('nama_rek'),
+                                     StsItem.amount.label('amount'),
+                                     KegiatanSub.nama.label('nama'),
+                                     cast(KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2,BigInteger).label('nilai1'))
                 rowTable = DataTables(req, StsItem, query, columns)
                 return rowTable.output_result()
+                
     #######    
     # Add #
     #######
@@ -136,5 +146,5 @@ class view_ar_sts_item(BaseViews):
         msg = 'Data sudah dihapus'
         self.query_id().delete()
         DBSession.flush()
-        nilai = "%d" % Sts.get_nilai(row.ar_sts_id) 
+        nilai = "%s" % Sts.get_nilai(row.ar_sts_id) 
         return {'success':True, "msg":msg, 'jml_total':nilai}

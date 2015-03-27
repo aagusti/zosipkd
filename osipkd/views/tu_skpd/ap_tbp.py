@@ -9,6 +9,9 @@ import colander
 from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd import ARPaymentItem
+from osipkd.models.pemda_model import Unit, Rekening, Sap, RekeningSap
+from osipkd.models.apbd_tu import AkJurnal, AkJurnalItem
+from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -109,7 +112,7 @@ class AddSchema(colander.Schema):
     ref_kode = colander.SchemaNode(
                     colander.String(),
                     validator=colander.Length(max=32),
-                    title = "Referensi"
+                    title = "No Bank"
                     )
     ref_nama = colander.SchemaNode(
                     colander.String(),
@@ -134,20 +137,20 @@ class AddSchema(colander.Schema):
                     title = "Sumber") 
                     # deferred_source_type)
 
-    bendahara_uid    = colander.SchemaNode(
+    bud_uid    = colander.SchemaNode(
                           colander.Integer(),
-                          oid="bendahara_uid",
+                          oid="bud_uid",
                           missing=colander.drop,
                           title="Bendahara") 
-    bendahara_nip    = colander.SchemaNode(
+    bud_nip    = colander.SchemaNode(
                           colander.String(),
-                          oid="bendahara_nip",
+                          oid="bud_nip",
                           missing=colander.drop,
                           title="Bendahara")                          
-    bendahara_nm     = colander.SchemaNode(
+    bud_nama     = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          oid="bendahara_nm")
+                          oid="bud_nama")
                     
     ############## DI DROP DULU                
     kecamatan_kd = colander.SchemaNode(
@@ -204,14 +207,13 @@ class view_ar_payment_item(BaseViews):
     def ar_payment_item_act(self):
         ses = self.request.session
         req = self.request
-        params = req.params
+        params   = req.params
         url_dict = req.matchdict
+        
         kegiatan_sub_id = 'kegiatan_sub_id' in params and params['kegiatan_sub_id'] or 0
         if url_dict['act']=='grid':
             columns = []
             columns.append(ColumnDT('id'))
-            #columns.append(ColumnDT('kegiatan_subs.kegiatans.kode'))
-            #columns.append(ColumnDT('kegiatan_subs.no_urut'))
             columns.append(ColumnDT('kode'))
             columns.append(ColumnDT('nama'))
             columns.append(ColumnDT('ref_kode'))
@@ -219,12 +221,10 @@ class view_ar_payment_item(BaseViews):
             columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
             columns.append(ColumnDT('amount',  filter=self._number_format))
             columns.append(ColumnDT('posted'))           
-            query = DBSession.query(ARPaymentItem).filter(
-                      ARPaymentItem.tahun == ses['tahun'],
-                      ARPaymentItem.unit_id == ses['unit_id'],
-                      ARPaymentItem.tanggal == ses['tanggal'],
-                      
-                      )
+            query = DBSession.query(ARPaymentItem).filter(ARPaymentItem.tahun == ses['tahun'],
+                                                          ARPaymentItem.unit_id == ses['unit_id'],
+                                                          ARPaymentItem.tanggal == ses['tanggal']
+                                                          )
             rowTable = DataTables(req, ARPaymentItem, query, columns)
             return rowTable.output_result()
         
@@ -277,10 +277,7 @@ class view_ar_payment_item(BaseViews):
         return HTTPFound(location=self.request.route_url('ap-tbp') )
         
     def session_failed(self, session_name):
-            
-        #r = dict(form=self.session[session_name])
         del self.session[session_name]
-        #return r
         
     @view_config(route_name='ap-tbp-add', renderer='templates/ap-tbp/add.pt',
                  permission='add')
@@ -291,19 +288,26 @@ class view_ar_payment_item(BaseViews):
         if req.POST:
             if 'simpan' in req.POST:
                 controls = req.POST.items()
+                controls_dicted = dict(controls)
+
+                #Cek Kode Sama ato tidak
+                a = form.validate(controls)
+                b = a['ref_kode']
+                c = "%s" % b
+                cek  = DBSession.query(ARPaymentItem).filter(ARPaymentItem.ref_kode==c).first()
+                if cek :
+                    self.request.session.flash('Nomor Bank sudah ada.', 'error')
+                    return HTTPFound(location=self.request.route_url('ap-tbp-add'))
+
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    #req.session[SESS_ADD_FAILED] = e.render()     
-                    #form.set_appstruct(rowd)
                     return dict(form=form)
-                    #return HTTPFound(location=req.route_url('ar-payment-item-add'))
-                self.save_request(dict(controls))
+                row = self.save_request(controls_dicted)
+                #return HTTPFound(location=req.route_url('ap-tbp-edit',id=row.id))
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
             return dict(form=form)
-        
-            #return self.session_failed(SESS_ADD_FAILED)
         rowd={}
         rowd['unit_id']     = ses['unit_id']
         rowd['unit_nm']     = ses['unit_nm']
@@ -328,6 +332,8 @@ class view_ar_payment_item(BaseViews):
     def view_ar_payment_item_edit(self):
         request = self.request
         row     = self.query_id().first()
+        uid     = row.id
+        kode    = row.ref_kode
         
         if not row:
             return id_not_found(request)
@@ -340,6 +346,19 @@ class view_ar_payment_item(BaseViews):
             if 'simpan' in request.POST:
                 controls = request.POST.items()
                 print controls
+
+                #Cek Kode Sama ato tidak
+                a = form.validate(controls)
+                b = a['ref_kode']
+                c = "%s" % b
+                cek = DBSession.query(ARPaymentItem).filter(ARPaymentItem.ref_kode==c).first()
+                if cek:
+                    kode1 = DBSession.query(ARPaymentItem).filter(ARPaymentItem.id==uid).first()
+                    d     = kode1.ref_kode
+                    if d!=c:
+                        self.request.session.flash('Nomor Bank sudah ada', 'error')
+                        return HTTPFound(location=request.route_url('ap-tbp-edit',id=row.id))
+
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
@@ -352,28 +371,8 @@ class view_ar_payment_item(BaseViews):
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
         rowd = row.to_dict()
-        #rowd={}
-        #rowd['id']          = row.id
-        #rowd['unit_id']     = row.unit_id
         rowd['unit_nm']     = row.units.nama
         rowd['unit_kd']     = row.units.kode
-        #rowd['kegiatan_sub_id'] =row.kegiatan_sub_id
-        #rowd['kegiatan_sub_kd'] ="".join([row.kegiatan_subs.kegiatans.kode,'-',str(row.kegiatan_subs.no_urut)])
-        #rowd['kegiatan_sub_nm'] =row.kegiatan_subs.nama
-        #rowd['rekening_id'] = row.rekening_id
-        #rowd['kode']        = row.kode
-        #rowd['nama']        = row.nama
-        #rowd['ref_kode']    = row.ref_kode
-        #rowd['ref_nama']    = row.ref_nama
-        #rowd['tanggal']    = row.tanggal
-        #rowd['amount']     = row.amount
-        #rowd['kecamatan_kd']    = row.kecamatan_kd
-        #rowd['kecamatan_nm']    = row.kecamatan_nm
-        #rowd['kelurahan_kd']    = row.kelurahan_kd
-        #rowd['kelurahan_nm']    = row.kelurahan_nm
-        #rowd['is_kota']         = row.is_kota
-        #rowd['disabled']      = row.disabled
-        #rowd['sumber_id']    = row.sumber_id
         form.set_appstruct(rowd)
         return dict(form=form)
 
@@ -396,14 +395,171 @@ class view_ar_payment_item(BaseViews):
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
-                msg = 'TBP ID %d %s sudah dihapus.' % (row.id, row.nama)
+                msg = 'TBP ID %d %s sudah dihapus.' % (row.id, row.ref_nama)
                 try:
                   q.delete()
                   DBSession.flush()
                 except:
-                  msg = 'TBP ID %d %s tidak dapat dihapus.' % (row.id, row.nama)
+                  msg = 'TBP ID %d %s tidak dapat dihapus.' % (row.id, row.ref_nama)
                 request.session.flash(msg)
             return self.route_list()
-        return dict(row=row,
-                     form=form.render())
+        return dict(row=row, form=form.render())
+
+    ###########
+    # Posting #
+    ###########     
+    def save_request2(self, row=None):
+        row = ARPaymentItem()
+        self.request.session.flash('TBP sudah diposting dan dibuat Jurnalnya.')
+        return row
+        
+    @view_config(route_name='ap-tbp-posting', renderer='templates/ap-tbp/posting.pt',
+                 permission='posting')
+    def view_edit_posting(self):
+        request = self.request
+        row     = self.query_id().first()
+        id_tbp  = row.id
+        nama    = row.ref_nama
+        kode    = row.ref_kode
+        tanggal = row.tanggal
+        
+        if not row:
+            return id_not_found(request)
+        if not row.amount:
+           request.session.flash('Data tidak dapat diposting, karena bernilai 0.', 'error')
+           return route_list()
+        if row.posted:
+            request.session.flash('Data sudah diposting', 'error')
+            return self.route_list()
+            
+        form = Form(colander.Schema(), buttons=('posting','cancel'))
+        
+        if request.POST:
+            if 'posting' in request.POST: 
+                #Update posted pada TBP
+                row.posted=1
+                self.save_request2(row)
+                
+                #Tambah ke Jurnal SKPD
+                periode = ARPaymentItem.get_periode(row.id)
+                
+                row = AkJurnal()
+                row.created    = datetime.now()
+                row.create_uid = self.request.user.id
+                row.updated    = datetime.now()
+                row.update_uid = self.request.user.id
+                row.tahun_id   = self.session['tahun']
+                row.unit_id    = self.session['unit_id']
+                row.nama       = "Diterima TBP %s" % nama
+                row.notes      = nama
+                row.periode    = periode
+                row.posted     = 0
+                row.disabled   = 0
+                row.is_skpd    = 0
+                row.jv_type    = 1
+                row.source     = "TBP"
+                row.source_no  = kode
+                row.tgl_source = tanggal
+                row.tanggal    = datetime.now()
+                row.tgl_transaksi = datetime.now()
+                
+                if not row.kode:
+                    tahun    = self.session['tahun']
+                    unit_kd  = self.session['unit_kd']
+                    is_skpd  = row.is_skpd
+                    tipe     = AkJurnal.get_tipe(row.jv_type)
+                    no_urut  = AkJurnal.get_norut(row.id)+1
+                    no       = "0000%d" % no_urut
+                    nomor    = no[-5:]     
+                    row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
+                
+                DBSession.add(row)
+                DBSession.flush()
+                
+                jui   = row.id
+                rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
+                                       KegiatanItem.nama.label('nama1'),
+                                       KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                       ARPaymentItem.amount.label('nilai1'),
+                                       RekeningSap.db_lo_sap_id.label('sap1'),
+                                       RekeningSap.db_lra_sap_id.label('sap2'),
+                                       RekeningSap.neraca_sap_id.label('sap3'),
+                                ).join(Rekening
+                                ).outerjoin(KegiatanItem,RekeningSap,KegiatanSub,
+                                ).filter(ARPaymentItem.id==id_tbp,
+                                         ARPaymentItem.rekening_id==KegiatanItem.rekening_id,
+                                         KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                                         KegiatanItem.rekening_id==Rekening.id,
+                                         RekeningSap.rekening_id==Rekening.id,
+                                ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
+                                           KegiatanItem.nama.label('nama1'),
+                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                           ARPaymentItem.amount.label('nilai1'),
+                                           RekeningSap.db_lo_sap_id.label('sap1'),
+                                           RekeningSap.db_lra_sap_id.label('sap2'),
+                                           RekeningSap.neraca_sap_id.label('sap3'),
+                                ).all()
+                
+                n=0
+                for row in rows:
+                    ji = AkJurnalItem()
+                    
+                    ji.ak_jurnal_id = "%d" % jui
+                    ji.kegiatan_sub_id = row.kegiatan_sub_id1
+                    ji.rekening_id  = row.rekening_id1
+                    ji.sap_id       = 3862
+                    ji.amount       = row.nilai1
+                    ji.notes        = row.nama1
+                    n = n + 1
+                    
+                    DBSession.add(ji)
+                    DBSession.flush()
+                
+            return self.route_list()
+        return dict(row=row, form=form.render()) 
+
+    #############
+    # UnPosting #
+    #############   
+    def save_request4(self, row=None):
+        row = ARPaymentItem()
+        self.request.session.flash('TBP sudah di UnPosting.')
+        return row
+        
+    @view_config(route_name='ap-tbp-unposting', renderer='templates/ap-tbp/unposting.pt',
+                 permission='unposting') 
+    def view_edit_unposting(self):
+        request = self.request
+        row     = self.query_id().first()
+        kode    = row.ref_kode
+        
+        if not row:
+            return id_not_found(request)
+        if not row.posted:
+            request.session.flash('Data tidak dapat di Unposting, karena belum diposting.', 'error')
+            return self.route_list()
+        if row.disabled:
+            request.session.flash('Data jurnal TBP sudah diposting.', 'error')
+            return self.route_list()
+            
+        form = Form(colander.Schema(), buttons=('unposting','cancel'))
+        
+        if request.POST:
+            if 'unposting' in request.POST: 
+            
+                #Update status posted pada TBP
+                row.posted=0
+                self.save_request4(row)
+                
+                r = DBSession.query(AkJurnal.id).filter(AkJurnal.source_no==row.ref_kode).first()
+                #Menghapus Item Jurnal
+                DBSession.query(AkJurnalItem).filter(AkJurnalItem.ak_jurnal_id==r).delete()
+                DBSession.flush()
+                
+                #Menghapus TBP yang sudah menjadi jurnal
+                DBSession.query(AkJurnal).filter(AkJurnal.source_no==kode).delete()
+                DBSession.flush()
+                
+            return self.route_list()
+        return dict(row=row, form=form.render())    
 

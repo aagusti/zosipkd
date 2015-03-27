@@ -198,7 +198,8 @@ class view_ap_spm(BaseViews):
         if not row.kode:
             tahun    = self.session['tahun']
             unit_kd  = self.session['unit_kd']
-            no_urut  = Spm.get_norut(row.id)+1
+            unit_id  = self.session['unit_id']
+            no_urut  = Spm.get_norut(tahun, unit_id)+1
             no       = "0000%d" % no_urut
             nomor    = no[-5:]     
             row.kode = "%d" % tahun + "-%s" % unit_kd + "-%s" % nomor
@@ -207,9 +208,9 @@ class view_ap_spm(BaseViews):
         DBSession.flush()
 
         #Untuk update status disabled pada SPP
-        row = DBSession.query(Spp).filter(Spp.id==row.ap_spp_id).first()   
-        row.disabled=1
-        self.save_request3(row)
+        row1 = DBSession.query(Spp).filter(Spp.id==row.ap_spp_id).first()   
+        row1.disabled=1
+        self.save_request3(row1)
 
         return row
 
@@ -232,17 +233,30 @@ class view_ap_spm(BaseViews):
                  permission='add')
     def view_add(self):
         request=self.request
+        ses = self.session
+
         form = self.get_form(AddSchema)
         if request.POST:
             if 'simpan' in request.POST:
                 controls = request.POST.items()
                 controls_dicted = dict(controls)
+
+                #Cek Kode Sama ato tidak
+                if not controls_dicted['kode']=='':
+                    a = form.validate(controls)
+                    b = a['kode']
+                    c = "%s" % b
+                    cek  = DBSession.query(Spm).filter(Spm.kode==c).first()
+                    if cek :
+                        self.request.session.flash('Kode Spm sudah ada.', 'error')
+                        return HTTPFound(location=self.request.route_url('ap-spm-add'))
+
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
                     return dict(form=form)
                 row = self.save_request(controls_dicted)
-                return self.route_list()
+                return HTTPFound(location=request.route_url('ap-spm-edit',id=row.id))
             return self.route_list()
         elif SESS_ADD_FAILED in request.session:
             del request.session[SESS_ADD_FAILED]
@@ -264,7 +278,9 @@ class view_ap_spm(BaseViews):
     def view_edit(self):
         request = self.request
         row = self.query_id().first()
-
+        uid     = row.id
+        kode    = row.kode
+ 
         if not row:
             return id_not_found(request)
         if row.posted:
@@ -275,6 +291,19 @@ class view_ap_spm(BaseViews):
         if request.POST:
             if 'simpan' in request.POST:
                 controls = request.POST.items()   
+
+                #Cek Kode Sama ato tidak
+                a = form.validate(controls)
+                b = a['kode']
+                c = "%s" % b
+                cek = DBSession.query(Spm).filter(Spm.kode==c).first()
+                if cek:
+                    kode1 = DBSession.query(Spm).filter(Spm.id==uid).first()
+                    d     = kode1.kode
+                    if d!=c:
+                        self.request.session.flash('Kode Spm sudah ada', 'error')
+                        return HTTPFound(location=request.route_url('ap-spm-edit',id=row.id))
+
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
@@ -410,18 +439,21 @@ class AddSchema(colander.Schema):
     kode            = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          oid="kode",
                           title="No. SPM")
     nama            = colander.SchemaNode(
                           colander.String(),
                           title = "Uraian",
-                          oid = "nama")
+                          oid = "nama2")
     tanggal         = colander.SchemaNode(
                           colander.Date(),
                           )
+    """
     nama            = colander.SchemaNode(
                           colander.String(),
                           title = "Uraian"
                           )
+    """
     ttd_uid         = colander.SchemaNode(
                           colander.Integer(),
                           missing=colander.drop,
@@ -431,7 +463,7 @@ class AddSchema(colander.Schema):
     ttd_nip         = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title = "TTD",
+                          title = "PA",
                           oid = "ttd_nip"
                           )
     ttd_nama        = colander.SchemaNode(

@@ -83,10 +83,11 @@ class view_ap_giro_ppkd(BaseViews):
         if not row.kode:
             tahun    = self.session['tahun']
             unit_kd  = self.session['unit_kd']
-            no_urut  = Giro.get_norut(row.id)+1
+            unit_id  = self.session['unit_id']
+            no_urut  = Giro.get_norut(tahun, unit_id)+1
             no       = "0000%d" % no_urut
             nomor    = no[-5:]
-            row.kode = "%d" % tahun + "-%s" % unit_kd + "-%s" % nomor
+            row.kode = "%d" % tahun + "-%s" % unit_kd + "-BUD-%s" % nomor
             
         DBSession.add(row)
         DBSession.flush()
@@ -117,12 +118,23 @@ class view_ap_giro_ppkd(BaseViews):
             if 'simpan' in request.POST:
                 controls = request.POST.items()
                 controls_dicted = dict(controls)
+
+                #Cek Kode Sama ato tidak
+                if not controls_dicted['kode']=='':
+                    a = form.validate(controls)
+                    b = a['kode']
+                    c = "%s" % b
+                    cek  = DBSession.query(Giro).filter(Giro.kode==c).first()
+                    if cek :
+                        self.request.session.flash('Kode Giro sudah ada.', 'error')
+                        return HTTPFound(location=self.request.route_url('ap-giro-add'))
+
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
                     return dict(form=form)
                 row = self.save_request(controls_dicted)
-                return self.route_list()
+                return HTTPFound(location=request.route_url('ap-giro-edit',id=row.id))
             return self.route_list()
         elif SESS_ADD_FAILED in request.session:
             del request.session[SESS_ADD_FAILED]
@@ -144,6 +156,8 @@ class view_ap_giro_ppkd(BaseViews):
     def view_edit(self):
         request = self.request
         row = self.query_id().first()
+        uid     = row.id
+        kode    = row.kode
         
         if not row:
             return id_not_found(request)
@@ -152,6 +166,19 @@ class view_ap_giro_ppkd(BaseViews):
         if request.POST:
             if 'simpan' in request.POST:
                 controls = request.POST.items()
+
+                #Cek Kode Sama ato tidak
+                a = form.validate(controls)
+                b = a['kode']
+                c = "%s" % b
+                cek = DBSession.query(Giro).filter(Giro.kode==c).first()
+                if cek:
+                    kode1 = DBSession.query(Giro).filter(Giro.id==uid).first()
+                    d     = kode1.kode
+                    if d!=c:
+                        self.request.session.flash('Kode Giro sudah ada', 'error')
+                        return HTTPFound(location=request.route_url('ap-giro-edit',id=row.id))
+
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
@@ -177,7 +204,9 @@ class view_ap_giro_ppkd(BaseViews):
         
         if not row:
             return id_not_found(request)
-            
+        if row.nominal:
+            request.session.flash('Data tidak dapat dihapus, karena masih memiliki items', 'error')
+            return self.route_list()
         form = Form(colander.Schema(), buttons=('hapus','cancel'))
         values= {}
         if request.POST:
@@ -204,7 +233,7 @@ class AddSchema(colander.Schema):
                           title="No. Giro")
     nama            = colander.SchemaNode(
                           colander.String(),
-                          title = "Uraian"
+                          title = "Keperluan"
                           )
     tanggal         = colander.SchemaNode(
                           colander.Date(),

@@ -98,7 +98,7 @@
                ${error}</p>
           </div>
         </div>
-        <div tal:define="field form['tgl_validasi']" id="item-${field.oid}">
+        <div tal:define="field form['no_validasi']" id="item-${field.oid}">
           <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                   ${field.title}</label>
           <div class="col-md-2">
@@ -137,7 +137,6 @@
                    ${error}</p>
               </div>
             </div>
-
           <!---ttd_jab------------------------------------------------------------------->
           
           <div tal:define="field form['ttd_jab']" style="display: none;">
@@ -168,7 +167,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
-              "remote"   : "/pejabat/act/headofnama4?term=%QUERY",
+              "remote"   : "/pejabat/act/headofnama2?term=%QUERY",
             },
             {
               "name"      : 'ttd_nama',
@@ -316,18 +315,22 @@
             var harga = parseInt($('#amount').val());
             kegiatan_item_id = $('#kegiatan_item_id').val();
             
+            $('#ar_sts_item_id').val('');
+            $('#detail').submit();
+            
+            /**
             if (kegiatan_item_id==''){
                 alert('data untuk entry masih kosong');
             }
             else{
             if(harga>nilai){
-                alert('harga tidak boleh besar dari anggaran');
+                alert('Harga tidak boleh besar dari anggaran Rp.'+$('#nilai').val());
             }
             else{
                 $('#ar_sts_item_id').val('');
                 $('#detail').submit();
             }
-            }
+            }*/
             })
 // save update
           $('#rekening_save').click(function () {
@@ -336,18 +339,22 @@
             var harga = parseInt($('#amount').val());
             kegiatan_item_id = $('#kegiatan_item_id').val();
 
+            $('#ar_sts_item_id').val();
+            $('#detail').submit();
+
+            /**
             if (kegiatan_item_id==''){
                 alert('data harus dipilih terlebih dahulu');
             }
             else{
             if(harga>nilai){
-                alert('harga tidak boleh besar dari anggaran');
+                alert('Harga tidak boleh besar dari anggaran Rp.'+$('#nilai').val());
             }
             else{
                 $('#ar_sts_item_id').val();
                 $('#detail').submit();
             }
-            }
+            }*/
            })
 //
             $('#kode1').typeahead({
@@ -562,6 +569,9 @@
         $("#jml_total").attr('readonly',true);
         jml_total=$("#jml_total").val();
         $("#jml_total").val(formatNumber(jml_total));
+        
+        $("#tgl_validasi").attr('readonly',true);
+        $("#no_validasi").attr('readonly',true);
      });
     </script>
   </div>

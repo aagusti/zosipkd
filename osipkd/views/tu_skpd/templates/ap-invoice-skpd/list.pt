@@ -116,6 +116,7 @@
             <th>Uraian</th>
             <th>Nilai</th>
             <th>Posting</th>
+            <th>SPP</th>
         </tr>
       </thead>
       <tbody>
@@ -133,6 +134,8 @@
           '	<button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
           '	<button id="btn_print"  class="btn btn btn-primary" type="button">Cetak</button>',
+          //'	<button id="btn_posting"   class="btn btn btn-success" type="button">Posting</button>',
+          //'	<button id="btn_unposting" class="btn btn btn-info"    type="button">UnPosting</button>',
           ' <button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
           '	&nbsp;',
           '</div>',
@@ -165,7 +168,7 @@
             },{
                 "bSearchable": false,
                 "bSortable"  : false,
-                "aTargets"   : [3,4,6,7]
+                "aTargets"   : [3,4,6,7,8]
             },{
                 "bSearchable": true,
                 "bSortable"  : false,
@@ -197,20 +200,31 @@
                         return 'Y';
                     }
                 }
+            },{
+                "aTargets" : [8], // Column number which needs to be modified
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return 'N';
+                    } else if (data == "1") {
+                        return 'Y';
+                    }
+                }
             }],
             "aoColumns": [
                 null, {
-                    "sWidth": "50px"
+                    "sWidth": "40px"
+                }, {
+                    "sWidth": "20px",
                 }, {
                     "sWidth": "30px",
                 }, {
-                    "sWidth": "30px",
-                }, {
-                    "sWidth": "220px",
+                    "sWidth": "160px",
                 }, {
                     "sWidth": "200px",
                 }, {
                     "sWidth": "70px",
+                }, {
+                    "sWidth": "20px", "class":"right"
                 }, {
                     "sWidth": "20px", "class":"right"
                 }
@@ -230,7 +244,13 @@
                         $(this).addClass('row_selected');
                     }
                 })
-				//Kondisi Background-color
+				//Kondisi Background-color SPP
+                switch(aData[8]){
+                    case '1' :
+                        $('td',nRow).css("background-color","#AFEEEE")
+                        break;
+                }
+				//Kondisi Background-color Posting
                 switch(aData[7]){
                     case '1' :
                         $('td',nRow).css("background-color","#ddffdd")
@@ -252,7 +272,7 @@
                 iPos = oTable.fnGetPosition(this);
                 var aData = oTable.fnGetData(iPos);
                 mID = aData[0];
-				        nilai = aData[6];
+                nilai = aData[6];
                 mID2 = aData[6];
 
                 oTable.$('tr.selected').removeClass('selected');
@@ -263,6 +283,7 @@
         $('#btn_tambah').click(function () {
             window.location = '/ap-invoice-skpd/add';
         });
+        
         $('#btn_edit').click(function () {
             if (mID) {
                 window.location = '/ap-invoice-skpd/' + mID +'/edit';
@@ -270,17 +291,31 @@
                 alert('Silahkan pilih data yang akan di edit');
             }
         });
+        
+        $('#btn_posting').click(function () {
+            if (mID) {
+                window.location = '/ap-invoice-skpd/' + mID +'/posting';
+            } else {
+                alert('Silahkan pilih data yang akan diposting');
+            }
+        });
+        
+        $('#btn_unposting').click(function () {
+            if (mID) {
+                window.location = '/ap-invoice-skpd/' + mID +'/unposting';
+            } else {
+                alert('Silahkan pilih data yang akan diunposting');
+            }
+        });
+        
         $('#btn_delete').click(function () {
             if (mID) {
-                    window.location = '/ap-invoice-skpd/' + mID +'/delete'; }
-				/**
-                if(mID2=="0"){
-                    window.location = '/ap-invoice-skpd/' + mID +'/delete'; }
-                else{alert('Data tidak dapat dihapus, karena masih mempunyai item.');}
+                window.location = '/ap-invoice-skpd/' + mID +'/delete'; 
             } else {
                 alert('Silahkan pilih data yang akan di hapus');
-            }*/
+            }
         });
+        
         $('#btn_print').click(function () {
             url = "/ap-report-skpd/act/apinvoice?id="+mID;
             if (mID) {
@@ -289,10 +324,12 @@
                 alert('Silahkan pilih Kegiatan ID');
             }
         });
+        
         $("#btn_close").click(function () {
             window.location = '/tu-skpd';
             return false;
         });
+        
      });
     </script>
     

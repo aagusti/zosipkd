@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_rka_221" language="groovy" pageWidth="612" pageHeight="1008" columnWidth="544" leftMargin="50" rightMargin="18" topMargin="36" bottomMargin="72">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="1072"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
@@ -63,6 +63,9 @@
 	</field>
 	<field name="sasaran" class="java.lang.String">
 		<fieldDescription><![CDATA[sasaran]]></fieldDescription>
+	</field>
+	<field name="logo" class="java.lang.String">
+		<fieldDescription><![CDATA[logo]]></fieldDescription>
 	</field>
 	<variable name="anggaran" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{anggaran})]]></variableExpression>
@@ -374,6 +377,10 @@ Kuasa Pengguna Anggaran]]></text>
 					</textElement>
 					<textFieldExpression><![CDATA[": Rp. "+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{anggaran}))]]></textFieldExpression>
 				</textField>
+				<image>
+					<reportElement x="225" y="23" width="94" height="103"/>
+					<imageExpression><![CDATA[$F{logo}]]></imageExpression>
+				</image>
 			</band>
 			<band height="17" splitType="Stretch"/>
 			<band height="54" splitType="Stretch">

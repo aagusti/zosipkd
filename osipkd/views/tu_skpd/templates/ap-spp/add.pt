@@ -720,6 +720,19 @@
                     value="batal">Batal</button>
             </div> 
           </div>
+
+          <div class="form-group">
+            <label for="no_bku" class="control-label col-md-1" id="req-no_bku">
+                    No BKU </label>
+            <div class="col-md-2">
+               <input id="no_bku" class=" form-control " readonly type="text" value="" name="no_bku">
+            </div>
+            <label for="tgl_bku" class="control-label col-md-1" id="req-tgl_bku">
+                    Tgl BKU </label>
+            <div class="col-md-2">
+               <input id="tgl_bku" class=" form-control " readonly type="text" value="" name="tgl_bku">
+            </div>
+          </div>
           <script>
             $('#rekening_add').click(function () {
                 /**var jenis = $('#jenis').val();
@@ -744,7 +757,9 @@
             $('#kode1').bind('typeahead:selected', function(obj, datum, name) {  
                   $('#ap_invoice_id').val(datum.id);
                   $('#nama1').val(datum.nama);
-                  $('#amount1').val(datum.amount);                  
+                  $('#amount1').val(datum.amount);   
+                  $('#no_bku').val(datum.no_bku);
+                  $('#tgl_bku').val(datum.tgl_bku);                
             });
               
             $( "#detail" ).submit(function( event ) {
@@ -769,6 +784,8 @@
                       $('#kode1').val('');
                       $('#nama1').val('');
                       $('#amount1').val(0);
+                      $('#no_bku').val('');
+                      $('#tgl_bku').val('');
                       $('#jml_total').val(formatNumber(html.jml_total));
                       oTable.fnReloadAjax(oTableUrl);
                     } else {
@@ -832,7 +849,7 @@
             "aoColumnDefs": [{
                 "bSearchable": false,
                 "bVisible"   : false,
-                "aTargets"   : [0,1]
+                "aTargets"   : [0,1,7,8]
             },{
                 "bSearchable": true,
                 "bSortable"  : false,
@@ -877,7 +894,9 @@
                         $("#ap_invoice_id").val(data[1]);
                         $("#kode1").val(data[2]);
                         $("#nama1").val(data[5]);
-                        $("#amount1").val(data[6]);                        
+                        $("#amount1").val(data[6]);  
+                        $("#no_bku").val(data[7]);
+                        $("#tgl_bku").val(data[8]);                       
                         oTable.$('tr.row_selected').removeClass('row_selected');
                         $(this).addClass('row_selected');
                     }
@@ -910,6 +929,8 @@
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
                     $('#kode1').val('');
                     $('#nama1').val('');
+                    $('#no_bku').val('');
+                    $('#tgl_bku').val('');
                     $('#amount1').val(0);
 
                     if(html.jml_total=="None"){

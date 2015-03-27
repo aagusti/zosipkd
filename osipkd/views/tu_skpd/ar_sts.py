@@ -23,10 +23,9 @@ def deferred_jenis_id(node, kw):
     return widget.SelectWidget(values=values)
     
 JENIS_ID = (
-    (1, 'Penerimaan'),
-    (2, 'Pendapatan'),
-    (3, 'Kontra Pos'),
-    (4, 'Lainnya'))
+    (1, 'Pendapatan'),
+    (2, 'Kontra Pos'),
+    (3, 'Lainnya'))
     
 class view_ar_sts(BaseViews):
 
@@ -167,7 +166,15 @@ class AddSchema(colander.Schema):
                           title="Tgl.STS")
     tgl_validasi  = colander.SchemaNode(
                           colander.Date(),
-                          title="Validasi")
+                          missing=colander.drop,
+                          oid="tgl_validasi",
+                          title="Tgl.Validasi")
+    no_validasi   = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          oid="no_validasi",
+                          title = "No.validasi"
+                          )
 
 class EditSchema(AddSchema):
     id             = colander.SchemaNode(
@@ -226,12 +233,23 @@ def view_add(request):
         if 'simpan' in request.POST:
             controls = request.POST.items() 
             controls_dicted = dict(controls)
+
+            #Cek Kode Sama ato tidak
+            if not controls_dicted['kode']=='':
+                a = form.validate(controls)
+                b = a['kode']
+                c = "%s" % b
+                cek  = DBSession.query(Sts).filter(Sts.kode==c).first()
+                if cek :
+                    request.session.flash('Kode Sts sudah ada.', 'error')
+                    return HTTPFound(location=request.route_url('ar-sts-add'))
+
             try:
                 c = form.validate(controls)
             except ValidationFailure, e:
                 return dict(form=form)
             row = save_request(controls_dicted, request)
-            return route_list(request)
+            return HTTPFound(location=request.route_url('ar-sts-edit',id=row.id))
         return route_list(request)
     elif SESS_ADD_FAILED in request.session:
         del request.session[SESS_ADD_FAILED]
@@ -252,6 +270,8 @@ def id_not_found(request):
              permission='edit')
 def view_edit(request):
     row = query_id(request).first()
+    uid     = row.id
+    kode    = row.kode
     
     if not row:
         return id_not_found(request)
@@ -263,6 +283,19 @@ def view_edit(request):
     if request.POST:
         if 'simpan' in request.POST:
             controls = request.POST.items()
+
+            #Cek Kode Sama ato tidak
+            a = form.validate(controls)
+            b = a['kode']
+            c = "%s" % b
+            cek = DBSession.query(Sts).filter(Sts.kode==c).first()
+            if cek:
+                kode1 = DBSession.query(Sts).filter(Sts.id==uid).first()
+                d     = kode1.kode
+                if d!=c:
+                    request.session.flash('Kode Sts sudah ada', 'error')
+                    return HTTPFound(location=request.route_url('ar-sts-edit',id=row.id))
+
             try:
                 c = form.validate(controls)
             except ValidationFailure, e:

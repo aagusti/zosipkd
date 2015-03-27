@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, or_
 from pyramid.view import (
     view_config,
     )
@@ -88,11 +88,39 @@ class view_fungsi_urusan(BaseViews):
         if url_dict['act']=='grid':
             columns = []
             columns.append(ColumnDT('id'))
-            columns.append(ColumnDT('fungsis.nama'))
-            columns.append(ColumnDT('urusans.nama'))
+            columns.append(ColumnDT('fnama'))
+            columns.append(ColumnDT('unama'))
             columns.append(ColumnDT('nama'))
             
-            query = FungsiUrusan.query()
+            query = DBSession.query(FungsiUrusan.id,
+                                    Fungsi.nama.label('fnama'),
+                                    Urusan.nama.label('unama'),
+                                    FungsiUrusan.nama,
+                            ).filter(FungsiUrusan.fungsi_id==Fungsi.id,
+                                     FungsiUrusan.urusan_id==Urusan.id,
+                            )
+            
+            rowTable = DataTables(req, FungsiUrusan, query, columns)
+            return rowTable.output_result()
+
+        elif url_dict['act']=='grid1':
+            cari = 'cari' in params and params['cari'] or ''
+            columns = []
+            columns.append(ColumnDT('id'))
+            columns.append(ColumnDT('fnama'))
+            columns.append(ColumnDT('unama'))
+            columns.append(ColumnDT('nama'))
+            
+            query = DBSession.query(FungsiUrusan.id,
+                                    Fungsi.nama.label('fnama'),
+                                    Urusan.nama.label('unama'),
+                                    FungsiUrusan.nama,
+                            ).filter(FungsiUrusan.fungsi_id==Fungsi.id,
+                                     FungsiUrusan.urusan_id==Urusan.id,
+                                     or_(Fungsi.nama.ilike('%%%s%%' % cari),
+                                         Urusan.nama.ilike('%%%s%%' % cari),
+                                         FungsiUrusan.nama.ilike('%%%s%%' % cari))
+                            )
             
             rowTable = DataTables(req, FungsiUrusan, query, columns)
             return rowTable.output_result()

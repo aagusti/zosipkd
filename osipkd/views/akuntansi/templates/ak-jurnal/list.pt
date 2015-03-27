@@ -46,8 +46,7 @@
             "highlight": true,
             "minLength": 1,
             "remote": "/unit/act/headofkode?term=%QUERY", 
-        },
-        {
+        },{
           "name": 'unit_kd',
           "displayKey": 'value',
         }); 
@@ -57,8 +56,7 @@
             "highlight": true,
             "minLength": 1,
             "remote": "/unit/act/headofnama?term=%QUERY", 
-        },
-        {
+        },{
           "name": 'unit_nm',
           "displayKey": 'value',
         }); 
@@ -112,8 +110,9 @@
                 <th>Tipe</th>
                 <th>Uraian</th>
                 <th>Referensi</th>
-                <th>Nilai</th>
-                <th>Posted</th>
+                <th>Kode Referensi</th>
+                <th>Jurnals</th>
+                <th>Posting</th>
             </tr>
         </thead>
         <tbody>
@@ -148,7 +147,7 @@
               [10, 25, 50, 100]
           ],
           "aoColumnDefs": [
-                    {
+          {
               "bSearchable": false,
               "bVisible"   : false,
               "aTargets"   : [0]
@@ -159,7 +158,7 @@
           },{
               "bSearchable": false,
               "bSortable"  : false,
-              "aTargets"   : [3,5,6,7]
+              "aTargets"   : [3,5,6,7,8]
           },{
                 "aTargets" : [3], // Untuk Jenis
                 "mRender"  : function (data, type, full) {
@@ -173,10 +172,21 @@
                         return 'KR';
                     } else if (data == "5") {
                         return 'CL';
+                    } else if (data == "6") {
+                        return 'LO';
                     }
                 }
           },{
                 "aTargets" : [7], // Untuk Posting
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return 'PPKD';
+                    } else if (data == "1") {
+                        return 'SKPD';
+                    }
+                }
+          },{
+                "aTargets" : [8], // Untuk Posting
                 "mRender"  : function (data, type, full) {
                     if (data == "0") {
                         return 'N';
@@ -187,14 +197,16 @@
           }],
           "aoColumns": [
               null,
-              {"width": "75px"},
-              {"width": "75px"},
-              {"width": "60px"},
+              {"width": "30px"},
+              {"width": "50px"},
+              {"width": "30px"},
               {"width": "300px"},
-              {"width": "75px"},
-              {"width": "80px", "sClass":"right"},
+              {"width": "50px"},
+              {"width": "80px"},
+              {"width": "30px"},
               {"width": "30px",  "sClass":"right"},
           ],
+          
           "fnRowCallback": function (nRow, aData, iDisplayIndex) {
                 $(nRow).on("click", function (event) {
                     if ($(this).hasClass('row_selected')) {
@@ -211,7 +223,7 @@
                     }
                 })
                 
-                switch(aData[7]){
+                switch(aData[8]){
                     case '1' :
                         $('td',nRow).css("background-color","#ddffdd")
                         break;
@@ -224,9 +236,12 @@
           '	<button id="btn_add"    class="btn btn btn-primary" type="button">Tambah</button>',
           '	<button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
-          '	<!--button id="btn_pdf" class="btn btn btn-warning" type="button">PDF</button-->',
-          '	<!--button id="btn_csv"    class="btn btn btn-default" type="button">CSV</button-->',
+          //'	<button id="btn_print"   class="btn btn btn-primary" type="button">Cetak</button>',
+          //'	<button id="btn_posting" class="btn btn btn-success" type="button">Posting</button>',
+          //'	<button id="btn_unposting" class="btn btn btn-info" type="button">UnPosting</button>',
+          //'	<!--button id="btn_pdf" class="btn btn btn-warning" type="button">Cetak</button-->',
           '	<button id="btn_close"  class="btn btn btn-warning" type="button">Tutup</button>',
+          //'	<!--button id="btn_csv" class="btn btn btn-default" type="button">CSV</button-->',
           '	&nbsp;',
           '</div>',
         ];
@@ -241,28 +256,47 @@
             } else {
                 iPos = oTable.fnGetPosition(this);
                 var aData = oTable.fnGetData(iPos);
-                //mID = aData[0];
-                oTable.$('tr.selected').removeClass('selected');
-                $(this).addClass('selected');
+
                 mID = aData[0];
-                        oTable.$('tr.row_selected').removeClass('row_selected');
-                        $(this).addClass('row_selected');
-                        /*oTable2.fnReloadAjax("egaji/grid2?id=" + mID);*/                
+                //mID2= aData[6];
+                
+                oTable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');                
             }
         });
         $('#btn_add').click(function () {
             window.location = '/ak-jurnal/add';
         });
-
+ 
         $('#btn_edit').click(function () {
             if (mID) window.location = '/ak-jurnal/'+mID+'/edit';
             else alert('Pilih Baris yang akan di edit');
         });
-
+        
+        $('#btn_posting').click(function () {
+            if (mID) {
+                window.location = '/ak-jurnal/' + mID +'/posting';
+            } else {
+                alert('Silahkan pilih data yang akan diposting');
+            }
+        });
+        
+        $('#btn_unposting').click(function () {
+            if (mID) {
+                window.location = '/ak-jurnal/' + mID +'/unposting';
+            } else {
+                alert('Silahkan pilih data yang akan diunposting');
+            }
+        });
+        
         $('#btn_delete').click(function () {
-            if (mID) window.location = '/ak-jurnal/'+mID+'/delete';
-            else alert('Pilih Baris yang akan di hapus');
+            if (mID){ 
+                window.location = '/ak-jurnal/'+mID+'/delete'; 
+            }else{ 
+                alert('Pilih Baris yang akan di hapus');
+            }
         });        
+
         $("#btn_close").click(function () {
             window.location = '/skpd';
             return false;

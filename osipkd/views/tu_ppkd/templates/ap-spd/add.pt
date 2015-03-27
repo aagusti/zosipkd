@@ -33,22 +33,28 @@
           </div>
           <!-- UNIT -------------------------------------------------------------------->
           <div tal:define="field form['unit_id']" style="display: none;">
-               <input type="text" class="form-control" id="${field.oid}" 
-                      value="${request.session.unit_id}" readonly name="${field.oid}">
+              ${structure:field.serialize()}
           </div>
-          <div id="item-unit_kd">
-            <label for="unit_kd" class="control-label col-md-2" id="req-unit_kd">
-                    SKPD</label>
+          <div tal:define="field form['unit_kd']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                    ${field.title}</label>
             <div class="col-md-2">
-             <input type="text" class="form-control" id="unit_kd" 
-                    name="unit_kd" value="${request.session.unit_kd}" >
+               ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
             </div>
           </div>
-          <div class="col-md-6" id="item-unit_nm">
-            <input type="text" class="form-control" id="unit_nm" 
-                   name="unit_nm" value="${request.session.unit_nm}" >
+          <div tal:define="field form['unit_nm']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-6">
+               ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
           </div>
-
       <script>
         $('#unit_kd').typeahead({
             "hint": true,
@@ -75,13 +81,13 @@
         $('#unit_kd').bind('typeahead:selected', function(obj, datum, name) {  
               $('#unit_nm').val(datum.nama);
               $('#unit_id').val(datum.id);
-              change_unit();
+              //change_unit();
         });
 
         $('#unit_nm').bind('typeahead:selected', function(obj, datum, name) {      
               $('#unit_kd').val(datum.kode);
               $('#unit_id').val(datum.id);
-              change_unit()
+              //change_unit()
         });
       </script> 
 

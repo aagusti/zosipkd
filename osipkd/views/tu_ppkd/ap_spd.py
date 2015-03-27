@@ -10,7 +10,7 @@ from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
 from osipkd.models.pemda_model import Unit
-from osipkd.models.apbd_tu import Spd, SpdItem
+from osipkd.models.apbd_tu import Spd, SpdItem, Spp
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -181,12 +181,23 @@ class view_ap_spd_ppkd(BaseViews):
             if 'simpan' in request.POST:
                 controls = request.POST.items()
                 controls_dicted = dict(controls)
+
+                #Cek Kode Sama ato tidak
+                if not controls_dicted['kode']=='':
+                    a = form.validate(controls)
+                    b = a['kode']
+                    c = "%s" % b
+                    cek  = DBSession.query(Spd).filter(Spd.kode==c).first()
+                    if cek :
+                        self.request.session.flash('Kode Spd sudah ada.', 'error')
+                        return HTTPFound(location=self.request.route_url('ap-spd-add'))
+
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
                     return dict(form=form)
                 row = self.save_request(controls_dicted)
-                return self.route_list()
+                return HTTPFound(location=request.route_url('ap-spd-edit',id=row.id))
             return self.route_list()
         elif SESS_ADD_FAILED in request.session:
             del request.session[SESS_ADD_FAILED]
@@ -208,6 +219,8 @@ class view_ap_spd_ppkd(BaseViews):
     def view_edit(self):
         request = self.request
         row = self.query_id().first()
+        uid     = row.id
+        kode    = row.kode
         
         if not row:
             return id_not_found(request)
@@ -216,6 +229,19 @@ class view_ap_spd_ppkd(BaseViews):
         if request.POST:
             if 'simpan' in request.POST:
                 controls = request.POST.items()
+				
+                #Cek Kode Sama ato tidak
+                a = form.validate(controls)
+                b = a['kode']
+                c = "%s" % b
+                cek = DBSession.query(Spd).filter(Spd.kode==c).first()
+                if cek:
+                    kode1 = DBSession.query(Spd).filter(Spd.id==uid).first()
+                    d     = kode1.kode
+                    if d!=c:
+                        self.request.session.flash('Kode Spd sudah ada', 'error')
+                        return HTTPFound(location=request.route_url('ap-spd-edit',id=row.id))
+
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
@@ -226,6 +252,8 @@ class view_ap_spd_ppkd(BaseViews):
             del request.session[SESS_EDIT_FAILED]
             return dict(form=form)
         values = row.to_dict() 
+        values['unit_kd']=row.units.kode
+        values['unit_nm']=row.units.nama
         
         bl  = "%s" % Spd.get_nilai1(row.id) 
         btl = "%s" % Spd.get_nilai2(row.id)
@@ -263,8 +291,15 @@ class view_ap_spd_ppkd(BaseViews):
 
 class AddSchema(colander.Schema):
     unit_id          = colander.SchemaNode(
-                          colander.String(),
+                          colander.Integer(),
                           oid = "unit_id")
+    unit_kd          = colander.SchemaNode(
+                          colander.String(),
+                          oid = "unit_kd",
+                          title = "SKPD")
+    unit_nm          = colander.SchemaNode(
+                          colander.String(),
+                          oid = "unit_nm")
     tahun_id         = colander.SchemaNode(
                           colander.Integer(),
                           title="Tahun",

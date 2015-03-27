@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_rka_1" language="groovy" pageWidth="972" pageHeight="612" orientation="Landscape" columnWidth="911" leftMargin="54" rightMargin="7" topMargin="36" bottomMargin="14">
-	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="727"/>
-	<property name="ireport.y" value="1419"/>
+	<property name="ireport.zoom" value="0.75"/>
+	<property name="ireport.x" value="2"/>
+	<property name="ireport.y" value="60"/>
 	<parameter name="R4221_subreport1" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="R4221_subreport2" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="R4221_subreport3" class="java.lang.String" isForPrompting="false"/>
@@ -67,6 +67,9 @@
 	<field name="sdana" class="java.lang.String">
 		<fieldDescription><![CDATA[sdana]]></fieldDescription>
 	</field>
+	<field name="logo" class="java.lang.String">
+		<fieldDescription><![CDATA[logo]]></fieldDescription>
+	</field>
 	<variable name="jumlah1" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{anggaran1})]]></variableExpression>
 	</variable>
@@ -90,14 +93,14 @@
 		<groupHeader>
 			<band height="477">
 				<textField>
-					<reportElement x="0" y="21" width="754" height="20"/>
+					<reportElement x="0" y="65" width="754" height="20"/>
 					<textElement textAlignment="Center" markup="none">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="0" y="56" width="754" height="37"/>
+					<reportElement x="0" y="90" width="754" height="37"/>
 					<textElement textAlignment="Center" markup="none">
 						<font size="14" isBold="true"/>
 					</textElement>
@@ -105,21 +108,21 @@
 SATUAN KERJA PERANGKAT DAERAH (DPPA SKPD)]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="0" y="93" width="754" height="20"/>
+					<reportElement x="0" y="127" width="754" height="20"/>
 					<textElement textAlignment="Center" markup="none">
 						<font size="14" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["TAHUN ANGGARAN "+$F{tahun}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="0" y="128" width="754" height="30"/>
+					<reportElement x="0" y="154" width="754" height="30"/>
 					<textElement textAlignment="Center" markup="none">
 						<font size="20" isBold="true"/>
 					</textElement>
 					<text><![CDATA[BELANJA LANGSUNG]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="475" y="167" width="20" height="18"/>
+					<reportElement x="475" y="188" width="20" height="18"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -132,7 +135,7 @@ SATUAN KERJA PERANGKAT DAERAH (DPPA SKPD)]]></text>
 					<text><![CDATA[5]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="344" y="167" width="36" height="18"/>
+					<reportElement x="344" y="188" width="36" height="18"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -145,7 +148,7 @@ SATUAN KERJA PERANGKAT DAERAH (DPPA SKPD)]]></text>
 					<textFieldExpression><![CDATA[$F{urusan_kd}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="380" y="167" width="55" height="18"/>
+					<reportElement x="380" y="188" width="55" height="18"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -158,7 +161,7 @@ SATUAN KERJA PERANGKAT DAERAH (DPPA SKPD)]]></text>
 					<textFieldExpression><![CDATA[$F{unit_kd}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="455" y="167" width="20" height="18"/>
+					<reportElement x="455" y="188" width="20" height="18"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -171,7 +174,7 @@ SATUAN KERJA PERANGKAT DAERAH (DPPA SKPD)]]></text>
 					<textFieldExpression><![CDATA[$F{kegiatan_kd}.substring( 8 )]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="435" y="167" width="20" height="18"/>
+					<reportElement x="435" y="188" width="20" height="18"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -184,49 +187,49 @@ SATUAN KERJA PERANGKAT DAERAH (DPPA SKPD)]]></text>
 					<textFieldExpression><![CDATA[$F{program_kd}.substring( 5 )]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="113" y="167" width="226" height="18"/>
+					<reportElement x="113" y="188" width="226" height="18"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[NO DPPA SKPD : ]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="0" y="204" width="180" height="18"/>
+					<reportElement x="0" y="218" width="180" height="18"/>
 					<textElement verticalAlignment="Top" markup="none">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[URUSAN PEMERINTAHAN]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="164" y="204" width="62" height="18"/>
+					<reportElement x="164" y="218" width="62" height="18"/>
 					<textElement verticalAlignment="Top">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[": "+$F{urusan_kd}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="0" y="227" width="164" height="18"/>
+					<reportElement x="0" y="241" width="164" height="18"/>
 					<textElement verticalAlignment="Top" markup="none">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[ORGANISASI]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="164" y="227" width="62" height="18"/>
+					<reportElement x="164" y="241" width="62" height="18"/>
 					<textElement verticalAlignment="Top">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[": "+$F{unit_kd}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="289" y="204" width="465" height="18"/>
+					<reportElement stretchType="RelativeToBandHeight" x="289" y="218" width="465" height="18"/>
 					<textElement verticalAlignment="Top">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{urusan_nm}.toUpperCase()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="289" y="227" width="466" height="18"/>
+					<reportElement stretchType="RelativeToBandHeight" x="289" y="241" width="466" height="18"/>
 					<textElement verticalAlignment="Top">
 						<font size="12" isBold="true"/>
 					</textElement>
@@ -290,7 +293,7 @@ Kuasa Pengguna Anggaran]]></text>
 					<text><![CDATA[c. Jabatan]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="495" y="167" width="20" height="18"/>
+					<reportElement x="495" y="188" width="20" height="18"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -303,89 +306,93 @@ Kuasa Pengguna Anggaran]]></text>
 					<text><![CDATA[2]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="289" y="249" width="466" height="18"/>
+					<reportElement stretchType="RelativeToBandHeight" x="289" y="263" width="466" height="18"/>
 					<textElement verticalAlignment="Top">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{program_nm}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="164" y="249" width="141" height="18"/>
+					<reportElement x="164" y="263" width="141" height="18"/>
 					<textElement verticalAlignment="Top">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[": "+$F{urusan_kd}+" "+$F{unit_kd}+" "+$F{program_kd}.substring( 5 )]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="0" y="249" width="164" height="18"/>
+					<reportElement x="0" y="263" width="164" height="18"/>
 					<textElement verticalAlignment="Top" markup="none">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[PROGRAM]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="289" y="271" width="466" height="18"/>
+					<reportElement stretchType="RelativeToBandHeight" x="289" y="285" width="466" height="18"/>
 					<textElement verticalAlignment="Top">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{kegiatan_nm}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="164" y="271" width="141" height="18"/>
+					<reportElement x="164" y="285" width="141" height="18"/>
 					<textElement verticalAlignment="Top">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[": "+$F{urusan_kd}+" "+$F{unit_kd}+" "+$F{program_kd}.substring( 5 )+" "+$F{kegiatan_kd}.substring( 8 )]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="0" y="271" width="164" height="18"/>
+					<reportElement x="0" y="285" width="164" height="18"/>
 					<textElement verticalAlignment="Top" markup="none">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[KEGIATAN]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="164" y="293" width="591" height="18"/>
+					<reportElement x="164" y="307" width="591" height="18"/>
 					<textElement verticalAlignment="Top">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[": "+($F{lokasi}==null ? "" : $F{lokasi})]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="0" y="293" width="164" height="18"/>
+					<reportElement x="0" y="307" width="164" height="18"/>
 					<textElement verticalAlignment="Top" markup="none">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[LOKASI]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="0" y="315" width="164" height="18"/>
+					<reportElement x="0" y="329" width="164" height="18"/>
 					<textElement verticalAlignment="Top" markup="none">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[SUMBER DANA]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="164" y="315" width="591" height="18"/>
+					<reportElement x="164" y="329" width="591" height="18"/>
 					<textElement verticalAlignment="Top">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[": "+($F{sdana}==null ? "" : $F{sdana})]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="164" y="339" width="591" height="18"/>
+					<reportElement x="164" y="353" width="591" height="18"/>
 					<textElement verticalAlignment="Top">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[": Rp. "+(NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{anggaran2})))]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="0" y="339" width="164" height="18"/>
+					<reportElement x="0" y="353" width="164" height="18"/>
 					<textElement verticalAlignment="Top" markup="none">
 						<font size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[JUMLAH ANGGARAN]]></text>
 				</staticText>
+				<image>
+					<reportElement x="346" y="0" width="55" height="60"/>
+					<imageExpression><![CDATA[$F{logo}]]></imageExpression>
+				</image>
 			</band>
 			<band height="31"/>
 			<band height="54">

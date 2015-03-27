@@ -43,6 +43,9 @@ class view_ap_spp_item(BaseViews):
                 columns.append(ColumnDT('tanggal'))
                 columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('amount',filter=self._number_format))
+                columns.append(ColumnDT('nbku'))
+                columns.append(ColumnDT('tbku'))
+                
                 query = DBSession.query(SppItem.id,
                                         SppItem.ap_invoice_id,
                                         APInvoice.kode.label('kode'),
@@ -50,6 +53,8 @@ class view_ap_spp_item(BaseViews):
                                         APInvoice.tanggal.label('tanggal'),
                                         APInvoice.nama.label('nama'),
                                         APInvoice.amount.label('amount'),
+                                        APInvoice.no_bku.label('nbku'),
+                                        APInvoice.tgl_bku.label('tbku'),
                           ).join(APInvoice
                           ).filter(SppItem.ap_spp_id==ap_spp_id
                           ).group_by(SppItem.id, 
@@ -58,7 +63,9 @@ class view_ap_spp_item(BaseViews):
                                      APInvoice.jenis.label('jenis'),
                                      APInvoice.tanggal.label('tanggal'),
                                      APInvoice.nama.label('nama'),
-                                     APInvoice.amount.label('amount'))
+                                     APInvoice.amount.label('amount'),
+                                     APInvoice.no_bku.label('nbku'),
+                                     APInvoice.tgl_bku.label('tbku'))
                 rowTable = DataTables(req, SppItem, query, columns)
                 return rowTable.output_result()
 #######    
@@ -111,7 +118,7 @@ def view_add(request):
     
     #Untuk update status posted dan status_spp pada APInvoice
     row = DBSession.query(APInvoice).filter(APInvoice.id==controls['ap_invoice_id']).first()   
-    row.posted=1
+    #row.disabled=1
     row.status_spp=1
     save_request2(row)
 
@@ -171,7 +178,7 @@ def view_delete(request):
 
     #Untuk update status posted dan status_spp pada APInvoice    
     row = DBSession.query(APInvoice).filter(APInvoice.id==row.ap_invoice_id).first()   
-    row.posted=0
+    #row.disabled=0
     row.status_spp=0
     save_request2(row)
     

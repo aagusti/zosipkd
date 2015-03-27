@@ -89,7 +89,7 @@ class Pejabat(DefaultModel, Base):
     uraian     = Column(String(200))
     mulai      = Column(Date)
     selesai    = Column(Date)
-    
+
 
 """class Tapd(NamaModel, Base):
     __tablename__  = 'tapds'
@@ -114,7 +114,6 @@ class Pejabat(DefaultModel, Base):
         data['mulai']   = data['mulai'] and datetime.strptime(data['mulai'],'%d-%m-%Y') or None
         data['selesai'] = data['selesai'] and datetime.strptime(data['selesai'],'%d-%m-%Y') or None
         return DBSession.query(cls).filter(cls.id==data['id']).update(data)
-    
 
 class TapdUnit(NamaModel, Base):
     __tablename__  = 'pegawai_jabatans'
@@ -130,8 +129,6 @@ class TapdUnit(NamaModel, Base):
         self.mulai     = data['mulai']
         self.selesai   = data['selesai']
 """
-        
-         
 
 class Program(NamaModel, Base):
     __tablename__  = 'programs'
@@ -223,8 +220,7 @@ class KegiatanSub(NamaModel, Base):
                    cls.tahun_id   == tahun_id,
                    cls.unit_id    == unit_id,
                    cls.kegiatan_id == kegiatan_id).scalar() or 0
-        
-           
+
 ############################################
 ###    INDIKATOR KEGIATAN    ###
 ###  KegiatanIndikator  ###

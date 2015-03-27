@@ -4,6 +4,16 @@
     <hr>
     <script>
     $(document).ready(function(){
+        $('#div_tipe').hide();
+        $('input[name="rpt"]').click(function(){
+            if($(this).val()=="1"){
+                $('#div_tipe').hide();
+            }
+            if($(this).val()=="2"){
+                $('#div_tipe').show();
+            }
+        });
+
         $('#tanggal').click(
             function(){
               if (!Modernizr.inputtypes['date'] ||
@@ -72,7 +82,7 @@
             }
             
             //window.open('/b104/r100/'+jenis+'?tipe='+tipe+'&mulai='+mulai+'&selesai='+selesai);
-            window.open('/ar-report-skpd/act/'+rpt+'?mulai='+mulai+'&selesai='+selesai);
+            window.open('/ar-report-skpd/act/'+rpt+'?tipe='+tipe+'&mulai='+mulai+'&selesai='+selesai);
 
         });
         
@@ -185,7 +195,7 @@
     <div class="panel-body">
         <div class="form-group">
         <label class="control-label col-xs-2" for="rpt">Jenis Laporan</label>
-        <div class="col-xs-2">
+        <div class="col-xs-3">
             <div class="radio">
                 <label><input type="radio" name="rpt" value="1">Register Tagihan/Piutang</label>
             </div>
@@ -217,6 +227,22 @@
         </div>
       </div>       
 
+      <!--Type---------------------------------------------------------------->
+      <div class="form-group" id="div_tipe">
+        <label class="control-label col-xs-1" for="jenis"></label>
+        <div class="col-md-3">
+               <label class="control-label col-md-3" for="jenis">Type</label>
+                <div class="col-md-9">
+                    <select class="form-control" id="tipe" name="tipe">
+                        <option value="0">Semua Jenis</option>
+                        <option value="1">Pendapatan</option>
+                        <option value="2">Kontra Pos</option>
+                        <option value="3">Pengembalian Kas</option>
+                    </select>
+                </div>
+        </div>
+      </div>       
+    
         <div class="form-group">
             <div class="col-md-3">
               <div id="item-tahun">

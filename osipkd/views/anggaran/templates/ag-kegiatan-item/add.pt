@@ -457,7 +457,7 @@
 		</script>
       </div>
      
-	  <!--DPPA-->
+    <!--DPPA-->
      <div class="form-group"   tal:attributes="style request.session['ag_step_id']!=4 and  'display:none'">
         <div class="col-sm-12"> 
           <div class="panel-heading">DPPA</div>
@@ -533,31 +533,135 @@
               </div>              
           </div>
         </div>
-		
-		<script>
-		var a, b, c, jml4;
-		a = $('#vol_4_1').val();
-		b = $('#vol_4_2').val();
-		c = $('#hsat_4').val();
-		jml4 = (a*b)*c;
-		$('#jml4').val(formatNumber(jml4));
-		$('#hsat_4').val(formatNumber(c));
-		
-        function formatNumber(n) {
-            return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
-		</script>
+        
+        <script>
+        var a, b, c, jml4;
+        a = $('#vol_4_1').val();
+        b = $('#vol_4_2').val();
+        c = $('#hsat_4').val();
+        jml4 = (a*b)*c;
+        $('#jml4').val(formatNumber(jml4));
+        $('#hsat_4').val(formatNumber(c));
+        
+            function formatNumber(n) {
+                return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+        </script>
      </div>
      
       <div class="form-group">
         <div class="col-sm-3">
           <button type="submit" class="btn btn-primary" id="simpan" name="simpan">Simpan</button>
-          <button type="submit" class="btn btn-danger"  id="batal"  name="batal">Batal</button>
           <button type="button" class="btn btn-warning" id="btn_close">Tutup</button>
         </div>
       </div>
       <script type='text/javascript'>
         $(document).ready(function () {
+			/**
+            $("#btn_simpan").click(function () {
+            var tahun_nm = $('#tahun_nm').val();
+            var bln01  = parseInt($('#bln01').val());
+            var bln02  = parseInt($('#bln02').val());
+            var bln03  = parseInt($('#bln03').val());
+            var bln04  = parseInt($('#bln04').val());
+            var bln05  = parseInt($('#bln05').val());
+            var bln06  = parseInt($('#bln06').val());
+            var bln07  = parseInt($('#bln07').val());
+            var bln08  = parseInt($('#bln08').val());
+            var bln09  = parseInt($('#bln09').val());
+            var bln10  = parseInt($('#bln10').val());
+            var bln11  = parseInt($('#bln11').val());
+            var bln12  = parseInt($('#bln12').val());
+            var jmlbln;
+            jmlbln=bln01+bln02+bln03+bln04+bln05+bln06+bln07+bln08+bln09+bln10+bln11+bln12;
+
+            if(tahun_nm=='RKA'){
+                $('#jml1').val(formatNumber(jml1));
+                
+                if(jmlbln>jml1){
+                alert('Tidak boleh melebihi jumlah RKA');
+                }else{
+                    //$('#myform').submit();
+                }
+                
+                function formatNumber(n) {
+                    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                }
+            }
+            else if(tahun_nm=='DPA'){
+                $('#jml2').val(formatNumber(jml2));
+            
+                if(jmlbln>jml2){
+                    alert('Tidak boleh melebihi jumlah DPA');
+                }
+                else{
+                    $('#myform').submit();
+                }
+                
+                function formatNumber(n) {
+                    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                }
+            }
+            else if(tahun_nm=='PRKA'){
+                $('#jml3').val(formatNumber(jml3));
+                
+                if(jmlbln>jml3){
+                alert('Tidak boleh melebihi jumlah PRKA');
+                }else{
+                    //$('#myform').submit();
+
+                }
+            
+                function formatNumber(n) {
+                    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                }
+            }
+            else if(tahun_nm=='DPPA'){
+                $('#jml4').val(formatNumber(jml4));
+                
+                if(jmlbln>jml4){
+                alert('Tidak boleh melebihi jumlah DPPA');
+                }else{
+                    //$('#myform').submit();
+                }
+            
+                function formatNumber(n) {
+                    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                }
+            }
+            });
+
+            $( "#myform" ).submit(function( event ) {
+                var kegiatan_sub_id;
+                var is_success;
+                is_success = true;
+                var kegiatan_sub_id = $('#id').val();
+                if (kegiatan_sub_id=="") {
+                    is_success = false;
+                    $("#errors").css('display', 'inline', 'important');
+                    $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + 'Simpan Dulu Headernya');
+                }
+                if (is_success){
+                $.ajax({type: "POST",
+                    url : "/ag-kegiatan-item/"+kegiatan_sub_id+"/add",
+                    data: $('#myform').serialize(),
+                    success: function (html) {
+                    if (html.success == true) {
+                        $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+            
+                    } else {
+                        $("#errors").css('display', 'inline', 'important');
+                        $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                    }
+                    },
+                    beforeSend: function () {
+                    $("#errors").css('display', 'inline', 'important');
+                    $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+                    }
+                });
+                }
+                event.preventDefault();
+            });*/
             
             $("#btn_close").click(function () {
                 if ($('#kegiatan_kd').val()=='0.00.00.10-1')
@@ -599,7 +703,6 @@
                      ${error}</p>
                 </div>
               </div>
- 
         </div>
         
         <div class="form-group">

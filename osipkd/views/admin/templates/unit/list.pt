@@ -8,6 +8,7 @@
                 <th>ID</th>
                 <th>Kode</th>
                 <th>Nama</th>
+                <th>Alamat</th>
                 <th>in-aktif</th>
             </tr>
         </thead>
@@ -22,6 +23,7 @@
       var oTable;
       var iPos;
       var oTableUrl = "/unit/act/grid";
+      
       Number.prototype.formatMoney = function(decPlaces, thouSeparator, decSeparator) {
         var n = this,
             decPlaces = isNaN(decPlaces = Math.abs(decPlaces)) ? 2 : decPlaces,
@@ -33,45 +35,46 @@
         return sign + (j ? i.substr(0, j) + thouSeparator : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thouSeparator) + (decPlaces ? decSeparator + Math.abs(n - i).toFixed(decPlaces).slice(2) : "");
       };
 
-        
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
-          "sDom": '<"toolbar">lfrtip',
-          "sAjaxSource": oTableUrl,
-          "bServerSide": true,
-          "bProcessing": true,
+          "sDom"           : '<"toolbar">lfrtip',
+          "sAjaxSource"    : oTableUrl,
+          "bServerSide"    : true,
+          "bProcessing"    : true,
           "bScrollCollapse": true,
-          "bSort": true,
-          "bInfo": false,
-          "bFilter": true,
-          "bAutoWidth": false,
-          "bPaginate": true,
+          "bSort"          : true,
+          "bInfo"          : false,
+          "bFilter"        : true,
+          "bAutoWidth"     : false,
+          "bPaginate"      : true,
           "sPaginationType": "full_numbers",
           
           "lengthMenu": [
               [10, 25, 50, 100],
               [10, 25, 50, 100]
           ],
-          "aoColumnDefs": [{
-                        "bSearchable": false,
-                        "bVisible": false,
-                        "aTargets": [0]
-                    }],
+          "aoColumnDefs": [
+          {
+              "bSearchable": false,
+              "bVisible"   : false,
+              "aTargets"   : [0]
+          }],
           "aoColumns": [
               null,
-              {"width": "120px"},
-              null,
-              {"width": "60px", "sClass":"center"},
+              {"width": "30px"},
+              {"width": "190px"},
+              {"width": "190px"},
+              {"width": "10px", "sClass":"center"},
           ]
         });
           
         var tb_array = [
           '<div class="btn-group pull-left">',
-          '	<button id="btn_add" class="btn btn btn-primary" type="button">Tambah</button>',
-          '	<button id="btn_edit" class="btn btn btn-primary" type="button">Edit</button>',
-          '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',
-          '	<button id="btn_print" class="btn btn btn-primary" type="button">Cetak</button>',
-          '	<button id="btn_close" class="btn btn btn-warning" type="button">Tutup</button>',
+          '	<button id="btn_add"    class="btn btn btn-primary" type="button">Tambah</button>',
+          '	<button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button>',
+          '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
+          '	<button id="btn_print"  class="btn btn btn-primary" type="button">Cetak</button>',
+          '	<button id="btn_close"  class="btn btn btn-warning" type="button">Tutup</button>',
           '	&nbsp;',
           '</div>',
         ];

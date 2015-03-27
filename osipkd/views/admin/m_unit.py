@@ -30,11 +30,11 @@ SESS_EDIT_FAILED = 'Edit unit gagal'
 
 class AddSchema(colander.Schema):
     urusan_widget = widget.AutocompleteInputWidget(
-            size=60,
-            values = '/urusan/act/headofnama',
-            min_length=1)
+                    size=60,
+                    values = '/urusan/act/headofnama',
+                    min_length=1)
                   
-    kode = colander.SchemaNode(
+    kode      = colander.SchemaNode(
                     colander.String(),
                     validator=colander.Length(max=18))
     urusan_nm = colander.SchemaNode(
@@ -45,18 +45,22 @@ class AddSchema(colander.Schema):
                     colander.Integer(),
                     widget=widget.HiddenWidget(),
                     oid = "urusan_id")
-    nama = colander.SchemaNode(
+    nama     = colander.SchemaNode(
+                    colander.String())
+    alamat   = colander.SchemaNode(
                     colander.String())
     kategori = colander.SchemaNode(
                     colander.String())
-    singkat = colander.SchemaNode(
+    singkat  = colander.SchemaNode(
                     colander.String())
     disabled = colander.SchemaNode(
                     colander.Boolean())
+                    
 class EditSchema(AddSchema):
     id = colander.SchemaNode(colander.String(),
             missing=colander.drop,
             widget=widget.HiddenWidget(readonly=True))
+            
 class view_unit(BaseViews):
     ########                    
     # List #
@@ -65,6 +69,7 @@ class view_unit(BaseViews):
                  permission='read')
     def view_list(self):
         return dict(a={})
+        
     ##########                    
     # Action #
     ##########    
@@ -73,13 +78,15 @@ class view_unit(BaseViews):
     def gaji_unit_act(self):
         ses = self.request.session
         req = self.request
-        params = req.params
+        params   = req.params
         url_dict = req.matchdict
+        
         if url_dict['act']=='grid':
             columns = []
             columns.append(ColumnDT('id'))
             columns.append(ColumnDT('kode'))
             columns.append(ColumnDT('nama'))
+            columns.append(ColumnDT('alamat'))
             columns.append(ColumnDT('disabled'))
             
             groups = groupfinder(req.user, req)
@@ -166,11 +173,8 @@ class view_unit(BaseViews):
                     user_unit.status  = 1
                     DBSession.add(user_unit)
                     DBSession.flush()
-                
-                  
-    #######    
-    # Add #
-    #######
+                    
+################################################################
     def form_validator(self, form, value):
         if 'id' in form.request.matchdict:
             uid = form.request.matchdict['id']
@@ -208,11 +212,15 @@ class view_unit(BaseViews):
         r = dict(form=self.session[session_name])
         del self.session[session_name]
         return r
+    
+    #######    
+    # Add #
+    #######    
     @view_config(route_name='unit-add', renderer='templates/unit/add.pt',
                  permission='add')
     def view_unit_add(self):
-        req = self.request
-        ses = self.session
+        req  = self.request
+        ses  = self.session
         form = self.get_form(AddSchema)
         if req.POST:
             if 'simpan' in req.POST:
@@ -227,6 +235,7 @@ class view_unit(BaseViews):
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
         return dict(form=form.render())
+        
     ########
     # Edit #
     ########
@@ -236,13 +245,16 @@ class view_unit(BaseViews):
         msg = 'unit ID %s Tidak Ditemukan.' % self.request.matchdict['id']
         request.session.flash(msg, 'error')
         return route_list()
+        
     @view_config(route_name='unit-edit', renderer='templates/unit/edit.pt',
                  permission='edit')
     def view_unit_edit(self):
         request = self.request
-        row = self.query_id().first()
+        row     = self.query_id().first()
+        
         if not row:
             return id_not_found(request)
+            
         form = self.get_form(EditSchema)
         if request.POST:
             if 'simpan' in request.POST:
@@ -260,8 +272,8 @@ class view_unit(BaseViews):
             return self.session_failed(SESS_EDIT_FAILED)
         values = row.to_dict()
         values['urusan_nm'] = row.urusans.nama
-        
         return dict(form=form.render(appstruct=values))
+        
     ##########
     # Delete #
     ##########    
@@ -269,10 +281,12 @@ class view_unit(BaseViews):
                  permission='delete')
     def view_unit_delete(self):
         request = self.request
-        q = self.query_id()
-        row = q.first()
+        q       = self.query_id()
+        row     = q.first()
+        
         if not row:
             return self.id_not_found(request)
+            
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
@@ -284,5 +298,5 @@ class view_unit(BaseViews):
                   msg = 'unit ID %d %s tidak dapat dihapus.' % (row.id, row.nama)
                 request.session.flash(msg)
             return self.route_list()
-        return dict(row=row,
-                     form=form.render())
+        return dict(row=row, form=form.render())
+        

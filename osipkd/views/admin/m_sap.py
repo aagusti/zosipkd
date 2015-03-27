@@ -17,7 +17,7 @@ from datatables import ColumnDT, DataTables
 
 from osipkd.tools import row2dict, xls_reader
 from osipkd.models import (DBSession,)
-from osipkd.models.pemda_model import Sap
+from osipkd.models.pemda_model import Sap, Rekening, RekeningSap
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
 
 
@@ -87,7 +87,11 @@ class view_rekening(BaseViews):
             columns.append(ColumnDT('level_id'))
             columns.append(ColumnDT('disabled'))
  
-            query = DBSession.query(Sap)
+            query = DBSession.query(Sap.id,
+                                    Sap.kode,
+                                    Sap.nama,
+                                    Sap.level_id,
+                                    Sap.disabled)
             
             rowTable = DataTables(req, Sap, query, columns)
             return rowTable.output_result()
@@ -98,7 +102,8 @@ class view_rekening(BaseViews):
                                 Sap.kode, 
                                 Sap.nama, 
                       ).filter(or_(Sap.kode.ilike('8%%%s%%' % term),
-                                   Sap.kode.ilike('9%%%s%%' % term))
+                                   Sap.kode.ilike('9%%%s%%' % term),
+                                   Sap.kode.ilike('1%%%s%%' % term))
                       )
             rows = q.all()
             r = []
@@ -119,7 +124,8 @@ class view_rekening(BaseViews):
                                 Sap.nama, 
                       ).filter(Sap.nama.ilike('%%%s%%' % term),
                                or_(Sap.kode.ilike('8%%'),
-                                   Sap.kode.ilike('9%%'))
+                                   Sap.kode.ilike('9%%'),
+                                   Sap.kode.ilike('1%%'))
                       )
             rows = q.all()
             r = []
@@ -132,7 +138,50 @@ class view_rekening(BaseViews):
                 r.append(d)
             print '****----****',r                
             return r
+        
+        elif url_dict['act']=='headofkode11':
+            term = 'term' in params and params['term'] or ''            
+            q = DBSession.query(Sap.id, 
+                                Sap.kode, 
+                                Sap.nama, 
+                      ).filter(or_(Sap.kode.ilike('8%%%s%%' % term),
+                                   Sap.kode.ilike('9%%%s%%' % term),
+                                   Sap.kode.ilike('2%%%s%%' % term))
+                      )
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[1]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
+            print '****----****',r                
+            return r
             
+        elif url_dict['act']=='headofnama11':
+            term = 'term' in params and params['term'] or ''            
+            q = DBSession.query(Sap.id, 
+                                Sap.kode, 
+                                Sap.nama, 
+                      ).filter(Sap.nama.ilike('%%%s%%' % term),
+                               or_(Sap.kode.ilike('8%%'),
+                                   Sap.kode.ilike('9%%'),
+                                   Sap.kode.ilike('2%%'))
+                      )
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[2]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
+            print '****----****',r                
+            return r
+                
         elif url_dict['act']=='headofkode2':
             term = 'term' in params and params['term'] or ''            
             q = DBSession.query(Sap.id, 
@@ -141,7 +190,8 @@ class view_rekening(BaseViews):
                       ).filter(or_(Sap.kode.ilike('4%%%s%%' % term),
                                    Sap.kode.ilike('5%%%s%%' % term),
                                    Sap.kode.ilike('6%%%s%%' % term),
-                                   Sap.kode.ilike('7%%%s%%' % term))
+                                   Sap.kode.ilike('7%%%s%%' % term),
+                                   Sap.kode.ilike('0%%%s%%' % term))
                       )
             rows = q.all()
             r = []
@@ -164,7 +214,8 @@ class view_rekening(BaseViews):
                                or_(Sap.kode.ilike('4%%'),
                                    Sap.kode.ilike('5%%'),
                                    Sap.kode.ilike('6%%'),
-                                   Sap.kode.ilike('7%%'))
+                                   Sap.kode.ilike('7%%'),
+                                   Sap.kode.ilike('0%%'))
                       )
             rows = q.all()
             r = []
@@ -209,6 +260,104 @@ class view_rekening(BaseViews):
                                    Sap.kode.ilike('2%%'),
                                    Sap.kode.ilike('3%%'))
                       )
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[2]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
+            print '****----****',r                
+            return r
+        
+        elif url_dict['act']=='headofkode4':
+            term = 'term' in params and params['term'] or ''
+            rekening_id = 'rekening_id' in params and params['rekening_id'] or 0
+                        
+            q = DBSession.query(Sap.id, 
+                                Sap.kode, 
+                                Sap.nama, 
+                      ).filter(RekeningSap.rekening_id   == rekening_id,
+                               RekeningSap.rekening_id   == Rekening.id,
+                               RekeningSap.db_lo_sap_id  == Sap.id,
+                               RekeningSap.kr_lo_sap_id  == Sap.id,
+                               RekeningSap.db_lra_sap_id == Sap.id,
+                               RekeningSap.kr_lra_sap_id == Sap.id,
+                               RekeningSap.neraca_sap_id == Sap.id,
+                               Sap.kode.ilike('%%%s%%' % term))
+            rows = q.all()
+            
+            if not rows:
+                return {'success':False, 'msg':'SAP tidak ditemukan'}
+                
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[1]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
+            print '****----****',r                
+            return r
+        
+        elif url_dict['act']=='headofnama4':
+            term = 'term' in params and params['term'] or ''
+            rekening_id = 'rekening_id' in params and params['rekening_id'] or 0
+                        
+            q = DBSession.query(Sap.id, 
+                                Sap.kode, 
+                                Sap.nama, 
+                      ).filter(RekeningSap.rekening_id   == rekening_id,
+                               RekeningSap.rekening_id   == Rekening.id,
+                               RekeningSap.db_lo_sap_id  == Sap.id,
+                               RekeningSap.kr_lo_sap_id  == Sap.id,
+                               RekeningSap.db_lra_sap_id == Sap.id,
+                               RekeningSap.kr_lra_sap_id == Sap.id,
+                               RekeningSap.neraca_sap_id == Sap.id,
+                               Sap.nama.ilike('%%%s%%' % term))
+            rows = q.all()
+            
+            if not rows:
+                return {'success':False, 'msg':'SAP tidak ditemukan'}
+                
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[1]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
+            print '****----****',r                
+            return r
+        
+        elif url_dict['act']=='headofkode12':
+            term = 'term' in params and params['term'] or ''            
+            q = DBSession.query(Sap.id, 
+                                Sap.kode, 
+                                Sap.nama, 
+                      ).filter(Sap.kode.ilike('%%%s%%' % term))
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[1]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
+            print '****----****',r                
+            return r
+        
+        elif url_dict['act']=='headofnama12':
+            term = 'term' in params and params['term'] or ''            
+            q = DBSession.query(Sap.id, 
+                                Sap.kode, 
+                                Sap.nama, 
+                      ).filter(Sap.nama.ilike('%%%s%%' % term))
             rows = q.all()
             r = []
             for k in rows:

@@ -84,6 +84,11 @@
               $('#nama').val(datum.nama);
               $('#kegiatan_id').val(datum.id);
         });
+        $('#kegiatan_nm').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#kode').val(datum.kode);
+              $('#nama').val(datum.nama);
+              $('#kegiatan_id').val(datum.id);
+        });
         </script>
       </div>
       <!--NO Urut-------------------------------------------------------------------->
@@ -173,7 +178,6 @@
         
       </div>
 
-      
       <!------------------------------------------------------------------------>  
           <!-- TAB-->
           <ul class="nav nav-tabs" role="tablist">
@@ -270,8 +274,6 @@
                   </div>
                 </div>
               </div>
-            
-              
             </div>
             
             <div id="pane2" class="tab-pane">

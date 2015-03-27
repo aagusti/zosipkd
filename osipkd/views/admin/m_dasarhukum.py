@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, or_
 from sqlalchemy.sql.expression import and_
 from ziggurat_foundations.models import groupfinder
 from pyramid.view import (
@@ -77,14 +77,44 @@ class view_dasarhukum(BaseViews):
         req = self.request
         params = req.params
         url_dict = req.matchdict
+        
         if url_dict['act']=='grid':
             columns = []
             columns.append(ColumnDT('id'))
-            columns.append(ColumnDT('rekenings.kode'))
-            columns.append(ColumnDT('rekenings.nama'))
+            columns.append(ColumnDT('rkode'))
+            columns.append(ColumnDT('rnama'))
             columns.append(ColumnDT('no_urut'))
             columns.append(ColumnDT('nama'))
-            query = DasarHukum.query() #DBSession.query(DasarHukum)
+            
+            query = DBSession.query(DasarHukum.id,
+                                    Rekening.kode.label('rkode'),
+                                    Rekening.nama.label('rnama'),
+                                    DasarHukum.no_urut,
+                                    DasarHukum.nama,
+                            ).filter(DasarHukum.rekening_id==Rekening.id,
+                            )
+            rowTable = DataTables(req, DasarHukum, query, columns)
+            return rowTable.output_result()
+            
+        elif url_dict['act']=='grid1':
+            cari = 'cari' in params and params['cari'] or ''
+            columns = []
+            columns.append(ColumnDT('id'))
+            columns.append(ColumnDT('rkode'))
+            columns.append(ColumnDT('rnama'))
+            columns.append(ColumnDT('no_urut'))
+            columns.append(ColumnDT('nama'))
+            
+            query = DBSession.query(DasarHukum.id,
+                                    Rekening.kode.label('rkode'),
+                                    Rekening.nama.label('rnama'),
+                                    DasarHukum.no_urut,
+                                    DasarHukum.nama,
+                            ).filter(DasarHukum.rekening_id==Rekening.id,
+                                     or_(Rekening.kode.ilike('%%%s%%' % cari),
+                                     Rekening.nama.ilike('%%%s%%' % cari),
+                                     DasarHukum.nama.ilike('%%%s%%' % cari))
+                            )
             rowTable = DataTables(req, DasarHukum, query, columns)
             return rowTable.output_result()
             

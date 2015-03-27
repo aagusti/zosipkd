@@ -66,6 +66,22 @@
           ]
         });
           
+        // Pencarian Kondisi, ketika data yang dicari itu bukan dari data table
+        $('#table1_filter input').unbind();
+        $('#table1_filter input').bind('keyup', function(e) {
+            if(e.keyCode == 13) {
+                oTable.fnFilter(this.value);   
+            }else{
+                var existingString = $("#table1_filter input").val();
+                if (existingString.length > 1) {
+                    var oTableUrl1 = "/pejabat/act/grid1?cari="+existingString;
+                    oTable.fnReloadAjax(oTableUrl1);
+                }else{
+                    oTable.fnReloadAjax(oTableUrl);
+                }
+            }
+        }); 
+
         var tb_array = [
           '<div class="btn-group pull-left">',
           '	<button id="btn_add" class="btn btn btn-primary" type="button">Tambah</button>',

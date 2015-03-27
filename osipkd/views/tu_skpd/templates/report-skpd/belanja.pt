@@ -95,7 +95,6 @@
         });
         
         $('#btn_cetak').click(function () {
-            alert('lewat');
             if($('#unit_nm').val()=='Pilih Unit') {
                 alert('Silahkan pilih Unit terlebih dahulu!');
                 return;
@@ -141,7 +140,6 @@
             return false;
         });
 
-        $("#mulai,#selesai").datepicker({dateFormat:'dd-mm-yy'});
 
         $('input[name="jenis"]').prop('checked', false);
 

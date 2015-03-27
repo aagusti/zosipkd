@@ -24,15 +24,7 @@
 	<detail>
 		<band height="14" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="22" y="0" width="102" height="14"/>
-				<box leftPadding="3"/>
-				<textElement>
-					<font size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{rek_kd}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="124" y="0" width="322" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="22" y="0" width="143" height="14"/>
 				<box leftPadding="3"/>
 				<textElement>
 					<font size="9"/>
@@ -40,14 +32,14 @@
 				<textFieldExpression><![CDATA[$F{rek_nm}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="446" y="0" width="101" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="165" y="0" width="69" height="14"/>
 				<textElement textAlignment="Right">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{jumlah}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="2" y="0" width="20" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="22" height="14"/>
 				<box leftPadding="3"/>
 				<textElement textAlignment="Center">
 					<font size="9"/>

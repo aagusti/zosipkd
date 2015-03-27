@@ -418,6 +418,10 @@ class AddSchema(colander.Schema):
             size=60,
             values = '/kegiatan/act/headofkode',
             min_length=1)
+    kegiatannm_widget = widget.AutocompleteInputWidget(
+            size=60,
+            values = '/kegiatan/act/headofnama',
+            min_length=1)
             
     tahun_id         = colander.SchemaNode(
                           colander.String(),
@@ -447,6 +451,7 @@ class AddSchema(colander.Schema):
                           
     kegiatan_nm          = colander.SchemaNode(
                           colander.String(),
+                          widget = kegiatannm_widget,
                           oid="kegiatan_nm",)
 
     no_urut          = colander.SchemaNode(

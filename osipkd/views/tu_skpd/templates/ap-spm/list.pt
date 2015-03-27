@@ -391,6 +391,9 @@
                     <label class="col-md-6"><input type="radio" name="rpt" value="02">Surat Pernyataan</label>
                 </div>
                 <div class="radio">
+                    <label class="col-md-6"><input type="radio" name="rpt" value="12">Surat Pernyataan (TU)</label>
+                </div>
+                <div class="radio">
                     <label class="col-md-6"><input type="radio" name="rpt" value="03">Format SPM</label>
                 </div>
                 <div class="radio">

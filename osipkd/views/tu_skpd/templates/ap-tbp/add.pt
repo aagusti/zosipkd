@@ -171,10 +171,10 @@
     </div>
 
     <div class="form-group"> <!--BENDAHARA-->
-      <div tal:define="field form['bendahara_uid']" style="display: none;">
+      <div tal:define="field form['bud_uid']" style="display: none;">
           ${structure:field.serialize()}
       </div>
-      <div class="col-md-4" tal:define="field form['bendahara_nip']" id="item-${field.oid}">
+      <div class="col-md-4" tal:define="field form['bud_nip']" id="item-${field.oid}">
           <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
                   ${field.title}</label>
           <div class="col-md-8">
@@ -185,48 +185,48 @@
           </div>
         
       </div>
-      <div class="col-md-4" tal:define="field form['bendahara_nm']" >
+      <div class="col-md-4" tal:define="field form['bud_nama']" >
          ${structure:field.serialize()}
           <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
              tal:repeat="error field.error.messages()">
              ${error}</p>
       </div>
       <script>
-       $('#bendahara_uid').typeahead({
+       $('#bud_uid').typeahead({
           "hint"     : true,
           "highlight": true,
           "minLength": 1,
           "remote"   : "/pejabat/act/headofkode2?term=%QUERY",
         },
         {
-        "name"      : 'bendahara_uid',
+        "name"      : 'bud_uid',
         "displayKey": 'value',
       });
      
-      $('#bendahara_nm').typeahead({
+      $('#bud_nama').typeahead({
           "hint"     : true,
           "highlight": true,
           "minLength": 1,
           "remote"   : "/pejabat/act/headofnama2?term=%QUERY",
         },
         {
-          "name"      : 'bendahara_nm',
+          "name"      : 'bud_nama',
           "displayKey": 'value',
         });
     
-    $('#bendahara_uid').bind('typeahead:selected', function(obj, datum, name) {  
-          $('#bendahara_nm').val(datum.nama);
-          $('#bendahara_nip').val(datum.nip);
+    $('#bud_uid').bind('typeahead:selected', function(obj, datum, name) {  
+          $('#bud_nama').val(datum.nama);
+          $('#bud_nip').val(datum.nip);
           $('#pejabat_id').val(datum.id);
     });
-    $('#bendahara_nm').bind('typeahead:selected', function(obj, datum, name) {  
-          $('#bendahara_uid').val(datum.kode);
-          $('#bendahara_nip').val(datum.nip);
+    $('#bud_nama').bind('typeahead:selected', function(obj, datum, name) {  
+          $('#bud_uid').val(datum.kode);
+          $('#bud_nip').val(datum.nip);
           $('#pejabat_id').val(datum.id);
     });
     
-    $("#bendahara_uid").attr('readonly',true);
-    $("#bendahara_nip").attr('readonly',true);
+    $("#bud_uid").attr('readonly',true);
+    $("#bud_nip").attr('readonly',true);
     </script>
     </div>
 

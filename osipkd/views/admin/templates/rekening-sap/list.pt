@@ -8,9 +8,11 @@
                 <th>ID</th>
                 <th>Rekening</th>
                 <th>Uraian</th>
-                <th>LO</th>
-                <th>LRA</th>
-                <th>Aset</th>
+                <th>Debet LO</th>
+                <th>Kredit LO</th>
+                <th>Debet LRA</th>
+                <th>Kredit LRA</th>
+                <th>Neraca</th>
                 <th>PPh</th>
             </tr>
         </thead>
@@ -36,7 +38,6 @@
             j = (j = i.length) > 3 ? j % 3 : 0;
         return sign + (j ? i.substr(0, j) + thouSeparator : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thouSeparator) + (decPlaces ? decSeparator + Math.abs(n - i).toFixed(decPlaces).slice(2) : "");
       };
-
         
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
@@ -49,6 +50,7 @@
           "bInfo"          : false,
           "bFilter"        : true,
           "bAutoWidth"     : false,
+          "sName"          : true,
           "bPaginate"      : true,
           "sPaginationType": "full_numbers",
           
@@ -62,22 +64,20 @@
               "bVisible"   : false,
               "aTargets"   : [0]
           },{
+              "bSortable"  : false,
               "bSearchable": false,
-              "aTargets"   : [1,2,3,4,5]
-          },{
-              "bSearchable": true,
-              "aTargets"   : [6]
+              "aTargets"   : [2,3,4,5,6,7]
           },{
               "bSortable"  : true,
-              "aTargets"   : [6]
-          },{
-              "bSortable"  : false,
-              "aTargets"   : [1,2,3,4,5]
+              "bSearchable": true,
+              "aTargets"   : [8]
           }],
           "aoColumns": [
               null,
-              {"width": "60px"},
+              {"width": "60px","bSearchable" : true,},
               {"width": "120px"},
+              {"width": "60px"},
+              {"width": "60px"},
               {"width": "60px"},
               {"width": "60px"},
               {"width": "60px"},
@@ -96,6 +96,21 @@
           '</div>',
         ];
 
+        // Pencarian Kondisi, ketika data yang dicari itu bukan dari data table
+        $('#table1_filter input').unbind();
+        $('#table1_filter input').bind('keyup', function(e) {
+            if(e.keyCode == 13) {
+                oTable.fnFilter(this.value);   
+            }else{
+                var existingString = $("#table1_filter input").val();
+                if (existingString.length > 1) {
+                    var oTableUrl1 = "/rekening-sap/act/grid1?cari="+existingString;
+                    oTable.fnReloadAjax(oTableUrl1);
+                }else{
+                    oTable.fnReloadAjax(oTableUrl);
+                }
+            }
+        }); 
 
         var tb = tb_array.join(' ');
         $("div.toolbar").html(tb);
@@ -138,7 +153,7 @@
             window.location = '/admin';
             return false;
         });
-        })
+        });
     </script>
   </div>
 </html>

@@ -73,6 +73,7 @@ class view_ar_sts_item(BaseViews):
                                      cast(KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2,BigInteger).label('nilai1'))
                 rowTable = DataTables(req, StsItem, query, columns)
                 return rowTable.output_result()
+                
 #######    
 # Add #
 #######

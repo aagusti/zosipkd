@@ -9,8 +9,8 @@ import colander
 from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
-from osipkd.models.pemda_model import Unit
-from osipkd.models.apbd_tu import APInvoice, APInvoiceItem, SppItem, Spp
+from osipkd.models.pemda_model import Unit, Rekening, RekeningSap, Sap
+from osipkd.models.apbd_tu import APInvoice, APInvoiceItem, SppItem, Spp, AkJurnal, AkJurnalItem
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -38,6 +38,15 @@ KONTRAK_TYPE = (
     ('2', 'CV'),
     ('3', 'FIRMA'),
     ('4', 'Lain-lain'),
+    )
+    
+def deferred_bayar(node, kw):
+    values = kw.get('is_bayar', [])
+    return widget.SelectWidget(values=values)
+    
+IS_BAYAR = (
+    ('0', 'Lunas'),
+    ('1', 'Cicilan'),
     )
     
 class view_ap_invoice_skpd(BaseViews):
@@ -74,6 +83,7 @@ class view_ap_invoice_skpd(BaseViews):
                 columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('amount'))
                 columns.append(ColumnDT('posted'))
+                columns.append(ColumnDT('status_spp'))
 
                 query = DBSession.query(APInvoice.id,
                           APInvoice.kode,
@@ -83,6 +93,7 @@ class view_ap_invoice_skpd(BaseViews):
                           APInvoice.nama,
                           APInvoice.amount,
                           APInvoice.posted,
+                          APInvoice.status_spp,
                         ).outerjoin(APInvoiceItem
                         ).filter(APInvoice.tahun_id==ses['tahun'],
                               APInvoice.unit_id==ses['unit_id'],
@@ -96,6 +107,7 @@ class view_ap_invoice_skpd(BaseViews):
                           APInvoice.nama,
                           APInvoice.amount,
                           APInvoice.posted,
+                          APInvoice.status_spp,
                         )
                 rowTable = DataTables(req, APInvoice, query, columns)
                 return rowTable.output_result()
@@ -110,7 +122,7 @@ class view_ap_invoice_skpd(BaseViews):
                                     )\
                         .filter(APInvoice.tahun_id==ses['tahun'],
                                 APInvoice.unit_id==ses['unit_id'],
-                                APInvoice.posted==0)\
+                                APInvoice.disabled==0)\
                         .join(APInvoiceItem)\
                         .group_by(APInvoice.id, APInvoice.no_urut,
                                   APInvoice.nama)
@@ -131,11 +143,17 @@ class view_ap_invoice_skpd(BaseViews):
             term  = 'term'  in params and params['term'] or ''
             #jenis = 'jenis' in params and params['jenis'] or ''
             #jenis1= "%d" % jenis
-            q = DBSession.query(APInvoice.id,APInvoice.kode.label('kode1'),APInvoice.nama.label('nama1'),APInvoice.amount.label('amount1'),
+            q = DBSession.query(APInvoice.id,
+                                APInvoice.kode.label('kode1'),
+                                APInvoice.nama.label('nama1'),
+                                APInvoice.amount.label('amount1'),
+                                APInvoice.no_bku.label('nbku'),
+                                APInvoice.tgl_bku.label('tbku'),
                                 )\
                                 .filter(APInvoice.unit_id == ses['unit_id'],
                                         APInvoice.tahun_id == ses['tahun'],
-                                        APInvoice.posted == 0,
+                                        APInvoice.status_spp == 0,
+                                        APInvoice.amount != 0,
                                         #APInvoice.jenis == jenis1,
                                         APInvoice.kode.ilike('%s%%' % term))
             rows = q.all()                               
@@ -147,6 +165,8 @@ class view_ap_invoice_skpd(BaseViews):
                 d['kode']    = k[1]
                 d['nama']    = k[2]
                 d['amount']  = k[3]
+                d['no_bku']  = k[4]
+                d['tgl_bku'] = "%s" % k[5]
                 r.append(d)
             print '---****----',r              
             return r
@@ -174,13 +194,19 @@ class AddSchema(colander.Schema):
     kode            = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="Kode")
+                          title="No Utang")
     jenis           = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
                           widget=widget.SelectWidget(values=AP_TYPE),
                           oid="jenis",
                           title="Jenis")
+    is_bayar        = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          widget=widget.SelectWidget(values=IS_BAYAR),
+                          oid="is_bayar",
+                          title="Dibayar")
     tanggal         = colander.SchemaNode(
                           colander.Date())
                           
@@ -232,10 +258,12 @@ class AddSchema(colander.Schema):
     no_bku          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+						  oid="no_bku",
                           title="No. BKU")
     tgl_bku         = colander.SchemaNode(
                           colander.Date(),
                           missing=colander.drop, 
+                          oid="tgl_bku",
                           title="Tgl. BKU")
     ap_bentuk       = colander.SchemaNode(
                           colander.String(),
@@ -250,7 +278,7 @@ class AddSchema(colander.Schema):
     ap_pemilik      = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="Pemilik"
+                          title="Pemimpin Perusahaan"
                           )
     ap_kontrak      = colander.SchemaNode(
                           colander.String(),
@@ -328,7 +356,7 @@ class EditSchema(AddSchema):
 
 def get_form(request, class_form):
     schema = class_form(validator=form_validator)
-    schema = schema.bind(kontrak_type=KONTRAK_TYPE)
+    schema = schema.bind(kontrak_type=KONTRAK_TYPE,is_bayar=IS_BAYAR)
     schema.request = request
     return Form(schema, buttons=('simpan','batal'))
     
@@ -348,6 +376,12 @@ def save(request, values, row=None):
         nomor    = no[-5:]     
         row.kode = "%d" % tahun + "-%s" % unit_kd + "-%s" % nomor
         
+    j='3'
+    j1 = row.jenis
+    if j1 != j:
+        row.no_bku  = None
+        row.tgl_bku = None        
+    
     DBSession.add(row)
     DBSession.flush()
     return row
@@ -376,12 +410,23 @@ def view_add(request):
         if 'simpan' in request.POST:
             controls = request.POST.items()
             controls_dicted = dict(controls)
+            
+            #Cek Kode Sama ato tidak
+            if not controls_dicted['kode']=='':
+                a = form.validate(controls)
+                b = a['kode']
+                c = "%s" % b
+                cek  = DBSession.query(APInvoice).filter(APInvoice.kode==c).first()
+                if cek :
+                    request.session.flash('Kode Invoice sudah ada.', 'error')
+                    return HTTPFound(location=self.request.route_url('ap-invoice-skpd-add'))
+
             try:
                 c = form.validate(controls)
             except ValidationFailure, e:
                 return dict(form=form)
             row = save_request(controls_dicted, request)
-            return route_list(request)
+            return HTTPFound(location=request.route_url('ap-invoice-skpd-edit',id=row.id))
         return route_list(request)
     elif SESS_ADD_FAILED in request.session:
         del request.session[SESS_ADD_FAILED]
@@ -401,10 +446,15 @@ def id_not_found(request):
 @view_config(route_name='ap-invoice-skpd-edit', renderer='templates/ap-invoice-skpd/add.pt',
              permission='edit')
 def view_edit(request):
-    row = query_id(request).first()
-
+    row  = query_id(request).first()
+    uid  = row.id
+    kode = row.kode
+        
     if not row:
         return id_not_found(request)
+    if row.status_spp:
+        request.session.flash('Data sudah di SPP', 'error')
+        return route_list(request)
     if row.posted:
         request.session.flash('Data sudah diposting', 'error')
         return route_list(request)
@@ -413,6 +463,19 @@ def view_edit(request):
     if request.POST:
         if 'simpan' in request.POST:
             controls = request.POST.items()
+            
+            #Cek Kode Sama ato tidak
+            a = form.validate(controls)
+            b = a['kode']
+            c = "%s" % b
+            cek = DBSession.query(APInvoice).filter(APInvoice.kode==c).first()
+            if cek:
+                kode1 = DBSession.query(APInvoice).filter(APInvoice.id==uid).first()
+                d     = kode1.kode
+                if d!=c:
+                    request.session.flash('Kode Invoice sudah ada', 'error')
+                    return HTTPFound(location=request.route_url('ap-invoice-skpd-edit',id=row.id))
+
             try:
                 c = form.validate(controls)
             except ValidationFailure, e:
@@ -453,6 +516,9 @@ def view_delete(request):
     if row.posted:
         request.session.flash('Data sudah diposting', 'error')
         return route_list(request)
+    if row.status_spp:
+        request.session.flash('Data sudah di SPP', 'error')
+        return route_list(request)
     if row.amount:
         request.session.flash('Data tidak bisa dihapus, karena memiliki data items')
         return route_list(request)
@@ -468,4 +534,169 @@ def view_delete(request):
         return route_list(request)
     return dict(row=row, form=form.render())
     
+###########
+# Posting #
+###########     
+def save_request2(request, row=None):
+    row = APInvoice()
+    request.session.flash('Tagihan sudah diposting dan dibuat Jurnalnya.')
+    return row
     
+@view_config(route_name='ap-invoice-skpd-posting', renderer='templates/ap-invoice-skpd/posting.pt',
+             permission='posting')
+def view_edit_posting(request):
+    row    = query_id(request).first()
+    id_inv = row.id
+    g      = row.jenis
+    
+    if not row:
+        return id_not_found(request)
+    if g == 1: 
+        request.session.flash('Data tidak dapat diposting, karena bukan tipe GU / LS.', 'error')
+        return route_list(request)
+    if g == 2: 
+        request.session.flash('Data tidak dapat diposting, karena bukan tipe GU / LS.', 'error')
+        return route_list(request)
+    if not row.amount:
+        request.session.flash('Data tidak dapat diposting, karena bernilai 0.', 'error')
+        return route_list(request)
+    if row.posted:
+        request.session.flash('Data sudah diposting', 'error')
+        return route_list(request)
+        
+    form = Form(colander.Schema(), buttons=('posting','cancel'))
+    
+    if request.POST:
+        if 'posting' in request.POST: 
+            #Update posted pada APInvoice
+            row.posted=1
+            save_request2(request, row)
+            
+            #Tambah ke Jurnal SKPD
+            nama    = row.nama
+            kode    = row.kode
+            tanggal = row.tanggal
+            tipe    = APInvoice.get_tipe(row.id)
+            periode = APInvoice.get_periode(row.id)
+            
+            row = AkJurnal()
+            row.created    = datetime.now()
+            row.create_uid = request.user.id
+            row.updated    = datetime.now()
+            row.update_uid = request.user.id
+            row.tahun_id   = request.session['tahun']
+            row.unit_id    = request.session['unit_id']
+            row.nama       = "Dibayar Tagihan %s" % tipe + " %s" % nama
+            row.notes      = nama
+            row.periode    = periode
+            row.posted     = 0
+            row.disabled   = 0
+            row.is_skpd    = 1
+            row.jv_type    = 2
+            row.source     = "Tagihan-%s" % tipe
+            row.source_no  = kode
+            row.tgl_source = tanggal
+            row.tanggal    = datetime.now()
+            row.tgl_transaksi = datetime.now()
+            
+            if not row.kode:
+                tahun    = request.session['tahun']
+                unit_kd  = request.session['unit_kd']
+                is_skpd  = row.is_skpd
+                tipe     = AkJurnal.get_tipe(row.jv_type)
+                no_urut  = AkJurnal.get_norut(row.id)+1
+                no       = "0000%d" % no_urut
+                nomor    = no[-5:]     
+                row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
+            
+            DBSession.add(row)
+            DBSession.flush()
+            
+            jui   = row.id
+            rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
+                                   KegiatanItem.nama.label('nama1'),
+                                   KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                   APInvoiceItem.amount.label('nilai1'),
+                                   RekeningSap.db_lo_sap_id.label('sap1'),
+                                   RekeningSap.db_lra_sap_id.label('sap2'),
+                                   RekeningSap.neraca_sap_id.label('sap3'),
+                            ).join(APInvoiceItem, KegiatanSub,
+                            ).outerjoin(KegiatanItem,Rekening,RekeningSap
+                            ).filter(APInvoice.id==id_inv,
+                                     APInvoice.kegiatan_sub_id==KegiatanSub.id,
+                                     APInvoiceItem.ap_invoice_id==APInvoice.id,
+                                     APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                                     KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                                     KegiatanItem.rekening_id==Rekening.id,
+                                     RekeningSap.rekening_id==Rekening.id,
+                            ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
+                                       KegiatanItem.nama.label('nama1'),
+                                       KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                       APInvoiceItem.amount.label('nilai1'),
+                                       RekeningSap.db_lo_sap_id.label('sap1'),
+                                       RekeningSap.db_lra_sap_id.label('sap2'),
+                                       RekeningSap.neraca_sap_id.label('sap3'),
+                            ).all()
+
+            n=0
+            for row in rows:
+                ji = AkJurnalItem()
+                
+                ji.ak_jurnal_id = "%d" % jui
+                ji.kegiatan_sub_id = row.kegiatan_sub_id1
+                ji.rekening_id  = row.rekening_id1
+                ji.sap_id       = row.sap1
+                ji.amount       = row.nilai1
+                ji.notes        = row.nama1
+                n = n + 1
+                
+                DBSession.add(ji)
+                DBSession.flush()
+            
+        return route_list(request)
+    return dict(row=row, form=form.render())    
+    
+#############
+# UnPosting #
+#############   
+def save_request3(request, row=None):
+    row = APInvoice()
+    request.session.flash('Tagihan sudah di UnPosting.')
+    return row
+    
+@view_config(route_name='ap-invoice-skpd-unposting', renderer='templates/ap-invoice-skpd/unposting.pt',
+             permission='unposting') 
+def view_edit_unposting(request):
+    row = query_id(request).first()
+    
+    if not row:
+        return id_not_found(request)
+    if not row.posted:
+        request.session.flash('Data tidak dapat di Unposting, karena belum diposting.', 'error')
+        return route_list(request)
+    if row.disabled:
+        request.session.flash('Data jurnal Tagihan sudah diposting.', 'error')
+        return route_list(request)
+        
+    form = Form(colander.Schema(), buttons=('unposting','cancel'))
+    
+    if request.POST:
+        if 'unposting' in request.POST: 
+        
+            #Update status posted pada UTANG
+            row.posted=0
+            save_request3(request, row)
+            
+            r = DBSession.query(AkJurnal.id).filter(AkJurnal.source_no==row.kode).first()
+            #Menghapus Item Jurnal
+            DBSession.query(AkJurnalItem).filter(AkJurnalItem.ak_jurnal_id==r).delete()
+            DBSession.flush()
+                
+            #Menghapus UTANG yang sudah menjadi jurnal
+            DBSession.query(AkJurnal).filter(AkJurnal.source_no==row.kode).delete()
+            DBSession.flush()
+            
+        return route_list(request)
+    return dict(row=row, form=form.render())
+    
+      

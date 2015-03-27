@@ -203,12 +203,23 @@ class view_ap_spp(BaseViews):
             if 'simpan' in request.POST:
                 controls = request.POST.items()
                 controls_dicted = dict(controls)
+
+                #Cek Kode Sama ato tidak
+                if not controls_dicted['kode']=='':
+                    a = form.validate(controls)
+                    b = a['kode']
+                    c = "%s" % b
+                    cek  = DBSession.query(Spp).filter(Spp.kode==c).first()
+                    if cek :
+                        self.request.session.flash('Kode Spp sudah ada.', 'error')
+                        return HTTPFound(location=self.request.route_url('ap-spp-add'))
+
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
                     return dict(form=form)
                 row = self.save_request(controls_dicted)
-                return self.route_list()
+                return HTTPFound(location=request.route_url('ap-spp-edit',id=row.id))
             return self.route_list()
         elif SESS_ADD_FAILED in request.session:
             del request.session[SESS_ADD_FAILED]
@@ -230,6 +241,9 @@ class view_ap_spp(BaseViews):
     def view_edit(self):
         request = self.request
         row = self.query_id().first()
+        uid     = row.id
+        kode    = row.kode
+		
         if not row:
             return id_not_found(request)
         if row.posted:
@@ -240,6 +254,18 @@ class view_ap_spp(BaseViews):
             if 'simpan' in request.POST:
                 controls = request.POST.items()
                 
+                #Cek Kode Sama ato tidak
+                a = form.validate(controls)
+                b = a['kode']
+                c = "%s" % b
+                cek = DBSession.query(Spp).filter(Spp.kode==c).first()
+                if cek:
+                    kode1 = DBSession.query(Spp).filter(Spp.id==uid).first()
+                    d     = kode1.kode
+                    if d!=c:
+                        self.request.session.flash('Kode Spp sudah ada', 'error')
+                        return HTTPFound(location=request.route_url('ap-spp-edit',id=row.id))
+
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:

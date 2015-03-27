@@ -8,7 +8,9 @@ from pyramid.httpexceptions import ( HTTPFound, )
 import colander
 from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
-from osipkd.models.apbd import ARInvoiceItem as ARItem
+from osipkd.models.apbd import ARInvoiceItem as ARItem, Jurnal, JurnalItem
+from osipkd.models.pemda_model import Unit, Rekening, Sap, RekeningSap
+from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -49,12 +51,12 @@ class AddSchema(colander.Schema):
                     
     rekening_nm_widget = widget.AutocompleteInputWidget(
             size=60,
-            values = '/rekening/act/headofkode4',
+            values = '/rekening/act/headofnama11',
             min_length=1)
   
     rekening_kd_widget = widget.AutocompleteInputWidget(
             size=60,
-            values = '/rekening/act/headofkode4',
+            values = '/rekening/act/headofkode11',
             min_length=1)
     
     unit_id  = colander.SchemaNode(
@@ -365,3 +367,177 @@ class view_ar_invoice_item(BaseViews):
         return dict(row=row,
                      form=form.render())
 
+    ###########
+    # Posting #
+    ###########     
+    def save_request2(self, row=None):
+        row = ARItem()
+        self.request.session.flash('Penetapan/Tagihan sudah diposting dan dibuat Jurnalnya.')
+        return row
+        
+    @view_config(route_name='ar-invoice-item-posting', renderer='templates/ar-invoice-item/posting.pt',
+                 permission='posting')
+    def view_edit_posting(self):
+        request = self.request
+        row     = self.query_id().first()
+        id_inv  = row.id
+        
+        if not row:
+            return id_not_found(request)
+        if not row.amount:
+            self.request.session.flash('Data tidak dapat di jurnal, karena bernilai 0.', 'error')
+            return self.route_list()
+        if row.posted:
+            self.request.session.flash('Data sudah dibuat jurnal', 'error')
+            return self.route_list()
+            
+        form = Form(colander.Schema(), buttons=('jurnal','cancel'))
+        
+        if request.POST:
+            if 'jurnal' in request.POST: 
+                #Update posted pada ARInvoice
+                row.posted=1
+                self.save_request2(row)
+                
+                #Tambah ke Jurnal SKPD
+                nama    = row.ref_nama
+                kode    = row.ref_kode
+                tanggal = row.tanggal
+                #tipe    = ARInvoice.get_tipe(row.id)
+                periode = ARItem.get_periode(row.id)
+                
+                row = Jurnal()
+                row.created    = datetime.now()
+                row.create_uid = self.request.user.id
+                row.updated    = datetime.now()
+                row.update_uid = self.request.user.id
+                row.tahun_id   = self.session['tahun']
+                row.unit_id    = self.session['unit_id']
+                row.nama       = "Diterima Penetapan/Tagihan %s" % nama
+                row.notes      = nama
+                row.periode    = periode
+                row.posted     = 0
+                row.disabled   = 0
+                row.is_skpd    = 1
+                row.jv_type    = 1
+                row.source     = "Penetapan"
+                row.source_no  = kode
+                row.tgl_source = tanggal
+                row.tanggal    = datetime.now()
+                row.tgl_transaksi = datetime.now()
+                
+                if not row.kode:
+                    tahun    = self.session['tahun']
+                    unit_kd  = self.session['unit_kd']
+                    is_skpd  = row.is_skpd
+                    tipe     = Jurnal.get_tipe(row.jv_type)
+                    no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                    no       = "0000%d" % no_urut
+                    nomor    = no[-5:]     
+                    row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
+                
+                DBSession.add(row)
+                DBSession.flush()
+                
+                #Tambah ke Item Jurnal SKPD
+                jui   = row.id
+                rows = DBSession.query(ARItem.rekening_id.label('rekening_id1'),
+                                       Sap.nama.label('nama1'),
+                                       KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                       ARItem.amount.label('nilai1'),
+                                       RekeningSap.db_lo_sap_id.label('sap1'),
+                                       RekeningSap.kr_lo_sap_id.label('sap2'),
+                                       Rekening.id.label('rek'),
+                                ).join(Rekening
+                                #).outerjoin(KegiatanSub, KegiatanItem, RekeningSap 
+                                ).filter(ARItem.id==id_inv,
+                                         ARItem.rekening_id==KegiatanItem.rekening_id,
+                                         KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                                         KegiatanItem.rekening_id==RekeningSap.rekening_id,
+                                         RekeningSap.rekening_id==Rekening.id,
+                                         RekeningSap.kr_lo_sap_id==Sap.id
+                                ).group_by(ARItem.rekening_id.label('rekening_id1'),
+                                           Sap.nama.label('nama1'),
+                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                           ARItem.amount.label('nilai1'),
+                                           RekeningSap.db_lo_sap_id.label('sap1'),
+                                           RekeningSap.kr_lo_sap_id.label('sap2'),
+                                           Rekening.id.label('rek'),
+                                ).all()
+                
+                for row in rows:
+                    ji = JurnalItem()
+                    
+                    ji.jurnal_id = "%d" % jui
+                    ji.kegiatan_sub_id = row.kegiatan_sub_id1
+                    ji.rekening_id  = row.rek
+                    ji.sap_id       = row.sap1
+                    ji.notes        = ""
+                    ji.amount       = row.nilai1
+                    
+                    DBSession.add(ji)
+                    DBSession.flush()
+                
+                n=0
+                for row in rows:
+                    ji2 = JurnalItem()
+                    
+                    ji2.jurnal_id = "%d" % jui
+                    ji2.kegiatan_sub_id = row.kegiatan_sub_id1
+                    ji2.rekening_id  = row.rek
+                    ji2.sap_id       = row.sap2
+                    n = row.nilai1
+                    ji2.amount       = n * -1
+                    ji2.notes        = ""
+                    n = n + 1
+                    
+                    DBSession.add(ji2)
+                    DBSession.flush()
+                
+            return self.route_list()
+        return dict(row=row, form=form.render())    
+
+    #############
+    # UnPosting #
+    #############   
+    def save_request3(self, row=None):
+        row = ARItem()
+        self.request.session.flash('Penetapan/Tagihan sudah di Un-Jurnal.')
+        return row
+        
+    @view_config(route_name='ar-invoice-item-unposting', renderer='templates/ar-invoice-item/unposting.pt',
+                 permission='unposting') 
+    def view_edit_unposting(self):
+        request = self.request
+        row     = self.query_id().first()
+        
+        if not row:
+            return id_not_found(request)
+        if not row.posted:
+            self.request.session.flash('Data tidak dapat di Un-Jurnal, karena belum dibuat jurnal.', 'error')
+            return self.route_list()
+        if row.disabled:
+            self.request.session.flash('Data jurnal Penetapan/Tagihan sudah diposting.', 'error')
+            return self.route_list()
+            
+        form = Form(colander.Schema(), buttons=('un-jurnal','cancel'))
+        
+        if request.POST:
+            if 'un-jurnal' in request.POST: 
+            
+                #Update status posted pada PIUTANG
+                row.posted=0
+                self.save_request3(row)
+                
+                r = DBSession.query(Jurnal.id).filter(Jurnal.source_no==row.ref_kode,Jurnal.source=='Penetapan').first()
+                #Menghapus Item Jurnal
+                DBSession.query(JurnalItem).filter(JurnalItem.jurnal_id==r).delete()
+                DBSession.flush()
+                    
+                #Menghapus PIUTANG yang sudah menjadi jurnal
+                DBSession.query(Jurnal).filter(Jurnal.source_no==row.ref_kode,Jurnal.source=='Penetapan').delete()
+                DBSession.flush()
+                
+            return self.route_list()
+        return dict(row=row, form=form.render())
+            

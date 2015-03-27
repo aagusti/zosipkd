@@ -33,6 +33,9 @@
 	<field name="keg_kd" class="java.lang.String">
 		<fieldDescription><![CDATA[keg_kd]]></fieldDescription>
 	</field>
+	<field name="terbilang" class="java.lang.String">
+		<fieldDescription><![CDATA[terbilang]]></fieldDescription>
+	</field>
 	<variable name="jumlah" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{jumlah})]]></variableExpression>
 	</variable>
@@ -118,7 +121,7 @@
 		</band>
 	</detail>
 	<summary>
-		<band height="14">
+		<band height="28" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="402" y="0" width="85" height="14"/>
 				<box>
@@ -156,6 +159,26 @@
 				<textElement textAlignment="Center">
 					<font size="9" isBold="true"/>
 				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="14" width="487" height="14"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Terbilang : "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="56" y="14" width="431" height="14"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{terbilang}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

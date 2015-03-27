@@ -68,8 +68,8 @@ class view_ak_jurnal(BaseViews):
             columns.append(ColumnDT('amount_%s' %ag_step_id, filter=self._number_format))
             columns.append(ColumnDT('rekening_nm'))
             columns.append(ColumnDT('rekening_id'))
-            query = self.get_row_item().filter(
-                      KegiatanItem.kegiatan_sub_id==kegiatan_sub_id)
+            query = self.get_row_item().filter(KegiatanItem.kegiatan_sub_id==kegiatan_sub_id
+                      ).order_by(Rekening.kode.asc())
             rowTable = DataTables(req, KegiatanItem,  query, columns)
             return rowTable.output_result()
             
@@ -386,63 +386,75 @@ class AddSchema(colander.Schema):
                           missing=colander.drop,
                           )
     bln01            = colander.SchemaNode(
-                          colander.String(),
+                          colander.Integer(),
                           missing=colander.drop,
+                          oid="bln01",
                           default=0,
                           title="Jan")
     bln02            = colander.SchemaNode(
-                          colander.String(),
+                          colander.Integer(),
                           missing=colander.drop,
+                          oid="bln02",
                           default=0,
                           title="Feb")
     bln03            = colander.SchemaNode(
-                          colander.String(),
+                          colander.Integer(),
                           missing=colander.drop,
+                          oid="bln03",
                           default=0,
                           title="Mar")
     bln04            = colander.SchemaNode(
-                          colander.String(),
+                          colander.Integer(),
+                          oid="bln04",
                           missing=colander.drop,
                           default=0,
                           title="Apr")
     bln05            = colander.SchemaNode(
-                          colander.String(),
+                          colander.Integer(),
+                          oid="bln05",
                           missing=colander.drop,
                           default=0,
                           title="Mei")
     bln06            = colander.SchemaNode(
-                          colander.String(),
+                          colander.Integer(),
                           missing=colander.drop,
+                          oid="bln06",
                           default=0,
                           title="Jun")
     bln07            = colander.SchemaNode(
-                          colander.String(),
+                          colander.Integer(),
                           missing=colander.drop,
+                          oid="bln07",
                           default=0,
                           title="Jul")
     bln08            = colander.SchemaNode(
-                          colander.String(),
+                          colander.Integer(),
+                          oid="bln08",
                           missing=colander.drop,
                           default=0,
                           title="Agt")
     bln09            = colander.SchemaNode(
-                          colander.String(),
+                          colander.Integer(),
+                          oid="bln09",
                           missing=colander.drop,
                           default=0,
                           title="Sep")
     bln10            = colander.SchemaNode(
-                          colander.String(),
+                          colander.Integer(),
+                          oid="bln10",
                           missing=colander.drop,
                           default=0,
                           title="Okt")
     bln11            = colander.SchemaNode(
-                          colander.String(),
+                          colander.Integer(),
+                          oid="bln11",
                           missing=colander.drop,
                           default=0,
                           title="Nov")
     bln12            = colander.SchemaNode(
-                          colander.String(),
+                          colander.Integer(),
                           missing=colander.drop,
+                          oid="bln12",
                           default=0,
                           title="Des")
     ssh_id           = colander.SchemaNode(
@@ -464,7 +476,8 @@ class AddSchema(colander.Schema):
 
 class EditSchema(AddSchema):
     id             = colander.SchemaNode(
-                          colander.Integer(),)
+                          colander.Integer(),
+                          oid="id")
 
 def get_form(request, class_form):
     schema = class_form(validator=form_validator)
@@ -526,7 +539,24 @@ def save_request(values, request, row=None):
     row = save(values, request, row)
     request.session.flash('Kegiatan sudah disimpan.')
         
-def route_list(request,kegiatan_sub_id):
+def route_list(request, kegiatan_sub_id):
+    kegiatan_sub_id
+    q = DBSession.query(Kegiatan.kode.label('kegiatan_kd')).join(KegiatanSub, KegiatanItem, Kegiatan).filter(Kegiatan.id==KegiatanSub.kegiatan_id, 
+                                                                                        KegiatanItem.kegiatan_sub_id==kegiatan_sub_id)
+    rows = q.all()
+    for k in rows:
+        a =k[0]
+        
+        if a =='0.00.00.10':
+            return HTTPFound(location=request.route_url('ag-pendapatan',kegiatan_sub_id=kegiatan_sub_id))
+        elif a =='0.00.00.21':
+            return HTTPFound(location=request.route_url('ag-btl',kegiatan_sub_id=kegiatan_sub_id))
+        elif a =='0.00.00.31':
+            return HTTPFound(location=request.route_url('ag-penerimaan',kegiatan_sub_id=kegiatan_sub_id))
+        elif a =='0.00.00.32':
+            return HTTPFound(location=request.route_url('ag-pengeluaran',kegiatan_sub_id=kegiatan_sub_id))
+        #elif a =='0.00.00.20':
+            #return HTTPFound(location=request.route_url('ag-kegiatan-item',kegiatan_sub_id=kegiatan_sub_id))
     return HTTPFound(location=request.route_url('ag-kegiatan-item',kegiatan_sub_id=kegiatan_sub_id))
     
 def session_failed(request, session_name):
@@ -545,6 +575,59 @@ def view_add(request):
         if 'simpan' in request.POST:
             controls = request.POST.items()
             controls_dicted = dict(controls)
+            
+            b    = form.validate(controls)
+            vol_1_1 = b['vol_1_1']
+            vol_1_2 = b['vol_1_2']
+            hsat_1  = b['hsat_1'].replace('.','') 
+            vol_2_1 = b['vol_2_1']
+            vol_2_2 = b['vol_2_2']
+            hsat_2  = b['hsat_2'].replace('.','') 
+            vol_3_1 = b['vol_3_1']
+            vol_3_2 = b['vol_3_2']
+            hsat_3  = b['hsat_3'].replace('.','') 
+            vol_4_1 = b['vol_4_1']
+            vol_4_2 = b['vol_4_2']
+            hsat_4  = b['hsat_3'].replace('.','') 
+            bln01    = b['bln01']
+            bln02    = b['bln02']
+            bln03    = b['bln03']
+            bln04    = b['bln04']
+            bln05    = b['bln05']
+            bln06    = b['bln06']
+            bln07    = b['bln07']
+            bln08    = b['bln08']
+            bln09    = b['bln09']
+            bln10    = b['bln10']
+            bln11    = b['bln11']
+            bln12    = b['bln12']
+            rka  =  (vol_1_1*vol_1_2)*int(hsat_1)
+            rka1 = int(float(rka))
+            dpa  =  (vol_2_1*vol_2_2)*int(hsat_2)
+            dpa1 = int(float(dpa))
+            rpka =  (vol_3_1*vol_3_2)*int(hsat_3)
+            rpka1 = int(float(rpka))
+            dppa =  (vol_4_1*vol_4_2)*int(hsat_4)
+            dppa1 = int(float(rpka))
+            bln  = bln01+bln02+bln03+bln04+bln05+bln06+bln07+bln08+bln09+bln10+bln11+bln12
+            ag_step_id = request.session['ag_step_id']
+            if ag_step_id==1:
+                if bln>rka1:
+                    request.session.flash('Tidak boleh melebihi jumlah RKA', 'error')
+                    return HTTPFound(location=request.route_url('ag-kegiatan-item-add',kegiatan_sub_id=kegiatan_sub_id))
+            elif ag_step_id==2:
+                if bln>dpa1:
+                    request.session.flash('Tidak boleh melebihi jumlah DPA', 'error')
+                    return HTTPFound(location=request.route_url('ag-kegiatan-item-add',kegiatan_sub_id=kegiatan_sub_id))
+            elif ag_step_id==3:
+                if bln>rpka1:
+                    request.session.flash('Tidak boleh melebihi jumlah RPKA', 'error')
+                    return HTTPFound(location=request.route_url('ag-kegiatan-item-add',kegiatan_sub_id=kegiatan_sub_id))
+            elif ag_step_id==4:
+                if bln>dppa1:
+                    request.session.flash('Tidak boleh melebihi jumlah DPPA', 'error')
+                    return HTTPFound(location=request.route_url('ag-kegiatan-item-add',kegiatan_sub_id=kegiatan_sub_id))
+
             #return dict(form=form.render(appstruct=controls_dicted))
             try:
                 c = form.validate(controls)
@@ -563,7 +646,8 @@ def view_add(request):
 # Edit #
 ########
 def query_id(request):
-    return DBSession.query(KegiatanItem).filter(KegiatanItem.id==request.matchdict['id'])
+    return DBSession.query(KegiatanItem).filter(KegiatanItem.id==request.matchdict['id'],
+                                                KegiatanItem.kegiatan_sub_id==request.matchdict['kegiatan_sub_id'])
     
 def id_not_found(request,kegiatan_sub_id):    
     msg = 'ITEM ID %s not found.' % request.matchdict['id']
@@ -576,6 +660,7 @@ def view_edit(request):
     ses = request.session
     kegiatan_sub_id = request.matchdict['kegiatan_sub_id']
     row = query_id(request).first()
+    i=row.id
     if not row:
         return id_not_found(request,kegiatan_sub_id)
     form = get_form(request, EditSchema)
@@ -583,6 +668,60 @@ def view_edit(request):
     if request.POST:
         if 'simpan' in request.POST:
             controls = request.POST.items()
+            
+            a    = form.validate(controls)
+            vol_1_1 = a['vol_1_1']
+            vol_1_2 = a['vol_1_2']
+            hsat_1  = a['hsat_1'].replace('.','') 
+            vol_2_1 = a['vol_2_1']
+            vol_2_2 = a['vol_2_2']
+            hsat_2  = a['hsat_2'].replace('.','') 
+            vol_3_1 = a['vol_3_1']
+            vol_3_2 = a['vol_3_2']
+            hsat_3  = a['hsat_3'].replace('.','') 
+            vol_4_1 = a['vol_4_1']
+            vol_4_2 = a['vol_4_2']
+            hsat_4  = a['hsat_3'].replace('.','') 
+            bln01    = a['bln01']
+            bln02    = a['bln02']
+            bln03    = a['bln03']
+            bln04    = a['bln04']
+            bln05    = a['bln05']
+            bln06    = a['bln06']
+            bln07    = a['bln07']
+            bln08    = a['bln08']
+            bln09    = a['bln09']
+            bln10    = a['bln10']
+            bln11    = a['bln11']
+            bln12    = a['bln12']
+            rka  =  (vol_1_1*vol_1_2)*int(hsat_1)
+            rka1 = int(float(rka))
+            dpa  =  (vol_2_1*vol_2_2)*int(hsat_2)
+            dpa1 = int(float(dpa))
+            rpka =  (vol_3_1*vol_3_2)*int(hsat_3)
+            rpka1 = int(float(rpka))
+            dppa =  (vol_4_1*vol_4_2)*int(hsat_4)
+            dppa1 = int(float(rpka))
+            bln  = bln01+bln02+bln03+bln04+bln05+bln06+bln07+bln08+bln09+bln10+bln11+bln12
+            
+            ag_step_id = request.session['ag_step_id']
+            if ag_step_id==1:
+                if bln>rka1:
+                    request.session.flash('Tidak boleh melebihi jumlah RKA', 'error')
+                    return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
+            elif ag_step_id==2:
+                if bln>dpa1:
+                    request.session.flash('Tidak boleh melebihi jumlah DPA', 'error')
+                    return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
+            elif ag_step_id==3:
+                if bln>rpka1:
+                    request.session.flash('Tidak boleh melebihi jumlah RPKA', 'error')
+                    return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
+            elif ag_step_id==4:
+                if bln>dppa1:
+                    request.session.flash('Tidak boleh melebihi jumlah DPPA', 'error')
+                    return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
+
             try:
                 c = form.validate(controls)
             except ValidationFailure, e:

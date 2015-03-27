@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, or_
 from sqlalchemy.sql.expression import and_
 from ziggurat_foundations.models import groupfinder
 from pyramid.view import (
@@ -110,17 +110,48 @@ class view_pejabat(BaseViews):
     def view_act(self):
         ses = self.request.session
         req = self.request
-        params = req.params
+        params   = req.params
         url_dict = req.matchdict
+        
         if url_dict['act']=='grid':
             columns = []
             columns.append(ColumnDT('id'))
-            columns.append(ColumnDT('pegawais.nama'))
-            columns.append(ColumnDT('jabatans.nama'))
-            columns.append(ColumnDT('units.nama'))
-            query = DBSession.query(Pejabat)
+            columns.append(ColumnDT('pnama'))
+            columns.append(ColumnDT('jnama'))
+            columns.append(ColumnDT('unama'))
+            query = DBSession.query(Pejabat.id,
+                                    Pegawai.nama.label('pnama'),
+                                    Jabatan.nama.label('jnama'),
+                                    Unit.nama.label('unama'),
+                            ).filter(Pejabat.pegawai_id==Pegawai.id,
+                                     Pejabat.jabatan_id==Jabatan.id,
+                                     Pejabat.unit_id==Unit.id,
+                            )
             rowTable = DataTables(req, Pejabat, query, columns)
             return rowTable.output_result()
+
+        elif url_dict['act']=='grid1':
+            cari = 'cari' in params and params['cari'] or ''
+            columns = []
+            columns.append(ColumnDT('id'))
+            columns.append(ColumnDT('pnama'))
+            columns.append(ColumnDT('jnama'))
+            columns.append(ColumnDT('unama'))
+            query = DBSession.query(Pejabat.id,
+                                    Pegawai.nama.label('pnama'),
+                                    Jabatan.nama.label('jnama'),
+                                    Unit.nama.label('unama'),
+                            ).filter(Pejabat.pegawai_id==Pegawai.id,
+                                     Pejabat.jabatan_id==Jabatan.id,
+                                     Pejabat.unit_id==Unit.id,
+                                     or_(Pegawai.nama.ilike('%%%s%%' % cari),
+                                         Jabatan.nama.ilike('%%%s%%' % cari),
+                                         Unit.nama.ilike('%%%s%%' % cari))
+                                     
+                            )
+            rowTable = DataTables(req, Pejabat, query, columns)
+            return rowTable.output_result()
+
             
         elif url_dict['act']=='headofnama':
             term = 'term' in params and params['term'] or '' 
@@ -431,6 +462,46 @@ class view_pejabat(BaseViews):
                 r.append(d)    
             return r
             
+        ## BUD SP2D
+        elif url_dict['act']=='headofnama6':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama,Jabatan.nama,
+                      ).join(Pegawai,Jabatan,Unit).filter(Pejabat.unit_id == Unit.id, Unit.kode=='1.20.09',
+                           #Jabatan.kode.ilike('23%'),
+                           Pegawai.nama.ilike('%%%s%%' % term))
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[3]
+                d['kode']        = k[1]
+                d['nama']        = k[3]
+                d['nip']         = k[2]
+                d['jab']         = k[4]
+                r.append(d)    
+            return r
+
+        ## PA dan PPK SPM
+        elif url_dict['act']=='headofnama7':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(Pejabat.id, Jabatan.kode, Pegawai.kode, Pegawai.nama,Jabatan.nama,
+                      ).join(Pegawai,Jabatan).filter(Pejabat.unit_id == ses['unit_id'],
+                           Jabatan.kode.notlike('23%'),
+                           Pegawai.nama.ilike('%%%s%%' % term))
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[3]
+                d['kode']        = k[1]
+                d['nama']        = k[3]
+                d['nip']         = k[2]
+                d['jab']         = k[4]
+                r.append(d)    
+            return r
+
     #######    
     # Add #
     #######

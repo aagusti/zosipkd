@@ -34,8 +34,13 @@
 		<band height="1">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="275" height="1"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
 				<textElement>
-					<font size="7"/>
+					<font size="8"/>
 				</textElement>
 			</textField>
 		</band>
@@ -44,22 +49,34 @@
 		<band height="14" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="208" y="0" width="67" height="14"/>
+				<box rightPadding="1">
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
 				<textElement textAlignment="Right">
-					<font size="7"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="101" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="96" height="14"/>
+				<box leftPadding="1">
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
 				<textElement>
-					<font size="7"/>
+					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{unit_kd}.substring(0,4)+" "+$F{unit_kd}+" "+($F{keg_kd}=="0.00.00.21" ? "00.00" : $F{keg_kd}.substring(5))+" "+$F{rek_kd}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{unit_kd}+" "+$F{keg_kd}.substring(5)+" "+$F{rek_kd}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="101" y="0" width="107" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="96" y="0" width="112" height="14"/>
+				<box leftPadding="1">
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
 				<textElement>
-					<font size="7"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rek_nm}]]></textFieldExpression>
 			</textField>
@@ -69,8 +86,13 @@
 		<band height="1">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="275" height="1"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
 				<textElement>
-					<font size="7"/>
+					<font size="8"/>
 				</textElement>
 			</textField>
 		</band>

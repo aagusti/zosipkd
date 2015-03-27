@@ -104,7 +104,7 @@ class view_ruang(BaseViews):
         elif url_dict['act']=='headofnama':
             term   = 'term'   in params and params['term']   or '' 
             q = DBSession.query(AsetRuang.id,AsetRuang.kode,AsetRuang.uraian).\
-                    filter(AsetRuang.unit_id == ses['unit_id'],
+                    filter(#AsetRuang.unit_id == ses['unit_id'],
                            AsetRuang.uraian.ilike('%%%s%%' % term)).\
                     order_by(AsetRuang.uraian)
             rows = q.all()

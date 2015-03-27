@@ -136,8 +136,6 @@
               
             </div>   
             <script> 
-            
-            
            $('#rekening_add').click(function () {
                 $('#kegiatan_item_id').val('');
                 $('#header').submit();
@@ -311,7 +309,7 @@
         });
           
         var tb_array = [
-          '<div class="btn pull-left">',
+          '<div class="btn-group pull-left">',
           '	<button id="btn_add"    class="btn btn btn-primary" type="button">Tambah</button>',
           '	<button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',

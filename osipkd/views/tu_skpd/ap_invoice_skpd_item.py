@@ -103,9 +103,9 @@ def view_add(request):
             
     row.ap_invoice_id    = ap_invoice_id
     row.kegiatan_item_id = controls['kegiatan_item_id']
-    if not controls['no_urut'] or controls['no_urut'].split()=='':
-        controls['no_urut'] = APInvoiceItem.max_no_urut(ap_invoice_id)+1
-    row.no_urut          = controls['no_urut']
+    if not controls['no_urut1'] or controls['no_urut1'].split()=='':
+        controls['no_urut1'] = APInvoiceItem.max_no_urut(ap_invoice_id)+1
+    row.no_urut          = controls['no_urut1']
     row.nama             = controls['nama']
     row.vol_1            = controls['vol_1'].replace('.','')
     row.vol_2            = controls['vol_2'].replace('.','')

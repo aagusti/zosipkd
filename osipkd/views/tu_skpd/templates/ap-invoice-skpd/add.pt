@@ -130,16 +130,58 @@
                ${error}</p>
           </div>
         <script>
-        $('#jenis').onclick(function () {
-        var jenis = $('#jenis').val();
-        alert(jenis);
+        $(document).ready(function(){
+            //Hide All Kondisi
+            $('#no_bku').hide();
+            $('#no_bku1').hide();
+            $('#tgl_bku').hide();
+            $('#tgl_bku1').hide();
+            $('#is_bayar').hide();
+            $('#is_bayar1').hide();
+
+            //Hide Show Jenis saat edit
+            var jenis = $("#jenis").val();
+            if (jenis =='3'){
+                $('#no_bku').show();
+                $('#no_bku1').show();
+                $('#tgl_bku').show();
+                $('#tgl_bku1').show();
+                $('#is_bayar').show();
+                $('#is_bayar1').show();
+            }else{
+                $('#no_bku').hide();
+                $('#no_bku1').hide();
+                $('#tgl_bku').hide();
+                $('#tgl_bku1').hide();
+                $('#is_bayar').hide();
+                $('#is_bayar1').hide();
+            }
+
+            //Hide Show Jenis saat pilih/ entry
+            $("#jenis").change(function(){
+            var jenis1 = $("#jenis").val();
+            if(jenis1=='3'){
+                $('#no_bku').show();
+                $('#no_bku1').show();
+                $('#tgl_bku').show();
+                $('#tgl_bku1').show();
+                $('#is_bayar').show();
+                $('#is_bayar1').show();
+            }else{
+                $('#no_bku').hide();
+                $('#no_bku1').hide();
+                $('#tgl_bku').hide();
+                $('#tgl_bku1').hide();
+                $('#is_bayar').hide();
+                $('#is_bayar1').hide();
+            }
+            });
         });
-        
         </script>
         </div>
         <!--Bku-------------------------------------------------------------------->
         <div tal:define="field form['no_bku']" id="item-${field.oid}">
-          <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+          <label for="${field.oid}" class="control-label col-md-1" id="no_bku1">
                   ${field.title}</label>
           <div class="col-md-2">
              ${structure:field.serialize()}
@@ -149,7 +191,7 @@
           </div>
         </div>
         <div tal:define="field form['tgl_bku']" id="item-${field.oid}">
-          <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+          <label for="${field.oid}" class="control-label col-md-1" id="tgl_bku1">
                   ${field.title}</label>
           <div class="col-md-2">
              ${structure:field.serialize()}
@@ -182,6 +224,7 @@
                ${error}</p>
           </div>
         </div>
+
         <!--tanggal-------------------------------------------------------------------->
         <div tal:define="field form['tanggal']" id="item-${field.oid}">
           <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
@@ -211,6 +254,17 @@
           <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                   ${field.title}</label>
           <div class="col-md-3">
+             ${structure:field.serialize()}
+            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+               tal:repeat="error field.error.messages()">
+               ${error}</p>
+          </div>
+        </div>
+        <!--Dibayar-------------------------------------------------------------------->
+        <div tal:define="field form['is_bayar']" id="item-${field.oid}">
+          <label for="${field.oid}" class="control-label col-md-1" id="is_bayar1">
+                  ${field.title}</label>
+          <div class="col-md-2">
              ${structure:field.serialize()}
             <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                tal:repeat="error field.error.messages()">
@@ -495,10 +549,10 @@
           <input id="kegiatan_item_id" type="hidden" value="" name="kegiatan_item_id">
           <input id="nilai" type="hidden" value="" name="nilai">
           <div class="form-group">
-            <label for="no_urut" class="control-label col-md-1" id="req-no_urut">
+            <label for="no_urut1" class="control-label col-md-1" id="req-no_urut1">
                     Item </label>
             <div class="col-md-1">
-               <input id="no_urut" class=" form-control " type="text" value="" name="no_urut">
+               <input id="no_urut1" class=" form-control " type="text" value="" name="no_urut1">
             </div>
         
             <div class="col-md-4">
@@ -564,42 +618,56 @@
           </div>            
         <script>
           $('#rekening_add').click(function () {
-            var kegiatan_item_id;
+            var kegiatan_item_id, jml;
+            var vol_1 = parseInt($('#vol_1').val()); 
+            var vol_2 = parseInt($('#vol_2').val()); 
             var nilai = parseInt($('#nilai').val()); 
             var harga = parseInt($('#harga').val());
             kegiatan_item_id = $('#kegiatan_item_id').val();
 
-            if (kegiatan_item_id==''){
-                lert('data untuk entry masih kosong');
-            }
-            else{
-            if(harga > nilai){
-                alert('harga tidak boleh besar dari anggaran');
-            }
-            else{
-                $('#ap_invoice_item_id').val('');
-                $('#detail').submit();
-            }
+            jml = (vol_1 * vol_2) * harga;
+            if(jml<0){
+            alert('Harga tidak boleh negatif');
+            }else{
+                if (kegiatan_item_id==''){
+                    alert('Data untuk entry masih kosong');
+                }
+                else{
+                    if(harga > nilai){
+                        alert('Harga tidak boleh besar dari anggaran Rp.'+$('#nilai').val());
+                    }
+                    else{
+                        $('#ap_invoice_item_id').val('');
+                        $('#detail').submit();
+                    }
+                }
             }
            })
-// save update
+          // save update
           $('#rekening_save').click(function () {
-            var kegiatan_item_id;
+            var kegiatan_item_id,jml;
+            var vol_1 = parseInt($('#vol_1').val()); 
+            var vol_2 = parseInt($('#vol_2').val()); 
             var nilai = parseInt($('#nilai').val());
             var harga = parseInt($('#harga').val());
             kegiatan_item_id = $('#kegiatan_item_id').val();
             
-            if (kegiatan_item_id==''){
-                alert('data harus dipilih terlebih dahulu');
-            }
-            else{
-            if(harga >  nilai){
-                alert('harga tidak boleh besar dari anggaran');
-            }
-            else{
-                $('#ap_invoice_item_id').val();
-                $('#detail').submit();
-            }
+            jml = (vol_1 * vol_2) * harga;
+            if(jml<0){
+            alert('Harga tidak boleh negatif');
+            }else{
+                if (kegiatan_item_id==''){
+                    alert('Data harus dipilih terlebih dahulu');
+                }
+                else{
+                    if(harga >  nilai){
+                        alert('Harga tidak boleh besar dari anggaran Rp.'+$('#nilai').val());
+                    }
+                    else{
+                        $('#ap_invoice_item_id').val();
+                        $('#detail').submit();
+                    }
+                }
             }
            })
 //
@@ -638,7 +706,7 @@
                 success: function (html) {
                   if (html.success == true) {
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                    $('#no_urut').val('');
+                    $('#no_urut1').val('');
                     $('#item_nm').val('');
                     $('#nama').val('');
                     $('#vol_1').val(1);
@@ -746,7 +814,7 @@
                         mID = data[0];
 
                         $("#ap_invoice_item_id").val(data[0]);
-                        $("#no_urut").val(data[1]);
+                        $("#no_urut1").val(data[1]);
                         $("#nama").val(data[2]);
                         $("#item_nm").val(data[3]+'-'+data[10]);   
                         $("#ppn").val(data[5]);
@@ -756,7 +824,7 @@
                         $("#harga").val(data[9]);
                         $("#kegiatan_item_id").val(data[11]);
                         $("#nilai").val(data[12]);
-						
+
                         oTable.$('tr.row_selected').removeClass('row_selected');
                         $(this).addClass('row_selected');
                     }
@@ -787,7 +855,7 @@
                 success: function (html) {
                   if (html.success == true) {
                     $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                    $('#no_urut').val('');
+                    $('#no_urut1').val('');
                     $('#item_nm').val('');
                     $('#nama').val('');
                     $('#vol_1').val(1);

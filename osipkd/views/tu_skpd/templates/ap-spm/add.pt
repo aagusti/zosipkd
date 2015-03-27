@@ -80,16 +80,15 @@
 
         <!--Uraian-------------------------------------------------------------------->
         <div class="form-group"> 
-          <div tal:define="field form['nama']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
-                    ${field.title}</label>
-            <div class="col-md-8">
-               ${structure:field.serialize()}
-              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                 tal:repeat="error field.error.messages()">
-                 ${error}</p>
+                    <label class="control-label col-md-1" >
+                    Uraian</label>
+            <div class="col-md-8" tal:define="field form['nama']" id="nama">
+                     ${structure:field.serialize()}
+                   <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                      tal:repeat="error field.error.messages()">
+                      ${error}</p>
             </div>
-          </div>
+
         </div>
         <script>
             $('#spp_kd').typeahead({
@@ -116,12 +115,14 @@
                   $('#spp_nm').val(datum.nama);
                   $('#ap_spp_id').val(datum.id);
                   $('#spp_n').val(datum.nilai);
+                  $('#nama2').val(datum.urai);
             });
             $('#spp_nm').bind('typeahead:selected', function(obj, datum, name) {  
                   $('#nama').val(datum.urai);
                   $('#spp_kd').val(datum.kode);
                   $('#ap_spp_id').val(datum.id);
                   $('#spp_n').val(datum.nilai);
+                  $('#nama2').val(datum.urai);
             });
             $("#spp_n").attr('readonly',true);
           </script>
@@ -174,7 +175,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
-              "remote"   : "/pejabat/act/headofnama3?term=%QUERY",
+              "remote"   : "/pejabat/act/headofnama7?term=%QUERY",
             },
             {
               "name"      : 'ttd_nama',
@@ -250,7 +251,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
-              "remote"   : "/pejabat/act/headofnama3?term=%QUERY",
+              "remote"   : "/pejabat/act/headofnama7?term=%QUERY",
             },
             {
               "name"      : 'verified_nama',
@@ -277,7 +278,7 @@
         </script>
           <div class="col-md-4"> 
             <button type="submit" class="btn btn-primary" id="simpan" name="simpan">Simpan</button>
-            <button type="submit" class="btn btn-warning" id="tutup"  name="tutup">Tutup</button>
+            <button type="submit" class="btn btn-warning" id="btn_close"  name="tutup">Tutup</button>
           </div>
         </div>              
       </form>
@@ -479,7 +480,7 @@
                 "hint"     : true,
                 "highlight": true,
                 "minLength": 1,
-                "remote"   : "/rekening/act/headofkode2?term=%QUERY", 
+                "remote"   : "/rekening/act/headofkode7?term=%QUERY", 
             },{
                "name"      : 'kode1',
                "displayKey": 'value',

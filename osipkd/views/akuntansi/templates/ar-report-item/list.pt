@@ -14,7 +14,7 @@
               <span class="input-group-addon">
                 <input type="radio" name="ar-item-lap" id="ar-item-lap1" value="1">
               </span>
-              <input type="text" class="form-control" aria-label="..." readonly value="Laporan Piutang">
+              <input type="text" class="form-control" aria-label="..." readonly value="Laporan Ketetapan">
             </div><!-- /input-group -->
           </div><!-- /.col-lg-6 -->
         </div>
@@ -95,8 +95,8 @@
       </div>
       <button id="btn_pdf" class="btn btn-success" type="button"
               name="btn_pdf">Cetak</button>
-      <button id="btn_csv" class="btn btn-warning" type="button"
-              name="btn_csv">CSV</button>
+      <button id="btn_close" name="btn_close" type="button" class="btn btn-warning"
+          value="btn_close">Tutup</button>
     </div>
     <script>
       $('#tanggal').click(
@@ -143,6 +143,11 @@
             });
       });
       
+        $("#btn_close").click(function () {
+            window.location = '/skpd';
+            return false;
+        });
+
       $('#btn_pdf').click(function () {
             var jenis = $('input[name="ar-item-lap"]:checked').val();
             var level = $('input[name="ar-item-level"]:checked').val();

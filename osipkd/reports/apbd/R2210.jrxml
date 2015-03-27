@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_rka_1" language="groovy" pageWidth="612" pageHeight="972" columnWidth="540" leftMargin="54" rightMargin="18" topMargin="36" bottomMargin="14">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="825"/>
+	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[apbd/dpa/rekening]]>
 	</queryString>
@@ -59,6 +59,9 @@
 	</field>
 	<field name="customer" class="java.lang.String">
 		<fieldDescription><![CDATA[customer]]></fieldDescription>
+	</field>
+	<field name="logo" class="java.lang.String">
+		<fieldDescription><![CDATA[logo]]></fieldDescription>
 	</field>
 	<variable name="jumlah" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{jumlah1})]]></variableExpression>
@@ -316,6 +319,10 @@ Kuasa Pengguna Anggaran]]></text>
 					</textElement>
 					<text><![CDATA[1]]></text>
 				</staticText>
+				<image>
+					<reportElement x="223" y="75" width="94" height="103"/>
+					<imageExpression><![CDATA[$F{logo}]]></imageExpression>
+				</image>
 			</band>
 			<band height="54">
 				<rectangle>

@@ -164,7 +164,6 @@
         <!--BUTTON-->
         <div class="col-md-3">
           <button type="submit" class="btn btn-primary" id="simpan" name="simpan">Simpan</button>
-          <button type="submit" class="btn btn-danger"  id="batal"  name="batal">Batal</button>
           <button type="submit" class="btn btn-warning" id="tutup"  name="tutup">Tutup</button>
         </div>
        </div> 
@@ -178,11 +177,11 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Kegiatan</th>
-                <th>Uraian Kegiatan</th>
-                <th>Rekening</th>
-                <th>Uraian Rekening</th>
+                <th>SAP</th>
+                <th>Uraian SAP</th>
                 <th>Nilai</th>
+                <th>Catatan</th>
+                <th>Rekening</th>
             </tr>
         </thead>
         <tbody>
@@ -201,6 +200,7 @@
           <input id="kegiatan_sub_id" type="hidden" value="" name="kegiatan_sub_id">
           <input id="ak_jurnal_id"    type="hidden" value="" name="ak_jurnal_id">
           <input id="rekening_id"     type="hidden" value="" name="rekening_id">
+          <input id="sap_id"          type="hidden" value="" name="sap_id">
           
           <!--KEGIATAN SUB----------------------------------------------------------->
           <div class="form-group">
@@ -242,8 +242,23 @@
                    <input id="amount" class=" form-control " type="text" value="0" name="amount">
                 </div>
               </div>
-            </div>
+            </div> 
+          </div>
 
+          <!--REKENING SAP -------------------------------------------------------------->  
+          <div class="form-group">
+            <div class="col-md-3 box">
+              <div id="item-sap_kd">
+                <label for="sap_kd" class="control-label col-md-3" id="req-sap_kd">
+                        SAP</label>
+                <div class="col-md-9">
+                   <input id="sap_kd" class=" form-control " type="text" value="" name="sap_kd" width="100%">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5">
+               <input id="sap_nm" class=" form-control " type="text" value="" name="sap_nm">
+            </div>
           </div>
 
           <!--Referensi-------------------------------------------------------------->  
@@ -299,25 +314,29 @@
         {
             "bSearchable": false,
             "bVisible"   : false,
-            "aTargets"   : [0,6,7,8,9]
+            "aTargets"   : [0,6,7,8,9,10,11]
         },{ 
-            "type"       : "numeric-comma", "aTargets": [5]
+            "type"       : "numeric-comma", "aTargets": [3]
         },{
             "sClass"     : "right",
-            "aTargets"   : [5]
+            "aTargets"   : [3]
         },{
             "bSearchable": false,
             "bSortable"  : false,
-            "aTargets"   : [1,2,3,4]
+            "aTargets"   : [1,2,5]
+        },{
+            "bSearchable": true,
+            "bSortable"  : false,
+            "aTargets"   : [3,4]
         }
         ],
         "aoColumns": [
             null,
-            {"width": "20px"},
-            {"width": "140px"},
-            {"width": "40px"},
-            {"width": "140px"},
+            {"width": "50px"},
+            {"width": "160px"},
             {"width": "60px"},
+            {"width": "100px"},
+            {"width": "50px"},
         ]
       });
         
@@ -332,7 +351,6 @@
         '</div>',
       ];
 
-
       var tb = tb_array.join(' ');
       $("div.toolbar").html(tb);
       $("div.toolbar").attr('style', 'display:block; float: left; margin-bottom:6px; line-height:16px;');
@@ -346,12 +364,14 @@
               $(this).addClass('selected');
               mID = aData[0];
               $("#jurnal_item_id").val(mID);
-              $("#kegiatan_sub_kd").val(aData[1]);
-              $("#kegiatan_sub_nm").val(aData[2]);
-              $("#rekening_kd").val(aData[3]);
-              $("#rekening_nm").val(aData[4]);
-              $("#amount").val(aData[5]);
-              $("#notes").val(aData[6]);
+              $("#kegiatan_sub_kd").val(aData[10]);
+              $("#kegiatan_sub_nm").val(aData[11]);
+              $("#rekening_kd").val(aData[5]);
+              $("#rekening_nm").val(aData[6]);
+              $("#sap_kd").val(aData[1]);
+              $("#sap_nm").val(aData[2]);
+              $("#amount").val(aData[3]);
+              $("#notes").val(aData[4]);
               $("#ak_jurnal_id").val(aData[9]);
               $("#kegiatan_sub_id").val(aData[7]);
               $("#rekening_id").val(aData[8]);
@@ -391,6 +411,8 @@
                     $('#kegiatan_sub_nm').val('');
                     $('#rekening_kd').val('');
                     $('#rekening_nm').val('');
+                    $('#sap_kd').val('');
+                    $('#sap_nm').val('');
                     $('#amount').val(0);
                     $('#notes').val('');
                     oTable.fnReloadAjax(oTableUrl);
@@ -449,6 +471,8 @@
               $('#kegiatan_sub_nm').val('');
               $('#rekening_kd').val('');
               $('#rekening_nm').val('');
+              $('#sap_kd').val('');
+              $('#sap_nm').val('');
               $('#amount').val(0);
               $('#notes').val('');
               
@@ -528,12 +552,43 @@
      $('#rekening_kd').bind('typeahead:selected', function(obj, datum, name) {  
            $('#rekening_nm').val(datum.nama);
            $('#rekening_id').val(datum.id);
+           
+           $('#sap_kd').typeahead({
+               "hint"     : true,
+               "highlight": true,
+               "minLength": 1,
+               "remote"   : "/sap/act/headofkode4?rekening_id="+$("#rekening_id").val()+"&term=%QUERY",
+           },{
+              "name"      : 'sap_kd',
+              "displayKey": 'value',
+           });    
      });
      $('#rekening_nm').bind('typeahead:selected', function(obj, datum, name) {      
            $('#rekening_kd').val(datum.kode);
            $('#rekening_id').val(datum.id);
      });
      $("#rekening_nm").attr('readonly',true); 
+     
+     // -- SAP -- //
+     $('#sap_nm').typeahead({
+         "hint"     : true,
+         "highlight": true,
+         "minLength": 1,
+         "remote"   : "/sap/act/headofnama4?rekening_id="+$("#rekening_id").val()+"&term=%QUERY",
+     },{
+        "name"      : 'sap_nm',
+        "displayKey": 'value',
+     });
+           
+     $('#sap_kd').bind('typeahead:selected', function(obj, datum, name) {  
+           $('#sap_nm').val(datum.nama);
+           $('#sap_id').val(datum.id);   
+     });
+     $('#sap_nm').bind('typeahead:selected', function(obj, datum, name) {      
+           $('#sap_kd').val(datum.kode);
+           $('#sap_id').val(datum.id);
+     });
+     $("#sap_nm").attr('readonly',true); 
      });
   </script>
           

@@ -181,7 +181,8 @@ def save(request, values, row=None):
     if not row.kode:
         tahun    = request.session['tahun']
         unit_kd  = request.session['unit_kd']
-        no_urut  = ARInvoice.get_norut(row.id)+1
+        unit_id  = request.session['unit_id']
+        no_urut  = ARInvoice.get_norut(tahun, unit_id)+1
         no       = "0000%d" % no_urut
         nomor    = no[-5:]     
         row.kode = "%d" % tahun + "-%s" % unit_kd + "-%s" % nomor
@@ -214,12 +215,23 @@ def view_add(request):
         if 'simpan' in request.POST:
             controls = request.POST.items() 
             controls_dicted = dict(controls)
+
+            #Cek Kode Sama ato tidak
+            if not controls_dicted['kode']=='':
+                a = form.validate(controls)
+                b = a['kode']
+                c = "%s" % b
+                cek  = DBSession.query(ARInvoice).filter(ARInvoice.kode==c).first()
+                if cek :
+                    request.session.flash('Kode ARInvoice sudah ada.', 'error')
+                    return HTTPFound(location=request.route_url('ar-invoice-skpd-add'))
+            
             try:
                 c = form.validate(controls)
             except ValidationFailure, e:
                 return dict(form=form)
             row = save_request(controls_dicted, request)
-            return route_list(request)
+            return HTTPFound(location=request.route_url('ar-invoice-skpd-edit',id=row.id))
         return route_list(request)
     elif SESS_ADD_FAILED in request.session:
         del request.session[SESS_ADD_FAILED]
@@ -240,6 +252,8 @@ def id_not_found(request):
              permission='edit')
 def view_edit(request):
     row = query_id(request).first()
+    uid     = row.id
+    kode    = row.kode
 
     if not row:
         return id_not_found(request)
@@ -251,6 +265,19 @@ def view_edit(request):
     if request.POST:
         if 'simpan' in request.POST:
             controls = request.POST.items()
+
+            #Cek Kode Sama ato tidak
+            a = form.validate(controls)
+            b = a['kode']
+            c = "%s" % b
+            cek = DBSession.query(ARInvoice).filter(ARInvoice.kode==c).first()
+            if cek:
+                kode1 = DBSession.query(ARInvoice).filter(ARInvoice.id==uid).first()
+                d     = kode1.kode
+                if d!=c:
+                    request.session.flash('Kode ARInvoice sudah ada', 'error')
+                    return HTTPFound(location=request.route_url('ar-invoice-skpd-edit',id=row.id))
+            
             try:
                 c = form.validate(controls)
             except ValidationFailure, e:

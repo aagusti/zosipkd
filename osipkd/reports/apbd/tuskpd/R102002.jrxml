@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R103001" language="groovy" pageWidth="595" pageHeight="842" columnWidth="487" leftMargin="54" rightMargin="54" topMargin="72" bottomMargin="72">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R103001" language="groovy" pageWidth="612" pageHeight="1008" columnWidth="504" leftMargin="54" rightMargin="54" topMargin="36" bottomMargin="72">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="17"/>
@@ -45,6 +45,15 @@
 	<field name="customer" class="java.lang.String">
 		<fieldDescription><![CDATA[customer]]></fieldDescription>
 	</field>
+	<field name="bendahara_nip" class="java.lang.String">
+		<fieldDescription><![CDATA[bendahara_nip]]></fieldDescription>
+	</field>
+	<field name="unit_alamat" class="java.lang.String">
+		<fieldDescription><![CDATA[unit_alamat]]></fieldDescription>
+	</field>
+	<field name="logo" class="java.lang.String">
+		<fieldDescription><![CDATA[logo]]></fieldDescription>
+	</field>
 	<variable name="nilai" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{nilai})]]></variableExpression>
 	</variable>
@@ -52,28 +61,49 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="50">
+		<band height="134">
 			<textField>
-				<reportElement x="0" y="2" width="487" height="16"/>
+				<reportElement x="39" y="11" width="448" height="16"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="18" width="487" height="16"/>
+				<reportElement x="0" y="89" width="487" height="16"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="false"/>
+					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[TAGIHAN/PIUTANG/KETETAPAN]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="0" y="34" width="487" height="16"/>
+				<reportElement x="0" y="105" width="487" height="16"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isBold="false"/>
+					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["TAHUN ANGGARAN "+$F{tahun}]]></textFieldExpression>
 			</textField>
+			<image>
+				<reportElement x="0" y="0" width="62" height="74"/>
+				<imageExpression><![CDATA[$F{logo}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="39" y="27" width="448" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unit_nm}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="39" y="45" width="448" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unit_alamat}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="74" width="486" height="1"/>
+			</line>
 		</band>
 	</title>
 	<detail>
@@ -236,12 +266,19 @@
 				</textElement>
 				<text><![CDATA[Lembar 4: Bagian Perhitungan/ Pembukuan KAS]]></text>
 			</staticText>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="236" y="114" width="251" height="16"/>
+				<textElement textAlignment="Center" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bendahara_nm}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="236" y="130" width="251" height="16"/>
 				<textElement textAlignment="Center" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{bendahara_nm}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{bendahara_nip}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

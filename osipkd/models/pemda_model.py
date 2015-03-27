@@ -64,23 +64,24 @@ class Unit(Base, NamaModel):
                       'schema' : 'admin',}
                        
     #urusan_id = Column(Integer, ForeignKey('admin.urusans.id'))
-    kategori = Column(String(32))
-    singkat  = Column(String(32))
+    kategori  = Column(String(32))
+    alamat    = Column(String(255))
+    singkat   = Column(String(32))
     level_id  = Column(SmallInteger)
     header_id = Column(SmallInteger)
     urusan_id = Column(Integer, ForeignKey('admin.urusans.id'))
-    urusans     = relationship("Urusan", backref="units")
+    urusans   = relationship("Urusan", backref="units")
 
 class UserUnit(Base, CommonModel):
     __tablename__  = 'user_units'
     __table_args__ = {'extend_existing':True, 
                       'schema' : 'admin',}
-                       
-    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    unit_id = Column(Integer, ForeignKey('admin.units.id'), primary_key=True)
+     
+    units    = relationship("Unit", backref="users")
+    users    = relationship("User", backref="units")                  
+    user_id  = Column(Integer, ForeignKey('users.id'),       primary_key=True)
+    unit_id  = Column(Integer, ForeignKey('admin.units.id'), primary_key=True)
     sub_unit = Column(SmallInteger, nullable=False)
-    units     = relationship("Unit", backref="users")
-    users     = relationship("User", backref="units")
     
     @classmethod
     def query_user_id(cls, user_id):
@@ -165,20 +166,18 @@ class Sap(NamaModel, Base):
         return cls.query_id(id).first().level_id+1
 
 class RekeningSap(DefaultModel, Base):
-    __tablename__  = 'rekenings_saps'
-    __table_args__ = {'extend_existing':True,'schema' : 'admin'}
-    
-    rekening_id = Column(Integer, ForeignKey("admin.rekenings.id"))        
-    lo_sap_id   = Column(Integer, ForeignKey("admin.saps.id"))
-    lra_sap_id  = Column(Integer, ForeignKey("admin.saps.id"))
-    aset_sap_id = Column(Integer, ForeignKey("admin.saps.id"))
-    pph_id      = Column(String(64))
+    __tablename__    = 'rekenings_saps'
+    __table_args__   = {'extend_existing':True,'schema' : 'admin'}
+                     
+    rekening_id      = Column(Integer, ForeignKey("admin.rekenings.id"))        
+    db_lo_sap_id     = Column(Integer, nullable=True)
+    kr_lo_sap_id     = Column(Integer, nullable=True)
+    db_lra_sap_id    = Column(Integer, nullable=True)
+    kr_lra_sap_id    = Column(Integer, nullable=True)
+    neraca_sap_id    = Column(Integer, nullable=True)
+    pph_id           = Column(String(64))
     
     rekenings   = relationship("Rekening", backref="rekenings_saps")
-    losaps      = relationship("Sap",      foreign_keys=[lo_sap_id])
-    lrasaps     = relationship("Sap",      foreign_keys=[lra_sap_id])
-    asetsaps    = relationship("Sap",      foreign_keys=[aset_sap_id])
-    
         
 class DasarHukum(DefaultModel, Base):
     __tablename__  = 'dasar_hukums'

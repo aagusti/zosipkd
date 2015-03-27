@@ -33,6 +33,12 @@
 	<field name="customer" class="java.lang.String">
 		<fieldDescription><![CDATA[customer]]></fieldDescription>
 	</field>
+	<field name="unit_kd" class="java.lang.String">
+		<fieldDescription><![CDATA[unit_kd]]></fieldDescription>
+	</field>
+	<field name="tipe" class="java.lang.String">
+		<fieldDescription><![CDATA[tipe]]></fieldDescription>
+	</field>
 	<variable name="jumlah1" class="java.lang.Double">
 		<variableExpression><![CDATA[$F{jenis}=="1" ? Double.parseDouble($F{nominal}) : 0]]></variableExpression>
 	</variable>
@@ -50,6 +56,9 @@
 	</variable>
 	<variable name="total3" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$V{jumlah3}]]></variableExpression>
+	</variable>
+	<variable name="jenis" class="java.lang.String">
+		<variableExpression><![CDATA[$F{jenis}=="1" ? "P" : $F{jenis}=="2" ? "CP" : $F{jenis}=="3" ? "L" : ""]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -82,7 +91,7 @@
 	<pageHeader>
 		<band height="49">
 			<staticText>
-				<reportElement x="0" y="0" width="29" height="49"/>
+				<reportElement x="0" y="0" width="27" height="49"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -93,7 +102,7 @@
 				<text><![CDATA[No. Urut]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="29" y="0" width="60" height="49"/>
+				<reportElement x="27" y="0" width="58" height="49"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -104,7 +113,7 @@
 				<text><![CDATA[Tgl. STS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="89" y="0" width="90" height="49"/>
+				<reportElement x="85" y="0" width="97" height="49"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -148,7 +157,7 @@
 				<text><![CDATA[Pengembalian Kas]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="179" y="0" width="149" height="49"/>
+				<reportElement x="182" y="0" width="146" height="49"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -174,7 +183,7 @@
 	<detail>
 		<band height="18" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="89" y="0" width="90" height="18"/>
+				<reportElement stretchType="RelativeToBandHeight" x="85" y="0" width="97" height="18"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -182,7 +191,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{kode}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{kode}.substring(13)+"/"+$V{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="405" y="0" width="77" height="18"/>
@@ -193,10 +202,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Top" markup="none">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah2})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tipe}=="0" || $F{tipe}=="2" ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah2}) : 0]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="29" y="0" width="60" height="18"/>
+				<reportElement stretchType="RelativeToBandHeight" x="27" y="0" width="58" height="18"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -215,7 +224,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Top" markup="none">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah1})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tipe}=="0" || $F{tipe}=="1" ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah1}) : 0]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="482" y="0" width="73" height="18"/>
@@ -226,10 +235,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Top" markup="none">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah3})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tipe}=="0" || $F{tipe}=="3" ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah3}) : 0]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="29" height="18"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="27" height="18"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -240,7 +249,7 @@
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="179" y="0" width="149" height="18"/>
+				<reportElement stretchType="RelativeToBandHeight" x="182" y="0" width="146" height="18"/>
 				<box leftPadding="3">
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -274,7 +283,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{total3})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tipe}=="0" || $F{tipe}=="3" ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{total3}) : 0]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="328" y="0" width="77" height="20"/>
@@ -287,10 +296,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{total1})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tipe}=="0" || $F{tipe}=="1" ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{total1}) : 0]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="29" y="0" width="60" height="20"/>
+				<reportElement x="27" y="0" width="58" height="20"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -300,7 +309,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="89" y="0" width="90" height="20"/>
+				<reportElement x="85" y="0" width="97" height="20"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -310,7 +319,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="0" width="29" height="20"/>
+				<reportElement x="0" y="0" width="27" height="20"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -330,10 +339,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{total2})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tipe}=="0" || $F{tipe}=="2" ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{total2}) : 0]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="179" y="0" width="149" height="20"/>
+				<reportElement x="182" y="0" width="146" height="20"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>

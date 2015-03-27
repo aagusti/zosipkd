@@ -174,7 +174,7 @@ class view_aset_kibdel(BaseViews):
                 except ValidationFailure, e:
                     return dict(form=form)
                 row = self.save_request(controls_dicted)
-                return self.route_list()
+            return HTTPFound(location=request.route_url('aset-kibdel-edit',id=row.id))
             return self.route_list()
         elif SESS_ADD_FAILED in request.session:
             del request.session[SESS_ADD_FAILED]

@@ -187,6 +187,13 @@ class view_rekening(BaseViews):
         elif url_dict['act']=='headofkode62':
             term = 'term' in params and params['term'] or '' 
             return self.get_kode_dict(term,'6.2')            
+        
+        #######################################################################
+        # SPM POTONGAN 
+        elif url_dict['act']=='headofkode7':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_kode_dict(term,'7')
+
             
         #######################################################################
         # LO PENDAPATAN

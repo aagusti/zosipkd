@@ -228,7 +228,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none"/>
-				<textFieldExpression><![CDATA[$F{kode}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{kode}.substring(13)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="271" y="0" width="142" height="20"/>

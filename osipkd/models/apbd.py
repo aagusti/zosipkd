@@ -43,6 +43,13 @@ class ARInvoiceItem(NamaModel, Base):
     hari         = Column(Integer)
     posted       = Column(SmallInteger, nullable=False, default=0)
     
+    @classmethod
+    def get_periode(cls, id):
+        return DBSession.query(extract('month',cls.tanggal).label('periode'))\
+                .filter(cls.id==id,)\
+                .group_by(extract('month',cls.tanggal)
+                ).scalar() or 0
+                
 class ARPaymentItem(NamaModel, Base):
     __tablename__  = 'ar_payment_item'
     __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}
@@ -70,10 +77,24 @@ class ARPaymentItem(NamaModel, Base):
     minggu          = Column(Integer)
     hari            = Column(Integer)
     posted          = Column(SmallInteger, nullable=False, default=0)
-    bud_uid        = Column(BigInteger,   nullable=False)
-    bud_nip        = Column(String(50),   nullable=False)
-    bud_nama       = Column(String(64),   nullable=False)
-	
+    bud_uid         = Column(BigInteger,   nullable=False)
+    bud_nip         = Column(String(50),   nullable=False)
+    bud_nama        = Column(String(64),   nullable=False)
+    
+    @classmethod
+    def get_periode(cls, id):
+        return DBSession.query(extract('month',cls.tanggal).label('periode'))\
+                .filter(cls.id==id,)\
+                .group_by(extract('month',cls.tanggal)
+                ).scalar() or 0
+    
+    @classmethod
+    def get_periode2(cls, id_tbp):
+        return DBSession.query(extract('month',cls.tanggal).label('periode'))\
+                .filter(cls.id==id_tbp,)\
+                .group_by(extract('month',cls.tanggal)
+                ).scalar() or 0
+                
 class ARTargetItem(NamaModel, Base):
     __tablename__ = 'ar_target_item'
     __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}
@@ -114,7 +135,6 @@ class JurnalAnggaran(DefaultModel, Base):
     rekening_id     = Column(Integer ,   ForeignKey("admin.rekenings.id"),    nullable=False)    
     amount          = Column(BigInteger, nullable=False, default=0)
 
-    
 class Jurnal(NamaModel, Base):
     __tablename__   = 'jurnals'
     __table_args__  = {'extend_existing':True, 'schema' : 'apbd',}
@@ -139,26 +159,17 @@ class Jurnal(NamaModel, Base):
     disabled        = Column(SmallInteger,  nullable=False, default=0)
 
     @classmethod
-    def get_no_urut(cls, p):
-        row = DBSession.query(func.max(cls.no_urut).label('no_urut'))\
-                .filter(cls.tahun_id==p['tahun_id'],
-                        cls.unit_id==p['unit_id']
-                ).first()
-        if row and row.no_urut:
-           return row.no_urut+1
-        else:
-           return 1
-    
-    @classmethod
-    def get_norut(cls, id):
+    def get_norut(cls, tahun, unit_id):
         return DBSession.query(func.count(cls.id).label('no_urut'))\
-               .scalar() or 0
+               .filter(cls.tahun_id==tahun,
+                       cls.unit_id ==unit_id
+               ).scalar() or 0
                
     @classmethod
     def get_tipe(cls, jv_type):
         return DBSession.query(case([(cls.jv_type==1,"JT"),(cls.jv_type==2,"JK"),
                           (cls.jv_type==3,"JU"),(cls.jv_type==4,"KR"),
-                          (cls.jv_type==5,"CL")], else_="").label('jv_type'))\
+                          (cls.jv_type==5,"CL"),(cls.jv_type==6,"LO")], else_="").label('jv_type'))\
                 .filter(cls.jv_type==jv_type
                 ).group_by(cls.jv_type
                 ).scalar() or 0
@@ -167,16 +178,12 @@ class JurnalItem(DefaultModel, Base):
     __tablename__   ='jurnal_items'
     __table_args__  = {'extend_existing':True,'schema' :'apbd'}
 
-    jurnal_id       = Column(BigInteger,  ForeignKey("apbd.jurnals.id"),       nullable=False)
-    jurnals         = relationship("Jurnal",    backref="jurnal_items")
-
-    kegiatan_sub_id = Column(BigInteger,  ForeignKey("apbd.kegiatan_subs.id"), nullable=False)
-    kegiatan_subs   = relationship("KegiatanSub", backref="jurnal_items")
-
-    rekening_id     = Column(BigInteger,  ForeignKey("admin.rekenings.id"),    nullable=False)
-    rekenings       = relationship("Rekening",    backref="jurnal_items")
-
-    amount          = Column(BigInteger,  default=0) 
-    notes           = Column(String(225), nullable=True)
+    jurnals         = relationship("Jurnal", backref="jurnal_items")
+    jurnal_id       = Column(BigInteger, ForeignKey("apbd.jurnals.id"), nullable=False)
+    kegiatan_sub_id = Column(BigInteger, default=0, nullable=True) 
+    rekening_id     = Column(BigInteger, default=0, nullable=True)
+    sap_id          = Column(BigInteger, default=0, nullable=True)
+    amount          = Column(BigInteger, default=0) 
+    notes           = Column(String(225),nullable=True)
 
  
