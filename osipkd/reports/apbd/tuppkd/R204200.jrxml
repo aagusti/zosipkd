@@ -73,6 +73,9 @@
 	<field name="customer" class="java.lang.String">
 		<fieldDescription><![CDATA[customer]]></fieldDescription>
 	</field>
+	<field name="logo" class="java.lang.String">
+		<fieldDescription><![CDATA[logo]]></fieldDescription>
+	</field>
 	<variable name="jumlah" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{jumlah})]]></variableExpression>
 	</variable>
@@ -139,26 +142,30 @@
 		<groupHeader>
 			<band height="111">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement x="0" y="47" width="558" height="15"/>
+					<reportElement x="39" y="47" width="519" height="15"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="0" y="62" width="558" height="14"/>
+					<reportElement x="39" y="62" width="519" height="14"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[PENJABARAN LAPORAN REALISASI ANGGARAN PENDAPATAN DAN BELANJA DAERAH]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="0" y="76" width="558" height="15"/>
+					<reportElement x="39" y="76" width="519" height="15"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["S/D PERIODE "+$V{bulan_nm}+" TAHUN ANGGARAN "+$F{tahun_id}]]></textFieldExpression>
 				</textField>
+				<image>
+					<reportElement x="0" y="37" width="62" height="74"/>
+					<imageExpression><![CDATA[$F{logo}]]></imageExpression>
+				</image>
 			</band>
 			<band height="40">
 				<staticText>
@@ -206,7 +213,7 @@
 			</band>
 			<band height="32">
 				<staticText>
-					<reportElement x="0" y="0" width="60" height="32"/>
+					<reportElement x="0" y="0" width="50" height="32"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -219,7 +226,7 @@
 					<text><![CDATA[KODE REKENING]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="60" y="0" width="227" height="32"/>
+					<reportElement x="50" y="0" width="237" height="32"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -288,7 +295,7 @@ LEBIH/(KURANG)]]></text>
 			</band>
 			<band height="14">
 				<staticText>
-					<reportElement x="0" y="0" width="60" height="14"/>
+					<reportElement x="0" y="0" width="50" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -301,7 +308,7 @@ LEBIH/(KURANG)]]></text>
 					<text><![CDATA[1]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="60" y="0" width="227" height="14"/>
+					<reportElement x="50" y="0" width="237" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -398,7 +405,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["SURPLUS/(DEFISIT)"]]></textFieldExpression>
 				</textField>
@@ -411,7 +418,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{real_surplus}<0 ? "("+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{real_surplus}*-1)+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{real_surplus})]]></textFieldExpression>
 				</textField>
@@ -424,7 +431,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{jumlah_surplus}<0 ? "("+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_surplus}*-1)+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_surplus})]]></textFieldExpression>
 				</textField>
@@ -437,7 +444,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{jumlah_surplus}-$V{real_surplus})<0 ? "("+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{jumlah_surplus}-$V{real_surplus})*-1)+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_surplus}-$V{real_surplus})]]></textFieldExpression>
 				</textField>
@@ -450,7 +457,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{jumlah_surplus}==0 ? 0.00 : new java.text.DecimalFormat("#,##0.00").format($V{real_surplus}/$V{jumlah_surplus}*100)]]></textFieldExpression>
 				</textField>
@@ -471,7 +478,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{pend_bel_biaya}=="1" ? "JUMLAH PENDAPATAN" : $V{pend_bel_biaya}=="2" ? "JUMLAH BELANJA" : "PEMBIAYAAN NETTO"]]></textFieldExpression>
 				</textField>
@@ -484,7 +491,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{jumlah_pbb}<0 ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_pbb}*-1) : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_pbb})]]></textFieldExpression>
 				</textField>
@@ -497,7 +504,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{real_pbb}<0 ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{real_pbb}*-1) : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{real_pbb})]]></textFieldExpression>
 				</textField>
@@ -510,7 +517,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{jumlah_pbb}-$V{real_pbb})<0 ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{jumlah_pbb}-$V{real_pbb})*-1) : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_pbb}-$V{real_pbb})]]></textFieldExpression>
 				</textField>
@@ -523,7 +530,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{jumlah_pbb}==0 ? 0.00 : new java.text.DecimalFormat("#,##0.00").format($V{real_pbb}/$V{jumlah_pbb}*100)]]></textFieldExpression>
 				</textField>
@@ -535,13 +542,13 @@ LEBIH/(KURANG)]]></text>
 		<groupHeader>
 			<band height="15">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="15"/>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="15"/>
 					<box leftPadding="3">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
@@ -551,17 +558,17 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="7"/>
 					</textElement>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="60" y="0" width="227" height="15"/>
+					<reportElement stretchType="RelativeToBandHeight" x="50" y="0" width="237" height="15"/>
 					<box leftPadding="3">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{jenis}=="1" ? "PENDAPATAN" : $F{jenis}=="2" ? "BELANJA TIDAK LANGSUNG" : $F{jenis}=="3" ? "BELANJA LANGSUNG" : $F{jenis}=="4" ? "PENERIMAAN PEMBIAYAAN" : $F{jenis}=="5" ? "PENGELUARAN PEMBIAYAAN" : ""]]></textFieldExpression>
 				</textField>
@@ -572,7 +579,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement>
-						<font size="9"/>
+						<font size="7"/>
 					</textElement>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
@@ -582,7 +589,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement>
-						<font size="9"/>
+						<font size="7"/>
 					</textElement>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
@@ -592,7 +599,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement>
-						<font size="9"/>
+						<font size="7"/>
 					</textElement>
 				</textField>
 			</band>
@@ -608,7 +615,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{jumlah_j}<0 ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_j}*-1) : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_j})]]></textFieldExpression>
 				</textField>
@@ -621,7 +628,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["JUMLAH "+($F{jenis}=="1" ? "PENDAPATAN" : $F{jenis}=="2" ? "BELANJA TIDAK LANGSUNG" : $F{jenis}=="3" ? "BELANJA LANGSUNG" : $F{jenis}=="4" ? "PENERIMAAN PEMBIAYAAN" : $F{jenis}=="5" ? "PENGELUARAN PEMBIAYAAN" : "")]]></textFieldExpression>
 				</textField>
@@ -634,7 +641,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{real_j}<0 ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{real_j}*-1) : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{real_j})]]></textFieldExpression>
 				</textField>
@@ -647,7 +654,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{jumlah_j}-$V{real_j})<0 ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{jumlah_j}-$V{real_j})*-1) : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_j}-$V{real_j})]]></textFieldExpression>
 				</textField>
@@ -660,7 +667,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{jumlah_j}==0 ? 0.00 : ($V{real_j}/$V{jumlah_j}*100)<0 ? new java.text.DecimalFormat("#,##0.00").format($V{real_j}/$V{jumlah_j}*100*-1) : new java.text.DecimalFormat("#,##0.00").format($V{real_j}/$V{jumlah_j}*100)]]></textFieldExpression>
 				</textField>
@@ -678,7 +685,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true" isItalic="true"/>
+						<font size="7" isBold="true" isItalic="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{real_p}<0 ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{real_p}*-1) : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{real_p})]]></textFieldExpression>
 				</textField>
@@ -689,29 +696,29 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true" isItalic="true"/>
+						<font size="7" isBold="true" isItalic="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{jumlah_p}<0 ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_p}*-1) : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_p})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="60" y="0" width="227" height="15"/>
+					<reportElement stretchType="RelativeToBandHeight" x="50" y="0" width="237" height="15"/>
 					<box leftPadding="3">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement>
-						<font size="9" isBold="true" isItalic="true"/>
+						<font size="7" isBold="true" isItalic="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{program_nm}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="15"/>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="15"/>
 					<box leftPadding="3">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement>
-						<font size="9" isBold="true" isItalic="true"/>
+						<font size="7" isBold="true" isItalic="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{program_kd}]]></textFieldExpression>
 				</textField>
@@ -722,7 +729,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true" isItalic="true"/>
+						<font size="7" isBold="true" isItalic="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{jumlah_p}-$V{real_p})<0 ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{jumlah_p}-$V{real_p})*-1) : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_p}-$V{real_p})]]></textFieldExpression>
 				</textField>
@@ -733,7 +740,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true" isItalic="true"/>
+						<font size="7" isBold="true" isItalic="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{jumlah_p}==0 ? 0.00 : ($V{real_p}/$V{jumlah_p}*100)<0 ? new java.text.DecimalFormat("#,##0.00").format($V{real_p}/$V{jumlah_p}*100*-1) : new java.text.DecimalFormat("#,##0.00").format($V{real_p}/$V{jumlah_p}*100)]]></textFieldExpression>
 				</textField>
@@ -751,29 +758,29 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{jumlah_k}<0 ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_k}*-1) : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_k})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="60" y="0" width="227" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="50" y="0" width="237" height="14"/>
 					<box leftPadding="3">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement>
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{kegiatan_nm}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="14"/>
 					<box leftPadding="3">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement>
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{kegiatan_kd}]]></textFieldExpression>
 				</textField>
@@ -784,7 +791,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{real_k}<0 ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{real_k}*-1) : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{real_k})]]></textFieldExpression>
 				</textField>
@@ -795,7 +802,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{jumlah_k}-$V{real_k})<0 ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{jumlah_k}-$V{real_k})*-1) : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_k}-$V{real_k})]]></textFieldExpression>
 				</textField>
@@ -806,7 +813,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{jumlah_k}==0 ? 0.00 : ($V{real_k}/$V{jumlah_k}*100)<0 ? new java.text.DecimalFormat("#,##0.00").format($V{real_k}/$V{jumlah_k}*100*-1) : new java.text.DecimalFormat("#,##0.00").format($V{real_k}/$V{jumlah_k}*100)]]></textFieldExpression>
 				</textField>
@@ -819,7 +826,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="false"/>
+						<font size="7" isBold="false"/>
 					</textElement>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
@@ -829,27 +836,27 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="false"/>
+						<font size="7" isBold="false"/>
 					</textElement>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="60" y="0" width="227" height="12"/>
+					<reportElement stretchType="RelativeToBandHeight" x="50" y="0" width="237" height="12"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="false"/>
+						<font size="7" isBold="false"/>
 					</textElement>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="12"/>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="12"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="false"/>
+						<font size="7" isBold="false"/>
 					</textElement>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
@@ -859,7 +866,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="false"/>
+						<font size="7" isBold="false"/>
 					</textElement>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
@@ -869,7 +876,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="false"/>
+						<font size="7" isBold="false"/>
 					</textElement>
 				</textField>
 			</band>
@@ -880,13 +887,13 @@ LEBIH/(KURANG)]]></text>
 		<groupHeader>
 			<band height="14">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="14"/>
 					<box leftPadding="3">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement>
-						<font size="9" isBold="false"/>
+						<font size="7" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{rek_kd}]]></textFieldExpression>
 				</textField>
@@ -897,18 +904,18 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="false"/>
+						<font size="7" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_r})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="60" y="0" width="227" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="50" y="0" width="237" height="14"/>
 					<box leftPadding="3">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement>
-						<font size="9" isBold="false"/>
+						<font size="7" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{rek_nm}]]></textFieldExpression>
 				</textField>
@@ -919,7 +926,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="false"/>
+						<font size="7" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{real_r})]]></textFieldExpression>
 				</textField>
@@ -930,7 +937,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="false"/>
+						<font size="7" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_r}-$V{real_r})]]></textFieldExpression>
 				</textField>
@@ -941,7 +948,7 @@ LEBIH/(KURANG)]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="false"/>
+						<font size="7" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{jumlah_r}==0 ? 0.00 : new java.text.DecimalFormat("#,##0.00").format($V{real_r}/$V{jumlah_r}*100)]]></textFieldExpression>
 				</textField>
@@ -952,7 +959,7 @@ LEBIH/(KURANG)]]></text>
 		<band height="14">
 			<printWhenExpression><![CDATA[$V{PAGE_NUMBER}>1]]></printWhenExpression>
 			<staticText>
-				<reportElement x="0" y="0" width="60" height="14"/>
+				<reportElement x="0" y="0" width="50" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -960,12 +967,12 @@ LEBIH/(KURANG)]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[1]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="60" y="0" width="227" height="14"/>
+				<reportElement x="50" y="0" width="237" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -973,7 +980,7 @@ LEBIH/(KURANG)]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[2]]></text>
 			</staticText>
@@ -986,7 +993,7 @@ LEBIH/(KURANG)]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[3]]></text>
 			</staticText>
@@ -1041,17 +1048,17 @@ LEBIH/(KURANG)]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="9" isBold="false"/>
+					<font size="7" isBold="false"/>
 				</textElement>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="14"/>
 				<box leftPadding="3">
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement>
-					<font size="9" isBold="false"/>
+					<font size="7" isBold="false"/>
 				</textElement>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
@@ -1061,17 +1068,17 @@ LEBIH/(KURANG)]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="9" isBold="false"/>
+					<font size="7" isBold="false"/>
 				</textElement>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="60" y="0" width="227" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="50" y="0" width="237" height="14"/>
 				<box leftPadding="3">
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement>
-					<font size="9" isBold="false"/>
+					<font size="7" isBold="false"/>
 				</textElement>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
@@ -1081,7 +1088,7 @@ LEBIH/(KURANG)]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="9" isBold="false"/>
+					<font size="7" isBold="false"/>
 				</textElement>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
@@ -1091,7 +1098,7 @@ LEBIH/(KURANG)]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="9" isBold="false"/>
+					<font size="7" isBold="false"/>
 				</textElement>
 			</textField>
 		</band>

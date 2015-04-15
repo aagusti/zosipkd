@@ -44,8 +44,12 @@
           ],
           "aoColumnDefs": [{
                         "bSearchable": false,
-                        "bVisible": false,
-                        "aTargets": [0]
+                        "bVisible"   : false,
+                        "aTargets"   : [0]
+                    },{
+                        "bSearchable": true,
+                        "bVisible"   : true,
+                        "aTargets"   : [1,2,3]
                     }],
           "aoColumns": [
               null,

@@ -3,6 +3,7 @@ import unittest
 import os.path
 import uuid
 import urlparse
+import sqlalchemy
 
 from osipkd.tools import row2dict, xls_reader
 
@@ -144,7 +145,6 @@ class ViewTUSKPDLap(BaseViews):
         row = DBSession.query(Tahun.status_apbd).filter(Tahun.tahun==self.tahun).first()
         self.session['status_apbd'] = row and row[0] or 0
 
-
         self.status_apbd =  'status_apbd' in self.session and self.session['status_apbd'] or 0        
         #self.status_apbd_nm =  status_apbd[str(self.status_apbd)]        
         
@@ -166,7 +166,6 @@ class ViewTUSKPDLap(BaseViews):
         ##o = "http://"+str(urlparse.urlparse(self.request.url).netloc)
         logo = self.request.static_url('osipkd:static/img/logo.png')
         print "KKKKKKKKKKKKKKKKKKKKKKKKKKKKK", logo
-        
         
     # PENDAPATAN
     @view_config(route_name="ar-report-skpd", renderer="templates/report-skpd/pendapatan.pt", permission="read")
@@ -228,10 +227,27 @@ class ViewTUSKPDLap(BaseViews):
             response.write(pdf)
             return response
           
+        # TBP
+        elif url_dict['act']=='ap-tbp' :
+            print "TTTTTTTTTTTTTTTTTTTTTTTT"
+            pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+            query = DBSession.query(ARPaymentItem
+                  ).filter(ARPaymentItem.unit_id==Unit.id, ARPaymentItem.unit_id==self.session['unit_id'],
+                  ARPaymentItem.tahun==self.session['tahun'], ARPaymentItem.tanggal==mulai
+                  )
+            generator = b102r004Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+          
         ### AR PAYMENT
         elif url_dict['act']=='ar-sts' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             query = DBSession.query(Sts
+                ).join(StsItem).join(KegiatanItem).join(Rekening
                 ).filter(Sts.unit_id==Unit.id, 
                 Sts.unit_id==self.session['unit_id'],
                 Sts.tahun_id==self.session['tahun'], Sts.id==pk_id
@@ -291,14 +307,6 @@ class ViewTUSKPDLap(BaseViews):
             response.write(pdf)
             return response
            
-
-    # LAPORAN
-    @view_config(route_name="ak-report-skpd", renderer="templates/report-skpd/ak-report-skpd.pt", permission="read")
-    def ak_report_skpd(self):
-        params = self.request.params
-        return dict(datas=self.datas,)
-
-
     # BELANJA
     @view_config(route_name="ap-report-skpd", renderer="templates/report-skpd/belanja.pt", permission="read")
     def ap_report_skpd(self):
@@ -388,6 +396,34 @@ class ViewTUSKPDLap(BaseViews):
                   APInvoice.ap_rekening, APInvoice.ap_npwp, KegiatanSub.nama
                   )
             generator = b103r001Generator()  
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+            
+        ### AP PAYMENT
+        elif url_dict['act']=='appayment' :
+            pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+            query = DBSession.query(APPayment.tahun_id.label('tahun'), Unit.nama.label('unit_nm'), Unit.alamat,
+                  case([(APPayment.jenis==1,"UP"),(APPayment.jenis==2,"TU"),(APPayment.jenis==3,"GU"),
+                  (APPayment.jenis==4,"LS")], else_="").label('jenis'),
+                  APPayment.id.label('appayment_id'), APPayment.nama.label('appayment_nm'), 
+                  APPayment.tanggal.label('tgl_payment'),APPayment.kode, APPayment.ap_nama, 
+                  APPayment.ap_rekening, APPayment.ap_npwp, KegiatanSub.nama.label('kegiatan_nm'),
+                  func.sum(APPaymentItem.amount).label('nilai')
+                  ).filter(APPayment.unit_id==Unit.id, APPayment.kegiatan_sub_id==KegiatanSub.id,
+                  APPaymentItem.ap_payment_id==APPayment.id, APPayment.unit_id==self.session['unit_id'],
+                  APPayment.tahun_id==self.session['tahun'], APPayment.id==pk_id
+                  ).group_by(APPayment.tahun_id, Unit.nama, Unit.alamat,
+                  case([(APPayment.jenis==1,"UP"),(APPayment.jenis==2,"TU"),(APPayment.jenis==3,"GU"),
+                  (APPayment.jenis==4,"LS")], else_=""),
+                  APPayment.id, APPayment.nama, 
+                  APPayment.tanggal,APPayment.kode, APPayment.ap_nama, 
+                  APPayment.ap_rekening, APPayment.ap_npwp, KegiatanSub.nama
+                  )
+            generator = b103r004Generator()  
             pdf = generator.generate(query)
             response=req.response
             response.content_type="application/pdf"
@@ -1024,6 +1060,39 @@ class ViewTUSKPDLap(BaseViews):
             response.write(pdf)
             return response
 
+        ### LAPORAN SPM 3
+        elif url_dict['act']=='33' :
+            if tipe ==0 :
+                query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.kode.label('unit_kd'),
+                  Unit.nama.label('unit_nm'), Spm.id.label('spm_id'), Spm.tanggal.label('tgl_spm'), 
+                  Spm.kode.label('spm_kd'), Spm.nama.label('spm_nm'),
+                  case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),(Spp.jenis==4,"LS")], else_="").label('jenis'),
+                  Spp.id.label('spp_id'), Spp.nominal
+                  ).filter(Spm.ap_spp_id==Spp.id, 
+                  Spp.unit_id==Unit.id, Spp.unit_id==self.session['unit_id'],
+                  Spp.tahun_id==self.session['tahun'],  
+                  Spm.tanggal.between(mulai,selesai)        
+                  ).order_by(Spm.tanggal).all()
+            else:
+                query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.kode.label('unit_kd'),
+                  Unit.nama.label('unit_nm'), Spm.tanggal.label('tgl_spp'), 
+                  Spm.kode.label('spp_kd'), Spm.nama.label('spp_nm'),
+                  case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),(Spp.jenis==4,"LS")], else_="").label('jenis'),
+                  Spp.id.label('spp_id'), Spp.nominal
+                  ).filter(Spm.ap_spp_id==Spp.id, 
+                  Spp.unit_id==Unit.id, Spp.unit_id==self.session['unit_id'],
+                  Spp.tahun_id==self.session['tahun'], Spp.jenis==tipe,   
+                  Spm.tanggal.between(mulai,selesai)        
+                  ).order_by(Spm.tanggal).all()
+
+            generator = b104r2003Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
         ### SPM // Pengantar
         elif url_dict['act']=='spm01' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
@@ -1094,13 +1163,14 @@ class ViewTUSKPDLap(BaseViews):
                      Spp.id.label('spp_id'), Spp.kode.label('spp_kd'), Spp.jenis.label('jenis'), Spp.tanggal.label('spp_tgl'), Spp.ap_bank, 
                      Spp.ap_rekening, Spp.ap_npwp, Spp.ap_nama, Spp.nama.label('spp_nm'),
                      Spd.kode.label('spd_kd'), Spd.tanggal.label('spd_tgl'),
-                     Kegiatan.kode.label('keg_kd'), APInvoice.id.label('ap_invoice_id'),
-                     Program.kode.label('program_kd'),Spp.nominal
+                     #Kegiatan.kode.label('keg_kd'), APInvoice.id.label('ap_invoice_id'),
+                     #Program.kode.label('program_kd'),
+                     Spp.nominal
                      #).join(Spm).join(Unit).join(Spd).join(SppItem).join(APInvoice).join(KegiatanSub).join(Kegiatan).join(Program
                      ).filter(
                      Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id, Spd.id==Spp.ap_spd_id,
-                     SppItem.ap_spp_id==Spp.id, SppItem.ap_invoice_id==APInvoice.id, APInvoice.kegiatan_sub_id==KegiatanSub.id,
-                     Kegiatan.id==KegiatanSub.kegiatan_id, Program.id==Kegiatan.program_id,
+                     #SppItem.ap_spp_id==Spp.id, SppItem.ap_invoice_id==APInvoice.id, APInvoice.kegiatan_sub_id==KegiatanSub.id,
+                     #Kegiatan.id==KegiatanSub.kegiatan_id, Program.id==Kegiatan.program_id,
                      Spp.unit_id==self.session['unit_id'], Spp.tahun_id==self.session['tahun'], Spm.id==pk_id
                      )                     
 
@@ -1319,7 +1389,7 @@ class ViewTUSKPDLap(BaseViews):
                       Kegiatan.nama.label('keg_nm'), Rekening.kode.label('rek_kd'),
                       Rekening.nama.label('rek_nm'), Spp.tahun_id.label('tahun'), Sp2d.tanggal.label('tanggal'),
                       Spp.jenis.label('jenis'), (KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran'),
-                      APInvoiceItem.amount.label('nilai')
+                      func.current_date().label('tgl_now'), APInvoiceItem.amount.label('nilai')
                       ).filter(Sp2d.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id,
                       Spp.unit_id==Unit.id, Spp.id==SppItem.ap_spp_id,
                       SppItem.ap_invoice_id==APInvoiceItem.ap_invoice_id,
@@ -1332,15 +1402,15 @@ class ViewTUSKPDLap(BaseViews):
                       ).subquery()
                 
             query = DBSession.query(subq.c.urusan_kd, subq.c.unit_id, subq.c.unit_kd, subq.c.unit_nm, subq.c.program_kd, subq.c.keg_kd,
-                      subq.c.keg_nm, subq.c.rek_kd, subq.c.rek_nm, subq.c.tahun, func.sum(subq.c.anggaran).label('anggaran'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)<bulan, subq.c.jenis==4,func.substr(subq.c.rek_kd,1,5)=='5.2.1'),subq.c.nilai)], else_=0)).label('LSG_lalu'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)==bulan, subq.c.jenis==4,func.substr(subq.c.rek_kd,1,5)=='5.2.1'),subq.c.nilai)], else_=0)).label('LSG_kini'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)<bulan, subq.c.jenis==4,not_(func.substr(subq.c.rek_kd,1,5)=='5.2.1')),subq.c.nilai)], else_=0)).label('LS_lalu'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)==bulan, subq.c.jenis==4,not_(func.substr(subq.c.rek_kd,1,5)=='5.2.1')),subq.c.nilai)], else_=0)).label('LS_kini'),
+                      subq.c.keg_nm, subq.c.rek_kd, subq.c.rek_nm, subq.c.tahun, subq.c.tgl_now, func.sum(subq.c.anggaran).label('anggaran'),
+                      func.sum(case([(and_(extract('month',subq.c.tanggal)<bulan, subq.c.jenis==4,func.substr(subq.c.rek_kd,1,5)=='5.1.1'),subq.c.nilai)], else_=0)).label('LSG_lalu'),
+                      func.sum(case([(and_(extract('month',subq.c.tanggal)==bulan, subq.c.jenis==4,func.substr(subq.c.rek_kd,1,5)=='5.1.1'),subq.c.nilai)], else_=0)).label('LSG_kini'),
+                      func.sum(case([(and_(extract('month',subq.c.tanggal)<bulan, subq.c.jenis==4,not_(func.substr(subq.c.rek_kd,1,5)=='5.1.1')),subq.c.nilai)], else_=0)).label('LS_lalu'),
+                      func.sum(case([(and_(extract('month',subq.c.tanggal)==bulan, subq.c.jenis==4,not_(func.substr(subq.c.rek_kd,1,5)=='5.1.1')),subq.c.nilai)], else_=0)).label('LS_kini'),
                       func.sum(case([(and_(extract('month',subq.c.tanggal)<bulan, not_(subq.c.jenis==4)),subq.c.nilai)], else_=0)).label('Lain_lalu'),
                       func.sum(case([(and_(extract('month',subq.c.tanggal)==bulan, not_(subq.c.jenis==4)),subq.c.nilai)], else_=0)).label('Lain_kini'),
                       ).group_by(subq.c.urusan_kd, subq.c.unit_id, subq.c.unit_kd, subq.c.unit_nm, subq.c.program_kd, subq.c.keg_kd,
-                      subq.c.keg_nm, subq.c.rek_kd, subq.c.rek_nm, subq.c.tahun 
+                      subq.c.keg_nm, subq.c.rek_kd, subq.c.rek_nm, subq.c.tahun, subq.c.tgl_now 
                       ).order_by(subq.c.keg_kd
                       )
 
@@ -1374,10 +1444,10 @@ class ViewTUSKPDLap(BaseViews):
                 
             query = DBSession.query(subq.c.urusan_kd, subq.c.unit_id, subq.c.unit_kd, subq.c.unit_nm, subq.c.program_kd, subq.c.keg_kd,
                       subq.c.keg_nm, subq.c.rek_kd, subq.c.rek_nm, subq.c.tahun, func.sum(subq.c.anggaran).label('anggaran'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)<bulan, subq.c.jenis==4,func.substr(subq.c.rek_kd,1,5)=='5.2.1'),subq.c.nilai)], else_=0)).label('LSG_lalu'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)==bulan, subq.c.jenis==4,func.substr(subq.c.rek_kd,1,5)=='5.2.1'),subq.c.nilai)], else_=0)).label('LSG_kini'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)<bulan, subq.c.jenis==4,not_(func.substr(subq.c.rek_kd,1,5)=='5.2.1')),subq.c.nilai)], else_=0)).label('LS_lalu'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)==bulan, subq.c.jenis==4,not_(func.substr(subq.c.rek_kd,1,5)=='5.2.1')),subq.c.nilai)], else_=0)).label('LS_kini'),
+                      func.sum(case([(and_(extract('month',subq.c.tanggal)<bulan, subq.c.jenis==4,func.substr(subq.c.rek_kd,1,5)=='5.1.1'),subq.c.nilai)], else_=0)).label('LSG_lalu'),
+                      func.sum(case([(and_(extract('month',subq.c.tanggal)==bulan, subq.c.jenis==4,func.substr(subq.c.rek_kd,1,5)=='5.1.1'),subq.c.nilai)], else_=0)).label('LSG_kini'),
+                      func.sum(case([(and_(extract('month',subq.c.tanggal)<bulan, subq.c.jenis==4,not_(func.substr(subq.c.rek_kd,1,5)=='5.1.1')),subq.c.nilai)], else_=0)).label('LS_lalu'),
+                      func.sum(case([(and_(extract('month',subq.c.tanggal)==bulan, subq.c.jenis==4,not_(func.substr(subq.c.rek_kd,1,5)=='5.1.1')),subq.c.nilai)], else_=0)).label('LS_kini'),
                       func.sum(case([(and_(extract('month',subq.c.tanggal)<bulan, not_(subq.c.jenis==4)),subq.c.nilai)], else_=0)).label('Lain_lalu'),
                       func.sum(case([(and_(extract('month',subq.c.tanggal)==bulan, not_(subq.c.jenis==4)),subq.c.nilai)], else_=0)).label('Lain_kini'),
                       ).group_by(subq.c.urusan_kd, subq.c.unit_id, subq.c.unit_kd, subq.c.unit_nm, subq.c.program_kd, subq.c.keg_kd,
@@ -1393,6 +1463,681 @@ class ViewTUSKPDLap(BaseViews):
             response.write(pdf)
             return response
 
+        ###SP2D
+        elif url_dict['act']=='61' :
+            if tipe ==0 :
+               query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                  Spp.jenis, 
+                  Sp2d.kode.label('sp2d_kd'), Sp2d.tanggal.label('tgl_sp2d'), Sp2d.nama.label('sp2d_nm'),
+                  Sp2d.bud_nip, Sp2d.bud_nama, Spp.ap_nama, Spp.nama.label('spp_nm'), 
+                  func.sum(case([(func.substr(Rekening.kode,1,5)=='5.1.1',APInvoiceItem.amount)], else_=0)).label('nominal_gj'),
+                  func.sum(case([(func.substr(Rekening.kode,1,5)!='5.1.1',APInvoiceItem.amount)], else_=0)).label('nominal')
+                  ).filter(Sp2d.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id,
+                  SppItem.ap_spp_id==Spp.id, APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id,
+                  APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                  KegiatanItem.rekening_id==Rekening.id, Spp.unit_id==self.session['unit_id'],
+                  Spp.tahun_id==self.session['tahun'],
+                  Sp2d.tanggal.between(mulai,selesai)        
+                  ).group_by(Spp.tahun_id, Unit.id, Unit.kode, Unit.nama,
+                  Spp.jenis, Sp2d.kode, Sp2d.tanggal, Sp2d.nama,
+                  Sp2d.bud_nip, Sp2d.bud_nama, Spp.ap_nama, Spp.nama 
+                  ).order_by(Sp2d.tanggal).all()
+
+            else:
+               query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                  Spp.jenis, 
+                  Sp2d.kode.label('sp2d_kd'), Sp2d.tanggal.label('tgl_sp2d'), Sp2d.nama.label('sp2d_nm'),
+                  Sp2d.bud_nip, Sp2d.bud_nama, Spp.ap_nama, Spp.nama.label('spp_nm'), 
+                  func.sum(case([(func.substr(Rekening.kode,1,5)=='5.1.1',APInvoiceItem.amount)], else_=0)).label('nominal_gj'),
+                  func.sum(case([(func.substr(Rekening.kode,1,5)!='5.1.1',APInvoiceItem.amount)], else_=0)).label('nominal')
+                  ).filter(Sp2d.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id,
+                  SppItem.ap_spp_id==Spp.id, APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id,
+                  APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                  KegiatanItem.rekening_id==Rekening.id, Spp.unit_id==self.session['unit_id'],
+                  Spp.tahun_id==self.session['tahun'], Spp.jenis==tipe,
+                  Sp2d.tanggal.between(mulai,selesai)        
+                  ).group_by(Spp.tahun_id, Unit.id, Unit.kode, Unit.nama,
+                  Spp.jenis, Sp2d.kode, Sp2d.tanggal, Sp2d.nama,
+                  Sp2d.bud_nip, Sp2d.bud_nama, Spp.ap_nama, Spp.nama 
+                  ).order_by(Sp2d.tanggal).all()
+
+            generator = b204r0000Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+        elif url_dict['act']=='621' :
+            if tipe ==0 :
+                query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), 
+                  Unit.nama.label('unit_nm'), Spp.nama.label('spp_nm'), Spp.jenis, Spp.ap_nama,
+                  Sp2d.kode.label('sp2d_kd'), Sp2d.tanggal.label('tgl_sp2d'), Sp2d.nama.label('sp2d_nm'),
+                  Sp2d.bud_nip, Sp2d.bud_nama,  
+                  func.sum(case([(Spp.jenis==1,APInvoiceItem.amount)], else_=0)).label('UP'),
+                  func.sum(case([(Spp.jenis==2,APInvoiceItem.amount)], else_=0)).label('TU'),
+                  func.sum(case([(Spp.jenis==3,APInvoiceItem.amount)], else_=0)).label('GU'),
+                  func.sum(case([(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)=='5.1.1'),APInvoiceItem.amount)], else_=0)).label('LS_GJ'),
+                  func.sum(case([(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)!='5.1.1'),APInvoiceItem.amount)], else_=0)).label('LS')
+                  ).filter(Sp2d.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id,
+                  SppItem.ap_spp_id==Spp.id, APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id,
+                  APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                  KegiatanItem.rekening_id==Rekening.id, Spp.unit_id==self.session['unit_id'],
+                  Spp.tahun_id==self.session['tahun'],  
+                  Sp2d.tanggal.between(mulai,selesai)        
+                  ).group_by(Spp.tahun_id, Unit.id, Unit.kode, Unit.nama, Spp.nama, Spp.jenis, Spp.ap_nama, 
+                  Sp2d.tanggal, Sp2d.kode, Sp2d.nama, Sp2d.bud_nip, Sp2d.bud_nama, 
+                  ).order_by(Sp2d.tanggal).all()
+            else:
+                query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), 
+                  Unit.nama.label('unit_nm'), Spp.nama.label('spp_nm'), Spp.jenis, Spp.ap_nama,
+                  Sp2d.kode.label('sp2d_kd'), Sp2d.tanggal.label('tgl_sp2d'), Sp2d.nama.label('sp2d_nm'),
+                  Sp2d.bud_nip, Sp2d.bud_nama,  
+                  func.sum(case([(Spp.jenis==1,APInvoiceItem.amount)], else_=0)).label('UP'),
+                  func.sum(case([(Spp.jenis==2,APInvoiceItem.amount)], else_=0)).label('TU'),
+                  func.sum(case([(Spp.jenis==3,APInvoiceItem.amount)], else_=0)).label('GU'),
+                  func.sum(case([(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)=='5.1.1'),APInvoiceItem.amount)], else_=0)).label('LS_GJ'),
+                  func.sum(case([(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)!='5.1.1'),APInvoiceItem.amount)], else_=0)).label('LS')
+                  ).filter(Sp2d.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id,
+                  SppItem.ap_spp_id==Spp.id, APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id,
+                  APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                  KegiatanItem.rekening_id==Rekening.id, Spp.unit_id==self.session['unit_id'],
+                  Spp.tahun_id==self.session['tahun'],  Spp.jenis==tipe,  
+                  Sp2d.tanggal.between(mulai,selesai)        
+                  ).group_by(Spp.tahun_id, Unit.id, Unit.kode, Unit.nama, Spp.nama, Spp.jenis, Spp.ap_nama, 
+                  Sp2d.tanggal, Sp2d.kode, Sp2d.nama, Sp2d.bud_nip, Sp2d.bud_nama, 
+                  ).order_by(Sp2d.tanggal).all()
+
+            generator = b204r0001Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        elif url_dict['act']=='64' :
+            if tipe ==0 :
+               query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                  Spp.jenis, 
+                  Sp2d.kode.label('sp2d_kd'), Sp2d.tanggal.label('tgl_sp2d'), Sp2d.nama.label('sp2d_nm'),
+                  Sp2d.bud_nip, Sp2d.bud_nama, Spp.ap_nama, Spp.nama.label('spp_nm'), 
+                  func.sum(case([(func.substr(Rekening.kode,1,5)=='5.1.1',APInvoiceItem.amount)], else_=0)).label('nominal_gj'),
+                  func.sum(case([(func.substr(Rekening.kode,1,5)!='5.1.1',APInvoiceItem.amount)], else_=0)).label('nominal')
+                  ).filter(Sp2d.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id,
+                  SppItem.ap_spp_id==Spp.id, APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id,
+                  APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                  KegiatanItem.rekening_id==Rekening.id, Spp.unit_id==self.session['unit_id'],
+                  Spp.tahun_id==self.session['tahun'],
+                  Sp2d.tanggal.between(mulai,selesai)        
+                  ).group_by(Spp.tahun_id, Unit.id, Unit.kode, Unit.nama,
+                  Spp.jenis, Sp2d.kode, Sp2d.tanggal, Sp2d.nama,
+                  Sp2d.bud_nip, Sp2d.bud_nama, Spp.ap_nama, Spp.nama 
+                  ).order_by(Sp2d.tanggal).all()
+            else:
+               query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                  Spp.jenis, 
+                  Sp2d.kode.label('sp2d_kd'), Sp2d.tanggal.label('tgl_sp2d'), Sp2d.nama.label('sp2d_nm'),
+                  Sp2d.bud_nip, Sp2d.bud_nama, Spp.ap_nama, Spp.nama.label('spp_nm'), 
+                  func.sum(case([(func.substr(Rekening.kode,1,5)=='5.1.1',APInvoiceItem.amount)], else_=0)).label('nominal_gj'),
+                  func.sum(case([(func.substr(Rekening.kode,1,5)!='5.1.1',APInvoiceItem.amount)], else_=0)).label('nominal')
+                  ).filter(Sp2d.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id,
+                  SppItem.ap_spp_id==Spp.id, APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id,
+                  APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                  KegiatanItem.rekening_id==Rekening.id, Spp.unit_id==self.session['unit_id'],
+                  Spp.tahun_id==self.session['tahun'], Spp.jenis==tipe,
+                  Sp2d.tanggal.between(mulai,selesai)        
+                  ).group_by(Spp.tahun_id, Unit.id, Unit.kode, Unit.nama,
+                  Spp.jenis, Sp2d.kode, Sp2d.tanggal, Sp2d.nama,
+                  Sp2d.bud_nip, Sp2d.bud_nama, Spp.ap_nama, Spp.nama 
+                  ).order_by(Sp2d.tanggal).all()
+
+            generator = b204r0002Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        elif url_dict['act']=='65' :
+            if tipe ==0 :
+                query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), 
+                  Unit.nama.label('unit_nm'), Spp.nama.label('spp_nm'), Spp.jenis, Spp.ap_nama,
+                  Spm.id.label('spm_id'),
+                  Sp2d.kode.label('sp2d_kd'), Sp2d.tanggal.label('tgl_sp2d'), Sp2d.nama.label('sp2d_nm'),
+                  Sp2d.bud_nip, Sp2d.bud_nama, func.sum(APInvoiceItem.amount).label('nominal'), 
+                  ).filter(Sp2d.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id,
+                  SppItem.ap_spp_id==Spp.id, APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id,
+                  APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                  KegiatanItem.rekening_id==Rekening.id, Spp.unit_id==self.session['unit_id'],
+                  Spp.tahun_id==self.session['tahun'], Spp.jenis==4, func.substr(Rekening.kode,1,5)=='5.1.1',
+                  Sp2d.tanggal.between(mulai,selesai)        
+                  ).group_by(Spp.tahun_id, Unit.id, Unit.kode, 
+                  Unit.nama, Spp.nama, Spp.jenis, Spp.ap_nama,
+                  Spm.id,
+                  Sp2d.kode, Sp2d.tanggal, Sp2d.nama,
+                  Sp2d.bud_nip, Sp2d.bud_nama
+                  ).order_by(Sp2d.tanggal).all()
+            else:
+                query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), 
+                  Unit.nama.label('unit_nm'), Spp.nama.label('spp_nm'), Spp.jenis, Spp.ap_nama,
+                  Spm.id.label('spm_id'),
+                  Sp2d.kode.label('sp2d_kd'), Sp2d.tanggal.label('tgl_sp2d'), Sp2d.nama.label('sp2d_nm'),
+                  Sp2d.bud_nip, Sp2d.bud_nama, func.sum(APInvoiceItem.amount).label('nominal'), 
+                  ).filter(Sp2d.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id,
+                  SppItem.ap_spp_id==Spp.id, APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id,
+                  APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                  KegiatanItem.rekening_id==Rekening.id, Spp.unit_id==self.session['unit_id'],
+                  Spp.tahun_id==self.session['tahun'], Spp.jenis==4, func.substr(Rekening.kode,1,5)=='5.1.1',
+                  Sp2d.tanggal.between(mulai,selesai)        
+                  ).group_by(Spp.tahun_id, Unit.id, Unit.kode, 
+                  Unit.nama, Spp.nama, Spp.jenis, Spp.ap_nama,
+                  Spm.id,
+                  Sp2d.kode, Sp2d.tanggal, Sp2d.nama,
+                  Sp2d.bud_nip, Sp2d.bud_nama
+                  ).order_by(Sp2d.tanggal).all()
+
+            generator = b204r0003Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        elif url_dict['act']=='66' :
+            if tipe ==0 :
+               query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                  Spp.jenis, 
+                  Sp2d.kode.label('sp2d_kd'), Sp2d.tanggal.label('tgl_sp2d'), Sp2d.nama.label('sp2d_nm'),
+                  Sp2d.bud_nip, Sp2d.bud_nama, Spp.ap_nama, Spp.nama.label('spp_nm'), 
+                  func.sum(case([(func.substr(Rekening.kode,1,5)=='5.1.1',APInvoiceItem.amount)], else_=0)).label('nominal_gj'),
+                  func.sum(case([(func.substr(Rekening.kode,1,5)!='5.1.1',APInvoiceItem.amount)], else_=0)).label('nominal'),
+                  func.sum(APInvoiceItem.ppn).label('ppn'),
+                  func.sum(APInvoiceItem.pph).label('pph')
+                  ).filter(Sp2d.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id,
+                  SppItem.ap_spp_id==Spp.id, APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id,
+                  APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                  KegiatanItem.rekening_id==Rekening.id, Spp.unit_id==self.session['unit_id'],
+                  Spp.tahun_id==self.session['tahun'],
+                  Sp2d.tanggal.between(mulai,selesai)        
+                  ).group_by(Spp.tahun_id, Unit.id, Unit.kode, Unit.nama,
+                  Spp.jenis, Sp2d.kode, Sp2d.tanggal, Sp2d.nama,
+                  Sp2d.bud_nip, Sp2d.bud_nama, Spp.ap_nama, Spp.nama 
+                  ).order_by(Sp2d.tanggal).all()
+            else:
+               query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                  Spp.jenis, 
+                  Sp2d.kode.label('sp2d_kd'), Sp2d.tanggal.label('tgl_sp2d'), Sp2d.nama.label('sp2d_nm'),
+                  Sp2d.bud_nip, Sp2d.bud_nama, Spp.ap_nama, Spp.nama.label('spp_nm'), 
+                  func.sum(case([(func.substr(Rekening.kode,1,5)=='5.1.1',APInvoiceItem.amount)], else_=0)).label('nominal_gj'),
+                  func.sum(case([(func.substr(Rekening.kode,1,5)!='5.1.1',APInvoiceItem.amount)], else_=0)).label('nominal'),
+                  func.sum(APInvoiceItem.ppn).label('ppn'),
+                  func.sum(APInvoiceItem.pph).label('pph')
+                  ).filter(Sp2d.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id,
+                  SppItem.ap_spp_id==Spp.id, APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id,
+                  APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                  KegiatanItem.rekening_id==Rekening.id, Spp.unit_id==self.session['unit_id'],
+                  Spp.tahun_id==self.session['tahun'], Spp.jenis==tipe,
+                  Sp2d.tanggal.between(mulai,selesai)        
+                  ).group_by(Spp.tahun_id, Unit.id, Unit.kode, Unit.nama,
+                  Spp.jenis, Sp2d.kode, Sp2d.tanggal, Sp2d.nama,
+                  Sp2d.bud_nip, Sp2d.bud_nama, Spp.ap_nama, Spp.nama 
+                  ).order_by(Sp2d.tanggal).all()
+
+            generator = b204r0004Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        elif url_dict['act']=='sp2d' :
+            pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+            subq1 = DBSession.query(Sp2d.id.label('sp2d_id'), Sp2d.kode.label('sp2d_kd'), Sp2d.tanggal.label('sp2d_tgl'), 
+                     Spm.id.label('spm_id'), Spm.kode.label('spm_kd'), Spm.nama.label('spm_nm'), Spm.tanggal.label('spm_tgl'), Spp.id.label('spp_id'), 
+                     Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm'), Spp.tanggal.label('spp_tgl'), Spp.jenis.label('jenis'), 
+                     Spp.ap_nama.label('ap_nama'), Spp.ap_bank.label('ap_bank'), Spp.ap_rekening.label('ap_rekening'), Spp.ap_npwp.label('ap_npwp'), 
+                     Spp.tahun_id.label('tahun_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), Kegiatan.kode.label('keg_kd'), 
+                     Kegiatan.nama.label('keg_nm'), Program.kode.label('prg_kd'), Program.nama.label('prg_nm'), 
+                     func.sum(APInvoiceItem.amount).label('nilai'), func.sum(APInvoiceItem.ppn).label('ppn'), 
+                     func.sum(APInvoiceItem.pph).label('pph'), literal_column('0').label('potongan')
+                     ).filter(Sp2d.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id,
+                     SppItem.ap_spp_id==Spp.id, SppItem.ap_invoice_id==APInvoiceItem.ap_invoice_id, APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                     KegiatanItem.rekening_id==Rekening.id, KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                     KegiatanSub.kegiatan_id==Kegiatan.id, Kegiatan.program_id==Program.id,
+                     Spp.unit_id==self.session['unit_id'], Spp.tahun_id==self.session['tahun'], Sp2d.id==pk_id,
+                     func.left(Rekening.kode,1)=='5'
+                     ).group_by(Sp2d.id, Sp2d.kode, Sp2d.tanggal, Spm.id, Spm.kode, 
+                     Spm.nama, Spm.tanggal, Spp.id, Spp.kode, Spp.nama, Spp.tanggal, 
+                     Spp.jenis, Spp.ap_nama, Spp.ap_bank, 
+                     Spp.ap_rekening, Spp.ap_npwp, Spp.tahun_id, Unit.kode, Unit.nama, 
+                     Kegiatan.kode, Kegiatan.nama, Program.kode, Program.nama 
+                     )                         
+
+            subq2 = DBSession.query(Sp2d.id.label('sp2d_id'), Sp2d.kode.label('sp2d_kd'), Sp2d.tanggal.label('sp2d_tgl'), 
+                     Spm.id.label('spm_id'), Spm.kode.label('spm_kd'), Spm.nama.label('spm_nm'), Spm.tanggal.label('spm_tgl'), Spp.id.label('spp_id'), 
+                     Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm'), Spp.tanggal.label('spp_tgl'), Spp.jenis.label('jenis'), 
+                     Spp.ap_nama.label('ap_nama'), Spp.ap_bank.label('ap_bank'), Spp.ap_rekening.label('ap_rekening'), Spp.ap_npwp.label('ap_npwp'), 
+                     Spp.tahun_id.label('tahun_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), Kegiatan.kode.label('keg_kd'), 
+                     Kegiatan.nama.label('keg_nm'), Program.kode.label('prg_kd'), Program.nama.label('prg_nm'), 
+                     literal_column('0').label('nilai'), literal_column('0').label('ppn'), 
+                     literal_column('0').label('pph'), func.sum(APInvoiceItem.amount).label('potongan')
+                     ).filter(Sp2d.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id,
+                     SppItem.ap_spp_id==Spp.id, SppItem.ap_invoice_id==APInvoiceItem.ap_invoice_id, APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                     KegiatanItem.rekening_id==Rekening.id, KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                     KegiatanSub.kegiatan_id==Kegiatan.id, Kegiatan.program_id==Program.id,
+                     Spp.unit_id==self.session['unit_id'], Spp.tahun_id==self.session['tahun'], Sp2d.id==pk_id,
+                     func.left(Rekening.kode,1)=='7'
+                     ).group_by(Sp2d.id, Sp2d.kode, Sp2d.tanggal, Spm.id, Spm.kode, 
+                     Spm.nama, Spm.tanggal, Spp.id, Spp.kode, Spp.nama, Spp.tanggal, 
+                     Spp.jenis, Spp.ap_nama, Spp.ap_bank, 
+                     Spp.ap_rekening, Spp.ap_npwp, Spp.tahun_id, Unit.kode, Unit.nama, 
+                     Kegiatan.kode, Kegiatan.nama, Program.kode, Program.nama 
+                     )                         
+            
+            subq = subq1.union(subq2).subquery()
+            
+            query = DBSession.query(subq.c.sp2d_id, subq.c.sp2d_kd, subq.c.sp2d_tgl, subq.c.spm_id, subq.c.spm_kd, 
+                     subq.c.spm_nm, subq.c.spm_tgl, subq.c.spp_id, subq.c.spp_kd, subq.c.spp_nm, subq.c.spp_tgl, 
+                     subq.c.jenis, subq.c.ap_nama, subq.c.ap_bank, subq.c.ap_rekening, 
+                     subq.c.ap_npwp, subq.c.tahun_id, subq.c.unit_kd, subq.c.unit_nm, subq.c.keg_kd, subq.c.keg_nm, subq.c.prg_kd, 
+                     subq.c.prg_nm, func.sum(subq.c.nilai).label('nilai'),func.sum(subq.c.ppn).label('ppn'), 
+                     func.sum(subq.c.pph).label('pph'),func.sum(subq.c.potongan).label('potongan')
+                     ).group_by(subq.c.sp2d_id, subq.c.sp2d_kd, subq.c.sp2d_tgl, subq.c.spm_id, subq.c.spm_kd, 
+                     subq.c.spm_nm, subq.c.spm_tgl, subq.c.spp_id, subq.c.spp_kd, subq.c.spp_nm, subq.c.spp_tgl, 
+                     subq.c.jenis, subq.c.ap_nama, subq.c.ap_bank, subq.c.ap_rekening, 
+                     subq.c.ap_npwp, subq.c.tahun_id, subq.c.unit_kd, subq.c.unit_nm, subq.c.keg_kd, subq.c.keg_nm, subq.c.prg_kd, 
+                     subq.c.prg_nm
+                     )                         
+
+            generator = b203r001Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+    #### Realisasi
+    @view_config(route_name="ap-report-real", renderer="templates/report-skpd/realisasi.pt", permission="read")
+    def ar_report_real(self):
+        params = self.request.params
+        return dict(datas=self.datas,)
+
+    @view_config(route_name="ap-report-real-act", renderer="json", permission="read")
+    def ap_report_real_act(self):
+        global bln
+        req    = self.request
+        params = req.params
+        url_dict = req.matchdict
+
+        bln = 'bulan' in params and params['bulan'] and int(params['bulan']) or 0
+        #### Realisasi 1
+        if url_dict['act']=='1' :
+            subq1 = (DBSession.query(Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
+                KegiatanSub.tahun_id.label('tahun_id'),
+                (KegiatanItem.vol_4_1* KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('jml'), 
+                sqlalchemy.sql.literal_column("0").label('realisasi')
+                ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                        KegiatanItem.rekening_id==Rekening.id,
+                        KegiatanSub.tahun_id==self.session['tahun']
+                ).union(DBSession.query(
+                Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
+                Spp.tahun_id.label('tahun_id'), sqlalchemy.sql.literal_column("0").label('jml'),
+                func.max(APInvoiceItem.amount).label('realisasi')
+                ).filter(APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                        APInvoiceItem.ap_invoice_id==APInvoice.id,
+                        KegiatanItem.rekening_id==Rekening.id,
+                        SppItem.ap_invoice_id==APInvoice.id,
+                        SppItem.ap_spp_id==Spp.id,
+                        Spm.ap_spp_id==Spp.id,                            
+                        Sp2d.ap_spm_id==Spm.id, 
+                        Spp.tahun_id==self.session['tahun'], extract('month',Sp2d.tanggal) <= bln
+                ).group_by(Rekening.kode, Rekening.nama, Spp.tahun_id
+                ))).subquery()
+
+            subq2 = DBSession.query(subq1.c.subrek_kd.label('subrek_kd'), subq1.c.subrek_nm.label('subrek_nm'), 
+                subq1.c.tahun_id.label('tahun_id'), 
+                func.sum(subq1.c.jml).label('jml'), func.sum(subq1.c.realisasi).label('realisasi')
+                ).group_by(subq1.c.subrek_kd, subq1.c.subrek_nm, subq1.c.tahun_id).subquery()                    
+
+            query = DBSession.query(Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
+                Rekening.level_id, Rekening.defsign, subq2.c.tahun_id, 
+                func.sum(subq2.c.jml).label('jumlah'),
+                func.sum(subq2.c.realisasi).label('realisasi'),
+                ).filter(Rekening.kode==func.left(subq2.c.subrek_kd, func.length(Rekening.kode)),
+                Rekening.level_id<4, func.substr(Rekening.kode,1,1)<'7')\
+                .group_by(Rekening.kode, Rekening.nama,
+                Rekening.level_id, Rekening.defsign, subq2.c.tahun_id)\
+                .order_by(Rekening.kode).all()                    
+
+            generator = b204r100Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        #### Realisasi 2
+        elif url_dict['act']=='2' :
+            subq1 = (DBSession.query(Unit.nama.label('unit_nm'),Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
+                KegiatanSub.tahun_id.label('tahun_id'),
+                (KegiatanItem.vol_4_1* KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('jml'), 
+                sqlalchemy.sql.literal_column("0").label('realisasi')
+                ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id, KegiatanSub.unit_id==Unit.id, 
+                        KegiatanItem.rekening_id==Rekening.id,
+                        KegiatanSub.tahun_id==self.session['tahun'], KegiatanSub.unit_id==self.session['unit_id']
+                ).union(DBSession.query(Unit.nama.label('unit_nm'),
+                Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
+                Spp.tahun_id.label('tahun_id'), sqlalchemy.sql.literal_column("0").label('jml'),
+                func.max(APInvoiceItem.amount).label('realisasi')
+                ).filter(APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                        APInvoiceItem.ap_invoice_id==APInvoice.id,
+                        KegiatanItem.rekening_id==Rekening.id,
+                        SppItem.ap_invoice_id==APInvoice.id,
+                        SppItem.ap_spp_id==Spp.id, Spp.unit_id==Unit.id, 
+                        Spm.ap_spp_id==Spp.id,                            
+                        Sp2d.ap_spm_id==Spm.id, 
+                        Spp.tahun_id==self.session['tahun'], extract('month',Sp2d.tanggal) <= bln,
+                        Spp.unit_id==self.session['unit_id']
+                ).group_by(Unit.nama, Rekening.kode, Rekening.nama, Spp.tahun_id
+                ))).subquery()
+
+            subq2 = DBSession.query(subq1.c.unit_nm, subq1.c.subrek_kd.label('subrek_kd'), subq1.c.subrek_nm.label('subrek_nm'), 
+                subq1.c.tahun_id.label('tahun_id'), 
+                func.sum(subq1.c.jml).label('jml'), func.sum(subq1.c.realisasi).label('realisasi')
+                ).group_by(subq1.c.unit_nm, subq1.c.subrek_kd, subq1.c.subrek_nm, subq1.c.tahun_id).subquery()                    
+
+            query = DBSession.query(Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
+                Rekening.level_id, Rekening.defsign, subq2.c.tahun_id, subq2.c.unit_nm, 
+                func.sum(subq2.c.jml).label('jumlah'),
+                func.sum(subq2.c.realisasi).label('realisasi'),
+                ).filter(Rekening.kode==func.left(subq2.c.subrek_kd, func.length(Rekening.kode)),
+                Rekening.level_id<4, func.substr(Rekening.kode,1,1)<'7')\
+                .group_by(Rekening.kode, Rekening.nama,
+                Rekening.level_id, Rekening.defsign, subq2.c.tahun_id, subq2.c.unit_nm)\
+                .order_by(Rekening.kode).all()                    
+
+            generator = b204r300Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        elif url_dict['act']=='3' :
+            subq1 = (DBSession.query(Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
+                Unit.id.label('unit_id'),Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'), 
+                KegiatanSub.tahun_id.label('tahun_id'),
+                Program.kode.label('program_kd'), Program.nama.label('program_nm'), 
+                Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                (KegiatanItem.vol_4_1* KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('jml'), 
+                sqlalchemy.sql.literal_column("0").label('realisasi')
+                ).filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                        KegiatanItem.rekening_id==Rekening.id, KegiatanSub.unit_id==Unit.id, 
+                        Unit.urusan_id==Urusan.id, KegiatanSub.kegiatan_id==Kegiatan.id,
+                        Kegiatan.program_id==Program.id,
+                        KegiatanSub.tahun_id==self.session['tahun'], KegiatanSub.unit_id==self.session['unit_id']
+                ).union(DBSession.query(
+                Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
+                Unit.id.label('unit_id'),Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'), 
+                Spp.tahun_id.label('tahun_id'), 
+                Program.kode.label('program_kd'), Program.nama.label('program_nm'), 
+                Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                sqlalchemy.sql.literal_column("0").label('jml'),
+                func.max(APInvoiceItem.amount).label('realisasi')
+                ).filter(APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+                        APInvoiceItem.ap_invoice_id==APInvoice.id,
+                        KegiatanItem.rekening_id==Rekening.id,
+                        Spp.unit_id==Unit.id,
+                        Unit.urusan_id==Urusan.id,
+                        KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                        KegiatanSub.kegiatan_id==Kegiatan.id,
+                        Kegiatan.program_id==Program.id,
+                        SppItem.ap_invoice_id==APInvoice.id,
+                        SppItem.ap_spp_id==Spp.id,
+                        Spm.ap_spp_id==Spp.id,                            
+                        Sp2d.ap_spm_id==Spm.id, 
+                        Spp.tahun_id==self.session['tahun'], extract('month',Sp2d.tanggal) <= bln,
+                        Spp.unit_id==self.session['unit_id']
+                ).group_by(Rekening.kode, Rekening.nama, Unit.id, Unit.kode, Unit.nama,
+                        Urusan.kode, Urusan.nama, Spp.tahun_id, Program.kode, Program.nama, 
+                        Kegiatan.kode, Kegiatan.nama
+                ))).subquery()
+
+            subq = DBSession.query(subq1.c.subrek_kd.label('subrek_kd'), subq1.c.subrek_nm.label('subrek_nm'), 
+                subq1.c.unit_id, subq1.c.unit_kd, subq1.c.unit_nm, subq1.c.urusan_kd, subq1.c.urusan_nm, 
+                subq1.c.tahun_id, subq1.c.program_kd, subq1.c.program_nm, subq1.c.kegiatan_kd, subq1.c.kegiatan_nm,
+                func.sum(subq1.c.jml).label('jml'), func.sum(subq1.c.realisasi).label('realisasi')
+                ).group_by(subq1.c.subrek_kd.label('subrek_kd'), subq1.c.subrek_nm.label('subrek_nm'), 
+                subq1.c.unit_id, subq1.c.unit_kd, subq1.c.unit_nm, subq1.c.urusan_kd, subq1.c.urusan_nm, 
+                subq1.c.tahun_id, subq1.c.program_kd, subq1.c.program_nm, subq1.c.kegiatan_kd, subq1.c.kegiatan_nm
+                ).subquery()                    
+
+            query = DBSession.query(Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
+                Rekening.level_id, Rekening.defsign, Rekening.id.label('rekening_id'),
+                subq.c.unit_id, subq.c.unit_kd, subq.c.unit_nm, subq.c.urusan_kd, subq.c.urusan_nm, 
+                subq.c.tahun_id, subq.c.program_kd, subq.c.program_nm, subq.c.kegiatan_kd, subq.c.kegiatan_nm, 
+                case([(and_(subq.c.program_kd=='00',subq.c.kegiatan_kd=='10'),1),(and_(subq.c.program_kd=='00',subq.c.kegiatan_kd=='21'),2),
+                (and_(subq.c.program_kd=='00',subq.c.kegiatan_kd=='31'),4),(and_(subq.c.program_kd=='00',subq.c.kegiatan_kd=='32'),5)], 
+                else_=3).label('jenis'),                    
+                func.sum(subq.c.jml).label('jumlah'),func.sum(subq.c.realisasi).label('realisasi')
+                ).filter(Rekening.kode==func.left(subq.c.subrek_kd, func.length(Rekening.kode)), func.substr(Rekening.kode,1,1)<'7'
+                ).group_by(Rekening.kode, Rekening.nama,
+                Rekening.level_id, Rekening.defsign, Rekening.id, 
+                subq.c.unit_id, subq.c.unit_kd, subq.c.unit_nm, subq.c.urusan_kd, subq.c.urusan_nm, subq.c.tahun_id,
+                subq.c.program_kd, subq.c.program_nm, subq.c.kegiatan_kd, subq.c.kegiatan_nm,
+                case([(and_(subq.c.program_kd=='00',subq.c.kegiatan_kd=='10'),1),(and_(subq.c.program_kd=='00',subq.c.kegiatan_kd=='21'),2),
+                (and_(subq.c.program_kd=='00',subq.c.kegiatan_kd=='31'),4),(and_(subq.c.program_kd=='00',subq.c.kegiatan_kd=='32'),5)], 
+                else_=3))\
+                .order_by(case([(and_(subq.c.program_kd=='00',subq.c.kegiatan_kd=='10'),1),(and_(subq.c.program_kd=='00',subq.c.kegiatan_kd=='21'),2),
+                (and_(subq.c.program_kd=='00',subq.c.kegiatan_kd=='31'),4),(and_(subq.c.program_kd=='00',subq.c.kegiatan_kd=='32'),5)], 
+                else_=3),subq.c.urusan_kd, subq.c.unit_kd, subq.c.program_kd, subq.c.kegiatan_kd, Rekening.kode).all() 
+        
+            generator = b204r200Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+    """
+    # LAPORAN AKUNTANSI
+    @view_config(route_name="ak-report-skpd", renderer="templates/report-skpd/ak-report-skpd.pt", permission="read")
+    def ak_report_skpd(self):
+        params = self.request.params
+        return dict(datas=self.datas,)
+
+    @view_config(route_name="ak-report-skpd-act", renderer="json", permission="read")
+    def ak_report_skpd_act(self):
+        global mulai, selesai, tingkat, tahun_lalu
+        req    = self.request
+        params = req.params
+        url_dict = req.matchdict
+ 
+        mulai   = 'mulai' in params and params['mulai'] or 0
+        selesai = 'selesai' in params and params['selesai'] or 0
+        kel   = 'kel' in params and params['kel'] or 0
+        rekid = 'rekid' in params and params['rekid'] or 0
+        sapid   = 'sapid' in params and params['sapid'] or 0
+        tahun_lalu = self.session['tahun']-1
+        tahun_kini = self.session['tahun']
+        print "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT", tahun_lalu
+          
+        if url_dict['act']=='bb' :
+            if kel == '1' :
+                query = DBSession.query(AkJurnal.kode.label('jurnal_kd'), AkJurnal.nama.label('jurnal_nm'), AkJurnal.tanggal, AkJurnal.tgl_transaksi, 
+                   AkJurnal.tahun_id, Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), AkJurnal.periode, AkJurnal.jv_type, AkJurnal.source, AkJurnal.source_no,
+                   AkJurnalItem.amount, Sap.kode.label('rek_kd'), Sap.nama.label('rek_nm'), 
+                   ).filter(AkJurnal.id==AkJurnalItem.ak_jurnal_id, AkJurnal.unit_id==Unit.id, 
+                   AkJurnal.unit_id==self.session['unit_id'], 
+                   AkJurnal.tahun_id==self.session['tahun'], AkJurnal.tanggal.between(mulai,selesai),
+                   AkJurnalItem.sap_id==Sap.id, AkJurnal.is_skpd==0
+                   ).order_by(AkJurnal.tanggal).all()
+                generator = b105r011Generator()
+                pdf = generator.generate(query)
+                response=req.response
+                response.content_type="application/pdf"
+                response.content_disposition='filename=output.pdf' 
+                response.write(pdf)
+                return response
+            elif kel == '2' :
+                query = DBSession.query(AkJurnal.kode.label('jurnal_kd'), AkJurnal.nama.label('jurnal_nm'), AkJurnal.tanggal, AkJurnal.tgl_transaksi, 
+                   AkJurnal.tahun_id, Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), AkJurnal.periode, AkJurnal.jv_type, AkJurnal.source, AkJurnal.source_no,
+                   AkJurnalItem.amount, Sap.kode.label('rek_kd'), Sap.nama.label('rek_nm'), 
+                   ).filter(AkJurnal.id==AkJurnalItem.ak_jurnal_id, AkJurnal.unit_id==Unit.id, 
+                   AkJurnal.unit_id==self.session['unit_id'], 
+                   AkJurnal.tahun_id==self.session['tahun'], AkJurnal.tanggal.between(mulai,selesai),
+                   AkJurnalItem.sap_id==Sap.id, AkJurnal.is_skpd==1
+                   ).order_by(AkJurnal.tanggal).all()
+                generator = b105r012Generator()
+                pdf = generator.generate(query)
+                response=req.response
+                response.content_type="application/pdf"
+                response.content_disposition='filename=output.pdf' 
+                response.write(pdf)
+                return response
+
+        elif url_dict['act']=='lrasap' :
+          if kel=='1' :
+              subq1 = DBSession.query(Unit.nama.label('unit_nm'), Sap.kode.label('subrek_kd'), Sap.nama.label('rek_nm'), 
+                 AkJurnalItem.amount.label('amount_kini'), AkJurnal.tahun_id.label('tahun_kini'),
+                 literal_column('0').label('amount_lalu'), literal_column(str(tahun_lalu)).label('tahun_lalu'),
+                 ).filter(AkJurnalItem.sap_id==Sap.id, AkJurnalItem.ak_jurnal_id==AkJurnal.id, 
+                 AkJurnal.unit_id==Unit.id, AkJurnalItem.amount>0, AkJurnal.is_skpd==0,
+                 AkJurnal.tahun_id==self.session['tahun'], AkJurnal.unit_id==self.session['unit_id']
+                 )
+              subq2 = DBSession.query(Unit.nama.label('unit_nm'),Sap.kode.label('subrek_kd'), Sap.nama.label('rek_nm'), 
+                 literal_column('0').label('amount_kini'), literal_column(str(tahun_kini)).label('tahun_kini'),
+                 AkJurnalItem.amount.label('amount_lalu'), AkJurnal.tahun_id.label('tahun_lalu'),
+                 ).filter(AkJurnalItem.sap_id==Sap.id, AkJurnalItem.ak_jurnal_id==AkJurnal.id, 
+                 AkJurnal.unit_id==Unit.id, AkJurnalItem.amount>0, AkJurnal.is_skpd==0,
+                 AkJurnal.tahun_id==tahun_lalu, AkJurnal.unit_id==self.session['unit_id']
+                 )
+                 
+              subq = subq1.union(subq2).subquery()
+              
+              query = DBSession.query(Sap.kode, Sap.nama, Sap.level_id, subq.c.unit_nm, subq.c.tahun_kini, subq.c.tahun_lalu,
+                 func.sum(subq.c.amount_kini).label('amount_kini'), func.sum(subq.c.amount_lalu).label('amount_lalu')
+                 ).filter(Sap.kode==func.left(subq.c.subrek_kd, func.length(Sap.kode)),
+                 #func.substr(Sap.kode,1,1).in_(['4','5','6']) 
+                 ).group_by(Sap.kode, Sap.nama, Sap.level_id, subq.c.unit_nm, subq.c.tahun_kini, subq.c.tahun_lalu,
+                 ).order_by(Sap.kode)
+                 
+              generator = b105r021Generator()
+              pdf = generator.generate(query)
+              response=req.response
+              response.content_type="application/pdf"
+              response.content_disposition='filename=output.pdf' 
+              response.write(pdf)
+              return response
+          elif kel=='2' :
+              subq1 = DBSession.query(Unit.nama.label('unit_nm'), Sap.kode.label('subrek_kd'), Sap.nama.label('rek_nm'), 
+                 AkJurnalItem.amount.label('amount_kini'), AkJurnal.tahun_id.label('tahun_kini'),
+                 literal_column('0').label('amount_lalu'), literal_column(str(tahun_lalu)).label('tahun_lalu'),
+                 ).filter(AkJurnalItem.sap_id==Sap.id, AkJurnalItem.ak_jurnal_id==AkJurnal.id, 
+                 AkJurnal.unit_id==Unit.id, AkJurnalItem.amount>0, AkJurnal.is_skpd==1,
+                 AkJurnal.tahun_id==self.session['tahun'], AkJurnal.unit_id==self.session['unit_id']
+                 )
+              subq2 = DBSession.query(Unit.nama.label('unit_nm'),Sap.kode.label('subrek_kd'), Sap.nama.label('rek_nm'), 
+                 literal_column('0').label('amount_kini'), literal_column(str(tahun_kini)).label('tahun_kini'),
+                 AkJurnalItem.amount.label('amount_lalu'), AkJurnal.tahun_id.label('tahun_lalu'),
+                 ).filter(AkJurnalItem.sap_id==Sap.id, AkJurnalItem.ak_jurnal_id==AkJurnal.id, 
+                 AkJurnal.unit_id==Unit.id, AkJurnalItem.amount>0, AkJurnal.is_skpd==1,
+                 AkJurnal.tahun_id==tahun_lalu, AkJurnal.unit_id==self.session['unit_id']
+                 )
+                 
+              subq = subq1.union(subq2).subquery()
+              
+              query = DBSession.query(Sap.kode, Sap.nama, Sap.level_id, subq.c.unit_nm, subq.c.tahun_kini, subq.c.tahun_lalu,
+                 func.sum(subq.c.amount_kini).label('amount_kini'), func.sum(subq.c.amount_lalu).label('amount_lalu')
+                 ).filter(Sap.kode==func.left(subq.c.subrek_kd, func.length(Sap.kode)),
+                 #func.substr(Sap.kode,1,1).in_(['4','5','6']) 
+                 ).group_by(Sap.kode, Sap.nama, Sap.level_id, subq.c.unit_nm, subq.c.tahun_kini, subq.c.tahun_lalu,
+                 ).order_by(Sap.kode)
+              
+              generator = b105r022Generator()
+              pdf = generator.generate(query)
+              response=req.response
+              response.content_type="application/pdf"
+              response.content_disposition='filename=output.pdf' 
+              response.write(pdf)
+              return response
+              
+        elif url_dict['act']=='lo' :
+          if kel=='1' :
+              subq1 = DBSession.query(Unit.nama.label('unit_nm'), Sap.kode.label('subrek_kd'), Sap.nama.label('rek_nm'), 
+                 AkJurnalItem.amount.label('amount_kini'), AkJurnal.tahun_id.label('tahun_kini'),
+                 literal_column('0').label('amount_lalu'), literal_column(str(tahun_lalu)).label('tahun_lalu'),
+                 ).filter(AkJurnalItem.sap_id==Sap.id, AkJurnalItem.ak_jurnal_id==AkJurnal.id, 
+                 AkJurnal.unit_id==Unit.id, AkJurnalItem.amount>0, AkJurnal.is_skpd==0,
+                 AkJurnal.tahun_id==self.session['tahun'], AkJurnal.unit_id==self.session['unit_id']
+                 )
+              subq2 = DBSession.query(Unit.nama.label('unit_nm'),Sap.kode.label('subrek_kd'), Sap.nama.label('rek_nm'), 
+                 literal_column('0').label('amount_kini'), literal_column(str(tahun_kini)).label('tahun_kini'),
+                 AkJurnalItem.amount.label('amount_lalu'), AkJurnal.tahun_id.label('tahun_lalu'),
+                 ).filter(AkJurnalItem.sap_id==Sap.id, AkJurnalItem.ak_jurnal_id==AkJurnal.id, 
+                 AkJurnal.unit_id==Unit.id, AkJurnalItem.amount>0, AkJurnal.is_skpd==0,
+                 AkJurnal.tahun_id==tahun_lalu, AkJurnal.unit_id==self.session['unit_id']
+                 )
+                 
+              subq = subq1.union(subq2).subquery()
+              
+              query = DBSession.query(Sap.kode, Sap.nama, Sap.level_id, subq.c.unit_nm, subq.c.tahun_kini, subq.c.tahun_lalu,
+                 func.sum(subq.c.amount_kini).label('amount_kini'), func.sum(subq.c.amount_lalu).label('amount_lalu')
+                 ).filter(Sap.kode==func.left(subq.c.subrek_kd, func.length(Sap.kode)),
+                 #func.substr(Sap.kode,1,1).in_(['8','9']) 
+                 ).group_by(Sap.kode, Sap.nama, Sap.level_id, subq.c.unit_nm, subq.c.tahun_kini, subq.c.tahun_lalu,
+                 ).order_by(Sap.kode)
+                 
+              generator = b105r051Generator()
+              pdf = generator.generate(query)
+              response=req.response
+              response.content_type="application/pdf"
+              response.content_disposition='filename=output.pdf' 
+              response.write(pdf)
+              return response
+          elif kel=='2' :
+              subq1 = DBSession.query(Unit.nama.label('unit_nm'), Sap.kode.label('subrek_kd'), Sap.nama.label('rek_nm'), 
+                 AkJurnalItem.amount.label('amount_kini'), AkJurnal.tahun_id.label('tahun_kini'),
+                 literal_column('0').label('amount_lalu'), literal_column(str(tahun_lalu)).label('tahun_lalu'),
+                 ).filter(AkJurnalItem.sap_id==Sap.id, AkJurnalItem.ak_jurnal_id==AkJurnal.id, 
+                 AkJurnal.unit_id==Unit.id, AkJurnalItem.amount>0, AkJurnal.is_skpd==1,
+                 AkJurnal.tahun_id==self.session['tahun'], AkJurnal.unit_id==self.session['unit_id']
+                 )
+              subq2 = DBSession.query(Unit.nama.label('unit_nm'),Sap.kode.label('subrek_kd'), Sap.nama.label('rek_nm'), 
+                 literal_column('0').label('amount_kini'), literal_column(str(tahun_kini)).label('tahun_kini'),
+                 AkJurnalItem.amount.label('amount_lalu'), AkJurnal.tahun_id.label('tahun_lalu'),
+                 ).filter(AkJurnalItem.sap_id==Sap.id, AkJurnalItem.ak_jurnal_id==AkJurnal.id, 
+                 AkJurnal.unit_id==Unit.id, AkJurnalItem.amount>0, AkJurnal.is_skpd==1,
+                 AkJurnal.tahun_id==tahun_lalu, AkJurnal.unit_id==self.session['unit_id']
+                 )
+                 
+              subq = subq1.union(subq2).subquery()
+              
+              query = DBSession.query(Sap.kode, Sap.nama, Sap.level_id, subq.c.unit_nm, subq.c.tahun_kini, subq.c.tahun_lalu,
+                 func.sum(subq.c.amount_kini).label('amount_kini'), func.sum(subq.c.amount_lalu).label('amount_lalu')
+                 ).filter(Sap.kode==func.left(subq.c.subrek_kd, func.length(Sap.kode)),
+                 #func.substr(Sap.kode,1,1).in_(['8','9']) 
+                 ).group_by(Sap.kode, Sap.nama, Sap.level_id, subq.c.unit_nm, subq.c.tahun_kini, subq.c.tahun_lalu,
+                 ).order_by(Sap.kode)
+              
+              generator = b105r052Generator()
+              pdf = generator.generate(query)
+              response=req.response
+              response.content_type="application/pdf"
+              response.content_disposition='filename=output.pdf' 
+              response.write(pdf)
+              return response
+    """
 #Laporan AR Invoice
 class b101r001Generator(JasperGenerator):
     def __init__(self):
@@ -1473,18 +2218,22 @@ class b102r002Generator(JasperGenerator):
         return self.root
        
 #STS-Generator
-class b102r003Generator(JasperGenerator):
+class b102r003Generator(JasperGeneratorWithSubreport):
     def __init__(self):
-        super(b102r003Generator, self).__init__()
-        self.reportname = get_rpath('apbd/tuskpd/R102003.jrxml')
+        self.mainreport = get_rpath('apbd/tuskpd/R102003.jrxml')
+
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/tuskpd/R102003_subreport1.jrxml'))
+
         self.xpath = '/apbd/sts'
-        self.root = ET.Element('apbd') 
+        self.root = ET.Element('apbd')
 
     def generate_xml(self, tobegreeted):
         for row in tobegreeted:
             xml_greeting  =  ET.SubElement(self.root, 'sts')
             ET.SubElement(xml_greeting, "tahun_id").text = unicode(row.tahun_id)
             ET.SubElement(xml_greeting, "unit_nm").text = row.units.nama
+            ET.SubElement(xml_greeting, "unit_alamat").text = row.units.alamat
             ET.SubElement(xml_greeting, "id").text = unicode(row.id)
             ET.SubElement(xml_greeting, "kode").text = row.kode
             ET.SubElement(xml_greeting, "nama").text = row.nama
@@ -1494,6 +2243,52 @@ class b102r003Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "nominal").text = unicode(row.nominal)
             ET.SubElement(xml_greeting, "bank_nama").text = row.bank_nama
             ET.SubElement(xml_greeting, "bank_account").text = row.bank_account
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "logo").text = logo
+            ET.SubElement(xml_greeting, "terbilang").text = Terbilang(row.nominal)
+            ET.SubElement(xml_greeting, "ttd_nama").text = row.ttd_nama
+            ET.SubElement(xml_greeting, "ttd_nip").text = row.ttd_nip
+            ET.SubElement(xml_greeting, "ttd_jab").text = row.ttd_jab
+            
+            rows = DBSession.query(Rekening.kode, Rekening.nama, Unit.kode.label('unit_kd'), Kegiatan.kode.label('keg_kd'),
+               Program.kode.label('program_kd'),
+               func.sum(StsItem.amount).label('jumlah')
+               ).filter(Rekening.id==KegiatanItem.rekening_id, 
+               KegiatanItem.id==StsItem.kegiatan_item_id, KegiatanSub.id==KegiatanItem.kegiatan_sub_id,
+               KegiatanSub.kegiatan_id==Kegiatan.id, Program.id==Kegiatan.program_id, Unit.id==KegiatanSub.unit_id,
+               StsItem.ar_sts_id==row.id
+               ).group_by(Rekening.kode, Rekening.nama, Unit.kode, Kegiatan.kode, Program.kode
+               ).order_by(Rekening.kode)
+            for row2 in rows :
+                xml_a = ET.SubElement(xml_greeting, "rekening")
+                ET.SubElement(xml_a, "rek_kd").text =row2.kode
+                ET.SubElement(xml_a, "rek_nm").text =row2.nama
+                ET.SubElement(xml_a, "unit_kd").text =row2.unit_kd
+                ET.SubElement(xml_a, "keg_kd").text =row2.keg_kd
+                ET.SubElement(xml_a, "program_kd").text =row2.program_kd
+                ET.SubElement(xml_a, "jumlah").text =unicode(row2.jumlah)
+        return self.root
+
+#TBP-Generator
+class b102r004Generator(JasperGenerator):
+    def __init__(self):
+        super(b102r004Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuskpd/R102004.jrxml')
+        self.xpath = '/apbd/tbp'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'tbp')
+            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
+            ET.SubElement(xml_greeting, "unit_nm").text = row.units.nama
+            ET.SubElement(xml_greeting, "unit_alamat").text = row.units.alamat
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "nama").text = row.nama
+            ET.SubElement(xml_greeting, "ref_kode").text = row.ref_kode
+            ET.SubElement(xml_greeting, "ref_nama").text = row.ref_nama
+            ET.SubElement(xml_greeting, "tanggal").text = unicode(row.tanggal)
+            ET.SubElement(xml_greeting, "amount").text = unicode(row.amount)
             ET.SubElement(xml_greeting, "customer").text = customer
             ET.SubElement(xml_greeting, "logo").text = logo
         return self.root
@@ -1515,6 +2310,35 @@ class b103r001Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "invoice_id").text = unicode(row.invoice_id)
             ET.SubElement(xml_greeting, "invoice_nm").text = row.invoice_nm
             ET.SubElement(xml_greeting, "tgl_invoice").text = unicode(row.tgl_invoice)
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "ap_nama").text = row.ap_nama
+            ET.SubElement(xml_greeting, "ap_rekening").text = row.ap_rekening
+            ET.SubElement(xml_greeting, "ap_npwp").text = row.ap_npwp
+            ET.SubElement(xml_greeting, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_greeting, "nilai").text = unicode(row.nilai)
+            ET.SubElement(xml_greeting, "terbilang").text = Terbilang(row.nilai)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "logo").text = logo
+        return self.root
+
+#AP Payment
+class b103r004Generator(JasperGenerator):
+    def __init__(self):
+        super(b103r004Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuskpd/R103004.jrxml')
+        self.xpath = '/apbd/invoice'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'invoice')
+            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "alamat").text = row.alamat
+            ET.SubElement(xml_greeting, "jenis").text = row.jenis
+            ET.SubElement(xml_greeting, "appayment_id").text = unicode(row.appayment_id)
+            ET.SubElement(xml_greeting, "appayment_nm").text = row.appayment_nm
+            ET.SubElement(xml_greeting, "tgl_payment").text = unicode(row.tgl_payment)
             ET.SubElement(xml_greeting, "kode").text = row.kode
             ET.SubElement(xml_greeting, "ap_nama").text = row.ap_nama
             ET.SubElement(xml_greeting, "ap_rekening").text = row.ap_rekening
@@ -2223,10 +3047,10 @@ class b103r003Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_greeting, "spp_nm").text = row.spp_nm
             ET.SubElement(xml_greeting, "spd_kd").text = row.spd_kd
             ET.SubElement(xml_greeting, "spd_tgl").text = unicode(row.spd_tgl)
-            ET.SubElement(xml_greeting, "keg_kd").text = row.keg_kd
-            ET.SubElement(xml_greeting, "prg_kd").text = row.program_kd
+            #ET.SubElement(xml_greeting, "keg_kd").text = row.keg_kd
+            #ET.SubElement(xml_greeting, "prg_kd").text = row.program_kd
             ET.SubElement(xml_greeting, "nominal").text = unicode(row.nominal)
-            ET.SubElement(xml_greeting, "ap_invoice_id").text = unicode(row.ap_invoice_id)
+            #ET.SubElement(xml_greeting, "ap_invoice_id").text = unicode(row.ap_invoice_id)
             ET.SubElement(xml_greeting, "logo").text = logo
             ET.SubElement(xml_greeting, "customer").text = customer
             ET.SubElement(xml_greeting, "terbilang_nominal").text = Terbilang(row.nominal)
@@ -2239,7 +3063,7 @@ class b103r003Generator(JasperGeneratorWithSubreport):
             
             rowppn = DBSession.query(func.coalesce(func.sum(APInvoiceItem.ppn),0).label('ppn'),
                func.coalesce(func.sum(APInvoiceItem.pph),0).label('pph')
-               ).filter(APInvoiceItem.ap_invoice_id==row.ap_invoice_id)
+               ).filter(APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id, SppItem.ap_spp_id==row.spp_id)
             for row5 in rowppn :
                ET.SubElement(xml_greeting, "ppn").text = unicode(row5.ppn)
                ET.SubElement(xml_greeting, "pph").text = unicode(row5.pph)
@@ -2822,16 +3646,30 @@ class b104r2003Generator(JasperGenerator):
         for row in tobegreeted:
             xml_greeting  =  ET.SubElement(self.root, 'spp')
             ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
+            ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
             ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
-            ET.SubElement(xml_greeting, "tgl_spp").text = unicode(row.tgl_spp)
-            ET.SubElement(xml_greeting, "spp_kd").text = row.spp_kd
-            ET.SubElement(xml_greeting, "spp_nm").text = row.spp_nm
-            ET.SubElement(xml_greeting, "UP").text = unicode(row.UP)
-            ET.SubElement(xml_greeting, "GU").text = unicode(row.GU)
-            ET.SubElement(xml_greeting, "TU").text = unicode(row.TU)
-            ET.SubElement(xml_greeting, "LS").text = unicode(row.LS)
+            ET.SubElement(xml_greeting, "spm_id").text = unicode(row.spm_id)
+            ET.SubElement(xml_greeting, "tgl_spm").text = unicode(row.tgl_spm)
+            ET.SubElement(xml_greeting, "spm_kd").text = row.spm_kd
+            ET.SubElement(xml_greeting, "spm_nm").text = row.spm_nm
+            ET.SubElement(xml_greeting, "jenis").text = row.jenis
+            ET.SubElement(xml_greeting, "spp_id").text = unicode(row.spp_id)
+            ET.SubElement(xml_greeting, "nominal").text = unicode(row.nominal)
             ET.SubElement(xml_greeting, "customer").text = customer
             ET.SubElement(xml_greeting, "logo").text = logo
+            
+            rowpot = DBSession.query(func.coalesce(func.sum(SpmPotongan.nilai),0).label('nilai_pot')
+               ).filter(SpmPotongan.ap_spm_id==row.spm_id)
+            for row2 in rowpot :
+               ET.SubElement(xml_greeting, "nilai_pot").text = unicode(row2.nilai_pot)
+
+            rowppn = DBSession.query(func.coalesce(func.sum(APInvoiceItem.ppn),0).label('ppn'),
+               func.coalesce(func.sum(APInvoiceItem.pph),0).label('pph')
+               ).filter(APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id, SppItem.ap_spp_id==row.spp_id)
+            for row3 in rowppn :
+               ET.SubElement(xml_greeting, "ppn").text = unicode(row3.ppn)
+               ET.SubElement(xml_greeting, "pph").text = unicode(row3.pph)
+
         return self.root
 
 class b104r2004Generator(JasperGenerator):
@@ -2894,11 +3732,12 @@ class b104r300Generator(JasperGenerator):
             for row2 in rows :
                ET.SubElement(xml_greeting, "pa_nama").text = row2.pa_nama
             
-            rows2 = DBSession.query(Pegawai.nama.label('bend_nama')
+            rows2 = DBSession.query(Pegawai.nama.label('bend_nama'), Pegawai.kode.label('bend_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
                Pejabat.unit_id==row.unit_id, Jabatan.id==13)
             for row3 in rows2 :
                ET.SubElement(xml_greeting, "bend_nama").text = row3.bend_nama
+               ET.SubElement(xml_greeting, "bend_nip").text = row3.bend_nip
             
         return self.root 
 
@@ -2939,11 +3778,442 @@ class b104r400Generator(JasperGenerator):
             for row2 in rows :
                ET.SubElement(xml_greeting, "pa_nama").text = row2.pa_nama
             
-            rows2 = DBSession.query(Pegawai.nama.label('bend_nama')
+            rows2 = DBSession.query(Pegawai.nama.label('bend_nama'), Pegawai.kode.label('bend_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
                Pejabat.unit_id==row.unit_id, Jabatan.id==13)
             for row3 in rows2 :
                ET.SubElement(xml_greeting, "bend_nama").text = row3.bend_nama
+               ET.SubElement(xml_greeting, "bend_nip").text = row3.bend_nip
                
         return self.root 
+"""
+class b105r011Generator(JasperGenerator):
+    def __init__(self):
+        super(b105r011Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuskpd/R105101.jrxml')
+        self.xpath = '/apbd/akuntansi'
+        self.root = ET.Element('apbd') 
 
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'akuntansi')
+            ET.SubElement(xml_greeting, "jurnal_kd").text = row.jurnal_kd
+            ET.SubElement(xml_greeting, "jurnal_nm").text = row.jurnal_nm
+            ET.SubElement(xml_greeting, "tanggal").text = unicode(row.tanggal)
+            ET.SubElement(xml_greeting, "tgl_transaksi").text = unicode(row.tgl_transaksi)
+            ET.SubElement(xml_greeting, "tahun_id").text = unicode(row.tahun_id)
+            ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "periode").text = unicode(row.periode)
+            ET.SubElement(xml_greeting, "jv_type").text = unicode(row.jv_type)
+            ET.SubElement(xml_greeting, "source").text = row.source
+            ET.SubElement(xml_greeting, "source_no").text = row.source_no
+            ET.SubElement(xml_greeting, "amount").text = unicode(row.amount)
+            ET.SubElement(xml_greeting, "rek_kd").text = row.rek_kd
+            ET.SubElement(xml_greeting, "rek_nm").text = row.rek_nm
+            ET.SubElement(xml_greeting, "mulai").text = mulai
+            ET.SubElement(xml_greeting, "selesai").text = selesai
+            ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root
+
+class b105r012Generator(JasperGenerator):
+    def __init__(self):
+        super(b105r012Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuskpd/R105102.jrxml')
+        self.xpath = '/apbd/akuntansi'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'akuntansi')
+            ET.SubElement(xml_greeting, "jurnal_kd").text = row.jurnal_kd
+            ET.SubElement(xml_greeting, "jurnal_nm").text = row.jurnal_nm
+            ET.SubElement(xml_greeting, "tanggal").text = unicode(row.tanggal)
+            ET.SubElement(xml_greeting, "tgl_transaksi").text = unicode(row.tgl_transaksi)
+            ET.SubElement(xml_greeting, "tahun_id").text = unicode(row.tahun_id)
+            ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "periode").text = unicode(row.periode)
+            ET.SubElement(xml_greeting, "jv_type").text = unicode(row.jv_type)
+            ET.SubElement(xml_greeting, "source").text = row.source
+            ET.SubElement(xml_greeting, "source_no").text = row.source_no
+            ET.SubElement(xml_greeting, "amount").text = unicode(row.amount)
+            ET.SubElement(xml_greeting, "rek_kd").text = row.rek_kd
+            ET.SubElement(xml_greeting, "rek_nm").text = row.rek_nm
+            ET.SubElement(xml_greeting, "mulai").text = mulai
+            ET.SubElement(xml_greeting, "selesai").text = selesai
+            ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root
+
+class b105r021Generator(JasperGenerator):
+    def __init__(self):
+        super(b105r021Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuskpd/R105201.jrxml')
+        self.xpath = '/apbd/akuntansi'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'akuntansi')
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "nama").text = row.nama
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "tahun_kini").text = unicode(row.tahun_kini)
+            ET.SubElement(xml_greeting, "tahun_lalu").text = unicode(row.tahun_lalu)
+            ET.SubElement(xml_greeting, "amount_kini").text = unicode(row.amount_kini)
+            ET.SubElement(xml_greeting, "amount_lalu").text = unicode(row.amount_lalu)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "logo").text = logo
+        return self.root
+
+class b105r022Generator(JasperGenerator):
+    def __init__(self):
+        super(b105r022Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuskpd/R105202.jrxml')
+        self.xpath = '/apbd/akuntansi'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'akuntansi')
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "nama").text = row.nama
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "tahun_kini").text = unicode(row.tahun_kini)
+            ET.SubElement(xml_greeting, "tahun_lalu").text = unicode(row.tahun_lalu)
+            ET.SubElement(xml_greeting, "amount_kini").text = unicode(row.amount_kini)
+            ET.SubElement(xml_greeting, "amount_lalu").text = unicode(row.amount_lalu)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "logo").text = logo
+        return self.root
+
+class b105r051Generator(JasperGenerator):
+    def __init__(self):
+        super(b105r051Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuskpd/R105501.jrxml')
+        self.xpath = '/apbd/akuntansi'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'akuntansi')
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "nama").text = row.nama
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "tahun_kini").text = unicode(row.tahun_kini)
+            ET.SubElement(xml_greeting, "tahun_lalu").text = unicode(row.tahun_lalu)
+            ET.SubElement(xml_greeting, "amount_kini").text = unicode(row.amount_kini)
+            ET.SubElement(xml_greeting, "amount_lalu").text = unicode(row.amount_lalu)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "logo").text = logo
+        return self.root
+
+class b105r052Generator(JasperGenerator):
+    def __init__(self):
+        super(b105r052Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuskpd/R105502.jrxml')
+        self.xpath = '/apbd/akuntansi'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'akuntansi')
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "nama").text = row.nama
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "tahun_kini").text = unicode(row.tahun_kini)
+            ET.SubElement(xml_greeting, "tahun_lalu").text = unicode(row.tahun_lalu)
+            ET.SubElement(xml_greeting, "amount_kini").text = unicode(row.amount_kini)
+            ET.SubElement(xml_greeting, "amount_lalu").text = unicode(row.amount_lalu)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "logo").text = logo
+        return self.root
+"""
+#Realisasi
+class b204r100Generator(JasperGenerator):
+    def __init__(self):
+        super(b204r100Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuppkd/R204100.jrxml')
+        self.xpath = '/apbd/realisasi'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'realisasi')
+            ET.SubElement(xml_greeting, "bulan").text = unicode(bln)
+            ET.SubElement(xml_greeting, "rek_kd").text = row.rek_kd
+            ET.SubElement(xml_greeting, "rek_nm").text = row.rek_nm
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "defsign").text = unicode(row.defsign)
+            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_greeting, "jumlah").text = unicode(row.jumlah)
+            ET.SubElement(xml_greeting, "realisasi").text = unicode(row.realisasi)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "logo").text = logo
+        return self.root
+
+#Realisasi SKPD Kegiatan
+class b204r200Generator(JasperGenerator):
+    def __init__(self):
+        super(b204r200Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuppkd/R204200.jrxml')
+        self.xpath = '/apbd/realisasi'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'realisasi')
+            ET.SubElement(xml_greeting, "tahun_id").text = unicode(row.tahun_id)
+            ET.SubElement(xml_greeting, "bulan").text = unicode(bln)
+            ET.SubElement(xml_greeting, "urusan_kd").text = row.urusan_kd
+            ET.SubElement(xml_greeting, "urusan_nm").text = row.urusan_nm
+            ET.SubElement(xml_greeting, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "program_kd").text = row.program_kd
+            ET.SubElement(xml_greeting, "program_nm").text = row.program_nm
+            ET.SubElement(xml_greeting, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_greeting, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_greeting, "jenis").text = unicode(row.jenis)
+            ET.SubElement(xml_greeting, "rek_kd").text = row.rek_kd
+            ET.SubElement(xml_greeting, "rek_nm").text = row.rek_nm
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "defsign").text = unicode(row.defsign)
+            ET.SubElement(xml_greeting, "rekening_id").text = unicode(row.rekening_id)
+            ET.SubElement(xml_greeting, "jumlah").text = unicode(row.jumlah)
+            ET.SubElement(xml_greeting, "realisasi").text = unicode(row.realisasi)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "logo").text = logo
+        return self.root
+
+#Realisasi SKPD
+class b204r300Generator(JasperGenerator):
+    def __init__(self):
+        super(b204r300Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuppkd/R204300.jrxml')
+        self.xpath = '/apbd/realisasi'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'realisasi')
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "bulan").text = unicode(bln)
+            ET.SubElement(xml_greeting, "rek_kd").text = row.rek_kd
+            ET.SubElement(xml_greeting, "rek_nm").text = row.rek_nm
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "defsign").text = unicode(row.defsign)
+            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun_id)
+            ET.SubElement(xml_greeting, "jumlah").text = unicode(row.jumlah)
+            ET.SubElement(xml_greeting, "realisasi").text = unicode(row.realisasi)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "logo").text = logo
+        return self.root
+
+# Register SP2D
+class b204r0000Generator(JasperGenerator):
+    def __init__(self):
+        super(b204r0000Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuppkd/R2040000.jrxml')
+        self.xpath = '/apbd/spp'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'spp')
+            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
+            ET.SubElement(xml_greeting, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "jenis").text = unicode(row.jenis)
+            ET.SubElement(xml_greeting, "sp2d_kd").text = row.sp2d_kd
+            ET.SubElement(xml_greeting, "tgl_sp2d").text = unicode(row.tgl_sp2d)
+            ET.SubElement(xml_greeting, "sp2d_nm").text = row.sp2d_nm
+            ET.SubElement(xml_greeting, "bud_nip").text = row.bud_nip
+            ET.SubElement(xml_greeting, "bud_nama").text = row.bud_nama
+            ET.SubElement(xml_greeting, "ap_nama").text = row.ap_nama
+            ET.SubElement(xml_greeting, "spp_nm").text = row.spp_nm
+            ET.SubElement(xml_greeting, "nominal_gj").text = unicode(row.nominal_gj)
+            ET.SubElement(xml_greeting, "nominal").text = unicode(row.nominal)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "logo").text = logo
+            rows = DBSession.query(Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
+               ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
+               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+            for row2 in rows :
+               ET.SubElement(xml_greeting, "pa_nama").text = row2.pa_nama
+               ET.SubElement(xml_greeting, "pa_nip").text = row2.pa_nip
+        return self.root
+
+class b204r0001Generator(JasperGenerator):
+    def __init__(self):
+        super(b204r0001Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuppkd/R2040001.jrxml')
+        self.xpath = '/apbd/spp'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'spp')
+            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
+            ET.SubElement(xml_greeting, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "spp_nm").text = row.spp_nm
+            ET.SubElement(xml_greeting, "jenis").text = unicode(row.jenis)
+            ET.SubElement(xml_greeting, "ap_nama").text = row.ap_nama
+            ET.SubElement(xml_greeting, "sp2d_kd").text = row.sp2d_kd
+            ET.SubElement(xml_greeting, "tgl_sp2d").text = unicode(row.tgl_sp2d)
+            ET.SubElement(xml_greeting, "sp2d_nm").text = row.sp2d_nm
+            ET.SubElement(xml_greeting, "bud_nip").text = row.bud_nip
+            ET.SubElement(xml_greeting, "bud_nama").text = row.bud_nama
+            ET.SubElement(xml_greeting, "UP").text = unicode(row.UP)
+            ET.SubElement(xml_greeting, "GU").text = unicode(row.GU)
+            ET.SubElement(xml_greeting, "TU").text = unicode(row.TU)
+            ET.SubElement(xml_greeting, "LS_GJ").text = unicode(row.LS_GJ)
+            ET.SubElement(xml_greeting, "LS").text = unicode(row.LS)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "logo").text = logo
+            rows = DBSession.query(Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
+               ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
+               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+            for row2 in rows :
+               ET.SubElement(xml_greeting, "pa_nama").text = row2.pa_nama
+               ET.SubElement(xml_greeting, "pa_nip").text = row2.pa_nip
+        return self.root
+
+# Register SP2D SKPD
+class b204r0002Generator(JasperGenerator):
+    def __init__(self):
+        super(b204r0002Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuppkd/R2040002.jrxml')
+        self.xpath = '/apbd/spp'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'spp')
+            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
+            ET.SubElement(xml_greeting, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "jenis").text = unicode(row.jenis)
+            ET.SubElement(xml_greeting, "sp2d_kd").text = row.sp2d_kd
+            ET.SubElement(xml_greeting, "tgl_sp2d").text = unicode(row.tgl_sp2d)
+            ET.SubElement(xml_greeting, "sp2d_nm").text = row.sp2d_nm
+            ET.SubElement(xml_greeting, "bud_nip").text = row.bud_nip
+            ET.SubElement(xml_greeting, "bud_nama").text = row.bud_nama
+            ET.SubElement(xml_greeting, "ap_nama").text = row.ap_nama
+            ET.SubElement(xml_greeting, "spp_nm").text = row.spp_nm
+            ET.SubElement(xml_greeting, "nominal_gj").text = unicode(row.nominal_gj)
+            ET.SubElement(xml_greeting, "nominal").text = unicode(row.nominal)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "logo").text = logo
+            rows = DBSession.query(Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
+               ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
+               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+            for row2 in rows :
+               ET.SubElement(xml_greeting, "pa_nama").text = row2.pa_nama
+               ET.SubElement(xml_greeting, "pa_nip").text = row2.pa_nip
+        return self.root
+
+# Register SP2D SKPD
+class b204r0003Generator(JasperGenerator):
+    def __init__(self):
+        super(b204r0003Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuppkd/R2040003.jrxml')
+        self.xpath = '/apbd/spp'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'spp')
+            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
+            ET.SubElement(xml_greeting, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "spp_nm").text = row.spp_nm
+            ET.SubElement(xml_greeting, "jenis").text = unicode(row.jenis)
+            ET.SubElement(xml_greeting, "ap_nama").text = row.ap_nama
+            ET.SubElement(xml_greeting, "spm_id").text = unicode(row.spm_id)
+            ET.SubElement(xml_greeting, "sp2d_kd").text = row.sp2d_kd
+            ET.SubElement(xml_greeting, "tgl_sp2d").text = unicode(row.tgl_sp2d)
+            ET.SubElement(xml_greeting, "sp2d_nm").text = row.sp2d_nm
+            ET.SubElement(xml_greeting, "bud_nip").text = row.bud_nip
+            ET.SubElement(xml_greeting, "bud_nama").text = row.bud_nama
+            ET.SubElement(xml_greeting, "nominal").text = unicode(row.nominal)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "logo").text = logo
+            rows = DBSession.query(Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
+               ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
+               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+            for row2 in rows :
+               ET.SubElement(xml_greeting, "pa_nama").text = row2.pa_nama
+               ET.SubElement(xml_greeting, "pa_nip").text = row2.pa_nip
+            
+            rows1 = DBSession.query(func.coalesce(func.sum(SpmPotongan.nilai),0).label('iwp')
+               ).filter(SpmPotongan.ap_spm_id==row.spm_id, Rekening.id==SpmPotongan.rekening_id,
+               Rekening.kode=="7.1.1.01.01")
+            for row3 in rows1 :
+               ET.SubElement(xml_greeting, "iwp").text = unicode(row3.iwp)
+
+            rows2 = DBSession.query(func.coalesce(func.sum(SpmPotongan.nilai),0).label('pph')
+               ).filter(SpmPotongan.ap_spm_id==row.spm_id, Rekening.id==SpmPotongan.rekening_id,
+               Rekening.kode=="7.1.1.01.03")
+            for row4 in rows2 :
+               ET.SubElement(xml_greeting, "pph").text = unicode(row4.pph)
+
+            rows3 = DBSession.query(func.coalesce(func.sum(SpmPotongan.nilai),0).label('taperum')
+               ).filter(SpmPotongan.ap_spm_id==row.spm_id, Rekening.id==SpmPotongan.rekening_id,
+               Rekening.kode=="7.1.1.01.05")
+            for row5 in rows3 :
+               ET.SubElement(xml_greeting, "taperum").text = unicode(row5.taperum)
+               
+            rows4 = DBSession.query(func.coalesce(func.sum(SpmPotongan.nilai),0).label('askes')
+               ).filter(SpmPotongan.ap_spm_id==row.spm_id, Rekening.id==SpmPotongan.rekening_id,
+               Rekening.kode=="7.1.1.01.02")
+            for row6 in rows4 :
+               ET.SubElement(xml_greeting, "askes").text = unicode(row6.askes)
+               
+        return self.root
+
+# Register PPN PPH
+class b204r0004Generator(JasperGenerator):
+    def __init__(self):
+        super(b204r0004Generator, self).__init__()
+        self.reportname = get_rpath('apbd/tuppkd/R2040004.jrxml')
+        self.xpath = '/apbd/spp'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'spp')
+            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
+            ET.SubElement(xml_greeting, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "jenis").text = unicode(row.jenis)
+            ET.SubElement(xml_greeting, "sp2d_kd").text = row.sp2d_kd
+            ET.SubElement(xml_greeting, "tgl_sp2d").text = unicode(row.tgl_sp2d)
+            ET.SubElement(xml_greeting, "sp2d_nm").text = row.sp2d_nm
+            ET.SubElement(xml_greeting, "bud_nip").text = row.bud_nip
+            ET.SubElement(xml_greeting, "bud_nama").text = row.bud_nama
+            ET.SubElement(xml_greeting, "ap_nama").text = row.ap_nama
+            ET.SubElement(xml_greeting, "spp_nm").text = row.spp_nm
+            ET.SubElement(xml_greeting, "nominal_gj").text = unicode(row.nominal_gj)
+            ET.SubElement(xml_greeting, "nominal").text = unicode(row.nominal)
+            ET.SubElement(xml_greeting, "ppn").text = unicode(row.ppn)
+            ET.SubElement(xml_greeting, "pph").text = unicode(row.pph)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "logo").text = logo
+            rows = DBSession.query(Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
+               ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
+               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+            for row2 in rows :
+               ET.SubElement(xml_greeting, "pa_nama").text = row2.pa_nama
+               ET.SubElement(xml_greeting, "pa_nip").text = row2.pa_nip
+        return self.root

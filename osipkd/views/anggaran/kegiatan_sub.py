@@ -34,7 +34,8 @@ SDANA = (
 
 class view_kegiatan_sub(BaseViews):
 
-    @view_config(route_name="ag-bl", renderer="templates/ag-bl/list.pt")
+    @view_config(route_name="ag-bl", renderer="templates/ag-bl/list.pt",
+                 permission='read')
     def view_list(self):
         ses = self.request.session
         req = self.request
@@ -69,7 +70,7 @@ class view_kegiatan_sub(BaseViews):
                 columns.append(ColumnDT('prg_nm'))
                 columns.append(ColumnDT('rka'))
                 columns.append(ColumnDT('dpa'))
-                columns.append(ColumnDT('rpka'))
+                columns.append(ColumnDT('rdppa'))
                 columns.append(ColumnDT('dppa'))
                 #columns.append(ColumnDT('pegawai_nama'))
 
@@ -84,7 +85,7 @@ class view_kegiatan_sub(BaseViews):
                     func.sum(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*
                              KegiatanItem.hsat_2).label('dpa'),                      
                     func.sum(KegiatanItem.vol_3_1*KegiatanItem.vol_3_2*
-                             KegiatanItem.hsat_3).label('rpka'),                      
+                             KegiatanItem.hsat_3).label('rdppa'),                      
                     func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*
                              KegiatanItem.hsat_4).label('dppa'))\
                     .join(Kegiatan)\
@@ -551,7 +552,7 @@ class AddSchema(colander.Schema):
     tgl_bahas_3      = colander.SchemaNode(
                           colander.Date(),
                           missing=colander.drop,
-                          title="Tanggal RPKA")
+                          title="Tanggal RDPPA")
     tgl_bahas_4      = colander.SchemaNode(
                           colander.Date(),
                           missing=colander.drop,

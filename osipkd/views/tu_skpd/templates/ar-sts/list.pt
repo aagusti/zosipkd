@@ -113,7 +113,8 @@
             <th>Jenis</th>
             <th>Uraian</th>
             <th>Nilai</th>
-            <th>Posting</th>
+            <th>P. SKPD</th>
+            <th>P. PPKD</th>
         </tr>
       </thead>
       <tbody>
@@ -131,6 +132,7 @@
           '	<button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
           '	<button id="btn_print"  class="btn btn btn-primary" type="button">Cetak</button>',
+          '	<button id="btn_validasi" class="btn btn btn-success" type="button">Validasi</button>',
           //'	<button id="btn_posting" class="btn btn btn-success" type="button">Posting</button>',
           //'	<button id="btn_unposting" class="btn btn btn-info" type="button">UnPosting</button>',
           ' <button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
@@ -176,15 +178,28 @@
                 "aTargets" : [4], // Column number which needs to be modified
                 "mRender"  : function (data, type, full) {
                     if (data == "1") {
-                        return 'Pendapatan';
+                        return 'Pendapatan Bendahara Penerimaan';
                     } else if (data == "2") {
-                        return 'Kontra Pos';
+                        return 'Pendapatan Piutang';
                     } else if (data == "3") {
+                        return 'Pendapatan Non Piutang';
+                    } else if (data == "4") {
+                        return 'Kontra Pos';
+                    } else if (data == "5") {
                         return 'Lainnya';
                     } 
                 }
             },{
-                "aTargets" : [7], // Untuk Posted
+                "aTargets" : [7], // Untuk Posted SKPD
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return 'N';
+                    } else if (data == "1") {
+                        return 'Y';
+                    }
+                }
+            },{
+                "aTargets" : [8], // Untuk Posted PPKD
                 "mRender"  : function (data, type, full) {
                     if (data == "0") {
                         return 'N';
@@ -208,6 +223,8 @@
                     "sWidth": "60px",
                 }, {
                     "sWidth": "30px","class":"right"
+                }, {
+                    "sWidth": "30px","class":"right"
                 }
             ],
             
@@ -226,6 +243,11 @@
                     }
                 })
                 switch(aData[7]){
+                    case '1' :
+                        $('td',nRow).css("background-color","#ddffdd")
+                        break;
+                }
+                switch(aData[8]){
                     case '1' :
                         $('td',nRow).css("background-color","#ddffdd")
                         break;
@@ -260,6 +282,14 @@
                 window.location = '/ar-sts/' + mID +'/posting';
             } else {
                 alert('Silahkan pilih data yang akan diposting');
+            }
+        });
+        
+        $('#btn_validasi').click(function () {
+            if (mID) {
+                window.location = '/ar-sts/' + mID +'/validasi';
+            } else {
+                alert('Silahkan pilih data yang akan diedit');
             }
         });
         

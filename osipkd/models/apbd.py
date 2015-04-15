@@ -80,7 +80,16 @@ class ARPaymentItem(NamaModel, Base):
     bud_uid         = Column(BigInteger,   nullable=False)
     bud_nip         = Column(String(50),   nullable=False)
     bud_nama        = Column(String(64),   nullable=False)
+    jenis           = Column(SmallInteger, default=1) #Piutang, Normal
+    no_urut         = Column(BigInteger,   nullable=True)
     
+    @classmethod
+    def max_no_urut(cls, tahun, unit_id):
+        return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
+                .filter(cls.tahun==tahun,
+                        cls.unit_id==unit_id
+                ).scalar() or 0
+                
     @classmethod
     def get_periode(cls, id):
         return DBSession.query(extract('month',cls.tanggal).label('periode'))\
@@ -94,7 +103,20 @@ class ARPaymentItem(NamaModel, Base):
                 .filter(cls.id==id_tbp,)\
                 .group_by(extract('month',cls.tanggal)
                 ).scalar() or 0
-                
+    
+    @classmethod
+    def get_tipe(cls, id):
+        return DBSession.query(case([(cls.jenis==1,"P"),(cls.jenis==2,"NP")], else_="").label('jenis'))\
+                .filter(cls.id==id,
+                ).scalar() or 0
+    
+    @classmethod
+    def get_norut(cls, tahun, unit_id):
+        return DBSession.query(func.count(cls.id).label('no_urut'))\
+               .filter(cls.tahun==tahun,
+                       cls.unit_id ==unit_id  
+               ).scalar() or 0
+               
 class ARTargetItem(NamaModel, Base):
     __tablename__ = 'ar_target_item'
     __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}
@@ -156,8 +178,16 @@ class Jurnal(NamaModel, Base):
     posted_date     = Column(Date) 
     notes           = Column(String(225),   nullable=False)
     is_skpd         = Column(SmallInteger,  nullable=False)
+    no_urut         = Column(BigInteger,    nullable=True)
     disabled        = Column(SmallInteger,  nullable=False, default=0)
 
+    @classmethod
+    def max_no_urut(cls, tahun, unit_id):
+        return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
+                .filter(cls.tahun_id==tahun,
+                        cls.unit_id==unit_id
+                ).scalar() or 0
+                
     @classmethod
     def get_norut(cls, tahun, unit_id):
         return DBSession.query(func.count(cls.id).label('no_urut'))\

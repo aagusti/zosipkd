@@ -24,10 +24,30 @@ def deferred_jenis_id(node, kw):
     return widget.SelectWidget(values=values)
     
 JENIS_ID = (
-    (1, 'Pendapatan'),
-    (2, 'Kontra Pos'),
-    (3, 'Lainnya'))
-               
+    (1, 'Pendapatan Bendahara Penerimaan'),
+    (2, 'Pendapatan Piutang'),
+    (3, 'Pendapatan Non Piutang'),
+    (4, 'Kontra Pos'),
+    (5, 'Lainnya'))
+ 
+def deferred_pos(node, kw):
+    values = kw.get('pos', [])
+    return widget.SelectWidget(values=values)
+    
+POS = (
+    #('0120230 202017', 'DAU'),
+    ('0120230202017', 'PAD / RKUD'),
+    ('0120230202017 (DAK)', 'DAK'),
+    ('0120230202017 (DAU)', 'DAU'),
+    ('0120230202017 (PAD)', 'PAD'),
+    ('20-CADANG', 'DANA CADANGAN'),
+    ('20-GIROCADANGAN', 'GIRO DANA CADANGAN'),
+    ('20-GIRORKUD', 'DEPOSITO RKUD'),
+    ('DEPOSITO BNI', 'DEPOSITO BNI'),
+    ('DEPOSITO BTN', 'DEPOSITO BTN'),
+    ('GIRO AUTOSAVE BSM', 'GIRO AUTOSAVE BSM'),
+    )
+    
 class AddSchema(colander.Schema):
     unit_kd_widget = widget.AutocompleteInputWidget(
             values = '/unit/act/headofkode',
@@ -108,7 +128,9 @@ class AddSchema(colander.Schema):
                        )
     bank_account  = colander.SchemaNode(
                        colander.String(),
-                       title="Rekening"
+                       title="Rekening",
+                       oid='bank_account',
+                       widget=widget.SelectWidget(values=POS),
                        )
     tgl_sts       = colander.SchemaNode(
                           colander.Date(),
@@ -128,7 +150,8 @@ class EditSchema(AddSchema):
                           oid="id")
 
 class view_ar_payment_sts(BaseViews):
-    @view_config(route_name="ar-payment-sts", renderer="templates/ar-sts/list.pt")
+    @view_config(route_name="ar-payment-sts", renderer="templates/ar-sts/list.pt",
+                 permission='read')
     def view_list(self):
         ses = self.request.session
         req = self.request
@@ -171,7 +194,7 @@ class view_ar_payment_sts(BaseViews):
                 
     def get_form(self, class_form):
         schema = class_form(validator=form_validator)
-        schema = schema.bind(jenis_id=JENIS_ID)
+        schema = schema.bind(jenis_id=JENIS_ID,pos=POS)
         schema.request = self.request
         return Form(schema, buttons=('simpan','batal'))
         
@@ -372,7 +395,7 @@ class view_ar_payment_sts(BaseViews):
                 self.save_request2(row)
                 
                 if g == '1':
-                    #Tambah ke Jurnal PPKD
+                    #Tambah ke Jurnal PPKD (Kas di Kasda ke RK-SKPD)
                     nama    = nam
                     kode    = kod
                     tanggal = tgl
@@ -388,7 +411,7 @@ class view_ar_payment_sts(BaseViews):
                     row.unit_id    = self.session['unit_id']
                     row.nama       = "Diterima STS %s" % tipe + " %s" % nama
                     row.notes      = nama
-                    row.periode    = periode
+                    row.periode    = self.session['bulan']
                     row.posted     = 0
                     row.disabled   = 0
                     row.is_skpd    = 0
@@ -398,13 +421,15 @@ class view_ar_payment_sts(BaseViews):
                     row.tgl_source = tanggal
                     row.tanggal    = datetime.now()
                     row.tgl_transaksi = datetime.now()
+                    row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
                     
                     if not row.kode:
                         tahun    = self.session['tahun']
                         unit_kd  = self.session['unit_kd']
                         is_skpd  = row.is_skpd
                         tipe     = Jurnal.get_tipe(row.jv_type)
-                        no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                        #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                        no_urut  = row.no_urut
                         no       = "0000%d" % no_urut
                         nomor    = no[-5:]     
                         row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
@@ -414,7 +439,6 @@ class view_ar_payment_sts(BaseViews):
                     
                     #Tambah ke Item Jurnal SKPD
                     jui   = row.id
-                    print 'XOXOXOX----------',jui
                     rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
                                                Sap.nama.label('nama1'),
                                                KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
@@ -463,7 +487,7 @@ class view_ar_payment_sts(BaseViews):
                     DBSession.add(ji2)
                     DBSession.flush()
                     
-                    #Tambah ke Jurnal SKPD
+                    #Tambah ke Jurnal SKPD (RK-PPKD ke Kas Bend.penerimaan)
                     nama    = nam
                     kode    = kod
                     tanggal = tgl
@@ -479,7 +503,7 @@ class view_ar_payment_sts(BaseViews):
                     row.unit_id    = self.session['unit_id']
                     row.nama       = "Diterima STS %s" % tipe + " %s" % nama
                     row.notes      = nama
-                    row.periode    = periode
+                    row.periode    = self.session['bulan']
                     row.posted     = 0
                     row.disabled   = 0
                     row.is_skpd    = 1
@@ -489,13 +513,15 @@ class view_ar_payment_sts(BaseViews):
                     row.tgl_source = tanggal
                     row.tanggal    = datetime.now()
                     row.tgl_transaksi = datetime.now()
+                    row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
                     
                     if not row.kode:
                         tahun    = self.session['tahun']
                         unit_kd  = self.session['unit_kd']
                         is_skpd  = row.is_skpd
                         tipe     = Jurnal.get_tipe(row.jv_type)
-                        no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                        #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                        no_urut  = row.no_urut
                         no       = "0000%d" % no_urut
                         nomor    = no[-5:]     
                         row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
@@ -554,6 +580,688 @@ class view_ar_payment_sts(BaseViews):
                     DBSession.flush()
                 
                 elif g == '2':
+                    #Tambah ke Jurnal PPKD (Kas di Kasda ke RK-SKPD)
+                    nama    = nam
+                    kode    = kod
+                    tanggal = tgl
+                    tipe    = Sts.get_tipe(row.id)
+                    periode = Sts.get_periode(row.id)
+                    
+                    row = Jurnal()
+                    row.created    = datetime.now()
+                    row.create_uid = self.request.user.id
+                    row.updated    = datetime.now()
+                    row.update_uid = self.request.user.id
+                    row.tahun_id   = self.session['tahun']
+                    row.unit_id    = self.session['unit_id']
+                    row.nama       = "Diterima STS %s" % tipe + " %s" % nama
+                    row.notes      = nama
+                    row.periode    = self.session['bulan']
+                    row.posted     = 0
+                    row.disabled   = 0
+                    row.is_skpd    = 0
+                    row.jv_type    = 1
+                    row.source     = "STS-%s" % tipe
+                    row.source_no  = kode
+                    row.tgl_source = tanggal
+                    row.tanggal    = datetime.now()
+                    row.tgl_transaksi = datetime.now()
+                    row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
+                    
+                    if not row.kode:
+                        tahun    = self.session['tahun']
+                        unit_kd  = self.session['unit_kd']
+                        is_skpd  = row.is_skpd
+                        tipe     = Jurnal.get_tipe(row.jv_type)
+                        #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                        no_urut  = row.no_urut
+                        no       = "0000%d" % no_urut
+                        nomor    = no[-5:]     
+                        row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
+                    
+                    DBSession.add(row)
+                    DBSession.flush()
+                    
+                    #Tambah ke Item Jurnal SKPD
+                    jui   = row.id
+                    rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               RekeningSap.db_lra_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).join(Rekening
+                                        ).outerjoin(KegiatanItem,RekeningSap,KegiatanSub,
+                                        ).filter(Sts.id==id_sts,
+                                               StsItem.ar_sts_id==Sts.id,
+                                               StsItem.kegiatan_item_id==KegiatanItem.id,
+                                               KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                                               KegiatanItem.rekening_id==RekeningSap.rekening_id,
+                                               RekeningSap.rekening_id==Rekening.id,
+                                               RekeningSap.db_lra_sap_id==Sap.id
+                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               RekeningSap.db_lra_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).first()
+                        
+                    ji1 = JurnalItem()
+                    ji1.jurnal_id = "%d" % jui
+                    ji1.kegiatan_sub_id = 0
+                    ji1.rekening_id  = 0
+                    s=DBSession.query(Sap.id).filter(Sap.kode=='1.1.1.01.01').first()
+                    ji1.sap_id       = s
+                    ji1.amount       = rows.nilai1
+                    ji1.notes        = ""
+                    DBSession.add(ji1)
+                    DBSession.flush()
+                    
+                    ji2 = JurnalItem()
+                    ji2.jurnal_id = "%d" % jui
+                    ji2.kegiatan_sub_id = 0
+                    ji2.rekening_id  = 0
+                    s=DBSession.query(Sap.id).filter(Sap.kode=='1.1.8.01.01').first()
+                    ji2.sap_id       = s
+                    n = rows.nilai1
+                    ji2.amount       = n * -1
+                    ji2.notes        = ""
+                    DBSession.add(ji2)
+                    DBSession.flush()
+                
+                    #Tambah ke Jurnal SKPD (RK-PPKD ke Piutang)
+                    nama    = nam
+                    kode    = kod
+                    tanggal = tgl
+                    tipe    = Sts.get_tipe(id_sts)
+                    periode = Sts.get_periode(id_sts)
+                    
+                    row = Jurnal()
+                    row.created    = datetime.now()
+                    row.create_uid = self.request.user.id
+                    row.updated    = datetime.now()
+                    row.update_uid = self.request.user.id
+                    row.tahun_id   = self.session['tahun']
+                    row.unit_id    = self.session['unit_id']
+                    row.nama       = "Diterima STS %s" % tipe + " %s" % nama
+                    row.notes      = nama
+                    row.periode    = self.session['bulan']
+                    row.posted     = 0
+                    row.disabled   = 0
+                    row.is_skpd    = 1
+                    row.jv_type    = 1
+                    row.source     = "STS-%s" % tipe
+                    row.source_no  = kode
+                    row.tgl_source = tanggal
+                    row.tanggal    = datetime.now()
+                    row.tgl_transaksi = datetime.now()
+                    row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
+                    
+                    if not row.kode:
+                        tahun    = self.session['tahun']
+                        unit_kd  = self.session['unit_kd']
+                        is_skpd  = row.is_skpd
+                        tipe     = Jurnal.get_tipe(row.jv_type)
+                        #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                        no_urut  = row.no_urut
+                        no       = "0000%d" % no_urut
+                        nomor    = no[-5:]     
+                        row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
+                    
+                    DBSession.add(row)
+                    DBSession.flush()
+                    
+                    jui   = row.id
+                    rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               StsItem.amount.label('nilai2'),
+                                               RekeningSap.db_lra_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).join(Rekening
+                                        ).outerjoin(KegiatanItem,RekeningSap,KegiatanSub,
+                                        ).filter(Sts.id==id_sts,
+                                               StsItem.ar_sts_id==Sts.id,
+                                               StsItem.kegiatan_item_id==KegiatanItem.id,
+                                               KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                                               KegiatanItem.rekening_id==RekeningSap.rekening_id,
+                                               RekeningSap.rekening_id==Rekening.id,
+                                               RekeningSap.db_lra_sap_id==Sap.id
+                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               StsItem.amount.label('nilai2'),
+                                               RekeningSap.db_lra_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).first()
+                                        
+                    ji3 = JurnalItem()
+                    ji3.jurnal_id = "%d" % jui
+                    ji3.kegiatan_sub_id = 0
+                    ji3.rekening_id  = 0
+                    s=DBSession.query(Sap.id).filter(Sap.kode=='3.1.3.01.01').first()
+                    ji3.sap_id       = s
+                    ji3.amount       = rows.nilai1
+                    ji3.notes        = ""
+                    DBSession.add(ji3)
+                    DBSession.flush()
+                    
+                    rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               StsItem.amount.label('nilai2'),
+                                               RekeningSap.db_lo_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).join(Rekening
+                                        ).outerjoin(KegiatanItem,RekeningSap,KegiatanSub,
+                                        ).filter(Sts.id==id_sts,
+                                               StsItem.ar_sts_id==Sts.id,
+                                               StsItem.kegiatan_item_id==KegiatanItem.id,
+                                               KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                                               KegiatanItem.rekening_id==RekeningSap.rekening_id,
+                                               RekeningSap.rekening_id==Rekening.id,
+                                               RekeningSap.db_lo_sap_id==Sap.id
+                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               StsItem.amount.label('nilai2'),
+                                               RekeningSap.db_lo_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).all()
+                    
+                    n=0
+                    for row in rows:
+                        ji2 = JurnalItem()
+                        
+                        ji2.jurnal_id = "%d" % jui
+                        ji2.kegiatan_sub_id = row.kegiatan_sub_id1
+                        ji2.rekening_id  = row.rek
+                        ji2.sap_id       = row.sap1
+                        n = row.nilai2
+                        ji2.amount       = n * -1
+                        ji2.notes        = ""
+                        n = n + 1
+                        
+                        DBSession.add(ji2)
+                        DBSession.flush()
+                    
+                    #Tambah ke Jurnal SKPD (SAL ke Pendapatan LRA)
+                    nama    = nam
+                    kode    = kod
+                    tanggal = tgl
+                    tipe    = Sts.get_tipe(id_sts)
+                    periode = Sts.get_periode(id_sts)
+                    
+                    row = Jurnal()
+                    row.created    = datetime.now()
+                    row.create_uid = self.request.user.id
+                    row.updated    = datetime.now()
+                    row.update_uid = self.request.user.id
+                    row.tahun_id   = self.session['tahun']
+                    row.unit_id    = self.session['unit_id']
+                    row.nama       = "Diterima STS %s" % tipe + " %s" % nama
+                    row.notes      = nama
+                    row.periode    = self.session['bulan']
+                    row.posted     = 0
+                    row.disabled   = 0
+                    row.is_skpd    = 1
+                    row.jv_type    = 1
+                    row.source     = "STS-%s" % tipe
+                    row.source_no  = kode
+                    row.tgl_source = tanggal
+                    row.tanggal    = datetime.now()
+                    row.tgl_transaksi = datetime.now()
+                    row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
+                    
+                    if not row.kode:
+                        tahun    = self.session['tahun']
+                        unit_kd  = self.session['unit_kd']
+                        is_skpd  = row.is_skpd
+                        tipe     = Jurnal.get_tipe(row.jv_type)
+                        #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                        no_urut  = row.no_urut
+                        no       = "0000%d" % no_urut
+                        nomor    = no[-5:]     
+                        row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
+                    
+                    DBSession.add(row)
+                    DBSession.flush()
+                    
+                    jui   = row.id
+                    rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               StsItem.amount.label('nilai2'),
+                                               RekeningSap.db_lra_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).join(Rekening
+                                        ).outerjoin(KegiatanItem,RekeningSap,KegiatanSub,
+                                        ).filter(Sts.id==id_sts,
+                                               StsItem.ar_sts_id==Sts.id,
+                                               StsItem.kegiatan_item_id==KegiatanItem.id,
+                                               KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                                               KegiatanItem.rekening_id==RekeningSap.rekening_id,
+                                               RekeningSap.rekening_id==Rekening.id,
+                                               RekeningSap.db_lra_sap_id==Sap.id
+                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               StsItem.amount.label('nilai2'),
+                                               RekeningSap.db_lra_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).first()
+                                        
+                    ji3 = JurnalItem()
+                    ji3.jurnal_id = "%d" % jui
+                    ji3.kegiatan_sub_id = 0
+                    ji3.rekening_id  = 0
+                    s=DBSession.query(Sap.id).filter(Sap.kode=='0.0.0.00.00').first()
+                    ji3.sap_id       = s
+                    ji3.amount       = rows.nilai1
+                    ji3.notes        = ""
+                    DBSession.add(ji3)
+                    DBSession.flush()
+                    
+                    rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               StsItem.amount.label('nilai2'),
+                                               RekeningSap.db_lo_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).join(Rekening
+                                        ).outerjoin(KegiatanItem,RekeningSap,KegiatanSub,
+                                        ).filter(Sts.id==id_sts,
+                                               StsItem.ar_sts_id==Sts.id,
+                                               StsItem.kegiatan_item_id==KegiatanItem.id,
+                                               KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                                               KegiatanItem.rekening_id==RekeningSap.rekening_id,
+                                               RekeningSap.rekening_id==Rekening.id,
+                                               RekeningSap.db_lo_sap_id==Sap.id
+                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               StsItem.amount.label('nilai2'),
+                                               RekeningSap.db_lo_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).all()
+                    
+                    n=0
+                    for row in rows:
+                        ji2 = JurnalItem()
+                        
+                        ji2.jurnal_id = "%d" % jui
+                        ji2.kegiatan_sub_id = row.kegiatan_sub_id1
+                        ji2.rekening_id  = row.rek
+                        ji2.sap_id       = row.sap2
+                        n = row.nilai2
+                        ji2.amount       = n * -1
+                        ji2.notes        = ""
+                        n = n + 1
+                        
+                        DBSession.add(ji2)
+                        DBSession.flush()
+                    
+                elif g == '3':
+                    #Tambah ke Jurnal PPKD (Kas di Kasda ke RK-SKPD)
+                    nama    = nam
+                    kode    = kod
+                    tanggal = tgl
+                    tipe    = Sts.get_tipe(row.id)
+                    periode = Sts.get_periode(row.id)
+                    
+                    row = Jurnal()
+                    row.created    = datetime.now()
+                    row.create_uid = self.request.user.id
+                    row.updated    = datetime.now()
+                    row.update_uid = self.request.user.id
+                    row.tahun_id   = self.session['tahun']
+                    row.unit_id    = self.session['unit_id']
+                    row.nama       = "Diterima STS %s" % tipe + " %s" % nama
+                    row.notes      = nama
+                    row.periode    = self.session['bulan']
+                    row.posted     = 0
+                    row.disabled   = 0
+                    row.is_skpd    = 0
+                    row.jv_type    = 1
+                    row.source     = "STS-%s" % tipe
+                    row.source_no  = kode
+                    row.tgl_source = tanggal
+                    row.tanggal    = datetime.now()
+                    row.tgl_transaksi = datetime.now()
+                    row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
+                    
+                    if not row.kode:
+                        tahun    = self.session['tahun']
+                        unit_kd  = self.session['unit_kd']
+                        is_skpd  = row.is_skpd
+                        tipe     = Jurnal.get_tipe(row.jv_type)
+                        #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                        no_urut  = row.no_urut
+                        no       = "0000%d" % no_urut
+                        nomor    = no[-5:]     
+                        row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
+                    
+                    DBSession.add(row)
+                    DBSession.flush()
+                    
+                    #Tambah ke Item Jurnal SKPD
+                    jui   = row.id
+                    rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               RekeningSap.db_lra_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).join(Rekening
+                                        ).outerjoin(KegiatanItem,RekeningSap,KegiatanSub,
+                                        ).filter(Sts.id==id_sts,
+                                               StsItem.ar_sts_id==Sts.id,
+                                               StsItem.kegiatan_item_id==KegiatanItem.id,
+                                               KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                                               KegiatanItem.rekening_id==RekeningSap.rekening_id,
+                                               RekeningSap.rekening_id==Rekening.id,
+                                               RekeningSap.db_lra_sap_id==Sap.id
+                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               RekeningSap.db_lra_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).first()
+                        
+                    ji1 = JurnalItem()
+                    ji1.jurnal_id = "%d" % jui
+                    ji1.kegiatan_sub_id = 0
+                    ji1.rekening_id  = 0
+                    s=DBSession.query(Sap.id).filter(Sap.kode=='1.1.1.01.01').first()
+                    ji1.sap_id       = s
+                    ji1.amount       = rows.nilai1
+                    ji1.notes        = ""
+                    DBSession.add(ji1)
+                    DBSession.flush()
+                    
+                    ji2 = JurnalItem()
+                    ji2.jurnal_id = "%d" % jui
+                    ji2.kegiatan_sub_id = 0
+                    ji2.rekening_id  = 0
+                    s=DBSession.query(Sap.id).filter(Sap.kode=='1.1.8.01.01').first()
+                    ji2.sap_id       = s
+                    n = rows.nilai1
+                    ji2.amount       = n * -1
+                    ji2.notes        = ""
+                    DBSession.add(ji2)
+                    DBSession.flush()
+                    
+                    #Tambah ke Jurnal SKPD (RK-PPKD ke Pendapatan LO)
+                    nama    = nam
+                    kode    = kod
+                    tanggal = tgl
+                    tipe    = Sts.get_tipe(id_sts)
+                    periode = Sts.get_periode(id_sts)
+                    
+                    row = Jurnal()
+                    row.created    = datetime.now()
+                    row.create_uid = self.request.user.id
+                    row.updated    = datetime.now()
+                    row.update_uid = self.request.user.id
+                    row.tahun_id   = self.session['tahun']
+                    row.unit_id    = self.session['unit_id']
+                    row.nama       = "Diterima STS %s" % tipe + " %s" % nama
+                    row.notes      = nama
+                    row.periode    = self.session['bulan']
+                    row.posted     = 0
+                    row.disabled   = 0
+                    row.is_skpd    = 1
+                    row.jv_type    = 1
+                    row.source     = "STS-%s" % tipe
+                    row.source_no  = kode
+                    row.tgl_source = tanggal
+                    row.tanggal    = datetime.now()
+                    row.tgl_transaksi = datetime.now()
+                    row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
+                    
+                    if not row.kode:
+                        tahun    = self.session['tahun']
+                        unit_kd  = self.session['unit_kd']
+                        is_skpd  = row.is_skpd
+                        tipe     = Jurnal.get_tipe(row.jv_type)
+                        #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                        no_urut  = row.no_urut
+                        no       = "0000%d" % no_urut
+                        nomor    = no[-5:]     
+                        row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
+                    
+                    DBSession.add(row)
+                    DBSession.flush()
+                    
+                    jui   = row.id
+                    rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               StsItem.amount.label('nilai2'),
+                                               RekeningSap.db_lra_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).join(Rekening
+                                        ).outerjoin(KegiatanItem,RekeningSap,KegiatanSub,
+                                        ).filter(Sts.id==id_sts,
+                                               StsItem.ar_sts_id==Sts.id,
+                                               StsItem.kegiatan_item_id==KegiatanItem.id,
+                                               KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                                               KegiatanItem.rekening_id==RekeningSap.rekening_id,
+                                               RekeningSap.rekening_id==Rekening.id,
+                                               RekeningSap.db_lra_sap_id==Sap.id
+                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               StsItem.amount.label('nilai2'),
+                                               RekeningSap.db_lra_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).first()
+                                        
+                    ji3 = JurnalItem()
+                    ji3.jurnal_id = "%d" % jui
+                    ji3.kegiatan_sub_id = 0
+                    ji3.rekening_id  = 0
+                    s=DBSession.query(Sap.id).filter(Sap.kode=='3.1.3.01.01').first()
+                    ji3.sap_id       = s
+                    ji3.amount       = rows.nilai1
+                    ji3.notes        = ""
+                    DBSession.add(ji3)
+                    DBSession.flush()
+                    
+                    rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               StsItem.amount.label('nilai2'),
+                                               RekeningSap.kr_lo_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).join(Rekening
+                                        ).outerjoin(KegiatanItem,RekeningSap,KegiatanSub,
+                                        ).filter(Sts.id==id_sts,
+                                               StsItem.ar_sts_id==Sts.id,
+                                               StsItem.kegiatan_item_id==KegiatanItem.id,
+                                               KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                                               KegiatanItem.rekening_id==RekeningSap.rekening_id,
+                                               RekeningSap.rekening_id==Rekening.id,
+                                               RekeningSap.kr_lo_sap_id==Sap.id
+                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               StsItem.amount.label('nilai2'),
+                                               RekeningSap.kr_lo_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).all()
+                    
+                    n=0
+                    for row in rows:
+                        ji2 = JurnalItem()
+                        
+                        ji2.jurnal_id = "%d" % jui
+                        ji2.kegiatan_sub_id = row.kegiatan_sub_id1
+                        ji2.rekening_id  = row.rek
+                        ji2.sap_id       = row.sap1
+                        n = row.nilai2
+                        ji2.amount       = n * -1
+                        ji2.notes        = ""
+                        n = n + 1
+                        
+                        DBSession.add(ji2)
+                        DBSession.flush()
+                    
+                    #Tambah ke Jurnal SKPD (SAL ke Pendapatan LRA)
+                    nama    = nam
+                    kode    = kod
+                    tanggal = tgl
+                    tipe    = Sts.get_tipe(id_sts)
+                    periode = Sts.get_periode(id_sts)
+                    
+                    row = Jurnal()
+                    row.created    = datetime.now()
+                    row.create_uid = self.request.user.id
+                    row.updated    = datetime.now()
+                    row.update_uid = self.request.user.id
+                    row.tahun_id   = self.session['tahun']
+                    row.unit_id    = self.session['unit_id']
+                    row.nama       = "Diterima STS %s" % tipe + " %s" % nama
+                    row.notes      = nama
+                    row.periode    = self.session['bulan']
+                    row.posted     = 0
+                    row.disabled   = 0
+                    row.is_skpd    = 1
+                    row.jv_type    = 1
+                    row.source     = "STS-%s" % tipe
+                    row.source_no  = kode
+                    row.tgl_source = tanggal
+                    row.tanggal    = datetime.now()
+                    row.tgl_transaksi = datetime.now()
+                    row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
+                    
+                    if not row.kode:
+                        tahun    = self.session['tahun']
+                        unit_kd  = self.session['unit_kd']
+                        is_skpd  = row.is_skpd
+                        tipe     = Jurnal.get_tipe(row.jv_type)
+                        #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                        no_urut  = row.no_urut
+                        no       = "0000%d" % no_urut
+                        nomor    = no[-5:]     
+                        row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
+                    
+                    DBSession.add(row)
+                    DBSession.flush()
+                    
+                    jui   = row.id
+                    rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               StsItem.amount.label('nilai2'),
+                                               RekeningSap.db_lra_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).join(Rekening
+                                        ).outerjoin(KegiatanItem,RekeningSap,KegiatanSub,
+                                        ).filter(Sts.id==id_sts,
+                                               StsItem.ar_sts_id==Sts.id,
+                                               StsItem.kegiatan_item_id==KegiatanItem.id,
+                                               KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                                               KegiatanItem.rekening_id==RekeningSap.rekening_id,
+                                               RekeningSap.rekening_id==Rekening.id,
+                                               RekeningSap.db_lra_sap_id==Sap.id
+                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               StsItem.amount.label('nilai2'),
+                                               RekeningSap.db_lra_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).first()
+                                        
+                    ji3 = JurnalItem()
+                    ji3.jurnal_id = "%d" % jui
+                    ji3.kegiatan_sub_id = 0
+                    ji3.rekening_id  = 0
+                    s=DBSession.query(Sap.id).filter(Sap.kode=='0.0.0.00.00').first()
+                    ji3.sap_id       = s
+                    ji3.amount       = rows.nilai1
+                    ji3.notes        = ""
+                    DBSession.add(ji3)
+                    DBSession.flush()
+                    
+                    rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               StsItem.amount.label('nilai2'),
+                                               RekeningSap.db_lo_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).join(Rekening
+                                        ).outerjoin(KegiatanItem,RekeningSap,KegiatanSub,
+                                        ).filter(Sts.id==id_sts,
+                                               StsItem.ar_sts_id==Sts.id,
+                                               StsItem.kegiatan_item_id==KegiatanItem.id,
+                                               KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                                               KegiatanItem.rekening_id==RekeningSap.rekening_id,
+                                               RekeningSap.rekening_id==Rekening.id,
+                                               RekeningSap.db_lo_sap_id==Sap.id
+                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               Sts.nominal.label('nilai1'),
+                                               StsItem.amount.label('nilai2'),
+                                               RekeningSap.db_lo_sap_id.label('sap1'),
+                                               RekeningSap.kr_lra_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                        ).all()
+                    
+                    n=0
+                    for row in rows:
+                        ji2 = JurnalItem()
+                        
+                        ji2.jurnal_id = "%d" % jui
+                        ji2.kegiatan_sub_id = row.kegiatan_sub_id1
+                        ji2.rekening_id  = row.rek
+                        ji2.sap_id       = row.sap2
+                        n = row.nilai2
+                        ji2.amount       = n * -1
+                        ji2.notes        = ""
+                        n = n + 1
+                        
+                        DBSession.add(ji2)
+                        DBSession.flush()
+                    
+                elif g == '4':
                     re = DBSession.query(func.substr(Rekening.kode,1,1)
                                  ).filter(Sts.id==id_sts,
                                           StsItem.ar_sts_id==Sts.id,
@@ -580,7 +1288,7 @@ class view_ar_payment_sts(BaseViews):
                         row.unit_id    = self.session['unit_id']
                         row.nama       = "Diterima STS %s" % tipe + " %s" % nama
                         row.notes      = nama
-                        row.periode    = periode
+                        row.periode    = self.session['bulan']
                         row.posted     = 0
                         row.disabled   = 0
                         row.is_skpd    = 0
@@ -590,13 +1298,15 @@ class view_ar_payment_sts(BaseViews):
                         row.tgl_source = tanggal
                         row.tanggal    = datetime.now()
                         row.tgl_transaksi = datetime.now()
+                        row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
                         
                         if not row.kode:
                             tahun    = self.session['tahun']
                             unit_kd  = self.session['unit_kd']
                             is_skpd  = row.is_skpd
                             tipe     = Jurnal.get_tipe(row.jv_type)
-                            no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                            #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                            no_urut  = row.no_urut
                             no       = "0000%d" % no_urut
                             nomor    = no[-5:]     
                             row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
@@ -667,7 +1377,7 @@ class view_ar_payment_sts(BaseViews):
                         row.unit_id    = self.session['unit_id']
                         row.nama       = "Diterima STS %s" % tipe + " %s" % nama
                         row.notes      = nama
-                        row.periode    = periode
+                        row.periode    = self.session['bulan']
                         row.posted     = 0
                         row.disabled   = 0
                         row.is_skpd    = 1
@@ -677,13 +1387,15 @@ class view_ar_payment_sts(BaseViews):
                         row.tgl_source = tanggal
                         row.tanggal    = datetime.now()
                         row.tgl_transaksi = datetime.now()
+                        row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
                         
                         if not row.kode:
                             tahun    = self.session['tahun']
                             unit_kd  = self.session['unit_kd']
                             is_skpd  = row.is_skpd
                             tipe     = Jurnal.get_tipe(row.jv_type)
-                            no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                            #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                            no_urut  = row.no_urut
                             no       = "0000%d" % no_urut
                             nomor    = no[-5:]     
                             row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
@@ -787,7 +1499,7 @@ class view_ar_payment_sts(BaseViews):
                         row.unit_id    = self.session['unit_id']
                         row.nama       = "Diterima STS %s" % tipe + " %s" % nama
                         row.notes      = nama
-                        row.periode    = periode
+                        row.periode    = self.session['bulan']
                         row.posted     = 0
                         row.disabled   = 0
                         row.is_skpd    = 1
@@ -797,13 +1509,15 @@ class view_ar_payment_sts(BaseViews):
                         row.tgl_source = tanggal
                         row.tanggal    = datetime.now()
                         row.tgl_transaksi = datetime.now()
+                        row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
                         
                         if not row.kode:
                             tahun    = self.session['tahun']
                             unit_kd  = self.session['unit_kd']
                             is_skpd  = row.is_skpd
                             tipe     = Jurnal.get_tipe(row.jv_type)
-                            no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                            #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                            no_urut  = row.no_urut
                             no       = "0000%d" % no_urut
                             nomor    = no[-5:]     
                             row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
@@ -907,7 +1621,7 @@ class view_ar_payment_sts(BaseViews):
                         row.unit_id    = self.session['unit_id']
                         row.nama       = "Diterima STS %s" % tipe + " %s" % nama
                         row.notes      = nama
-                        row.periode    = periode
+                        row.periode    = self.session['bulan']
                         row.posted     = 0
                         row.disabled   = 0
                         row.is_skpd    = 0
@@ -917,13 +1631,15 @@ class view_ar_payment_sts(BaseViews):
                         row.tgl_source = tanggal
                         row.tanggal    = datetime.now()
                         row.tgl_transaksi = datetime.now()
+                        row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
                         
                         if not row.kode:
                             tahun    = self.session['tahun']
                             unit_kd  = self.session['unit_kd']
                             is_skpd  = row.is_skpd
                             tipe     = Jurnal.get_tipe(row.jv_type)
-                            no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                            #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                            no_urut  = row.no_urut
                             no       = "0000%d" % no_urut
                             nomor    = no[-5:]     
                             row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
@@ -997,7 +1713,7 @@ class view_ar_payment_sts(BaseViews):
                         row.unit_id    = self.session['unit_id']
                         row.nama       = "Diterima STS %s" % tipe + " %s" % nama
                         row.notes      = nama
-                        row.periode    = periode
+                        row.periode    = self.session['bulan']
                         row.posted     = 0
                         row.disabled   = 0
                         row.is_skpd    = 1
@@ -1007,13 +1723,15 @@ class view_ar_payment_sts(BaseViews):
                         row.tgl_source = tanggal
                         row.tanggal    = datetime.now()
                         row.tgl_transaksi = datetime.now()
+                        row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
                         
                         if not row.kode:
                             tahun    = self.session['tahun']
                             unit_kd  = self.session['unit_kd']
                             is_skpd  = row.is_skpd
                             tipe     = Jurnal.get_tipe(row.jv_type)
-                            no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                            #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                            no_urut  = row.no_urut
                             no       = "0000%d" % no_urut
                             nomor    = no[-5:]     
                             row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
@@ -1117,7 +1835,7 @@ class view_ar_payment_sts(BaseViews):
                         row.unit_id    = self.session['unit_id']
                         row.nama       = "Diterima STS %s" % tipe + " %s" % nama
                         row.notes      = nama
-                        row.periode    = periode
+                        row.periode    = self.session['bulan']
                         row.posted     = 0
                         row.disabled   = 0
                         row.is_skpd    = 1
@@ -1127,13 +1845,15 @@ class view_ar_payment_sts(BaseViews):
                         row.tgl_source = tanggal
                         row.tanggal    = datetime.now()
                         row.tgl_transaksi = datetime.now()
+                        row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
                         
                         if not row.kode:
                             tahun    = self.session['tahun']
                             unit_kd  = self.session['unit_kd']
                             is_skpd  = row.is_skpd
                             tipe     = Jurnal.get_tipe(row.jv_type)
-                            no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                            #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                            no_urut  = row.no_urut
                             no       = "0000%d" % no_urut
                             nomor    = no[-5:]     
                             row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
@@ -1237,7 +1957,7 @@ class view_ar_payment_sts(BaseViews):
                     row.unit_id    = self.session['unit_id']
                     row.nama       = "Diterima STS %s" % tipe + " %s" % nama
                     row.notes      = nama
-                    row.periode    = periode
+                    row.periode    = self.session['bulan']
                     row.posted     = 0
                     row.disabled   = 0
                     row.is_skpd    = 0
@@ -1247,13 +1967,15 @@ class view_ar_payment_sts(BaseViews):
                     row.tgl_source = tanggal
                     row.tanggal    = datetime.now()
                     row.tgl_transaksi = datetime.now()
+                    row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
                     
                     if not row.kode:
                         tahun    = self.session['tahun']
                         unit_kd  = self.session['unit_kd']
                         is_skpd  = row.is_skpd
                         tipe     = Jurnal.get_tipe(row.jv_type)
-                        no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                        #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                        no_urut  = row.no_urut
                         no       = "0000%d" % no_urut
                         nomor    = no[-5:]     
                         row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
@@ -1327,7 +2049,7 @@ class view_ar_payment_sts(BaseViews):
                     row.unit_id    = self.session['unit_id']
                     row.nama       = "Diterima STS %s" % tipe + " %s" % nama
                     row.notes      = nama
-                    row.periode    = periode
+                    row.periode    = self.session['bulan']
                     row.posted     = 0
                     row.disabled   = 0
                     row.is_skpd    = 1
@@ -1337,13 +2059,15 @@ class view_ar_payment_sts(BaseViews):
                     row.tgl_source = tanggal
                     row.tanggal    = datetime.now()
                     row.tgl_transaksi = datetime.now()
+                    row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
                     
                     if not row.kode:
                         tahun    = self.session['tahun']
                         unit_kd  = self.session['unit_kd']
                         is_skpd  = row.is_skpd
                         tipe     = Jurnal.get_tipe(row.jv_type)
-                        no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                        #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                        no_urut  = row.no_urut
                         no       = "0000%d" % no_urut
                         nomor    = no[-5:]     
                         row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
@@ -1441,12 +2165,18 @@ class view_ar_payment_sts(BaseViews):
                 j    = '%s' % ji
                 
                 if j=='1':
-                    s='P'
+                    s='BP'
                     x='STS-%s' % s
                 if j=='2':
-                    s='CP'
+                    s='P'
                     x='STS-%s' % s
                 if j=='3':
+                    s='NP'
+                    x='STS-%s' % s
+                if j=='4':
+                    s='CP'
+                    x='STS-%s' % s
+                if j=='5':
                     s='L'
                     x='STS-%s' % s
                     

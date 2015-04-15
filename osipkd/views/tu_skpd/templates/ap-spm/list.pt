@@ -245,7 +245,7 @@
                 iPos = oTable.fnGetPosition(this);
                 var aData = oTable.fnGetData(iPos);
                 mID = aData[0];
-				        No_Spm = aData[1];
+                No_Spm = aData[1];
                 Uraian = aData[4];
                 Jenis  = aData[3];
                 mID2 = aData[7];
@@ -299,23 +299,23 @@
             $('#Uraian').val(Uraian);
             $('#Jenis').val(Jenis);
             
-				    if($('#Jenis').val()=="1"){
-                $('#Jenis').val('UP');				
-				    }
-				    else if($('#Jenis').val()=="2"){
-                $('#Jenis').val('TU');				
-				    }
-				    else if($('#Jenis').val()=="3"){
-                $('#Jenis').val('GU');				
-				    }
-				    else if($('#Jenis').val()=="4"){
-                $('#Jenis').val('LS');				
-				    }
-				    else {
-                $('#Jenis').val('');				
-				    }
-
-			      $('#dlgRpt').modal('show');
+            if($('#Jenis').val()=="1"){
+                    $('#Jenis').val('UP');
+            }
+            else if($('#Jenis').val()=="2"){
+                    $('#Jenis').val('TU');
+            }
+            else if($('#Jenis').val()=="3"){
+                    $('#Jenis').val('GU');
+            }
+            else if($('#Jenis').val()=="4"){
+                    $('#Jenis').val('LS');
+            }
+            else {
+                    $('#Jenis').val('');
+            }
+        
+            $('#dlgRpt').modal('show');
 
           } else {
               alert('Silahkan pilih Kegiatan ID');
@@ -324,7 +324,7 @@
 
         $('#btn_pil_rpt').click(function () {
           var rpt = $('input[name="rpt"]:checked').val();
-          if (mID) {
+          if (!rpt) {
             /*if(rpt==1){
               url = "/ap-report-skpd/act/spm"+rpt+"?id="+mID;
               window.open(url);
@@ -343,17 +343,17 @@
             }
             else if(rpt==5){
               url = "/ap-report-skpd/act/spm"+rpt+"?id="+mID;
-    					window.open(url);
-				    }
-				    else if(rpt==6){*/
-              url = "/ap-report-skpd/act/spm"+rpt+"?id="+mID;
-					    window.open(url);
-				    /*}*/
-
+              window.open(url);
+            }
+            else if(rpt==6){
+            }*/
+                alert('Silahkan pilih Jenis Laporan');
           } else {
-                alert('Silahkan pilih Kegiatan ID');
+                url = "/ap-report-skpd/act/spm"+rpt+"?id="+mID;
+                window.open(url);
           }
         });
+        
          $("#btn_close").click(function () {
             window.location = '/tu-skpd';
             return false;
@@ -381,7 +381,7 @@
                 </div>
         </div>
 
-          <div class="modal-body">
+        <div class="modal-body">
         <label class="control-label col-md-3" for="rpt">Jenis Laporan</label>
         <div class="modal-body">
           <div class="radio">
@@ -424,7 +424,7 @@
                     <label class="col-md-6"><input type="radio" name="rpt" value="6">SPTJM</label>
                 </div-->
         </div>
-          </div>
+        </div>
 
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>

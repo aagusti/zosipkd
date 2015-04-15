@@ -127,7 +127,6 @@
     </fieldset>
     </form>
     
-
     <table class="table table-bordered table-hover table-condensed" id="table1">
         <thead>
             <tr>
@@ -138,7 +137,7 @@
                 <th>Program</th>
                 <th>RKA</th>
                 <th>DPA</th>
-                <th>RPKA</th>
+                <th>RDPPA</th>
                 <th>DPPA</th>
             </tr>
         </thead>
@@ -295,12 +294,19 @@
         $('#btn_pil_rpt').click(function () {
             var rpt = $('input[name="rpt"]:checked').val();
             if(rpt==1){
-                  url = "/ag-report/r${request.session['ag_step_id']}00/act/221?id="+mID;
-              window.open(url);
+                url = "/ag-report/r${request.session['ag_step_id']}00/act/221?id="+mID;
+                window.open(url);
             }
-            if(rpt==2){
-                  url = "/ag-report/r${request.session['ag_step_id']}00/act/2211?id="+mID;
+            else if(rpt==2){
+                url = "/ag-report/r${request.session['ag_step_id']}00/act/2211?id="+mID;
+                window.open(url);
+            }
+            else if(rpt==3){
+                  url = "/ag-report/r${request.session['ag_step_id']}00/act/2211?id=0";
               window.open(url);
+            } 
+            else if(!rpt){
+              alert('Silahkan pilih Jenis Laporan');
             }
         });  
 
@@ -324,7 +330,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                     <label class="control-label col-xs-3" for="rpt">Jenis Laporan</label>
-						<!--RKA-->
+                        <!--RKA-->
                         <div class="col-sm-2" tal:attributes="style request.session['ag_step_id']!=1 and  'display:none'">
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="1">RKA-2.2.1</label>
@@ -333,31 +339,37 @@
                                 <label><input type="radio" name="rpt" value="2">Lampiran</label>
                             </div>
                         </div>
-						<!--DPA-->
-                        <div class="col-sm-2" tal:attributes="style request.session['ag_step_id']!=2 and  'display:none'">
+                        <!--DPA-->
+                        <div class="col-sm-4" tal:attributes="style request.session['ag_step_id']!=2 and  'display:none'">
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="1">DPA-2.2.1</label>
                             </div>
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="2">Lampiran</label>
                             </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="3">Semua Lampiran</label>
+                            </div>
                         </div>
-						<!--RPKA-->
+                        <!--RDPPA-->
                         <div class="col-sm-2" tal:attributes="style request.session['ag_step_id']!=3 and  'display:none'">
                             <div class="radio">
-                                <label><input type="radio" name="rpt" value="1">RPKA-2.2.1</label>
+                                <label><input type="radio" name="rpt" value="1">RDPPA-2.2.1</label>
                             </div>
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="2">Lampiran</label>
                             </div>
                         </div>
-						<!--DPPA-->
-                        <div class="col-sm-2" tal:attributes="style request.session['ag_step_id']!=4 and  'display:none'">
+                        <!--DPPA-->
+                        <div class="col-sm-4" tal:attributes="style request.session['ag_step_id']!=4 and  'display:none'">
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="1">DPPA-2.2.1</label>
                             </div>
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="2">Lampiran</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="3">Semua Lampiran</label>
                             </div>
                         </div>
                     </div><br><br><br><br>
@@ -369,5 +381,6 @@
             </div>
         </div>
     </div>
-    <!-- End Modal -->  </div> <!--End Metal-->
+    <!-- End Modal -->  
+  </div> <!--End Metal-->
 </html>

@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R103033" language="groovy" pageWidth="612" pageHeight="972" columnWidth="504" leftMargin="54" rightMargin="54" topMargin="30" bottomMargin="72">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="346"/>
+	<property name="ireport.y" value="457"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["Z:\\py_os\\zosipkd\\osipkd\\reports\\apbd\\tuskpd\\"]]></defaultValueExpression>
 	</parameter>
@@ -130,7 +130,7 @@
 		<variableExpression><![CDATA[$F{spp_tgl}.substring(5,7)=="01" ? "Januari" : $F{spp_tgl}.substring(5,7)=="02" ? "Februari" : $F{spp_tgl}.substring(5,7)=="03" ? "Maret" : $F{spp_tgl}.substring(5,7)=="04" ? "April" : $F{spp_tgl}.substring(5,7)=="05" ? "Mei" : $F{spp_tgl}.substring(5,7)=="06" ? "Juni" : $F{spp_tgl}.substring(5,7)=="07" ? "Juli" : $F{spp_tgl}.substring(5,7)=="08" ? "Agustus" : $F{spp_tgl}.substring(5,7)=="09" ? "September" : $F{spp_tgl}.substring(5,7)=="10" ? "Oktober" : $F{spp_tgl}.substring(5,7)=="11" ? "November" : $F{spp_tgl}.substring(5,7)=="12" ? "Desember" : ""]]></variableExpression>
 	</variable>
 	<variable name="dpa_no" class="java.lang.String">
-		<initialValueExpression><![CDATA[$F{unit_kd}+" "+$F{keg_kd}.substring(5)+" 5.2 Tanggal "+$V{tanggal}]]></initialValueExpression>
+		<initialValueExpression><![CDATA[$F{unit_kd}+" "+$F{keg_kd}.substring(5)+" 5.2 Tanggal "+($V{tanggal}==null ? "" : $V{tanggal})]]></initialValueExpression>
 	</variable>
 	<variable name="tot_spd" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{tot_spd})]]></variableExpression>
@@ -501,7 +501,7 @@
 					<textElement textAlignment="Center" markup="none">
 						<font isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA["NIP. "+$F{ttd_nip}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["NIP. "+($F{ttd_nip}==null ? "" : $F{ttd_nip})]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="294" y="320" width="193" height="16"/>
@@ -586,7 +586,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{tot_spd}-$V{nominal})]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="27" y="320" width="193" height="16"/>
 					<textElement textAlignment="Center" markup="none">
 						<font isBold="true" isUnderline="true"/>
@@ -598,7 +598,7 @@
 					<textElement textAlignment="Center" markup="none">
 						<font isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA["NIP. "+$F{pptk_nip}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["NIP. "+($F{pptk_nip}==null ? "" : $F{pptk_nip})]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="27" y="253" width="193" height="14"/>
@@ -624,6 +624,12 @@
 		<band height="329" splitType="Stretch">
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="112" width="487" height="217"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
 				<textElement markup="none">
 					<font size="9"/>
 				</textElement>
@@ -781,28 +787,28 @@
 				<textElement markup="none">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[": "+$F{ap_nama}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[": "+($F{ap_nama}==null ? "" : $F{ap_nama})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="150" y="198" width="337" height="15"/>
 				<textElement markup="none">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[": "+$F{ap_bentuk}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[": "+($F{ap_bentuk}==null ? "" : $F{ap_bentuk})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="150" y="213" width="337" height="15"/>
 				<textElement markup="none">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[": "+$F{ap_alamat}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[": "+($F{ap_alamat}==null ? "" : $F{ap_alamat})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="150" y="228" width="337" height="15"/>
 				<textElement markup="none">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[": "+$F{ap_pemilik}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[": "+($F{ap_pemilik}==null ? "" : $F{ap_pemilik})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="150" y="243" width="337" height="15"/>
@@ -816,7 +822,7 @@
 				<textElement markup="none">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[": "+$F{ap_kontrak}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[": "+($F{ap_kontrak}==null ? "" : $F{ap_kontrak})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="150" y="273" width="337" height="15"/>
@@ -830,14 +836,14 @@
 				<textElement markup="none">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[": "+$F{ap_waktu}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[": "+($F{ap_waktu}==null ? "" : $F{ap_waktu})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="150" y="303" width="337" height="26"/>
 				<textElement markup="none">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[": "+$F{ap_uraian}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[": "+($F{ap_uraian}==null ? "" : $F{ap_uraian})]]></textFieldExpression>
 			</textField>
 			<image>
 				<reportElement x="0" y="0" width="62" height="74"/>

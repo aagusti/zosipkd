@@ -20,7 +20,8 @@ SESS_EDIT_FAILED = 'Edit ap-advist gagal'
 
 class view_ap_advist_ppkd(BaseViews):
 
-    @view_config(route_name="ap-advist", renderer="templates/ap-advist/list.pt")
+    @view_config(route_name="ap-advist", renderer="templates/ap-advist/list.pt",
+                 permission='read')
     def view_list(self):
         ses = self.request.session
         req = self.request
@@ -80,11 +81,15 @@ class view_ap_advist_ppkd(BaseViews):
         row.posted=0
         row.disabled = 'disabled' in values and 1 or 0     
 
+        if not row.no_urut:
+            row.no_urut = Advist.max_no_urut(row.tahun_id,row.unit_id)+1;
+            
         if not row.kode:
             tahun    = self.session['tahun']
             unit_kd  = self.session['unit_kd']
             unit_id  = self.session['unit_id']
-            no_urut  = Advist.get_norut(tahun, unit_id)+1
+            #no_urut  = Advist.get_norut(tahun, unit_id)+1
+            no_urut  = row.no_urut
             no       = "0000%d" % no_urut
             nomor    = no[-5:]
             row.kode = "%d" % tahun + "-%s" % unit_kd + "-BUD-%s" % nomor

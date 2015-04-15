@@ -131,32 +131,6 @@
              tal:repeat="error field.error.messages()">
              ${error}</p>
         </div>
-      <!--Tanggal Validasi------------------------------------------------------------------->
-        <div tal:define="field form['tgl_validasi']" id="item-${field.oid}">
-          <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
-                  ${field.title}</label>
-          <div class="col-md-2">
-             ${structure:field.serialize()}
-            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-               tal:repeat="error field.error.messages()">
-               ${error}</p>
-          </div>
-        </div>
-      </div>
- 
-      <!--Uraian--------------------------------------------------------------------> 
-      <div class="form-group"> 
-        <div tal:define="field form['nama']" id="item-${field.oid}">
-          <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
-                  ${field.title}</label>
-          <div class="col-md-6">
-             ${structure:field.serialize()}
-            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-               tal:repeat="error field.error.messages()">
-               ${error}</p>
-          </div>
-        </div>
-
       <!--Nilai-------------------------------------------------------------------->
         <div tal:define="field form['nilai']" id="item-${field.oid}">
           <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
@@ -167,11 +141,26 @@
                tal:repeat="error field.error.messages()">
                ${error}</p>
           </div>
+        </div>      
+      </div>
+ 
+      <!--Uraian--------------------------------------------------------------------> 
+      <div class="form-group"> 
+        <div tal:define="field form['nama']" id="item-${field.oid}">
+          <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                  ${field.title}</label>
+          <div class="col-md-9">
+             ${structure:field.serialize()}
+            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+               tal:repeat="error field.error.messages()">
+               ${error}</p>
+          </div>
         </div>
       </div>
       
       <!--Button--------------------------------------------------------------------> 
       <div class="form-group"> 
+        <label class="control-label col-md-1"></label>
         <div class="col-md-3">
           <button type="submit" class="btn btn-primary" id="simpan" name="simpan">Simpan</button>
           <!--button type="submit" class="btn btn-danger"  id="batal"  name="batal">Batal</button-->
@@ -182,21 +171,20 @@
       </div>
      </div>
 
-    <div class="row">
-      <table class="table table-bordered table-hover table-condensed" id="table1">
-        <thead>
-            <tr>
-                <th>Index</th>
-                <th>No. Urut</th>
-                <th>Uraian</th>
-                <th>Rekening</th>
-                <th>Jumlah</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-  </div>
+    <table class="table table-bordered table-hover table-condensed" id="table1">
+      <thead>
+          <tr>
+              <th>Index</th>
+              <th>No. Urut</th>
+              <th>Uraian</th>
+              <th>Rekening</th>
+              <th>Jumlah</th>
+          </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table><br><br><br>
+      
   <div  class="panel panel-default">
     <div class="panel-heading">
         <h5 class="panel-title">Item Piutang</h5>

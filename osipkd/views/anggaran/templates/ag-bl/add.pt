@@ -93,7 +93,6 @@
       </div>
       <!--NO Urut-------------------------------------------------------------------->
       <div class="form-group"> 
-
         <div tal:define="field form['no_urut']" id="item-${field.oid}">
           <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                   ${field.title}</label>
@@ -113,7 +112,6 @@
       </div>
       <!--Volume dan Target-------------------------------------------------------------------->
       <div class="form-group"> 
-
         <div tal:define="field form['volume']" id="item-${field.oid}">
           <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                   ${field.title}</label>
@@ -164,7 +162,6 @@
       
       <!--Lokasi-------------------------------------------------------------------->
       <div class="form-group"> 
-
         <div tal:define="field form['lokasi']" id="item-${field.oid}">
           <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                   ${field.title}</label>
@@ -175,7 +172,6 @@
                ${error}</p>
           </div>
         </div>
-        
       </div>
 
       <!------------------------------------------------------------------------>  
@@ -225,7 +221,6 @@
                   </div>
                 </div>
               </div>
-              
               <!--PPAS/PPA-------------------------------------------------------------------->
               <div class="form-group"> 
                 <div tal:define="field form['ppas']" id="item-${field.oid}">
@@ -381,7 +376,6 @@
                   </div>
                 </div>
               </div>
-              
               <!--PRKA-------------------------------------------------------------------->
               <div class="form-group"> 
                 <div tal:define="field form['tgl_bahas_3']" id="item-${field.oid}">
@@ -548,8 +542,6 @@
             </div>
          </div>
           
-            
-              
           <div class="form-group">
               <div class="col-xs-3">
                   <button type="submit" class="btn btn-primary" id="simpan" name="simpan" >Simpan</button>

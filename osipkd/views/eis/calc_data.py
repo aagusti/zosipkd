@@ -32,7 +32,8 @@ def eis_update_chart_item(row):
     pass
     
 class eis_calc(BaseViews):
-    @view_config(route_name='eis-calc-all', renderer='json')
+    @view_config(route_name='eis-calc-all', renderer='json',
+                 permission='read')
     def eis_all(self):
         #UPDATE GRID
         req = self.request

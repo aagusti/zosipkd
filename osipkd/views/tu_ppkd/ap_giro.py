@@ -18,9 +18,28 @@ from osipkd.views.base_view import BaseViews
 SESS_ADD_FAILED = 'Tambah ap-giro gagal'
 SESS_EDIT_FAILED = 'Edit ap-giro gagal'
 
+def deferred_pos(node, kw):
+    values = kw.get('pos', [])
+    return widget.SelectWidget(values=values)
+    
+POS = (
+    #('0120230 202017', 'DAU'),
+    ('0120230202017', 'PAD / RKUD'),
+    ('0120230202017 (DAK)', 'DAK'),
+    ('0120230202017 (DAU)', 'DAU'),
+    ('0120230202017 (PAD)', 'PAD'),
+    ('20-CADANG', 'DANA CADANGAN'),
+    ('20-GIROCADANGAN', 'GIRO DANA CADANGAN'),
+    ('20-GIRORKUD', 'DEPOSITO RKUD'),
+    ('DEPOSITO BNI', 'DEPOSITO BNI'),
+    ('DEPOSITO BTN', 'DEPOSITO BTN'),
+    ('GIRO AUTOSAVE BSM', 'GIRO AUTOSAVE BSM'),
+    )
+    
 class view_ap_giro_ppkd(BaseViews):
 
-    @view_config(route_name="ap-giro", renderer="templates/ap-giro/list.pt")
+    @view_config(route_name="ap-giro", renderer="templates/ap-giro/list.pt",
+                 permission='read')
     def view_list(self):
         ses = self.request.session
         req = self.request
@@ -66,6 +85,7 @@ class view_ap_giro_ppkd(BaseViews):
                     
     def get_form(self, class_form):
         schema = class_form(validator=self.form_validator)
+        schema = schema.bind(pos=POS)
         schema.request = self.request
         return Form(schema, buttons=('simpan','batal'))
         
@@ -80,11 +100,15 @@ class view_ap_giro_ppkd(BaseViews):
         row.posted=0
         row.disabled = 'disabled' in values and 1 or 0     
 
+        if not row.no_urut:
+            row.no_urut = Giro.max_no_urut(row.tahun_id,row.unit_id)+1;
+            
         if not row.kode:
             tahun    = self.session['tahun']
             unit_kd  = self.session['unit_kd']
             unit_id  = self.session['unit_id']
-            no_urut  = Giro.get_norut(tahun, unit_id)+1
+            #no_urut  = Giro.get_norut(tahun, unit_id)+1
+            no_urut  = row.no_urut
             no       = "0000%d" % no_urut
             nomor    = no[-5:]
             row.kode = "%d" % tahun + "-%s" % unit_kd + "-BUD-%s" % nomor
@@ -220,10 +244,10 @@ class view_ap_giro_ppkd(BaseViews):
                      form=form.render())
 
 class AddSchema(colander.Schema):
-    unit_id          = colander.SchemaNode(
+    unit_id    = colander.SchemaNode(
                           colander.String(),
                           oid = "unit_id")
-    tahun_id         = colander.SchemaNode(
+    tahun_id   = colander.SchemaNode(
                           colander.Integer(),
                           title="Tahun",
                           oid = "tahun_id")
@@ -231,21 +255,26 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           missing=colander.drop,
                           title="No. Giro")
-    nama            = colander.SchemaNode(
+    nama       = colander.SchemaNode(
                           colander.String(),
                           title = "Keperluan"
                           )
-    tanggal         = colander.SchemaNode(
+    tanggal    = colander.SchemaNode(
                           colander.Date(),
                           title = "Tanggal"
                           )
-    nominal         = colander.SchemaNode(
+    nominal    = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
                           oid="jml_total",
                           title="Nominal"
                           )
-
+    pos        = colander.SchemaNode(
+                          colander.String(),
+                          oid='pos',
+                          widget=widget.SelectWidget(values=POS),
+                          )
+                          
 class EditSchema(AddSchema):
     id             = colander.SchemaNode(
                           colander.Integer(),

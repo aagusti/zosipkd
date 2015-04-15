@@ -46,7 +46,7 @@
           "bServerSide"    : true,
           "bProcessing"    : true,
           "bScrollCollapse": true,
-          "bSort"          : true,
+          "bSort"          : false, /**true*/
           "bInfo"          : false,
           "bFilter"        : true,
           "bAutoWidth"     : false,
@@ -90,7 +90,7 @@
           '	<button id="btn_add"    class="btn btn btn-primary" type="button">Tambah</button>',
           '	<button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
-          //'	<button id="btn_print" class="btn btn btn-primary" type="button">Cetak</button>',
+          '	<button id="btn_print" class="btn btn btn-primary" type="button">Cetak</button>',
           '	<button id="btn_close"  class="btn btn btn-warning" type="button">Tutup</button>',
           '	&nbsp;',
           '</div>',
@@ -145,8 +145,20 @@
         });
 
         $('#btn_print').click(function () {
-            url = "/ag-report/r000/act/r011"
-            window.open(url);
+            /**url = "/ag-report/r000/act/r011"
+            window.open(url);*/
+            $('#dlgRpt').modal('show');
+        });
+
+        $('#btn_pil_rpt').click(function () {
+          var rpt = $('input[name="rpt"]:checked').val();
+          if (!rpt) {
+                alert('Silahkan pilih Jenis Laporan');
+          } else {
+                url = "/ag-report/r000/act/r020"+rpt
+                //url = "/ap-report-skpd/act/spm"+rpt+"?id="+mID;
+                window.open(url);
+          }
         });
 
         $("#btn_close").click(function () {
@@ -155,5 +167,35 @@
         });
         });
     </script>
+    <!-- Modal Report -->
+    <div class="modal fade" id="dlgRpt">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title">Pilih Report</h4>
+          </div>
+        <div class="modal-body">
+        <label class="control-label col-md-3" for="rpt">Jenis Laporan</label>
+        <div class="modal-body">
+            <div class="radio">
+                <label class="col-md-6"><input type="radio" name="rpt" value="1">Rekening APBD - Rekening Sap LO</label>
+            </div>
+            <div class="radio">
+                <label class="col-md-6"><input type="radio" name="rpt" value="2">Rekening APBD - Rekening Sap LRA</label>
+            </div>
+            <div class="radio">
+                <label class="col-md-6"><input type="radio" name="rpt" value="3">Rekening APBD - PPH</label>
+            </div>
+        </div>
+        </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+            <button type="button" class="btn btn-primary" id="btn_pil_rpt" name="btn_pil_rpt">Cetak</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
   </div>
 </html>

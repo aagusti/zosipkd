@@ -1,0 +1,39 @@
+<html metal:use-macro="load: ../../templates/main.pt">
+<div metal:fill-slot="nav">
+    <ul class="nav navbar-nav">
+      <li tal:attributes="class request.path == '/app' and 'active'">
+          <a href="/ak-ppkd"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+      
+      <li class="dropdown" tal:attributes="class request.path in ['/password'] and 'active'">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Akuntansi SKPD<b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a href="/ak-jurnal-skpd">Jurnal SKPD</a></li>
+          <li><a href="/ak-arinvoice">Posting Tagihan/Piutang</a></li>
+          <li><a href="/ak-tbp">Posting TBP</a></li>
+          <li><a href="/ak-sts">Posting STS</a></li>
+          <li><a href="/ak-apinvoice">Posting Tagihan/Utang</a></li>
+          <li><a href="/ak-sp2d">Posting SP2D</a></li>
+          <li><a href="/ak-report-skpd">Laporan</a></li>
+        </ul>
+      </li>
+
+      <li class="dropdown" tal:attributes="class request.path in ['/password'] and 'active'">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Akuntansi PPKD<b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a href="/ak-jurnal-ppkd">Jurnal PPKD</a></li>
+          <li><a href="/ak-sts-ppkd">Posting STS</a></li>
+          <li><a href="/ak-sp2d-ppkd">Posting SP2D</a></li>
+          <li><a href="/ak-report-ppkd">Laporan</a></li>
+        </ul>
+      </li>
+    </ul>
+</div>
+
+<div metal:fill-slot="content">
+    <div metal:define-slot="content"></div> 
+</div>
+<div metal:fill-slot="scripts">
+    <div metal:define-slot="scripts"></div> 
+</div>
+</html>
+

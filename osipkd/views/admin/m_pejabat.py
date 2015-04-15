@@ -21,7 +21,7 @@ from osipkd.models import (
     DBSession,
     Group
     )
-from osipkd.models.pemda_model import Unit
+from osipkd.models.pemda_model import Unit, UserUnit
 from osipkd.models.apbd_anggaran import Pejabat, Pegawai, Jabatan
 
 
@@ -101,7 +101,13 @@ class view_pejabat(BaseViews):
     @view_config(route_name='pejabat', renderer='templates/pejabat/list.pt',
                  permission='read')
     def view_list(self):
-        return dict(a={})
+        ses = self.request.session
+        req = self.request
+        params = req.params
+        url_dict = req.matchdict
+        return dict(project='EIS', 
+        )
+        #return dict(a={})
     ##########                    
     # Action #
     ##########    
@@ -114,6 +120,7 @@ class view_pejabat(BaseViews):
         url_dict = req.matchdict
         
         if url_dict['act']=='grid':
+            pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             columns = []
             columns.append(ColumnDT('id'))
             columns.append(ColumnDT('pnama'))
@@ -125,7 +132,11 @@ class view_pejabat(BaseViews):
                                     Unit.nama.label('unama'),
                             ).filter(Pejabat.pegawai_id==Pegawai.id,
                                      Pejabat.jabatan_id==Jabatan.id,
+                                     Pejabat.unit_id==ses['unit_id'],
                                      Pejabat.unit_id==Unit.id,
+                                     #UserUnit.user_id=='9',
+                                     #Pejabat.unit_id==UserUnit.unit_id,
+                                     #UserUnit.unit_id==Unit.id,
                             )
             rowTable = DataTables(req, Pejabat, query, columns)
             return rowTable.output_result()
@@ -144,9 +155,9 @@ class view_pejabat(BaseViews):
                             ).filter(Pejabat.pegawai_id==Pegawai.id,
                                      Pejabat.jabatan_id==Jabatan.id,
                                      Pejabat.unit_id==Unit.id,
+                                     Pejabat.unit_id==ses['unit_id'],
                                      or_(Pegawai.nama.ilike('%%%s%%' % cari),
-                                         Jabatan.nama.ilike('%%%s%%' % cari),
-                                         Unit.nama.ilike('%%%s%%' % cari))
+                                         Jabatan.nama.ilike('%%%s%%' % cari))
                                      
                             )
             rowTable = DataTables(req, Pejabat, query, columns)

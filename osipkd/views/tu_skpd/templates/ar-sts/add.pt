@@ -67,7 +67,7 @@
         <div tal:define="field form['jenis']" id="item-${field.oid}">
           <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                   ${field.title}</label>
-          <div class="col-md-2">
+          <div class="col-md-3">
              ${structure:field.serialize()}
             <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                tal:repeat="error field.error.messages()">
@@ -75,7 +75,7 @@
           </div>
         </div>
         <div tal:define="field form['tgl_sts']" id="item-${field.oid}">
-          <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
+          <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                   ${field.title}</label>
           <div class="col-md-2">
               ${structure:field.serialize()}
@@ -91,7 +91,7 @@
         <div tal:define="field form['nama']" id="item-${field.oid}">
           <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                   ${field.title}</label>
-          <div class="col-md-6">
+          <div class="col-md-7">
              ${structure:field.serialize()}
             <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                tal:repeat="error field.error.messages()">
@@ -99,7 +99,7 @@
           </div>
         </div>
         <div tal:define="field form['no_validasi']" id="item-${field.oid}">
-          <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
+          <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                   ${field.title}</label>
           <div class="col-md-2">
              ${structure:field.serialize()}
@@ -228,8 +228,18 @@
         <div tal:define="field form['bank_account']" id="item-${field.oid}">
           <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                   ${field.title}</label>
-          <div class="col-md-2">
+          <div class="col-md-3">
             ${structure:field.serialize()}
+            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+               tal:repeat="error field.error.messages()">
+               ${error}</p>
+          </div>
+        </div>
+        <div tal:define="field form['nominal']" id="item-${field.oid}">
+          <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                  ${field.title}</label>
+          <div class="col-md-2">
+             ${structure:field.serialize()}
             <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                tal:repeat="error field.error.messages()">
                ${error}</p>
@@ -238,16 +248,7 @@
       </div>
   
       <div class="form-group"> 
-        <div tal:define="field form['nominal']" id="item-${field.oid}">
-          <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
-                  ${field.title}</label>
-          <div class="col-md-6">
-             ${structure:field.serialize()}
-            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-               tal:repeat="error field.error.messages()">
-               ${error}</p>
-          </div>
-        </div>
+        <label class="control-label col-md-1" ></label>
         <div class="col-md-3">
           <button type="submit" class="btn btn-primary" id="simpan" name="simpan">Simpan</button>
           <button type="submit" class="btn btn-warning" id="tutup"  name="tutup">Tutup</button>
@@ -257,24 +258,22 @@
       </div>
      </div>
 
-    <div class="row">
-      <table class="table table-bordered table-hover table-condensed" id="table1">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Kegiatan Item</th>
-                <th>Kegiatan</th>
-                <th>No</th>
-                <th>Rekening</th>
-                <th>Uraian</th>
-                <th>Nilai</th>
-                <th>nama</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-  </div>
+    <table class="table table-bordered table-hover table-condensed" id="table1">
+      <thead>
+          <tr>
+              <th>ID</th>
+              <th>Kegiatan Item</th>
+              <th>Kegiatan</th>
+              <th>No</th>
+              <th>Rekening</th>
+              <th>Uraian</th>
+              <th>Nilai</th>
+              <th>nama</th>
+          </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table><br><br><br>
   <div  class="panel panel-default">
     <div class="panel-heading">
         <h5 class="panel-title">Tambah Item</h5>

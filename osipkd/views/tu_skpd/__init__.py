@@ -11,7 +11,7 @@ from osipkd.views.base_view import BaseViews
 ########
 # APP Home #
 ########
-class vie_tu_skpd(BaseViews):
+class view_tu_skpd(BaseViews):
     @view_config(route_name='tu-skpd', renderer='templates/home.pt', permission='view')
     def view_app(self):
         session = self.request.session

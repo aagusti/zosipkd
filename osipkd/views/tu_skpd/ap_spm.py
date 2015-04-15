@@ -31,7 +31,8 @@ AP_TYPE = (
 
 class view_ap_spm(BaseViews):
 
-    @view_config(route_name="ap-spm", renderer="templates/ap-spm/list.pt")
+    @view_config(route_name="ap-spm", renderer="templates/ap-spm/list.pt",
+                 permission='read')
     def view_list(self):
         ses = self.request.session
         req = self.request
@@ -195,11 +196,17 @@ class view_ap_spm(BaseViews):
         row.posted=0
         row.disabled=0   
         
+        tahun    = self.session['tahun']
+        unit_id  = self.session['unit_id']
+        if not row.no_urut:
+            row.no_urut = Spm.max_no_urut(tahun,unit_id)+1;
+        
         if not row.kode:
             tahun    = self.session['tahun']
             unit_kd  = self.session['unit_kd']
             unit_id  = self.session['unit_id']
-            no_urut  = Spm.get_norut(tahun, unit_id)+1
+            #no_urut  = Spm.get_norut(tahun, unit_id)+1
+            no_urut  = row.no_urut
             no       = "0000%d" % no_urut
             nomor    = no[-5:]     
             row.kode = "%d" % tahun + "-%s" % unit_kd + "-%s" % nomor

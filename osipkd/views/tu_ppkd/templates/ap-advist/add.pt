@@ -116,23 +116,23 @@
       </form>
     </div>  
   </div>  
-      <div class="row">
-        <table class="table table-bordered table-hover table-condensed" id="table1">
-          <thead>
-              <tr>
-                  <th>Index</th>
-                  <th>No. SP2D</th>
-                  <th>No. SP2D</th>
-                  <th>Tanggal</th>
-                  <th>Uraian</th>
-                  <th>Nilai</th>
-                  <th>No. Validasi</th>
-              </tr>
-          </thead>
-          <tbody>
-          </tbody>
-      </table>
-      </div>
+  
+    <table class="table table-bordered table-hover table-condensed" id="table1">
+      <thead>
+          <tr>
+              <th>Index</th>
+              <th>No. SP2D</th>
+              <th>No. SP2D</th>
+              <th>Tanggal</th>
+              <th>Uraian</th>
+              <th>Nilai</th>
+              <th>No. Validasi</th>
+          </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table><br><br><br>
+      
       <div  class="panel panel-default">
           <div class="panel-heading">
               <h5 class="panel-title">Tambah SP2D</h5>

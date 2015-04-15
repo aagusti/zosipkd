@@ -35,7 +35,7 @@
             }
         );
         
-        $('#tanggal, #tanggal2').change(function(){
+        /**$('#tanggal, #tanggal2').change(function(){
               if ($('#tanggal').val()>$('#tanggal2').val()){
                   $('#tanggal2').val($('#tanggal').val());
               }
@@ -56,7 +56,7 @@
                   $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
                 }
               });
-        });
+        });*/
         $('#btn_cetak').click(function () {
             if($('#unit_nm').val()=='Pilih Unit') {
                 alert('Silahkan pilih Unit terlebih dahulu!');

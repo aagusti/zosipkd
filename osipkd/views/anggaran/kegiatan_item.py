@@ -26,8 +26,23 @@ JV_TYPE = (
     ('ju', 'Jurnal Umum'),
     )
 
+def deferred_sdana(node, kw):
+    values = kw.get('sdana', [])
+    return widget.SelectWidget(values=values)
+    
+SDANA = (
+    ('DAU', 'DAU'),
+    ('DAK', 'DAK'),
+    ('PAD', 'PAD'),
+    ('APBD Provinsi', 'APBD Provinsi'),
+    ('APBN', 'APBN'),
+    ('LOAN', 'LOAN'),
+    ('Bagi Hasil', 'Bagi Hasil'),
+    )
+    
 class view_ak_jurnal(BaseViews):
-    @view_config(route_name="ag-kegiatan-item", renderer="templates/ag-kegiatan-item/list.pt")
+    @view_config(route_name="ag-kegiatan-item", renderer="templates/ag-kegiatan-item/list.pt",
+                 permission='read')
     def view_list(self):
         ses = self.request.session
         req = self.request
@@ -473,6 +488,13 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           missing=colander.drop,
                           )
+    sdana       = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          widget=widget.SelectWidget(values=SDANA),
+                          oid="sdana",
+                          title="Sumber Dana"
+                          )
 
 class EditSchema(AddSchema):
     id             = colander.SchemaNode(
@@ -481,7 +503,7 @@ class EditSchema(AddSchema):
 
 def get_form(request, class_form):
     schema = class_form(validator=form_validator)
-    schema = schema.bind()
+    schema = schema.bind(sdana=SDANA)
     schema.request = request
     return Form(schema, buttons=('simpan','batal'))
     
@@ -605,10 +627,10 @@ def view_add(request):
             rka1 = int(float(rka))
             dpa  =  (vol_2_1*vol_2_2)*int(hsat_2)
             dpa1 = int(float(dpa))
-            rpka =  (vol_3_1*vol_3_2)*int(hsat_3)
-            rpka1 = int(float(rpka))
+            rdppa =  (vol_3_1*vol_3_2)*int(hsat_3)
+            rdppa1 = int(float(rdppa))
             dppa =  (vol_4_1*vol_4_2)*int(hsat_4)
-            dppa1 = int(float(rpka))
+            dppa1 = int(float(dppa))
             bln  = bln01+bln02+bln03+bln04+bln05+bln06+bln07+bln08+bln09+bln10+bln11+bln12
             ag_step_id = request.session['ag_step_id']
             if ag_step_id==1:
@@ -620,8 +642,8 @@ def view_add(request):
                     request.session.flash('Tidak boleh melebihi jumlah DPA', 'error')
                     return HTTPFound(location=request.route_url('ag-kegiatan-item-add',kegiatan_sub_id=kegiatan_sub_id))
             elif ag_step_id==3:
-                if bln>rpka1:
-                    request.session.flash('Tidak boleh melebihi jumlah RPKA', 'error')
+                if bln>rdppa1:
+                    request.session.flash('Tidak boleh melebihi jumlah RDPPA', 'error')
                     return HTTPFound(location=request.route_url('ag-kegiatan-item-add',kegiatan_sub_id=kegiatan_sub_id))
             elif ag_step_id==4:
                 if bln>dppa1:
@@ -636,6 +658,7 @@ def view_add(request):
                 #request.session[SESS_ADD_FAILED] = e.render()               
                 #return HTTPFound(location=request.route_url('ag-kegiatan-item-add'))
             save_request(controls_dicted, request)
+            return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
         return route_list(request,kegiatan_sub_id)
     elif SESS_ADD_FAILED in request.session:
         del request.session[SESS_ADD_FAILED]
@@ -698,10 +721,10 @@ def view_edit(request):
             rka1 = int(float(rka))
             dpa  =  (vol_2_1*vol_2_2)*int(hsat_2)
             dpa1 = int(float(dpa))
-            rpka =  (vol_3_1*vol_3_2)*int(hsat_3)
-            rpka1 = int(float(rpka))
+            rdppa =  (vol_3_1*vol_3_2)*int(hsat_3)
+            rdppa1 = int(float(rdppa))
             dppa =  (vol_4_1*vol_4_2)*int(hsat_4)
-            dppa1 = int(float(rpka))
+            dppa1 = int(float(rdppa))
             bln  = bln01+bln02+bln03+bln04+bln05+bln06+bln07+bln08+bln09+bln10+bln11+bln12
             
             ag_step_id = request.session['ag_step_id']
@@ -714,8 +737,8 @@ def view_edit(request):
                     request.session.flash('Tidak boleh melebihi jumlah DPA', 'error')
                     return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
             elif ag_step_id==3:
-                if bln>rpka1:
-                    request.session.flash('Tidak boleh melebihi jumlah RPKA', 'error')
+                if bln>rdppa1:
+                    request.session.flash('Tidak boleh melebihi jumlah RDPPA', 'error')
                     return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
             elif ag_step_id==4:
                 if bln>dppa1:
@@ -727,6 +750,7 @@ def view_edit(request):
             except ValidationFailure, e:
                 return dict(form=form, row=rows, rek_head=5)
             save_request(dict(controls), request, row)
+            return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
         return route_list(request,kegiatan_sub_id)
     elif SESS_EDIT_FAILED in request.session:
         del request.session[SESS_EDIT_FAILED]

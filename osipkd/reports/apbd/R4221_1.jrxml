@@ -136,7 +136,7 @@
 	<variable name="anggaran2_tot" class="java.lang.Double" resetType="Group" resetGroup="kegiatan_sub_id" calculation="Sum">
 		<variableExpression><![CDATA[$V{anggaran2}]]></variableExpression>
 	</variable>
-	<group name="kegiatan_sub_id">
+	<group name="kegiatan_sub_id" isStartNewPage="true" isResetPageNumber="true">
 		<groupExpression><![CDATA[$F{kegiatan_sub_id}]]></groupExpression>
 		<groupHeader>
 			<band height="204">

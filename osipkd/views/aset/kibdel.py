@@ -69,7 +69,8 @@ class EditSchema(AddSchema):
                      
 class view_aset_kibdel(BaseViews):
 
-    @view_config(route_name="aset-kibdel", renderer="templates/kibdel/list.pt")
+    @view_config(route_name="aset-kibdel", renderer="templates/kibdel/list.pt",
+                 permission='read')
     def view_list(self):
         ses = self.request.session
         req = self.request
@@ -138,7 +139,7 @@ class view_aset_kibdel(BaseViews):
             no_urut  = AsetDel.get_norut(row.id)+1
             no       = "0000%d" % no_urut
             nomor    = no[-5:]
-            row.kode = "KIBDel%s" % tahun + "-%s" % unit_kd + "-%s" % nomor
+            row.kode = "%s" % tahun + "-%s" % unit_kd + "-KIB-%s" % nomor
             
         DBSession.add(row)
         DBSession.flush()
@@ -174,7 +175,7 @@ class view_aset_kibdel(BaseViews):
                 except ValidationFailure, e:
                     return dict(form=form)
                 row = self.save_request(controls_dicted)
-            return HTTPFound(location=request.route_url('aset-kibdel-edit',id=row.id))
+                return HTTPFound(location=request.route_url('aset-kibdel-edit',id=row.id))
             return self.route_list()
         elif SESS_ADD_FAILED in request.session:
             del request.session[SESS_ADD_FAILED]

@@ -180,10 +180,10 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Kode</th>
-                <th>Uraian</th>
-                <th>Ref. Kode</th>
-                <th>Ref. Nama</th>
+                <th>Rekening</th>
+                <th>Uraian Rek.</th>
+                <th>No. TBP</th>
+                <th>Uraian TBP</th>
                 <th>Tanggal</th>
                 <th>Nilai</th>
                 <th>Posted</th>                
@@ -225,6 +225,18 @@
                 "bSearchable": false,
                 "bVisible"   : false,
                 "aTargets"   : [0]
+          },{
+                "bSearchable": true,
+                "aTargets"   : [1,2,3,4]
+          },{
+                "bSearchable": false,
+                "aTargets"   : [5,6,7]
+          },{
+                "bSortable"  : false,
+                "aTargets"   : [2,4,6,7]
+          },{
+                "bSortable"  : true,
+                "aTargets"   : [1,3,5]
           },{
                 "aTargets" : [7], // Untuk Posting
                 "mRender"  : function (data, type, full) {
@@ -330,13 +342,11 @@
             }
         });
         
+        var tanggal = $('#tanggal').val();
+
         $('#btn_print').click(function () {
-            url = "/ar-report-skpd/act/ap-tbp?id="+mID;
-            if (mID) {
-                window.open(url);
-            } else {
-                alert('Silahkan pilih TBP');
-            }
+            url = "/ar-report-skpd/act/ap-tbp?mulai="+tanggal;
+            window.open(url);
         });
         
         $("#btn_close").click(function () {

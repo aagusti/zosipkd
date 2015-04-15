@@ -68,7 +68,7 @@
 
         <!--Tanggal-------------------------------------------------------------------->
           <div tal:define="field form['tanggal']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-3" id="req-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
             <div class="col-md-2">
                ${structure:field.serialize()}
@@ -84,7 +84,7 @@
           <div tal:define="field form['nama']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
-            <div class="col-md-7">
+            <div class="col-md-8">
                ${structure:field.serialize()}
               <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                  tal:repeat="error field.error.messages()">
@@ -93,8 +93,77 @@
           </div>
         </div>
 
-        <!--Nominal-------------------------------------------------------------------->
+        <!--POS---------------------------------------------------------------------------->
         <div class="form-group"> 
+          <!--Kode-------------------------------------------------------------------->
+          <label for="koderek" class="control-label col-md-1" id="req-kode1">Pos/Rekening</label>
+          <div class="col-md-2">
+             <input id="koderek" class=" form-control " type="text" value="" name="koderek">
+          </div>
+          <div tal:define="field form['pos']" id="item-${field.oid}">
+            <div class="col-md-3">
+               ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
+          </div>
+          <script>
+            $(document).ready(function(){
+                //Kondisi show awal
+                var rekening = $("#pos").val();
+                if(rekening=='0120230202017'){
+                    $('#koderek').val('0120230202017');
+                }else if(rekening=='0120230202017 (DAK)'){
+                    $('#koderek').val('0120230202017 (DAK)');
+                }else if(rekening=='0120230202017 (DAU)'){
+                    $('#koderek').val('0120230202017 (DAU)');
+                }else if(rekening=='0120230202017 (PAD)'){
+                    $('#koderek').val('0120230202017 (PAD)');
+                }else if(rekening=='20-CADANG'){
+                    $('#koderek').val('20-CADANG');
+                }else if(rekening=='20-GIROCADANGAN'){
+                    $('#koderek').val('20-GIROCADANGAN');
+                }else if(rekening=='20-GIRORKUD'){
+                    $('#koderek').val('20-GIRORKUD');
+                }else if(rekening=='DEPOSITO BNI'){
+                    $('#koderek').val('DEPOSITO BNI');
+                }else if(rekening=='DEPOSITO BTN'){
+                    $('#koderek').val('DEPOSITO BTN');
+                }else if(rekening=='GIRO AUTOSAVE BSM'){
+                    $('#koderek').val('GIRO AUTOSAVE BSM');
+                }
+          
+                //Hide Show Jenis saat pilih/ entry
+                $("#pos").change(function(){
+                var rekening = $("#pos").val();
+                if(rekening=='0120230202017'){
+                    $('#koderek').val('0120230202017');
+                }else if(rekening=='0120230202017 (DAK)'){
+                    $('#koderek').val('0120230202017 (DAK)');
+                }else if(rekening=='0120230202017 (DAU)'){
+                    $('#koderek').val('0120230202017 (DAU)');
+                }else if(rekening=='0120230202017 (PAD)'){
+                    $('#koderek').val('0120230202017 (PAD)');
+                }else if(rekening=='20-CADANG'){
+                    $('#koderek').val('20-CADANG');
+                }else if(rekening=='20-GIROCADANGAN'){
+                    $('#koderek').val('20-GIROCADANGAN');
+                }else if(rekening=='20-GIRORKUD'){
+                    $('#koderek').val('20-GIRORKUD');
+                }else if(rekening=='DEPOSITO BNI'){
+                    $('#koderek').val('DEPOSITO BNI');
+                }else if(rekening=='DEPOSITO BTN'){
+                    $('#koderek').val('DEPOSITO BTN');
+                }else if(rekening=='GIRO AUTOSAVE BSM'){
+                    $('#koderek').val('GIRO AUTOSAVE BSM');
+                }
+                });
+                $("#koderek").attr('readonly',true);
+            });
+          </script>
+
+          <!--Nominal-------------------------------------------------------------------->
           <div tal:define="field form['nominal']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
@@ -105,9 +174,12 @@
                  ${error}</p>
             </div>
           </div>
-
-          <!--Button-------------------------------------------------------------------->
-          <div class="col-md-4"> 
+        </div>
+        
+        <!--Button-------------------------------------------------------------------->
+        <div class="form-group">  
+          <label class="control-label col-md-1"></label>
+          <div class="col-md-3"> 
             <button type="submit" class="btn btn-primary" id="simpan" name="simpan">Simpan</button>
             <button type="submit" class="btn btn-warning" id="tutup"  name="tutup">Tutup</button>
           </div>
@@ -116,23 +188,23 @@
       </form>
     </div>  
   </div>  
-      <div class="row">
-        <table class="table table-bordered table-hover table-condensed" id="table1">
-          <thead>
-              <tr>
-                  <th>Index</th>
-                  <th>No. SP2D</th>
-                  <th>No. SP2D</th>
-                  <th>Tanggal</th>
-                  <th>Uraian</th>
-                  <th>Nilai</th>
-                  <th>No. Validasi</th>
-              </tr>
-          </thead>
-          <tbody>
-          </tbody>
-      </table>
-      </div>
+  
+    <table class="table table-bordered table-hover table-condensed" id="table1">
+      <thead>
+          <tr>
+              <th>Index</th>
+              <th>No. SP2D</th>
+              <th>No. SP2D</th>
+              <th>Tanggal</th>
+              <th>Uraian</th>
+              <th>Nilai</th>
+              <th>No. Validasi</th>
+          </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table><br><br><br>
+        
       <div  class="panel panel-default">
           <div class="panel-heading">
               <h5 class="panel-title">Tambah SP2D</h5>

@@ -104,7 +104,7 @@
 		<variableExpression><![CDATA[$V{anggaran}]]></variableExpression>
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
 	</variable>
-	<group name="kegiatan_sub_id">
+	<group name="kegiatan_sub_id" isStartNewPage="true" isResetPageNumber="true">
 		<groupExpression><![CDATA[$F{kegiatan_sub_id}]]></groupExpression>
 		<groupHeader>
 			<band height="215">

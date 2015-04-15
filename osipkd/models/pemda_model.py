@@ -31,7 +31,7 @@ def unitfinder(userid, request):
     
 STATUS_APBD = ((1, "RKA"),
                (2, "DPA"),
-               (3, "PRKA"),
+               (3, "RDPPA"),
                (4, "DPPA"))
 
 JENIS_BELANJA = {"0":"Pilih",

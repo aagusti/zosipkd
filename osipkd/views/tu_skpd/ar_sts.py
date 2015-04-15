@@ -23,13 +23,34 @@ def deferred_jenis_id(node, kw):
     return widget.SelectWidget(values=values)
     
 JENIS_ID = (
-    (1, 'Pendapatan'),
-    (2, 'Kontra Pos'),
-    (3, 'Lainnya'))
+    (1, 'Pendapatan Bendahara Penerimaan'),
+    (2, 'Pendapatan Piutang'),
+    (3, 'Pendapatan Non Piutang'),
+    (4, 'Kontra Pos'),
+    (5, 'Lainnya'))
+
+def deferred_pos(node, kw):
+    values = kw.get('pos', [])
+    return widget.SelectWidget(values=values)
+    
+POS = (
+    #('0120230 202017', 'DAU'),
+    ('0120230202017', 'PAD / RKUD'),
+    ('0120230202017 (DAK)', 'DAK'),
+    ('0120230202017 (DAU)', 'DAU'),
+    ('0120230202017 (PAD)', 'PAD'),
+    ('20-CADANG', 'DANA CADANGAN'),
+    ('20-GIROCADANGAN', 'GIRO DANA CADANGAN'),
+    ('20-GIRORKUD', 'DEPOSITO RKUD'),
+    ('DEPOSITO BNI', 'DEPOSITO BNI'),
+    ('DEPOSITO BTN', 'DEPOSITO BTN'),
+    ('GIRO AUTOSAVE BSM', 'GIRO AUTOSAVE BSM'),
+    )
     
 class view_ar_sts(BaseViews):
 
-    @view_config(route_name="ar-sts", renderer="templates/ar-sts/list.pt")
+    @view_config(route_name="ar-sts", renderer="templates/ar-sts/list.pt",
+                 permission='read')
     def view_list(self):
         ses = self.request.session
         req = self.request
@@ -62,6 +83,7 @@ class view_ar_sts(BaseViews):
                 columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('nominal'))
                 columns.append(ColumnDT('posted'))
+                columns.append(ColumnDT('posted1'))
                 
                 query = DBSession.query(Sts).filter(
                           Sts.tahun_id == ses['tahun'],
@@ -115,14 +137,17 @@ class AddSchema(colander.Schema):
     kode          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          oid='kode',
                           title = "No. STS"
                           )
     nama          = colander.SchemaNode(
                           colander.String(),
+                          oid='nama',
                           title = "Uraian"
                           )
     jenis         =  colander.SchemaNode(
                           colander.String(),
+                          oid='jenis',
                           validator=colander.Length(max=32),
                           widget=widget.SelectWidget(values=JENIS_ID)) 
                     
@@ -155,11 +180,14 @@ class AddSchema(colander.Schema):
                           title="Jabatan")
     bank_nama     = colander.SchemaNode(
                           colander.String(),
+                          oid='bank_nama',
                           title="Bank"
                           )
     bank_account  = colander.SchemaNode(
                           colander.String(),
-                          title="Rekening"
+                          title="Rekening",
+                          oid='bank_account',
+                          widget=widget.SelectWidget(values=POS),
                           )
     tgl_sts       = colander.SchemaNode(
                           colander.Date(),
@@ -183,7 +211,7 @@ class EditSchema(AddSchema):
 
 def get_form(request, class_form):
     schema = class_form(validator=form_validator)
-    schema = schema.bind(jenis_id=JENIS_ID)
+    schema = schema.bind(jenis_id=JENIS_ID,pos=POS)
     schema.request = request
     return Form(schema, buttons=('simpan','batal'))
     
@@ -276,7 +304,10 @@ def view_edit(request):
     if not row:
         return id_not_found(request)
     if row.posted:
-        request.session.flash('Data sudah diposting', 'error')
+        request.session.flash('Data sudah diposting SKPD', 'error')
+        return route_list(request)
+    if row.posted1:
+        request.session.flash('Data sudah diposting PPKD', 'error')
         return route_list(request)
 
     form = get_form(request, EditSchema)
@@ -309,6 +340,55 @@ def view_edit(request):
     form.set_appstruct(values) 
     return dict(form=form)
 
+############
+# Validasi #
+############
+@view_config(route_name='ar-sts-validasi', renderer='templates/ar-sts/add2.pt',
+             permission='validasi')
+def view_validasi(request):
+    row  = query_id(request).first()
+    uid  = row.id
+    kode = row.kode
+    
+    if not row:
+        return id_not_found(request)
+    if row.posted:
+        request.session.flash('Data sudah diposting SKPD', 'error')
+        return route_list(request)
+    if row.posted1:
+        request.session.flash('Data sudah diposting PPKD', 'error')
+        return route_list(request)
+
+    form = get_form(request, EditSchema)
+    if request.POST:
+        if 'simpan' in request.POST:
+            controls = request.POST.items()
+            """
+            #Cek Kode Sama ato tidak
+            a = form.validate(controls)
+            b = a['kode']
+            c = "%s" % b
+            cek = DBSession.query(Sts).filter(Sts.kode==c).first()
+            if cek:
+                kode1 = DBSession.query(Sts).filter(Sts.id==uid).first()
+                d     = kode1.kode
+                if d!=c:
+                    request.session.flash('Kode Sts sudah ada', 'error')
+                    return HTTPFound(location=request.route_url('ar-sts-edit',id=row.id))
+            """
+            try:
+                c = form.validate(controls)
+            except ValidationFailure, e:
+                return dict(form=form)
+            save_request(dict(controls), request, row)
+        return route_list(request)
+    elif SESS_EDIT_FAILED in request.session:
+        del request.session[SESS_EDIT_FAILED]
+        return dict(form=form)
+    values = row.to_dict() 
+    form.set_appstruct(values) 
+    return dict(form=form)
+    
 ##########
 # Delete #
 ##########    
@@ -321,7 +401,10 @@ def view_delete(request):
     if not row:
         return id_not_found(request)
     if row.posted:
-        request.session.flash('Data sudah diposting', 'error')
+        request.session.flash('Data sudah diposting SKPD', 'error')
+        return route_list(request)
+    if row.posted1:
+        request.session.flash('Data sudah diposting PPKD', 'error')
         return route_list(request)
     if row.nominal:
         request.session.flash('Data tidak bisa dihapus, karena memiliki data items', 'error')
@@ -358,7 +441,10 @@ def view_edit_posting(request):
         request.session.flash('Data tidak dapat diposting, karena bernilai 0.', 'error')
         return route_list(request)
     if row.posted:
-        request.session.flash('Data sudah diposting', 'error')
+        request.session.flash('Data sudah diposting SKPD', 'error')
+        return route_list(request)
+    if row.posted1:
+        request.session.flash('Data sudah diposting PPKD', 'error')
         return route_list(request)
         
     form = Form(colander.Schema(), buttons=('posting','cancel'))
@@ -445,6 +531,9 @@ def view_edit_unposting(request):
     if not row:
         return id_not_found(request)
     if not row.posted:
+        request.session.flash('Data tidak dapat di Unposting, karena belum diposting.', 'error')
+        return route_list(request)
+    if not row.posted1:
         request.session.flash('Data tidak dapat di Unposting, karena belum diposting.', 'error')
         return route_list(request)
     if row.disabled:

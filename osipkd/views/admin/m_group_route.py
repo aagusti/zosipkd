@@ -32,12 +32,12 @@ class AddSchema(colander.Schema):
     group_widget = widget.AutocompleteInputWidget(
             size=60,
             values = '/group/act/headofnama',
-            min_length=3)
+            min_length=1)
 
     route_widget = widget.AutocompleteInputWidget(
             size=60,
             values = '/routes/act/headof',
-            min_length=3)
+            min_length=1)
 
     group_id  = colander.SchemaNode(
                     colander.Integer(),

@@ -222,13 +222,38 @@
             }
         });
         $('#btn_print').click(function () {
-            url = "/ap-report-sp2d/act/giro?id="+mID;
+            $('#dlgRpt').modal('show');
+            /**url = "/ap-report-sp2d/act/giro?id="+mID;
             if (mID) {
                    window.open(url);
             } else {
                 alert('Silahkan pilih Kegiatan ID');
-            }
+            }*/
         });
+
+        $('#btn_pil_rpt').click(function () {
+          var rpt = $('input[name="rpt"]:checked').val();
+          var mulai = $('#tanggal').val();
+          var awal = mulai.substring(0,4);
+          if (!rpt){
+                alert('Silahkan pilih Jenis Laporan');
+          }else{
+                url = "/ap-report-sp2d/act/"+rpt+"?mulai="+mulai+"&awal="+awal+"-01-01";
+                window.open(url);
+          }
+        });
+
+        $('#tanggal').click(
+            function(){
+              if (!Modernizr.inputtypes['date'] ||
+                  "date" != "date"){
+                $('#tanggal').pickadate({"selectMonths": true,
+                  "submitFormat": "yyyy-mm-dd", 
+                  "selectYears": true, "format": "yyyy-mm-dd"});
+              }
+            }
+        );
+
         $("#btn_close").click(function () {
             window.location = '/tu-ppkd';
             return false;
@@ -236,5 +261,44 @@
      });
     </script>
     
+          <!-- Modal Report -->
+    <div class="modal fade" id="dlgRpt">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title">Pilih Report</h4>
+          </div>
+
+        <!--Tanggal-->
+        <div class="modal-body">
+            <label class="control-label col-md-3" for="mulai">Tanggal</label>
+            <div class="col-xs-4">
+                   <input id="tanggal" class="form-control" type="text" readonly 
+                          value="${request.session['tanggal']}" name="tanggal"/>
+            </div>
+        </div>
+
+        <!--Jenis Laporan-->
+        <div class="modal-body">
+        <label class="control-label col-md-3" for="rpt">Jenis Laporan</label>
+        <div class="modal-body">
+          <div class="radio">
+            <label class="col-md-6"><input type="radio" name="rpt" value="rekon">Rekon</label>
+                </div>
+                <div class="radio">
+                    <label class="col-md-6"><input type="radio" name="rpt" value="giro">Giro</label>
+                </div>
+        </div>
+        </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+            <button type="button" class="btn btn-primary" id="btn_pil_rpt" name="btn_pil_rpt">Cetak</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
   </div> <!--End Metal-->
 </html>

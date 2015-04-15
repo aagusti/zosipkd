@@ -39,7 +39,8 @@ IS_BL = (
     
 class view_ap_spd_ppkd(BaseViews):
 
-    @view_config(route_name="ap-spd", renderer="templates/ap-spd/list.pt")
+    @view_config(route_name="ap-spd", renderer="templates/ap-spd/list.pt",
+                 permission='read')
     def view_list(self):
         ses = self.request.session
         req = self.request

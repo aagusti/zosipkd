@@ -66,8 +66,10 @@ class view_ap_invoice_skpd_item(BaseViews):
                                   join(KegiatanItem).\
                                   outerjoin(Rekening).\
                                   filter(APInvoiceItem.ap_invoice_id==ap_invoice_id)
+                                  
                 rowTable = DataTables(req, APInvoiceItem, query, columns)
                 return rowTable.output_result()
+                
 #######    
 # Add #
 #######
@@ -103,8 +105,10 @@ def view_add(request):
             
     row.ap_invoice_id    = ap_invoice_id
     row.kegiatan_item_id = controls['kegiatan_item_id']
+    
     if not controls['no_urut1'] or controls['no_urut1'].split()=='':
         controls['no_urut1'] = APInvoiceItem.max_no_urut(ap_invoice_id)+1
+        
     row.no_urut          = controls['no_urut1']
     row.nama             = controls['nama']
     row.vol_1            = controls['vol_1'].replace('.','')
@@ -114,14 +118,61 @@ def view_add(request):
     row.pph              = controls['pph'].replace('.','')
     row.amount           = float(controls['vol_1'].replace('.',''))*float(controls['vol_2'].replace('.',''))*float(controls['harga'].replace('.',''))
     
+    ### Kondisi sum sesuai kegiatan_item_id 
+    kegiatan_item_id = int(row.kegiatan_item_id)
+    hargaa  = row.harga
+    hargab  = '%s' % hargaa
+    hargac  = int(hargab)
+    
+    a = DBSession.query(func.sum(APInvoiceItem.amount).label('jumlah')
+                ).filter(APInvoiceItem.kegiatan_item_id==kegiatan_item_id
+                ).first()
+    b = '%s' % a
+    if b == 'None':
+        b = 0
+        print'XXXXXXXXXXX',b
+    
+    c = int(b)
+    amount = int(c + hargac)
+    
+    ### Kondisi Kegiatan Item
+    d = DBSession.query((KegiatanItem.vol_4_1*KegiatanItem.vol_4_2)*KegiatanItem.hsat_4
+                ).filter(KegiatanItem.id==kegiatan_item_id
+                ).first()
+    e = '%s' % d
+    f = int(float(e))
+    print'****--Anggaran Terpakai--**** ',c
+    print'****--Jumlah Inputan-----**** ',hargac
+    print'****--Terpakai+Inputan---**** ',amount
+    print'****--Pagu Anggaran------**** ',f
+    
+    g = f - c
+    print'****--Sisa Anggaran------**** ',g
+    
+    ### Kondisi Belanja Tidak Langsung (Gaji), kode rekening 5.1.1 bisa melebihi anggaran
+    z = DBSession.query(func.substr(Rekening.kode,1,5)
+                ).filter(KegiatanItem.rekening_id==Rekening.id, APInvoiceItem.kegiatan_item_id==KegiatanItem.id, 
+                APInvoiceItem.kegiatan_item_id==kegiatan_item_id
+                ).first()    
+    y = '%s' % z
+    print'******--',y
+    
+    if y != '5.1.1' :
+       if amount > f:
+           return {"success": False, 'id': row.id, "msg":'Tidak boleh melebihi jumlah pagu anggaran, Sisa anggaran %s' % g}
+
     DBSession.add(row)
     DBSession.flush()
+    
     amount = "%d" % APInvoice.get_nilai(row.ap_invoice_id) 
     return {"success": True, 'id': row.id, "msg":'Success Tambah Item Invoice', 'jml_total':amount}
 
 ########
 # Edit #
 ########
+def route_list2(request):
+    return HTTPFound(location=request.route_url('ap-invoice-skpd-edit',id=request.matchdict['ap_invoice_id']))
+  
 def route_list(request):
     return HTTPFound(location=request.route_url('ap-invoice-skpd'))
     
@@ -177,3 +228,4 @@ def view_delete(request):
     
     amount = "%s" % APInvoice.get_nilai(row.ap_invoice_id) 
     return {'success':True, "msg":msg, 'jml_total':amount}
+    

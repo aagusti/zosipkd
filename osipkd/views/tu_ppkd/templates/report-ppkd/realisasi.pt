@@ -28,7 +28,7 @@
 
         $('input[name="jenis"]').prop('checked', false);
         $("#btn_close").click(function () {
-            window.location = '/tu-ppkd';
+            window.location = '/tu-skpd';
             return false;
         });
     });

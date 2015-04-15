@@ -277,7 +277,7 @@
           '	<button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
           '	<button id="btn_posting"   class="btn btn btn-success" type="button">Posting Transaksi</button>',
-          '	<button id="btn_unposting" class="btn btn btn-info" type="button">Un-Jurnal</button>',
+          '	<button id="btn_unposting" class="btn btn btn-info" type="button">Un-Jurnal Transaksi</button>',
           //'	<button id="btn_post_rkp" class="btn btn btn-success" type="button">Posting Rekap</button>',
           ' <button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
           '	&nbsp;',

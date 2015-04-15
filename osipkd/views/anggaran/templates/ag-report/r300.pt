@@ -1,7 +1,7 @@
 <html metal:use-macro="load: ../base.pt">
   <div metal:fill-slot="content" class="panel panel-default ">
     <div class="panel-heading">
-    <h4 class="panel-title">Laporan RPKA</h4>
+    <h4 class="panel-title">Laporan RDPPA</h4>
     </div>
   
     <script>
@@ -141,7 +141,7 @@
           </div>
         </div>
         <div class="col-md-5">
-           <input id="tahun_nm" class=" form-control " type="text" value="RPKA" name="tahun_nm" readonly>
+           <input id="tahun_nm" class=" form-control " type="text" value="RDPPA" name="tahun_nm" readonly>
         </div>
       </div>
       <!----------------------------------------------------------------------->
@@ -232,25 +232,25 @@
                     <label><input type="radio" name="jenis" value="0">Ringkasan</label>
                 </div>
                 <div class="radio">
-                    <label><input type="radio" name="jenis" value="1">RPKA-1</label>
+                    <label><input type="radio" name="jenis" value="1">RDPPA-1</label>
                 </div>
                 <div class="radio">
-                    <label><input type="radio" name="jenis" value="21">RPKA-2.1</label>
+                    <label><input type="radio" name="jenis" value="21">RDPPA-2.1</label>
                 </div>
                 <div class="radio">
-                    <label><input type="radio" name="jenis" value="22">RPKA-2.2</label>
+                    <label><input type="radio" name="jenis" value="22">RDPPA-2.2</label>
                 </div>
                 <div class="radio">
-                    <label><input type="radio" name="jenis" value="221">RPKA-2.2.1</label>
+                    <label><input type="radio" name="jenis" value="221">RDPPA-2.2.1</label>
                 </div>
                 <div class="radio">
-                    <label><input type="radio" name="jenis" value="3">RPKA-3</label>
+                    <label><input type="radio" name="jenis" value="3">RDPPA-3</label>
                 </div>
                 <div class="radio">
-                    <label><input type="radio" name="jenis" value="31">RPKA-3.1</label>
+                    <label><input type="radio" name="jenis" value="31">RDPPA-3.1</label>
                 </div>
                 <div class="radio">
-                    <label><input type="radio" name="jenis" value="32">RPKA-3.2</label>
+                    <label><input type="radio" name="jenis" value="32">RDPPA-3.2</label>
                 </div>
                 <br>
                 <div class="col-md-0">

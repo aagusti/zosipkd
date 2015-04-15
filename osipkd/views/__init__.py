@@ -93,6 +93,10 @@ def view_login(request):
 @view_config(route_name='logout')
 def view_logout(request):
     headers = forget(request)
+    #Untuk melogout session
+    request.session['unit_id'] = None
+    request.session['unit_kd'] = None
+    request.session['unit_nm'] = None
     return HTTPFound(location = request.route_url('home'),
                       headers = headers)    
 

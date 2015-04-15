@@ -300,6 +300,7 @@ class KegiatanItem(NamaModel, Base):
     pelaksana = Column(String(25))
     mulai     = Column(Date)
     selesai   = Column(Date)
+    sdana     = Column(String(64))
 
     bln01 = Column(BigInteger, nullable=False, default=0)
     bln02 = Column(BigInteger, nullable=False, default=0)

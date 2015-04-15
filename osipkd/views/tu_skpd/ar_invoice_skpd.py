@@ -29,7 +29,8 @@ JENIS_ID = (
 
 class view_ar_invoice_skpd(BaseViews):
 
-    @view_config(route_name="ar-invoice-skpd", renderer="templates/ar-invoice-skpd/list.pt")
+    @view_config(route_name="ar-invoice-skpd", renderer="templates/ar-invoice-skpd/list.pt",
+                 permission='read')
     def view_list(self):
         ses = self.request.session
         req = self.request
@@ -57,7 +58,7 @@ class view_ar_invoice_skpd(BaseViews):
                 columns.append(ColumnDT('id'))
                 columns.append(ColumnDT('kode'))
                 columns.append(ColumnDT('tgl_terima', filter=self._DTstrftime))
-                columns.append(ColumnDT('tgl_validasi', filter=self._DTstrftime))
+                #columns.append(ColumnDT('tgl_validasi', filter=self._DTstrftime))
                 #columns.append(ColumnDT('jenis'))
                 #columns.append(ColumnDT('bendahara_nm'))
                 #columns.append(ColumnDT('penyetor'))
@@ -121,9 +122,11 @@ class AddSchema(colander.Schema):
     tgl_terima       = colander.SchemaNode(
                           colander.Date(),
                           title="Tgl.Ketetapan")
+    """
     tgl_validasi     = colander.SchemaNode(
                           colander.Date(),
                           title="Validasi") 
+    """
     nilai            = colander.SchemaNode(
                           colander.String(),
                           default=0,
@@ -178,11 +181,15 @@ def save(request, values, row=None):
         row = ARInvoice()
     row.from_dict(values)
     
+    if not row.no_urut:
+        row.no_urut = ARInvoice.max_no_urut(row.tahun_id,row.unit_id)+1;
+        
     if not row.kode:
         tahun    = request.session['tahun']
         unit_kd  = request.session['unit_kd']
         unit_id  = request.session['unit_id']
-        no_urut  = ARInvoice.get_norut(tahun, unit_id)+1
+        #no_urut  = ARInvoice.get_norut(tahun, unit_id)+1
+        no_urut  = row.no_urut
         no       = "0000%d" % no_urut
         nomor    = no[-5:]     
         row.kode = "%d" % tahun + "-%s" % unit_kd + "-%s" % nomor
@@ -291,7 +298,7 @@ def view_edit(request):
     
     #Ketika pas edit, kode sama nama muncul sesuai id kegiatansub
     values['kegiatan_nm']=row.kegiatansubs.nama
-    kd=row.kegiatansubs.kode
+    kd=row.kegiatansubs.kegiatans.kode
     ur=row.kegiatansubs.no_urut
     values['kegiatan_kd']="%s" % kd + "-%d" % ur
     

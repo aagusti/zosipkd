@@ -178,6 +178,7 @@ class Spm(NamaModel, Base):
     verified_uid   = Column(BigInteger,   nullable=False)
     verified_nip   = Column(String(50),   nullable=False)
     verified_nama  = Column(String(64),   nullable=False)
+    no_urut        = Column(BigInteger,   nullable=True)
                    
     posted         = Column(SmallInteger, nullable=False)
     disabled       = Column(SmallInteger, nullable=False, default=1)
@@ -185,8 +186,10 @@ class Spm(NamaModel, Base):
     @classmethod
     def max_no_urut(cls, tahun, unit_id):
         return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
-                .filter(cls.tahun_id==tahun,
-                        cls.unit_id==unit_id
+                .join(Spp
+                ).filter(cls.ap_spp_id==Spp.id,
+                        Spp.tahun_id==tahun,
+                        Spp.unit_id==unit_id
                 ).scalar() or 0
            
     @classmethod
@@ -235,11 +238,18 @@ class Sp2d(NamaModel, Base):
     disabled       = Column(SmallInteger, nullable=False, default=0)
     status_giro    = Column(SmallInteger, default=0)
     status_advist  = Column(SmallInteger, default=0)
+    posted1        = Column(SmallInteger, default=0)
+    no_urut        = Column(BigInteger,   nullable=True)
     
     @classmethod
-    def max_no_urut(cls, tahun):
+    def max_no_urut(cls, tahun, unit_id):
         return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
-                .filter(cls.tahun_id==tahun
+                .join(Spm
+                ).outerjoin(Spp
+                ).filter(cls.ap_spm_id==Spm.id,
+                        Spm.ap_spp_id==Spp.id,
+                        Spp.tahun_id==tahun,
+                        Spp.unit_id==unit_id
                 ).scalar() or 0
     
     @classmethod
@@ -287,6 +297,7 @@ class APInvoice(NamaModel, Base):
     nama            = Column(String(255))
     jenis           = Column(SmallInteger, nullable=False, default=0) #1 up 2 tu 3 gu 4 LS
     is_bayar        = Column(SmallInteger, default=0) #0 Lunas, 1 Cicilan
+    is_beban        = Column(SmallInteger, default=0) #0 Beban, 1 Non Beban
     #ap_nomor        = Column(String(32))
     #ap_tanggal      = Column(Date)
     ap_nama         = Column(String(64))
@@ -385,6 +396,121 @@ class APInvoiceItem(DefaultModel, Base):
                 .filter(cls.ap_invoice_id==ap_invoice_id
                 ).scalar() or 0            
 
+class APPayment(NamaModel, Base):
+    __tablename__  = 'ap_payments'
+    __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}
+
+    kegiatansubs   = relationship("KegiatanSub", backref="appayments")
+    units          = relationship("Unit",        backref="appayments")
+    
+    tahun_id        = Column(BigInteger, ForeignKey("apbd.tahuns.id"), nullable=False)
+    unit_id         = Column(Integer,    ForeignKey("admin.units.id"), nullable=False) 
+    no_urut         = Column(Integer, nullable=False)
+    tanggal         = Column(Date,    nullable=False)
+    
+    kegiatan_sub_id = Column(BigInteger, ForeignKey("apbd.kegiatan_subs.id"), nullable=False)
+    nama            = Column(String(255))
+    jenis           = Column(SmallInteger, nullable=False, default=0) #1 up 2 tu 3 gu 4 LS
+    is_bayar        = Column(SmallInteger, default=0) #0 Lunas, 1 Cicilan
+    is_uang         = Column(SmallInteger, default=0) #0 Uang Muka, 1 Panjar
+    #ap_nomor        = Column(String(32))
+    #ap_tanggal      = Column(Date)
+    ap_nama         = Column(String(64))
+    ap_rekening     = Column(String(32))
+    ap_npwp         = Column(String(25))
+    amount          = Column(BigInteger, nullable=False)
+    no_bast         = Column(String(64))
+    tgl_bast        = Column(Date)
+    no_bku          = Column(String(64))
+    tgl_bku         = Column(Date)
+    ap_bentuk      = Column(String(64))
+    ap_alamat      = Column(String(64))
+    ap_pemilik     = Column(String(64))
+    ap_kontrak     = Column(String(64))
+    ap_waktu       = Column(String(64))
+    ap_uraian      = Column(String(64))
+    ap_tgl_kontrak = Column(Date)
+    ap_nilai       = Column(BigInteger, default=0)
+    #BAP
+    ap_bap_no      = Column(String(64))
+    ap_bap_tgl     = Column(Date)
+    #Kwitansi
+    ap_kwitansi_nilai = Column(BigInteger, default=0)
+    ap_kwitansi_no    = Column(String(64))
+    ap_kwitansi_tgl   = Column(Date)
+     
+    disabled        = Column(SmallInteger, nullable=False, default=0)
+    posted          = Column(SmallInteger, nullable=False, default=0)
+    status_spp      = Column(SmallInteger, nullable=False, default=0)
+
+    UniqueConstraint('tahun_id', 'unit_id', 'no_urut',
+                name = 'payment_ukey')
+
+    @classmethod
+    def max_no_urut(cls, tahun, unit_id):
+        return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
+                .filter(cls.tahun_id==tahun,
+                        cls.unit_id==unit_id
+                ).scalar() or 0
+
+    @classmethod
+    def get_jml_tagihan(cls, p):
+        return DBSession.query(func.sum(APPaymentItem.nilai).label('nilai')
+                             ).join(cls,
+                             ).filter(APPaymentItem.ap_payment_id==cls.id,
+                                      cls.id==p['id']
+                                      ).first()
+ 
+    @classmethod
+    def get_nilai(cls, ap_payment_id):
+        return DBSession.query(func.sum(APPaymentItem.amount).label('amount')
+                             ).filter(APPaymentItem.ap_payment_id==ap_payment_id 
+                                      ).first()
+    
+    @classmethod
+    def get_periode(cls, id):
+        return DBSession.query(extract('month',cls.tanggal).label('periode'))\
+                .filter(cls.id==id,)\
+                .group_by(extract('month',cls.tanggal)
+                ).scalar() or 0
+                
+    @classmethod
+    def get_tipe(cls, id):
+        return DBSession.query(case([(cls.jenis==1,"UP"),(cls.jenis==2,"TU"),
+                          (cls.jenis==3,"GU"),(cls.jenis==4,"LS")], else_="").label('jenis'))\
+                .filter(cls.id==id,
+                ).scalar() or 0
+                 
+class APPaymentItem(DefaultModel, Base):
+    __tablename__  = 'ap_payment_items'
+    __table_args__ = {'extend_existing':True, 'schema' : 'apbd',}
+    
+    kegiatanitems  =  relationship("KegiatanItem", backref="appaymentitems")
+    appayments     =  relationship("APPayment",    backref="appaymentitems")
+
+    ap_payment_id    = Column(BigInteger, ForeignKey("apbd.ap_payments.id"),    nullable=False)
+    kegiatan_item_id = Column(BigInteger, ForeignKey("apbd.kegiatan_items.id"), nullable=False)  
+    no_urut          = Column(Integer) 
+    nama             = Column(String(255)) 
+    vol_1            = Column(BigInteger,   nullable=False, default=0)
+    vol_2            = Column(BigInteger,   nullable=False, default=0)
+    harga            = Column(BigInteger,   nullable=False, default=0)
+    amount           = Column(BigInteger,   nullable=False, default=0)
+    ppn_prsn         = Column(SmallInteger, nullable=False, default=0)
+    ppn              = Column(BigInteger,   nullable=False, default=0)
+    pph_prsn         = Column(SmallInteger, nullable=False, default=0)
+    pph              = Column(BigInteger,   nullable=False, default=0)
+    pph_id           = Column(SmallInteger) #42 #21 #22#23 #26
+    notes1           = Column(String(64)) 
+    notes2           = Column(String(64)) 
+    notes3           = Column(String(64)) 
+    
+    @classmethod
+    def max_no_urut(cls, ap_payment_id):
+        return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
+                .filter(cls.ap_payment_id==ap_payment_id
+                ).scalar() or 0            
+
 class Giro(NamaModel, Base):
     __tablename__  ='ap_giros'
     __table_args__ = {'extend_existing':True,'schema' :'apbd'}
@@ -395,8 +521,10 @@ class Giro(NamaModel, Base):
     unit_id  = Column(Integer,    ForeignKey("admin.units.id"), nullable=False)
     kode     = Column(String(50))
     nama     = Column(String(150))
+    pos      = Column(String(64))
     tanggal  = Column(Date,         nullable=False)
     nominal  = Column(BigInteger,   nullable=False, default=0)
+    no_urut  = Column(BigInteger,   nullable=True)
 
     posted   = Column(SmallInteger, nullable=False, default=0)
     disabled = Column(SmallInteger, nullable=False, default=0)
@@ -449,6 +577,7 @@ class Advist(NamaModel, Base):
     nama     = Column(String(255))
     tanggal  = Column(Date,         nullable=False)
     nominal  = Column(BigInteger,   nullable=False, default=0)
+    no_urut  = Column(BigInteger,   nullable=True)
 
     posted   = Column(SmallInteger, nullable=False, default=0)
     disabled = Column(SmallInteger, nullable=False, default=0)
@@ -510,6 +639,7 @@ class ARInvoice(NamaModel, Base):
     alamat          = Column(String(150))
     tgl_terima      = Column(Date)    
     tgl_validasi    = Column(Date)
+    no_urut         = Column(BigInteger,   nullable=True)
     posted          = Column(SmallInteger, nullable=False, default=0)
     disabled        = Column(Integer,      nullable=False, default=0)
 
@@ -612,6 +742,7 @@ class Sts(NamaModel, Base):
     tgl_sts        = Column(Date) 
     tgl_validasi   = Column(Date)
     posted         = Column(SmallInteger, nullable=False, default=0)
+    posted1        = Column(SmallInteger, nullable=False, default=0)
     disabled       = Column(SmallInteger, nullable=False, default=0)
     no_validasi    = Column(String(64))
     
@@ -640,8 +771,8 @@ class Sts(NamaModel, Base):
                 
     @classmethod
     def get_tipe(cls, id):
-        return DBSession.query(case([(Sts.jenis==1,"P"),(Sts.jenis==2,"CP"),
-                          (Sts.jenis==3,"L")], else_="").label('jenis'))\
+        return DBSession.query(case([(Sts.jenis==1,"BP"),(Sts.jenis==2,"P"),(Sts.jenis==3,"NP"),(Sts.jenis==4,"CP"),
+                          (Sts.jenis==5,"L")], else_="").label('jenis'))\
                 .filter(cls.id==id,
                 ).scalar() or 0        
      
@@ -677,8 +808,16 @@ class AkJurnal(NamaModel, Base):
     posted_date     = Column(Date) 
     notes           = Column(String(225),   nullable=False)
     is_skpd         = Column(SmallInteger,  nullable=False)
+    no_urut         = Column(BigInteger,    nullable=True)
     disabled        = Column(SmallInteger,  nullable=False, default=0)
 
+    @classmethod
+    def max_no_urut(cls, tahun, unit_id):
+        return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
+                .filter(cls.tahun_id==tahun,
+                        cls.unit_id==unit_id
+                ).scalar() or 0
+                
     @classmethod
     def get_norut(cls, tahun, unit_id):
         return DBSession.query(func.count(cls.id).label('no_urut'))\

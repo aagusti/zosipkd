@@ -162,33 +162,35 @@
                  ${error}</p>
             </div>
           </div>
-
-          <div class="col-md-4"> 
-            <button type="submit" class="btn btn-primary" id="simpan" name="simpan" >Simpan</button>
-            <button type="submit" class="btn btn-warning" id="tutup" name="tutup">Tutup</button>
-          </div>
-        </div>   
+        </div>  
+        <div class="form-group">
+            <label class="control-label col-md-1"></label>
+            <div class="col-md-3"> 
+              <button type="submit" class="btn btn-primary" id="simpan" name="simpan" >Simpan</button>
+              <button type="submit" class="btn btn-warning" id="tutup" name="tutup">Tutup</button>
+            </div>
+        </div>        
       </form>
     </div>  
   </div>  
-      <div class="row">
-        <table class="table table-bordered table-hover table-condensed" id="table1">
-          <thead>
-              <tr>
-                  <th>Index</th>
-                  <th>Kode</th>
-                  <th>Uraian</th>
-                  <th>Anggaran</th>
-                  <th>Lalu</th>
-                  <th>Kini</th>
-                  <th>Jumlah</th>
-                  <th>Sisa</th>
-              </tr>
-          </thead>
-          <tbody>
-          </tbody>
-      </table>
-      </div>
+  
+    <table class="table table-bordered table-hover table-condensed" id="table1">
+      <thead>
+          <tr>
+              <th>Index</th>
+              <th>Kode</th>
+              <th>Uraian</th>
+              <th>Anggaran</th>
+              <th>Lalu</th>
+              <th>Kini</th>
+              <th>Jumlah</th>
+              <th>Sisa</th>
+          </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table><br><br><br>
+        
       <div class="row">
           <form method="post" id="detail" accept-charset="utf-8" id="myform" class="form-horizontal" enctype="multipart/form-data">
             <fieldset class="deformFormFieldset">

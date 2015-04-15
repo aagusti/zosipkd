@@ -49,9 +49,19 @@ IS_BAYAR = (
     ('1', 'Cicilan'),
     )
     
+def deferred_beban(node, kw):
+    values = kw.get('is_beban', [])
+    return widget.SelectWidget(values=values)
+    
+IS_BEBAN = (
+    ('0', 'Beban'),
+    ('1', 'Non Beban'),
+    )
+    
 class view_ap_invoice_skpd(BaseViews):
 
-    @view_config(route_name="ap-invoice-skpd", renderer="templates/ap-invoice-skpd/list.pt")
+    @view_config(route_name="ap-invoice-skpd", renderer="templates/ap-invoice-skpd/list.pt",
+                 permission='read')
     def view_list(self):
         ses = self.request.session
         req = self.request
@@ -207,6 +217,12 @@ class AddSchema(colander.Schema):
                           widget=widget.SelectWidget(values=IS_BAYAR),
                           oid="is_bayar",
                           title="Dibayar")
+    is_beban        = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          widget=widget.SelectWidget(values=IS_BEBAN),
+                          oid="is_beban",
+                          title="Beban")
     tanggal         = colander.SchemaNode(
                           colander.Date())
                           
@@ -356,7 +372,7 @@ class EditSchema(AddSchema):
 
 def get_form(request, class_form):
     schema = class_form(validator=form_validator)
-    schema = schema.bind(kontrak_type=KONTRAK_TYPE,is_bayar=IS_BAYAR)
+    schema = schema.bind(kontrak_type=KONTRAK_TYPE,is_bayar=IS_BAYAR,is_beban=IS_BEBAN)
     schema.request = request
     return Form(schema, buttons=('simpan','batal'))
     
@@ -520,7 +536,7 @@ def view_delete(request):
         request.session.flash('Data sudah di SPP', 'error')
         return route_list(request)
     if row.amount:
-        request.session.flash('Data tidak bisa dihapus, karena memiliki data items')
+        request.session.flash('Data tidak bisa dihapus, karena memiliki data items', 'error')
         return route_list(request)
         
     form = Form(colander.Schema(), buttons=('hapus','cancel'))

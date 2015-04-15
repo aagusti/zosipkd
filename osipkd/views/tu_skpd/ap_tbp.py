@@ -29,6 +29,14 @@ SUMBER_ID = (
     (2, 'PBB'),
     (3, 'BPHTB'),
     (4, 'PADL'))
+
+def deferred_jenis(node, kw):
+    values = kw.get('jenis', [])
+    return widget.SelectWidget(values=values)
+    
+JENIS = (
+    (1, 'Piutang'), 
+    (2, 'Non Piutang'))
     
 class AddSchema(colander.Schema):
     unit_kd_widget = widget.AutocompleteInputWidget(
@@ -52,12 +60,12 @@ class AddSchema(colander.Schema):
 
     rekening_nm_widget = widget.AutocompleteInputWidget(
             size=60,
-            values = '/rekening/act/headofnama4',
+            values = '/rekening/act/headofnamaTBP',
             min_length=1)
   
     rekening_kd_widget = widget.AutocompleteInputWidget(
             size=60,
-            values = '/rekening/act/headofkode4',
+            values = '/rekening/act/headofkodeTBP',
             min_length=1,
             )
             
@@ -111,8 +119,8 @@ class AddSchema(colander.Schema):
                     oid = 'nama')
     ref_kode = colander.SchemaNode(
                     colander.String(),
-                    validator=colander.Length(max=32),
-                    title = "No Bank"
+                    missing=colander.drop,
+                    title = "No. Bukti"
                     )
     ref_nama = colander.SchemaNode(
                     colander.String(),
@@ -147,10 +155,15 @@ class AddSchema(colander.Schema):
                           oid="bud_nip",
                           missing=colander.drop,
                           title="Bendahara")                          
-    bud_nama     = colander.SchemaNode(
+    bud_nama   = colander.SchemaNode(
                           colander.String(),
-                          missing=colander.drop,
                           oid="bud_nama")
+    
+    jenis      =  colander.SchemaNode(
+                    colander.String(),
+                    widget=widget.SelectWidget(values=JENIS),
+                    oid="jenis",
+                    title = "Jenis",) 
                     
     ############## DI DROP DULU                
     kecamatan_kd = colander.SchemaNode(
@@ -241,7 +254,7 @@ class view_ar_payment_item(BaseViews):
                 
     def get_form(self, class_form, row=None):
         schema = class_form(validator=self.form_validator)
-        schema = schema.bind(sumber_id=SUMBER_ID)
+        schema = schema.bind(sumber_id=SUMBER_ID,jenis=JENIS)
         schema.request = self.request
         if row:
           schema.deserialize(row)
@@ -262,6 +275,21 @@ class view_ar_payment_item(BaseViews):
         row.minggu  = tanggal.isocalendar()[1]
         row.disable = 'disable' in values and values['disable'] and 1 or 0
         row.is_kota = 'is_kota' in values and values['is_kota'] and 1 or 0
+        
+        tahun    = self.session['tahun']
+        unit_id  = self.session['unit_id']
+        if not row.no_urut:
+            row.no_urut = ARPaymentItem.max_no_urut(tahun,unit_id)+1;
+            
+        if not row.ref_kode:
+            tahun        = self.session['tahun']
+            unit_kd      = self.session['unit_kd']
+            unit_id      = self.session['unit_id']
+            #no_urut      = ARPaymentItem.get_norut(tahun, unit_id)+1
+            no_urut      = row.no_urut
+            no           = "0000%d" % no_urut
+            nomor        = no[-5:]
+            row.ref_kode = "%d" % tahun + "-%s" % unit_kd + "-%s" % nomor
         
         DBSession.add(row)
         DBSession.flush()
@@ -291,13 +319,14 @@ class view_ar_payment_item(BaseViews):
                 controls_dicted = dict(controls)
 
                 #Cek Kode Sama ato tidak
-                a = form.validate(controls)
-                b = a['ref_kode']
-                c = "%s" % b
-                cek  = DBSession.query(ARPaymentItem).filter(ARPaymentItem.ref_kode==c).first()
-                if cek :
-                    self.request.session.flash('Nomor Bank sudah ada.', 'error')
-                    return HTTPFound(location=self.request.route_url('ap-tbp-add'))
+                if not controls_dicted['ref_kode']=='':
+                    a = form.validate(controls)
+                    b = a['ref_kode']
+                    c = "%s" % b
+                    cek  = DBSession.query(ARPaymentItem).filter(ARPaymentItem.ref_kode==c).first()
+                    if cek :
+                        self.request.session.flash('Nomor Bukti sudah ada.', 'error')
+                        return HTTPFound(location=self.request.route_url('ap-tbp-add'))
 
                 try:
                     c = form.validate(controls)
@@ -356,7 +385,7 @@ class view_ar_payment_item(BaseViews):
                     kode1 = DBSession.query(ARPaymentItem).filter(ARPaymentItem.id==uid).first()
                     d     = kode1.ref_kode
                     if d!=c:
-                        self.request.session.flash('Nomor Bank sudah ada', 'error')
+                        self.request.session.flash('Nomor Bukti sudah ada', 'error')
                         return HTTPFound(location=request.route_url('ap-tbp-edit',id=row.id))
 
                 try:

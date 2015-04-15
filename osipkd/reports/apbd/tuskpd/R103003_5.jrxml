@@ -135,7 +135,7 @@
 				<reportElement x="0" y="0" width="62" height="74"/>
 				<imageExpression><![CDATA[$F{logo}]]></imageExpression>
 			</image>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="51" y="48" width="435" height="16"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font size="10" isBold="true"/>

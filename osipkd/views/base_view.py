@@ -69,6 +69,26 @@ class BaseViews(object):
         self.unit_id = self.session['unit_id']
         self.all_unit = self.session['all_unit']
         
+        """
+        ####### konstanta rekening sap #######
+        self.ben_penerimaan  = '1.1.1.02.01'
+        self.ben_pengeluaran = '1.1.1.03.01'
+        self.rk_ppkd = '3.1.3.01.01'
+        self.rk_skpd = '1.1.8.01.01'
+        self.kasda   = '1.1.1.01.01'
+        self.sal     = '0.0.0.00.00'
+        
+        if not 'ben_penerimaan' in self.session:
+            self.session['ben_penerimaan'] = self.ben_penerimaan
+        
+        self.ben_penerimaan  = self.session['ben_penerimaan'] 
+        self.ben_pengeluaran = self.session['ben_pengeluaran']
+        self.rk_ppkd = self.session['rk_ppkd']  
+        self.rk_skpd = self.session['rk_skpd'] 
+        self.kasda   = self.session['kasda']
+        self.sal     = self.session['sal']
+        """
+        
         self.d = {}
         self.d['success'] = False        
         self.d['msg']='Hak akses dibatasi'
@@ -119,6 +139,7 @@ class BaseViews(object):
             return ret
         else:
             return chain    
+            
 @view_config(route_name='change-act', renderer='json', permission='view')
 def change_act(request):
     ses = request.session
@@ -127,8 +148,8 @@ def change_act(request):
     url_dict = req.matchdict
     
     if url_dict['act']=='tahun':
-        ses['tahun'] = 'tahun' in params and params['tahun'] or '2014'
-        ses['bulan'] = 'bulan' in params and params['bulan'] or '12'
+        ses['tahun'] = 'tahun' in params and params['tahun'] or '2015'
+        ses['bulan'] = 'bulan' in params and params['bulan'] or '4'
         return {'success':True}
     elif url_dict['act']=='tanggal':
         ses['tanggal'] = 'tanggal' in params and datetime.strptime(params['tanggal'],'%Y-%m-%d') or datetime.date(datetime.now())

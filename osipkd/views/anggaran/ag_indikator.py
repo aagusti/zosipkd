@@ -28,7 +28,8 @@ TIPE = (
     )
 
 class view_ag_indikator(BaseViews):
-    @view_config(route_name="ag-indikator", renderer="templates/ag-indikator/list.pt")
+    @view_config(route_name="ag-indikator", renderer="templates/ag-indikator/list.pt",
+                 permission='read')
     def view_list(self):
         ses = self.request.session
         req = self.request
@@ -203,7 +204,7 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           missing=colander.drop,
                           oid='tolok_ukur_3',
-                          title='Tolok Ukur RPKA'
+                          title='Tolok Ukur RDPPA'
                           )
     volume_3        = colander.SchemaNode(
                           colander.String(),

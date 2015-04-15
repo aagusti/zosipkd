@@ -664,6 +664,7 @@
         });
         $("#pptk_nip").attr('readonly',true);
         </script>
+          
           <div class="col-md-4"> 
             <button type="submit" class="btn btn-primary" id="simpan" name="simpan" >Simpan</button>
             <button type="submit" class="btn btn-warning" id="tutup" name="tutup">Tutup</button>
@@ -672,23 +673,23 @@
       </form>
     </div>  
   </div>  
-      <div class="row">
-        <table class="table table-bordered table-hover table-condensed" id="table1">
-          <thead>
-              <tr>
-                <th>Index</th>
-                <th>No. Tagihan</th>
-                <th>No. Tagihan</th>
-                <th>Jenis</th>
-                <th>Tanggal</th>
-                <th>Uraian</th>
-                <th>Nilai</th>
-              </tr>
-          </thead>
-          <tbody>
-          </tbody>
-      </table>
-      </div>
+  
+    <table class="table table-bordered table-hover table-condensed" id="table1">
+      <thead>
+          <tr>
+            <th>Index</th>
+            <th>No. Tagihan</th>
+            <th>No. Tagihan</th>
+            <th>Jenis</th>
+            <th>Tanggal</th>
+            <th>Uraian</th>
+            <th>Nilai</th>
+          </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table><br><br><br>
+        
       <div  class="panel panel-default">
           <div class="panel-heading">
               <h5 class="panel-title">Tambah Tagihan / Utang</h5>

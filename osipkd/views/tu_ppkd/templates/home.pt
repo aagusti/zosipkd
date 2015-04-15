@@ -9,9 +9,9 @@ Selamat Datang di Aplikasi ${request.title}
 
 <p>Aplikasi ${request.title} adalah aplikasi 
    yang digunakan untuk menatausahakan pendapatan dan belanja di SKPD
-<p> Module yang terdapata pada aplikasi ini adalah:
+<p> Module yang terdapat pada aplikasi ini adalah:
 <p><ul>
-     <li>Penatausahaan Belanja</li>
+     <li>Kasda</li>
      <li>Laporan</li>
 </div><!--well-->
 

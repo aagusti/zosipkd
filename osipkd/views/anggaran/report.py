@@ -8,6 +8,7 @@ from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
 #from sqlalchemy import not_, func
 from sqlalchemy import *
+from sqlalchemy.orm import aliased
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
@@ -57,7 +58,7 @@ b = ' puluh '
 c = ' ratus '
 d = ' ribu '
 e = ' juta '
-f = ' miliyar '
+f = ' milyar '
 g = ' triliun '
 def Terbilang(x):   
     y = str(x)         
@@ -354,6 +355,74 @@ class ViewAnggaranLap(BaseViews):
             response.content_disposition='filename=output.pdf' 
             response.write(pdf)
             return response
+        elif url_dict['act']=='r0201' :
+            sap1db = aliased(Sap)
+            sap1kr = aliased(Sap)
+            
+            query = DBSession.query(RekeningSap.id.label('id'),
+                                    Rekening.kode.label('norek'),
+                                    Rekening.nama.label('nmrek'),
+                                    sap1db.kode.label('nosapdb'),
+                                    sap1db.nama.label('nmsapdb'),
+                                    sap1kr.kode.label('nosapkr'),
+                                    sap1kr.nama.label('nmsapkr'),
+                              ).outerjoin(Rekening, RekeningSap.rekening_id == Rekening.id
+                              ).outerjoin(sap1db, RekeningSap.db_lo_sap_id  == sap1db.id
+                              ).outerjoin(sap1kr, RekeningSap.kr_lo_sap_id  == sap1kr.id
+                              ).order_by(Rekening.kode)
+                                    
+            generator = r0201Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+         
+        elif url_dict['act']=='r0202' :
+            sap1db = aliased(Sap)
+            sap1kr = aliased(Sap)
+            
+            query = DBSession.query(RekeningSap.id.label('id'),
+                                    Rekening.kode.label('norek'),
+                                    Rekening.nama.label('nmrek'),
+                                    sap1db.kode.label('nosapdb'),
+                                    sap1db.nama.label('nmsapdb'),
+                                    sap1kr.kode.label('nosapkr'),
+                                    sap1kr.nama.label('nmsapkr'),
+                              ).outerjoin(Rekening, RekeningSap.rekening_id == Rekening.id
+                              ).outerjoin(sap1db, RekeningSap.db_lra_sap_id  == sap1db.id
+                              ).outerjoin(sap1kr, RekeningSap.kr_lra_sap_id  == sap1kr.id
+                              ).order_by(Rekening.kode)
+                                    
+            generator = r0202Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+         
+        elif url_dict['act']=='r0203' :
+            sap = aliased(Sap)
+            
+            query = DBSession.query(RekeningSap.id.label('id'),
+                                    Rekening.kode.label('norek'),
+                                    Rekening.nama.label('nmrek'),
+                                    sap.kode.label('nosapdb'),
+                                    sap.nama.label('nmsapdb'),
+                                    RekeningSap.pph_id.label('pph')
+                              ).outerjoin(Rekening, RekeningSap.rekening_id == Rekening.id
+                              ).outerjoin(sap, RekeningSap.neraca_sap_id  == sap.id
+                              ).order_by(Rekening.kode)
+                                    
+            generator = r0203Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
         else:
             return HTTPNotFound() #TODO: Warning Hak Akses 
 
@@ -422,7 +491,7 @@ class ViewAnggaranLap(BaseViews):
                 subq1.c.unit_kd, subq1.c.unit_nm, subq1.c.tahun, 
                 func.sum(subq1.c.jml1).label('jumlah1'))\
                 .filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode))
-                ,Rekening.level_id<6).group_by(Rekening.kode, Rekening.nama,
+                ,Rekening.level_id<6, func.substr(Rekening.kode,1,1).in_(('4','5','6'))).group_by(Rekening.kode, Rekening.nama,
                 Rekening.level_id, Rekening.defsign, subq1.c.urusan_kd, subq1.c.urusan_nm,
                 subq1.c.unit_kd, subq1.c.unit_nm, subq1.c.tahun)\
                 .order_by(Rekening.kode).all()                    
@@ -1033,23 +1102,44 @@ class ViewAnggaranLap(BaseViews):
 
          ## BL DPA Ikhtisar
         elif url_dict['act']=='2211' :
-            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
-                 Urusan.nama.label('urusan_nm'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
-                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
-                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
-                 KegiatanSub.sdana, KegiatanSub.lokasi, KegiatanSub.id,
-                 Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
-                 KegiatanItem.no_urut, KegiatanItem.nama.label('item_nm'), KegiatanItem.vol_2_1.label('volume1'), KegiatanItem.sat_2_1.label('satuan1'), 
-                 KegiatanItem.vol_2_2.label('volume2'), KegiatanItem.sat_2_2.label('satuan2'), KegiatanItem.hsat_2.label('harga'), 
-                 Tahun.tanggal_2.label('tanggal'),                 
-                 (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('anggaran')
-                 ).filter(Program.id==Kegiatan.program_id, Kegiatan.id==KegiatanSub.kegiatan_id, KegiatanSub.unit_id==Unit.id, 
-                   Unit.urusan_id==Urusan.id, KegiatanSub.id==KegiatanItem.kegiatan_sub_id, Rekening.id==KegiatanItem.rekening_id, 
-                   Tahun.id==KegiatanSub.tahun_id,
-                   KegiatanSub.tahun_id==self.session['tahun'],
-                   KegiatanSub.unit_id==self.session['unit_id'], 
-                   KegiatanSub.id==self.request.params['id']
-                 ).order_by(KegiatanSub.tahun_id, Urusan.kode, Unit.kode, Program.kode, Kegiatan.kode, KegiatanSub.id, Rekening.kode, KegiatanItem.no_urut)
+            pid = self.request.params['id']
+            if pid == '0' :
+              query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                   Urusan.nama.label('urusan_nm'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                   Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                   Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                   KegiatanSub.sdana, KegiatanSub.lokasi, KegiatanSub.id,
+                   Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
+                   KegiatanItem.no_urut, KegiatanItem.nama.label('item_nm'), KegiatanItem.vol_2_1.label('volume1'), KegiatanItem.sat_2_1.label('satuan1'), 
+                   KegiatanItem.vol_2_2.label('volume2'), KegiatanItem.sat_2_2.label('satuan2'), KegiatanItem.hsat_2.label('harga'), 
+                   Tahun.tanggal_2.label('tanggal'),                 
+                   (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('anggaran')
+                   ).filter(Program.id==Kegiatan.program_id, Kegiatan.id==KegiatanSub.kegiatan_id, KegiatanSub.unit_id==Unit.id, 
+                     Unit.urusan_id==Urusan.id, KegiatanSub.id==KegiatanItem.kegiatan_sub_id, Rekening.id==KegiatanItem.rekening_id, 
+                     Tahun.id==KegiatanSub.tahun_id,
+                     KegiatanSub.tahun_id==self.session['tahun'],
+                     KegiatanSub.unit_id==self.session['unit_id'], 
+                     not_(Kegiatan.kode.in_(('0.00.00.10','0.00.00.21','0.00.00.31','0.00.00.32','0.00.00.99')))
+                   ).order_by(KegiatanSub.tahun_id, Urusan.kode, Unit.kode, Program.kode, Kegiatan.kode, KegiatanSub.id, Rekening.kode, KegiatanItem.no_urut)
+            else :
+              query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                   Urusan.nama.label('urusan_nm'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                   Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                   Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                   KegiatanSub.sdana, KegiatanSub.lokasi, KegiatanSub.id,
+                   Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
+                   KegiatanItem.no_urut, KegiatanItem.nama.label('item_nm'), KegiatanItem.vol_2_1.label('volume1'), KegiatanItem.sat_2_1.label('satuan1'), 
+                   KegiatanItem.vol_2_2.label('volume2'), KegiatanItem.sat_2_2.label('satuan2'), KegiatanItem.hsat_2.label('harga'), 
+                   Tahun.tanggal_2.label('tanggal'),                 
+                   (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('anggaran')
+                   ).filter(Program.id==Kegiatan.program_id, Kegiatan.id==KegiatanSub.kegiatan_id, KegiatanSub.unit_id==Unit.id, 
+                     Unit.urusan_id==Urusan.id, KegiatanSub.id==KegiatanItem.kegiatan_sub_id, Rekening.id==KegiatanItem.rekening_id, 
+                     Tahun.id==KegiatanSub.tahun_id,
+                     KegiatanSub.tahun_id==self.session['tahun'],
+                     KegiatanSub.unit_id==self.session['unit_id'], 
+                     KegiatanSub.id==self.request.params['id']
+                   ).order_by(KegiatanSub.tahun_id, Urusan.kode, Unit.kode, Program.kode, Kegiatan.kode, KegiatanSub.id, Rekening.kode, KegiatanItem.no_urut)
+              
 
             generator = r2041Generator()
             pdf = generator.generate(query)
@@ -1941,27 +2031,50 @@ class ViewAnggaranLap(BaseViews):
 
         ## BL DPPA Lampiran
         elif url_dict['act']=='2211' :
-            query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
-                 Urusan.nama.label('urusan_nm'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
-                 Program.kode.label('program_kd'), Program.nama.label('program_nm'),
-                 Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
-                 KegiatanSub.sdana, KegiatanSub.lokasi, KegiatanSub.id,
-                 Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
-                 KegiatanItem.no_urut, KegiatanItem.nama.label('item_nm'), 
-                 Tahun.tanggal_4.label('tanggal'),                 
-                 KegiatanItem.vol_3_1.label('volume11'), KegiatanItem.sat_3_1.label('satuan11'), 
-                 KegiatanItem.vol_3_2.label('volume12'), KegiatanItem.sat_3_2.label('satuan12'), KegiatanItem.hsat_3.label('harga1'), 
-                 (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('anggaran1'),
-                 KegiatanItem.vol_4_1.label('volume21'), KegiatanItem.sat_4_1.label('satuan21'), 
-                 KegiatanItem.vol_4_2.label('volume22'), KegiatanItem.sat_4_2.label('satuan22'), KegiatanItem.hsat_2.label('harga2'), 
-                 (KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran2')
-                 ).filter(Program.id==Kegiatan.program_id, Kegiatan.id==KegiatanSub.kegiatan_id, KegiatanSub.unit_id==Unit.id, 
-                   Unit.urusan_id==Urusan.id, KegiatanSub.id==KegiatanItem.kegiatan_sub_id, Rekening.id==KegiatanItem.rekening_id, 
-                   Tahun.id==KegiatanSub.tahun_id, KegiatanSub.tahun_id==self.session['tahun'],
-                   KegiatanSub.unit_id==self.session['unit_id'], 
-                   KegiatanSub.id==self.request.params['id']
-                 ).order_by(KegiatanSub.tahun_id, Urusan.kode, Unit.kode, Program.kode, Kegiatan.kode, KegiatanSub.id, Rekening.kode, KegiatanItem.no_urut)
-
+            pid = self.request.params['id']
+            if pid == '0' :
+              query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                   Urusan.nama.label('urusan_nm'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                   Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                   Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                   KegiatanSub.sdana, KegiatanSub.lokasi, KegiatanSub.id,
+                   Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
+                   KegiatanItem.no_urut, KegiatanItem.nama.label('item_nm'), 
+                   Tahun.tanggal_4.label('tanggal'),                 
+                   KegiatanItem.vol_3_1.label('volume11'), KegiatanItem.sat_3_1.label('satuan11'), 
+                   KegiatanItem.vol_3_2.label('volume12'), KegiatanItem.sat_3_2.label('satuan12'), KegiatanItem.hsat_3.label('harga1'), 
+                   (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('anggaran1'),
+                   KegiatanItem.vol_4_1.label('volume21'), KegiatanItem.sat_4_1.label('satuan21'), 
+                   KegiatanItem.vol_4_2.label('volume22'), KegiatanItem.sat_4_2.label('satuan22'), KegiatanItem.hsat_2.label('harga2'), 
+                   (KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran2')
+                   ).filter(Program.id==Kegiatan.program_id, Kegiatan.id==KegiatanSub.kegiatan_id, KegiatanSub.unit_id==Unit.id, 
+                     Unit.urusan_id==Urusan.id, KegiatanSub.id==KegiatanItem.kegiatan_sub_id, Rekening.id==KegiatanItem.rekening_id, 
+                     Tahun.id==KegiatanSub.tahun_id, KegiatanSub.tahun_id==self.session['tahun'],
+                     KegiatanSub.unit_id==self.session['unit_id'],
+                     not_(Kegiatan.kode.in_(('0.00.00.10','0.00.00.21','0.00.00.31','0.00.00.32','0.00.00.99')))
+                   ).order_by(KegiatanSub.tahun_id, Urusan.kode, Unit.kode, Program.kode, Kegiatan.kode, KegiatanSub.id, Rekening.kode, KegiatanItem.no_urut)
+            else :
+              query = DBSession.query(KegiatanSub.tahun_id, Urusan.kode.label('urusan_kd'),
+                   Urusan.nama.label('urusan_nm'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+                   Program.kode.label('program_kd'), Program.nama.label('program_nm'),
+                   Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                   KegiatanSub.sdana, KegiatanSub.lokasi, KegiatanSub.id,
+                   Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
+                   KegiatanItem.no_urut, KegiatanItem.nama.label('item_nm'), 
+                   Tahun.tanggal_4.label('tanggal'),                 
+                   KegiatanItem.vol_3_1.label('volume11'), KegiatanItem.sat_3_1.label('satuan11'), 
+                   KegiatanItem.vol_3_2.label('volume12'), KegiatanItem.sat_3_2.label('satuan12'), KegiatanItem.hsat_3.label('harga1'), 
+                   (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('anggaran1'),
+                   KegiatanItem.vol_4_1.label('volume21'), KegiatanItem.sat_4_1.label('satuan21'), 
+                   KegiatanItem.vol_4_2.label('volume22'), KegiatanItem.sat_4_2.label('satuan22'), KegiatanItem.hsat_2.label('harga2'), 
+                   (KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran2')
+                   ).filter(Program.id==Kegiatan.program_id, Kegiatan.id==KegiatanSub.kegiatan_id, KegiatanSub.unit_id==Unit.id, 
+                     Unit.urusan_id==Urusan.id, KegiatanSub.id==KegiatanItem.kegiatan_sub_id, Rekening.id==KegiatanItem.rekening_id, 
+                     Tahun.id==KegiatanSub.tahun_id, KegiatanSub.tahun_id==self.session['tahun'],
+                     KegiatanSub.unit_id==self.session['unit_id'], 
+                     KegiatanSub.id==self.request.params['id']
+                   ).order_by(KegiatanSub.tahun_id, Urusan.kode, Unit.kode, Program.kode, Kegiatan.kode, KegiatanSub.id, Rekening.kode, KegiatanItem.no_urut)
+              
             generator = r4041Generator()
             pdf = generator.generate(query)
             response=req.response
@@ -2175,7 +2288,7 @@ class ViewAnggaranLap(BaseViews):
                 Rekening.level_id, Rekening.defsign, subq1.c.tahun_id, 
                 func.sum(subq1.c.jml2).label('jumlah2')
                 ).filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode)),
-                Rekening.level_id<4
+                Rekening.level_id<4, func.substr(Rekening.kode,1,1).in_(('4','5','6'))
                 ).group_by(Rekening.kode, Rekening.nama,
                 Rekening.level_id, Rekening.defsign, subq1.c.tahun_id
                 ).order_by(Rekening.kode).all()                    
@@ -2201,7 +2314,8 @@ class ViewAnggaranLap(BaseViews):
             query = DBSession.query(Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
                 Rekening.level_id, Rekening.defsign, subq1.c.tahun_id, 
                 func.sum(subq1.c.jml2).label('jumlah2')
-                ).filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode))
+                ).filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode)), 
+                func.substr(Rekening.kode,1,1).in_(('4','5','6'))
                 ).group_by(Rekening.kode, Rekening.nama,
                 Rekening.level_id, Rekening.defsign, subq1.c.tahun_id)\
                 .order_by(Rekening.kode).all()                    
@@ -2352,7 +2466,7 @@ class ViewAnggaranLap(BaseViews):
                 Rekening.level_id, Rekening.defsign, subq1.c.tahun_id, 
                 func.sum(subq1.c.jml2).label('jumlah2')
                 ).filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode)),
-                Rekening.level_id<4)\
+                Rekening.level_id<4, func.substr(Rekening.kode,1,1).in_(('4','5','6')))\
                 .group_by(Rekening.kode, Rekening.nama,
                 Rekening.level_id, Rekening.defsign, subq1.c.tahun_id)\
                 .order_by(Rekening.kode).all()                    
@@ -2378,7 +2492,8 @@ class ViewAnggaranLap(BaseViews):
             query = DBSession.query(Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
                 Rekening.level_id, Rekening.defsign, subq1.c.tahun_id, 
                 func.sum(subq1.c.jml2).label('jumlah2')
-                ).filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode)))\
+                ).filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode)), 
+                func.substr(Rekening.kode,1,1).in_(('4','5','6')))\
                 .group_by(Rekening.kode, Rekening.nama,
                 Rekening.level_id, Rekening.defsign, subq1.c.tahun_id)\
                 .order_by(Rekening.kode).all()                    
@@ -2472,7 +2587,7 @@ class ViewAnggaranLap(BaseViews):
                 func.sum(subq1.c.jml1).label('jumlah1'),func.sum(subq1.c.jml2).label('jumlah2'),
                 func.sum(subq1.c.jml3).label('jumlah3'),func.sum(subq1.c.jml4).label('jumlah4'))\
                 .filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode)),
-                Rekening.level_id<4)\
+                Rekening.level_id<4, func.substr(Rekening.kode,1,1).in_(('4','5','6')))\
                 .group_by(Rekening.kode, Rekening.nama,
                 Rekening.level_id, Rekening.defsign, subq1.c.tahun_id)\
                 .order_by(Rekening.kode).all()                    
@@ -2502,7 +2617,8 @@ class ViewAnggaranLap(BaseViews):
                 Rekening.level_id, Rekening.defsign, subq1.c.tahun_id, 
                 func.sum(subq1.c.jml1).label('jumlah1'),func.sum(subq1.c.jml2).label('jumlah2'),
                 func.sum(subq1.c.jml3).label('jumlah3'),func.sum(subq1.c.jml4).label('jumlah4'))\
-                .filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode)))\
+                .filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode)), 
+                func.substr(Rekening.kode,1,1).in_(('4','5','6')))\
                 .group_by(Rekening.kode, Rekening.nama,
                 Rekening.level_id, Rekening.defsign, subq1.c.tahun_id)\
                 .order_by(Rekening.kode).all()                    
@@ -2680,7 +2796,7 @@ class ViewAnggaranLap(BaseViews):
                 func.sum(subq1.c.jml1).label('jumlah1'),func.sum(subq1.c.jml2).label('jumlah2'),
                 func.sum(subq1.c.jml3).label('jumlah3'),func.sum(subq1.c.jml4).label('jumlah4'))\
                 .filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode)),
-                Rekening.level_id<4)\
+                Rekening.level_id<4, func.substr(Rekening.kode,1,1).in_(('4','5','6')))\
                 .group_by(Rekening.kode, Rekening.nama,
                 Rekening.level_id, Rekening.defsign, subq1.c.tahun_id)\
                 .order_by(Rekening.kode).all()                    
@@ -2710,7 +2826,8 @@ class ViewAnggaranLap(BaseViews):
                 Rekening.level_id, Rekening.defsign, subq1.c.tahun_id, 
                 func.sum(subq1.c.jml1).label('jumlah1'),func.sum(subq1.c.jml2).label('jumlah2'),
                 func.sum(subq1.c.jml3).label('jumlah3'),func.sum(subq1.c.jml4).label('jumlah4'))\
-                .filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode)))\
+                .filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode)), 
+                func.substr(Rekening.kode,1,1).in_(('4','5','6')))\
                 .group_by(Rekening.kode, Rekening.nama,
                 Rekening.level_id, Rekening.defsign, subq1.c.tahun_id)\
                 .order_by(Rekening.kode).all()                    
@@ -3225,6 +3342,68 @@ class r019Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
 
+class r0201Generator(JasperGenerator):
+    def __init__(self):
+        super(r0201Generator, self).__init__()
+        self.reportname = get_rpath('apbd/R00201.jrxml')
+        self.xpath = '/apbd/master/rekangg'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'master')
+        for id, norek, nmrek, nosapdb, nmsapdb, nosapkr, nmsapkr in tobegreeted:
+            xml_greeting  =  ET.SubElement(xml_a, 'rekangg')
+            ET.SubElement(xml_greeting, "id").text = unicode(id)
+            ET.SubElement(xml_greeting, "norek").text = unicode(norek)
+            ET.SubElement(xml_greeting, "nmrek").text = unicode(nmrek)
+            ET.SubElement(xml_greeting, "nosapdb").text = unicode(nosapdb)
+            ET.SubElement(xml_greeting, "nmsapdb").text = unicode(nmsapdb)
+            ET.SubElement(xml_greeting, "nosapkr").text = unicode(nosapkr)
+            ET.SubElement(xml_greeting, "nmsapkr").text = unicode(nmsapkr)
+            ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root
+        
+class r0202Generator(JasperGenerator):
+    def __init__(self):
+        super(r0202Generator, self).__init__()
+        self.reportname = get_rpath('apbd/R00202.jrxml')
+        self.xpath = '/apbd/master/rekangg'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'master')
+        for id, norek, nmrek, nosapdb, nmsapdb, nosapkr, nmsapkr in tobegreeted:
+            xml_greeting  =  ET.SubElement(xml_a, 'rekangg')
+            ET.SubElement(xml_greeting, "id").text = unicode(id)
+            ET.SubElement(xml_greeting, "norek").text = unicode(norek)
+            ET.SubElement(xml_greeting, "nmrek").text = unicode(nmrek)
+            ET.SubElement(xml_greeting, "nosapdb").text = unicode(nosapdb)
+            ET.SubElement(xml_greeting, "nmsapdb").text = unicode(nmsapdb)
+            ET.SubElement(xml_greeting, "nosapkr").text = unicode(nosapkr)
+            ET.SubElement(xml_greeting, "nmsapkr").text = unicode(nmsapkr)
+            ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root
+        
+class r0203Generator(JasperGenerator):
+    def __init__(self):
+        super(r0203Generator, self).__init__()
+        self.reportname = get_rpath('apbd/R00203.jrxml')
+        self.xpath = '/apbd/master/rekangg'
+        self.root = ET.Element('apbd') 
+
+    def generate_xml(self, tobegreeted):
+        xml_a  =  ET.SubElement(self.root, 'master')
+        for id, norek, nmrek, nosapdb, nmsapdb, pph in tobegreeted:
+            xml_greeting  =  ET.SubElement(xml_a, 'rekangg')
+            ET.SubElement(xml_greeting, "id").text = unicode(id)
+            ET.SubElement(xml_greeting, "norek").text = unicode(norek)
+            ET.SubElement(xml_greeting, "nmrek").text = unicode(nmrek)
+            ET.SubElement(xml_greeting, "nosapdb").text = unicode(nosapdb)
+            ET.SubElement(xml_greeting, "nmsapdb").text = unicode(nmsapdb)
+            ET.SubElement(xml_greeting, "pph").text = unicode(pph)
+            ET.SubElement(xml_greeting, "customer").text = customer
+        return self.root
+        
 class r100Generator(JasperGenerator):
     def __init__(self):
         super(r100Generator, self).__init__()
@@ -3595,7 +3774,8 @@ class r200Generator(JasperGeneratorWithSubreport):
             rowrek = DBSession.query(Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
                 Rekening.level_id, Rekening.defsign, 
                 func.sum(subq1.c.jml2).label('jumlah2'))\
-                .filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode)))\
+                .filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode)), 
+                func.substr(Rekening.kode,1,1).in_(('4','5','6')))\
                 .group_by(Rekening.kode, Rekening.nama,
                 Rekening.level_id, Rekening.defsign)\
                 .order_by(Rekening.kode).all()
@@ -4025,7 +4205,8 @@ class r300Generator(JasperGeneratorWithSubreport):
             rowrek = DBSession.query(Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
                 Rekening.level_id, Rekening.defsign, 
                 func.sum(subq1.c.jml2).label('jumlah2'),func.sum(subq1.c.jml3).label('jumlah3'))\
-                .filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode)))\
+                .filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode)), 
+                func.substr(Rekening.kode,1,1).in_(('4','5','6')))\
                 .group_by(Rekening.kode, Rekening.nama,
                 Rekening.level_id, Rekening.defsign)\
                 .order_by(Rekening.kode).all()
@@ -4446,7 +4627,8 @@ class r400Generator(JasperGeneratorWithSubreport):
             rowrek = DBSession.query(Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
                 Rekening.level_id, Rekening.defsign, 
                 func.sum(subq1.c.jml3).label('jumlah3'),func.sum(subq1.c.jml4).label('jumlah4'))\
-                .filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode)))\
+                .filter(Rekening.kode==func.left(subq1.c.subrek_kd, func.length(Rekening.kode)), 
+                func.substr(Rekening.kode,1,1).in_(('4','5','6')))\
                 .group_by(Rekening.kode, Rekening.nama,
                 Rekening.level_id, Rekening.defsign)\
                 .order_by(Rekening.kode).all()

@@ -200,13 +200,17 @@ class view_ak_jurnal(BaseViews):
         row.posted        = 'posted'  in values and values['posted']  and 1 or 0
         row.tgl_transaksi = datetime.now()
         
+        if not row.no_urut:
+            row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
+            
         if not row.kode:
             tahun    = self.session['tahun']
             unit_kd  = self.session['unit_kd']
             is_skpd  = row.is_skpd
             jv_type  = row.jv_type
             tipe     = Jurnal.get_tipe(jv_type)
-            no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+            #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+            no_urut  = row.no_urut
             no       = "0000%d" % no_urut
             nomor    = no[-5:]     
             row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor

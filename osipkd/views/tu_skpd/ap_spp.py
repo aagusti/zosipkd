@@ -31,7 +31,8 @@ AP_TYPE = (
 
 class view_ap_spp(BaseViews):
 
-    @view_config(route_name="ap-spp", renderer="templates/ap-spp/list.pt")
+    @view_config(route_name="ap-spp", renderer="templates/ap-spp/list.pt",
+                 permission='read')
     def view_list(self):
         ses = self.request.session
         req = self.request

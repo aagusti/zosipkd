@@ -413,9 +413,9 @@ class view_ar_invoice_item(BaseViews):
                 row.update_uid = self.request.user.id
                 row.tahun_id   = self.session['tahun']
                 row.unit_id    = self.session['unit_id']
-                row.nama       = "Diterima Penetapan/Tagihan %s" % nama
+                row.nama       = "Diterima Penetapan/Tagihan dari %s" % nama
                 row.notes      = nama
-                row.periode    = periode
+                row.periode    = self.session['bulan']
                 row.posted     = 0
                 row.disabled   = 0
                 row.is_skpd    = 1
@@ -425,13 +425,15 @@ class view_ar_invoice_item(BaseViews):
                 row.tgl_source = tanggal
                 row.tanggal    = datetime.now()
                 row.tgl_transaksi = datetime.now()
+                row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
                 
                 if not row.kode:
                     tahun    = self.session['tahun']
                     unit_kd  = self.session['unit_kd']
                     is_skpd  = row.is_skpd
                     tipe     = Jurnal.get_tipe(row.jv_type)
-                    no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                    #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                    no_urut  = row.no_urut
                     no       = "0000%d" % no_urut
                     nomor    = no[-5:]     
                     row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor

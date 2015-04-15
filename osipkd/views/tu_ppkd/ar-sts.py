@@ -29,7 +29,8 @@ JENIS_ID = (
     
 class view_ar_sts(BaseViews):
 
-    @view_config(route_name="ar-sts-ppkd", renderer="templates/ar-sts-ppkd/list.pt")
+    @view_config(route_name="ar-sts-ppkd", renderer="templates/ar-sts-ppkd/list.pt",
+                 permission='read')
     def view_list(self):
         ses = self.request.session
         req = self.request
@@ -240,7 +241,7 @@ def id_not_found(request):
     msg = 'User ID %s not found.' % request.matchdict['id']
     request.session.flash(msg, 'error')
     return route_list(request)
-
+"""
 @view_config(route_name='ar-sts-ppkd-edit', renderer='templates/ar-sts-ppkd/add.pt',
              permission='edit')
 def view_edit(request):
@@ -283,3 +284,4 @@ def view_edit(request):
     values = row.to_dict() 
     form.set_appstruct(values) 
     return dict(form=form)
+"""

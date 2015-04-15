@@ -294,6 +294,16 @@
                ${error}</p>
           </div>
         </div>
+        <div tal:define="field form['is_beban']" id="item-${field.oid}">
+          <label for="${field.oid}" class="control-label col-md-1" id="is_bayar1">
+                  ${field.title}</label>
+          <div class="col-md-2">
+             ${structure:field.serialize()}
+            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+               tal:repeat="error field.error.messages()">
+               ${error}</p>
+          </div>
+        </div>
       </div>
 
       <div class="form-group"> 
@@ -520,23 +530,22 @@
      </div>
     </div>
     
-    <div class="row">
-      <table class="table table-bordered table-hover table-condensed" id="table1">
-        <thead>
-            <tr>
-                <th>Index</th>
-                <th>No</th>
-                <th>Uraian</th>
-                <th>Rekening</th>
-                <th>Jumlah</th>
-                <th>PPn</th>
-                <th>PPh</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-  </div>
+    <table class="table table-bordered table-hover table-condensed" id="table1">
+      <thead>
+          <tr>
+              <th>Index</th>
+              <th>No</th>
+              <th>Uraian</th>
+              <th>Rekening</th>
+              <th>Jumlah</th>
+              <th>PPn</th>
+              <th>PPh</th>
+          </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table><br><br><br>
+      
   <div  class="panel panel-default">
     <div class="panel-heading">
         <h5 class="panel-title">Item Tagihan / Utang</h5>
@@ -618,6 +627,9 @@
           </div>            
         <script>
           $('#rekening_add').click(function () {
+          $('#ap_invoice_item_id').val('');
+          $('#detail').submit();
+          /**
             var kegiatan_item_id, jml;
             var vol_1 = parseInt($('#vol_1').val()); 
             var vol_2 = parseInt($('#vol_2').val()); 
@@ -641,10 +653,13 @@
                         $('#detail').submit();
                     }
                 }
-            }
+            }*/
            })
           // save update
           $('#rekening_save').click(function () {
+          $('#ap_invoice_item_id').val();
+          $('#detail').submit();
+          /**
             var kegiatan_item_id,jml;
             var vol_1 = parseInt($('#vol_1').val()); 
             var vol_2 = parseInt($('#vol_2').val()); 
@@ -668,7 +683,7 @@
                         $('#detail').submit();
                     }
                 }
-            }
+            }*/
            })
 //
           $('#item_nm').typeahead({

@@ -256,6 +256,7 @@
             window.location = '/ar-sts-ppkd/add';
         });
         
+        /*
         $('#btn_edit').click(function () {
             if (mID) {
                 window.location = '/ar-sts-ppkd/' + mID +'/edit';
@@ -263,7 +264,8 @@
                 alert('Silahkan pilih data yang akan diedit');
             }
         });
-
+        */
+        
         $('#btn_delete').click(function () {
             if (mID) {
                 window.location = '/ar-sts-ppkd/' + mID +'/delete';

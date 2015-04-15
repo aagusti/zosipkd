@@ -111,7 +111,7 @@ class AddSchema(colander.Schema):
     ref_kode = colander.SchemaNode(
                     colander.String(),
                     validator=colander.Length(max=32),
-                    title = "No Bank"
+                    title = "No. Bukti"
                     )
     ref_nama = colander.SchemaNode(
                     colander.String(),
@@ -264,6 +264,11 @@ class view_ar_payment_item(BaseViews):
         row.disable = 'disable' in values and values['disable'] and 1 or 0
         row.is_kota = 'is_kota' in values and values['is_kota'] and 1 or 0
         
+        tahun    = self.session['tahun']
+        unit_id  = self.session['unit_id']
+        if not row.no_urut:
+            row.no_urut = ARPaymentItem.max_no_urut(tahun,unit_id)+1;
+            
         DBSession.add(row)
         DBSession.flush()
         return row
@@ -453,9 +458,9 @@ class view_ar_payment_item(BaseViews):
                 row.update_uid = self.request.user.id
                 row.tahun_id   = self.session['tahun']
                 row.unit_id    = self.session['unit_id']
-                row.nama       = "Diterima TBP %s" % nama
+                row.nama       = "Diterima TBP dari %s" % nama
                 row.notes      = nama
-                row.periode    = periode
+                row.periode    = self.session['bulan']
                 row.posted     = 0
                 row.disabled   = 0
                 row.is_skpd    = 1
@@ -465,13 +470,15 @@ class view_ar_payment_item(BaseViews):
                 row.tgl_source = tanggal
                 row.tanggal    = datetime.now()
                 row.tgl_transaksi = datetime.now()
+                row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
                 
                 if not row.kode:
                     tahun    = self.session['tahun']
                     unit_kd  = self.session['unit_kd']
                     is_skpd  = row.is_skpd
                     tipe     = Jurnal.get_tipe(row.jv_type)
-                    no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                    #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                    no_urut  = row.no_urut
                     no       = "0000%d" % no_urut
                     nomor    = no[-5:]     
                     row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
@@ -544,9 +551,9 @@ class view_ar_payment_item(BaseViews):
                 row.update_uid = self.request.user.id
                 row.tahun_id   = self.session['tahun']
                 row.unit_id    = self.session['unit_id']
-                row.nama       = "Diterima TBP %s" % nama
+                row.nama       = "Diterima TBP dari %s" % nama
                 row.notes      = nama
-                row.periode    = periode2
+                row.periode    = self.session['bulan']
                 row.posted     = 0
                 row.disabled   = 0
                 row.is_skpd    = 1
@@ -556,13 +563,15 @@ class view_ar_payment_item(BaseViews):
                 row.tgl_source = tanggal
                 row.tanggal    = datetime.now()
                 row.tgl_transaksi = datetime.now()
+                row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
                 
                 if not row.kode:
                     tahun    = self.session['tahun']
                     unit_kd  = self.session['unit_kd']
                     is_skpd  = row.is_skpd
                     tipe     = Jurnal.get_tipe(row.jv_type)
-                    no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                    #no_urut  = Jurnal.get_norut(row.tahun_id,row.unit_id)+1
+                    no_urut  = row.no_urut
                     no       = "0000%d" % no_urut
                     nomor    = no[-5:]     
                     row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor

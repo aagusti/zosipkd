@@ -6,7 +6,7 @@
       <li class="dropdown" tal:attributes="class request.path in ['/password'] and 'active'">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Pendapatan<b class="caret"></b></a>
         <ul class="dropdown-menu">
-          <li><a href="/anggaran">Anggaran</a></li>
+          <!--li><a href="/ag-pendapatan-skpd">Anggaran</a></li-->
           <li><a href="/ar-invoice-skpd">Tagihan/Piutang/Ketetapan</a></li>
           <li><a href="/ap-tbp">TBP</a></li>
           <li><a href="/ar-sts">STS</a></li>
@@ -19,13 +19,17 @@
         <ul class="dropdown-menu">
         
           <li><a href="/ap-invoice-skpd">Tagihan/Utang</a></li>
+          <li><a href="/ap-payment">Pembayaran Tagihan</a></li>
           <li><a href="/ap-spp">SPP</a></li>
           <li><a href="/ap-spm">SPM</a></li>
+          <li><a href="/ap-sp2d">SP2D</a></li>
+          <!--li><a href="/ls-sp2d">List SP2D</a></li-->
           <li><a href="/ap-report-skpd">Laporan</a></li>
+          <li><a href="/ap-report-real">Laporan Realisasi Anggaran</a></li>
         </ul>
       </li>
       
-      <li class="dropdown" tal:attributes="class request.path in ['/password'] and 'active'">
+      <!--li class="dropdown" tal:attributes="class request.path in ['/password'] and 'active'">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Akuntansi<b class="caret"></b></a>
         <ul class="dropdown-menu">
           <li><a href="/ak-jurnal-skpd">Jurnal</a></li>
@@ -36,7 +40,7 @@
           <li><a href="/ak-sp2d">Posting SP2D</a></li>
           <li><a href="/ak-report-skpd">Laporan</a></li>
         </ul>
-      </li>
+      </li-->
     </ul>
 </div>
 

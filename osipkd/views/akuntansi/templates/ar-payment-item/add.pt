@@ -103,7 +103,7 @@
         <div class="form-group" tal:define="field form['amount']" id="item-${field.oid}">
           <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}" style="text-align:left;!important;">
                   ${field.title}</label>
-          <div class="col-md-6">
+          <div class="col-md-5">
              ${structure:field.serialize()}
               <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                  tal:repeat="error field.error.messages()">
@@ -185,7 +185,7 @@
           </div>
         
       </div>
-      <div class="col-md-4" tal:define="field form['bud_nama']" >
+      <div class="col-md-3" tal:define="field form['bud_nama']" >
          ${structure:field.serialize()}
           <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
              tal:repeat="error field.error.messages()">

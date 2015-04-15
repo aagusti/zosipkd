@@ -560,19 +560,19 @@
                                 <label><input type="radio" name="rpt" value="2">Lampiran</label>
                             </div>
                         </div>
-						<!--RPKA-->
+						<!--RDPPA-->
                         <div class="col-sm-2" tal:attributes="style request.session['ag_step_id']!=3 and  'display:none'">
                             <div class="radio" style="${row and row.rekening_kd !='0.00.00.10' and 'display:none'}">
-                                <label><input type="radio" name="rpt" value="1">RPKA-1</label>
+                                <label><input type="radio" name="rpt" value="1">RDPPA-1</label>
                             </div>
                             <div class="radio" style="${row and row.rekening_kd !='0.00.00.21' and 'display:none'}">
-                                <label><input type="radio" name="rpt" value="1">RPKA-21</label>
+                                <label><input type="radio" name="rpt" value="1">RDPPA-21</label>
                             </div>
                             <div class="radio" style="${row and row.rekening_kd !='0.00.00.31' and 'display:none'}">
-                                <label><input type="radio" name="rpt" value="1">RPKA-31</label>
+                                <label><input type="radio" name="rpt" value="1">RDPPA-31</label>
                             </div>
                             <div class="radio" style="${row and row.rekening_kd !='0.00.00.32' and 'display:none'}">
-                                <label><input type="radio" name="rpt" value="1">RPKA-32</label>
+                                <label><input type="radio" name="rpt" value="1">RDPPA-32</label>
                             </div>
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="2">Lampiran</label>

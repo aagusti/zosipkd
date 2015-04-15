@@ -71,7 +71,22 @@ class view_rekening(BaseViews):
         
     ##########                    
     # Action #
-    ##########    
+    ########## 
+    def get_nama_dict(self, term, prefix=''):
+        q = DBSession.query(Sap.id, Sap.kode, Sap.nama
+                  ).filter(Sap.kode.ilike('%s%%' % prefix),
+                           Sap.nama.ilike('%%%s%%' % term))
+        rows = q.all()
+        r = []
+        for k in rows:
+            d={}
+            d['id']          = k[0]
+            d['value']       = k[2]
+            d['kode']        = k[1]
+            d['nama']        = k[2]
+            r.append(d)    
+        return r
+        
     @view_config(route_name='sap-act', renderer='json',
                  permission='view')
     def gaji_sap_act(self):
@@ -87,14 +102,14 @@ class view_rekening(BaseViews):
             columns.append(ColumnDT('level_id'))
             columns.append(ColumnDT('disabled'))
  
-            query = DBSession.query(Sap.id,
-                                    Sap.kode,
-                                    Sap.nama,
-                                    Sap.level_id,
-                                    Sap.disabled)
+            query = DBSession.query(Sap)
             
             rowTable = DataTables(req, Sap, query, columns)
             return rowTable.output_result()
+         
+        elif url_dict['act']=='headofnama':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_nama_dict(term)
             
         elif url_dict['act']=='headofkode1':
             term = 'term' in params and params['term'] or ''            

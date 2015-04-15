@@ -71,6 +71,7 @@ class view_group(BaseViews):
             query = DBSession.query(Group)
             rowTable = DataTables(req, Group, query, columns)
             return rowTable.output_result()
+            
         elif url_dict['act']=='headofnama':
             term = 'term' in params and params['term'] or '' 
             rows = DBSession.query(Group.id, Group.group_name

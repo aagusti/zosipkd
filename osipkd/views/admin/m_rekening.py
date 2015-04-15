@@ -4,7 +4,7 @@ import colander
 
 from datetime import datetime
 
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, or_
 from sqlalchemy.sql.expression import and_
 
 from ziggurat_foundations.models import groupfinder
@@ -100,7 +100,52 @@ class view_rekening(BaseViews):
             d['nama']        = k[2]
             r.append(d)    
         return r
-
+    
+    def get_kode_TBP_dict(self, term, prefix=''):
+        ses = self.request.session
+        q = DBSession.query(Rekening.id, Rekening.kode, Rekening.nama
+                    ).join(KegiatanItem, 
+                           KegiatanSub,
+                    ).filter(KegiatanItem.rekening_id==Rekening.id,
+                             KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                             KegiatanSub.unit_id == ses['unit_id'],
+                             KegiatanSub.tahun_id == ses['tahun'],
+                             Rekening.kode.ilike('%s%%' % prefix),
+                             Rekening.kode.ilike('%%%s%%' % term))
+        rows = q.all()
+        r = []
+        for k in rows:
+            d={}
+            d['id']          = k[0]
+            d['value']       = k[1]
+            d['kode']        = k[1]
+            d['nama']        = k[2]
+            r.append(d)    
+        return r
+        
+    def get_nama_TBP_dict(self, term, prefix=''):
+        ses = self.request.session
+        q = DBSession.query(Rekening.id, Rekening.kode, Rekening.nama
+                    ).join(KegiatanItem, 
+                           KegiatanSub,
+                    ).filter(KegiatanItem.rekening_id==Rekening.id,
+                             KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                             KegiatanSub.unit_id == ses['unit_id'],
+                             KegiatanSub.tahun_id == ses['tahun'],
+                             Rekening.kode.ilike('%s%%' % prefix),
+                             Rekening.nama.ilike('%%%s%%' % term))
+        rows = q.all()
+        r = []
+        for k in rows:
+            d={}
+            d['id']          = k[0]
+            d['value']       = k[2]
+            d['kode']        = k[1]
+            d['nama']        = k[2]
+            r.append(d)    
+        return r
+        
+        
     @view_config(route_name='rekening-act', renderer='json',
                  permission='view')
     def gaji_rekening_act(self):
@@ -147,6 +192,14 @@ class view_rekening(BaseViews):
             term = 'term' in params and params['term'] or '' 
             return self.get_kode_dict(term,'4')
         
+        # PENDAPATAN TBP
+        elif url_dict['act']=='headofnamaTBP':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_nama_TBP_dict(term,'4')
+        elif url_dict['act']=='headofkodeTBP':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_kode_TBP_dict(term,'4')
+            
         #######################################################################
         # BELANJA
         elif url_dict['act']=='headofnama5':
@@ -226,7 +279,7 @@ class view_rekening(BaseViews):
                       ).join(KegiatanItem, 
                              KegiatanSub,
                       ).filter(KegiatanSub.unit_id == ses['unit_id'],
-                               KegiatanSub.tahun_id==ses['tahun'],
+                               KegiatanSub.tahun_id == ses['tahun'],
                                KegiatanItem.kegiatan_sub_id == KegiatanSub.id,
                                KegiatanItem.rekening_id == Rekening.id,
                                KegiatanItem.kegiatan_sub_id == kegiatan_sub_id,
@@ -282,8 +335,7 @@ class view_rekening(BaseViews):
                 r.append(d)
             print '****----****',r                
             return r
-            
-            
+        
     #######    
     # Add #
     #######

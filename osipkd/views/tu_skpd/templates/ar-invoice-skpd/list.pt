@@ -109,7 +109,7 @@
             <th>Index</th>
             <th>No. Piutang</th>
             <th>Tgl. Ketetapan</th>
-            <th>Tgl. Validasi</th>
+            <!--th>Tgl. Validasi</th-->
             <th>Uraian</th>
             <th>Nilai</th>
             <th>Posting</th>
@@ -164,15 +164,20 @@
                "aTargets"   : [0]
             },{
                "sClass"     : "right",
-               "aTargets"   : [5],
+               "aTargets"   : [4],
                "mRender"    : function (data, type, full) {
                               return formatNumber(data);}
             },{
                "bSearchable": true,
-               "bSortable"  : false,
-               "aTargets"   : [2,3,4,5]
+               "aTargets"   : [1,2,3,4]
             },{
-                "aTargets" : [6], // Untuk Posted
+               "bSortable"  : true,
+               "aTargets"   : [1,2,4]
+            },{
+               "bSortable"  : false,
+               "aTargets"   : [3,5]
+            },{
+                "aTargets" : [5], // Untuk Posted
                 "mRender"  : function (data, type, full) {
                     if (data == "0") {
                         return 'N';
@@ -183,13 +188,11 @@
             }],
             "aoColumns": [
                 null, {
-                    "sWidth": "70px"
+                    "sWidth": "50px"
                 }, {
                     "sWidth": "40px",
                 }, {
-                    "sWidth": "40px",
-                }, {
-                    "sWidth": "110px",
+                    "sWidth": "150px",
                 }, {
                     "sWidth": "60px",
                 }, {
@@ -211,7 +214,7 @@
                         $(this).addClass('row_selected');
                     }
                 })
-                switch(aData[6]){
+                switch(aData[5]){
                     case '1' :
                         $('td',nRow).css("background-color","#ddffdd")
                         break;
@@ -232,7 +235,7 @@
                 iPos = oTable.fnGetPosition(this);
                 var aData = oTable.fnGetData(iPos);
                 mID = aData[0];
-                mID2 = aData[5];
+                mID2 = aData[4];
                 oTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
             }
