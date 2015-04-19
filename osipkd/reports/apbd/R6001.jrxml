@@ -39,6 +39,12 @@
 	<field name="customer" class="java.lang.String">
 		<fieldDescription><![CDATA[customer]]></fieldDescription>
 	</field>
+	<field name="no_kep" class="java.lang.String">
+		<fieldDescription><![CDATA[no_kep]]></fieldDescription>
+	</field>
+	<field name="tanggal" class="java.lang.String">
+		<fieldDescription><![CDATA[tanggal]]></fieldDescription>
+	</field>
 	<variable name="pendapatan1" class="java.lang.Double">
 		<variableExpression><![CDATA[Integer.parseInt($F{jenis_kd})==2 ? Double.parseDouble($F{jumlah2}) : 0]]></variableExpression>
 	</variable>
@@ -132,13 +138,11 @@
 					<text><![CDATA[Lampiran II  :]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="783" y="0" width="153" height="33"/>
+					<reportElement x="783" y="0" width="153" height="11"/>
 					<textElement>
 						<font size="8"/>
 					</textElement>
-					<text><![CDATA[PERATURAN DAERAH
-Nomor   :
-Tanggal :]]></text>
+					<text><![CDATA[PERATURAN DAERAH]]></text>
 				</staticText>
 				<textField>
 					<reportElement x="0" y="34" width="936" height="15"/>
@@ -161,10 +165,38 @@ Tanggal :]]></text>
 					</textElement>
 					<textFieldExpression><![CDATA["TAHUN ANGGARAN "+$F{tahun}]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement x="783" y="10" width="61" height="11"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Nomor     :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="783" y="21" width="61" height="11"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Tanggal   :]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="824" y="10" width="112" height="12"/>
+					<textElement markup="none">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{no_kep}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="824" y="22" width="112" height="12"/>
+					<textElement markup="none">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tanggal}.substring(8,10)+"-"+$F{tanggal}.substring(5,7)+"-"+$F{tanggal}.substring(0,4)]]></textFieldExpression>
+				</textField>
 			</band>
 			<band height="70">
 				<staticText>
-					<reportElement x="0" y="0" width="45" height="70"/>
+					<reportElement x="0" y="0" width="30" height="70"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -177,7 +209,7 @@ Tanggal :]]></text>
 					<text><![CDATA[Kode]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="45" y="0" width="121" height="70"/>
+					<reportElement x="30" y="0" width="136" height="70"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -586,7 +618,7 @@ Langsung]]></text>
 					<text><![CDATA[3]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="45" y="0" width="121" height="14"/>
+					<reportElement x="30" y="0" width="136" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -599,7 +631,7 @@ Langsung]]></text>
 					<text><![CDATA[2]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="0" y="0" width="45" height="14"/>
+					<reportElement x="0" y="0" width="30" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -728,7 +760,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_t1})]]></textFieldExpression>
 				</textField>
@@ -741,7 +773,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{pendapatan_t2})]]></textFieldExpression>
 				</textField>
@@ -754,7 +786,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{pendapatan_t1})]]></textFieldExpression>
 				</textField>
@@ -767,7 +799,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{pendapatan_t2}-$V{pendapatan_t1})<0 ? "("+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{pendapatan_t2}-$V{pendapatan_t1})*-1)+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{pendapatan_t2}-$V{pendapatan_t1})]]></textFieldExpression>
 				</textField>
@@ -780,7 +812,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Top">
-						<font size="9" isBold="true"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[JUMLAH]]></text>
 				</staticText>
@@ -793,7 +825,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_t1})]]></textFieldExpression>
 				</textField>
@@ -806,7 +838,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[(($V{pendapatan_t2}-$V{pendapatan_t1})*100/$V{pendapatan_t1})<0 ? "("+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format((($V{pendapatan_t2}-$V{pendapatan_t1})*100*-1/$V{pendapatan_t1}))+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{pendapatan_t2}-$V{pendapatan_t1})*100/$V{pendapatan_t1})]]></textFieldExpression>
 				</textField>
@@ -819,7 +851,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_t2})]]></textFieldExpression>
 				</textField>
@@ -832,7 +864,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_t1}+$V{bl_t1})]]></textFieldExpression>
 				</textField>
@@ -845,7 +877,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_t2}+$V{bl_t2})]]></textFieldExpression>
 				</textField>
@@ -858,7 +890,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_t2})]]></textFieldExpression>
 				</textField>
@@ -871,7 +903,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[(($V{btl_t2}+$V{bl_t2})-($V{btl_t1}+$V{bl_t1}))<0 ? "("+ NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format((($V{btl_t2}+$V{bl_t2})-($V{btl_t1}+$V{bl_t1}))*-1)+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{btl_t2}+$V{bl_t2})-($V{btl_t1}+$V{bl_t1}))]]></textFieldExpression>
 				</textField>
@@ -884,7 +916,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9" isBold="true"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[((($V{btl_t2}+$V{bl_t2})-($V{btl_t1}+$V{bl_t1}))/($V{btl_t1}+$V{bl_t1}))<0 ? "("+ NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format((($V{btl_t2}+$V{bl_t2})-($V{btl_t1}+$V{bl_t1}))*-1/($V{btl_t1}+$V{bl_t1}))+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format((($V{btl_t2}+$V{bl_t2})-($V{btl_t1}+$V{bl_t1}))/($V{btl_t1}+$V{bl_t1}))]]></textFieldExpression>
 				</textField>
@@ -897,24 +929,24 @@ Langsung]]></text>
 		<groupHeader>
 			<band height="16">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="45" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="30" height="16"/>
 					<box leftPadding="1">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement>
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{urusan_kd}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="45" y="0" width="121" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="30" y="0" width="136" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement>
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{urusan_nm}]]></textFieldExpression>
 				</textField>
@@ -925,7 +957,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_ur1})]]></textFieldExpression>
 				</textField>
@@ -936,7 +968,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{pendapatan_ur1})]]></textFieldExpression>
 				</textField>
@@ -947,7 +979,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{pendapatan_ur2}-$V{pendapatan_ur1})<0 ? "("+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{pendapatan_ur2}-$V{pendapatan_ur1})*-1)+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{pendapatan_ur2}-$V{pendapatan_ur1})]]></textFieldExpression>
 				</textField>
@@ -958,7 +990,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{pendapatan_ur2})]]></textFieldExpression>
 				</textField>
@@ -969,7 +1001,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_ur1})]]></textFieldExpression>
 				</textField>
@@ -980,7 +1012,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_ur1}+$V{bl_ur1})]]></textFieldExpression>
 				</textField>
@@ -991,7 +1023,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_ur2})]]></textFieldExpression>
 				</textField>
@@ -1002,7 +1034,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_ur2})]]></textFieldExpression>
 				</textField>
@@ -1013,7 +1045,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[(($V{btl_ur2}+$V{bl_ur2})-($V{btl_ur1}+$V{bl_ur1}))<0 ? "("+ NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format((($V{btl_ur2}+$V{bl_ur2})-($V{btl_ur1}+$V{bl_ur1}))*-1)+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{btl_ur2}+$V{bl_ur2})-($V{btl_ur1}+$V{bl_ur1}))]]></textFieldExpression>
 				</textField>
@@ -1024,7 +1056,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_ur2}+$V{bl_ur2})]]></textFieldExpression>
 				</textField>
@@ -1035,7 +1067,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[(($V{pendapatan_ur2}-$V{pendapatan_ur1})*100/$V{pendapatan_ur1})<0 ? "("+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format((($V{pendapatan_ur2}-$V{pendapatan_ur1})*100*-1/$V{pendapatan_ur1}))+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{pendapatan_ur2}-$V{pendapatan_ur1})*100/$V{pendapatan_ur1})]]></textFieldExpression>
 				</textField>
@@ -1046,7 +1078,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[((($V{btl_ur2}+$V{bl_ur2})-($V{btl_ur1}+$V{bl_ur1}))/($V{btl_ur1}+$V{bl_ur1}))<0 ? "("+ NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format((($V{btl_ur2}+$V{bl_ur2})-($V{btl_ur1}+$V{bl_ur1}))*-1/($V{btl_ur1}+$V{bl_ur1}))+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format((($V{btl_ur2}+$V{bl_ur2})-($V{btl_ur1}+$V{bl_ur1}))/($V{btl_ur1}+$V{bl_ur1}))]]></textFieldExpression>
 				</textField>
@@ -1058,13 +1090,13 @@ Langsung]]></text>
 		<groupHeader>
 			<band height="16">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="45" y="0" width="121" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="30" y="0" width="136" height="16"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement>
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{unit_nm}]]></textFieldExpression>
 				</textField>
@@ -1075,7 +1107,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{pendapatan_u1})]]></textFieldExpression>
 				</textField>
@@ -1086,7 +1118,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{pendapatan_u2})]]></textFieldExpression>
 				</textField>
@@ -1097,7 +1129,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{pendapatan_u2}-$V{pendapatan_u1})<0 ? "("+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{pendapatan_u2}-$V{pendapatan_u1})*-1)+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{pendapatan_u2}-$V{pendapatan_u1})]]></textFieldExpression>
 				</textField>
@@ -1108,18 +1140,18 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_u1})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="45" height="16"/>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="30" height="16"/>
 					<box topPadding="0" leftPadding="1">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement>
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{unit_kd}]]></textFieldExpression>
 				</textField>
@@ -1130,7 +1162,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_u1})]]></textFieldExpression>
 				</textField>
@@ -1141,7 +1173,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_u1}+$V{bl_u1})]]></textFieldExpression>
 				</textField>
@@ -1152,7 +1184,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_u2})]]></textFieldExpression>
 				</textField>
@@ -1163,7 +1195,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{bl_u2})]]></textFieldExpression>
 				</textField>
@@ -1174,7 +1206,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{btl_u2}+$V{bl_u2})]]></textFieldExpression>
 				</textField>
@@ -1185,7 +1217,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[(($V{btl_u2}+$V{bl_u2})-($V{btl_u1}+$V{bl_u1}))<0 ? "("+ NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format((($V{btl_u2}+$V{bl_u2})-($V{btl_u1}+$V{bl_u1}))*-1)+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{btl_u2}+$V{bl_u2})-($V{btl_u1}+$V{bl_u1}))]]></textFieldExpression>
 				</textField>
@@ -1196,7 +1228,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[(($V{pendapatan_u2}-$V{pendapatan_u1})*100/$V{pendapatan_u1})<0 ? "("+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format((($V{pendapatan_u2}-$V{pendapatan_u1})*100*-1/$V{pendapatan_u1}))+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(($V{pendapatan_u2}-$V{pendapatan_u1})*100/$V{pendapatan_u1})]]></textFieldExpression>
 				</textField>
@@ -1207,7 +1239,7 @@ Langsung]]></text>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="9"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[((($V{btl_u2}+$V{bl_u2})-($V{btl_u1}+$V{bl_u1}))/($V{btl_u1}+$V{bl_u1}))<0 ? "("+ NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format((($V{btl_u2}+$V{bl_u2})-($V{btl_u1}+$V{bl_u1}))*-1/($V{btl_u1}+$V{bl_u1}))+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format((($V{btl_u2}+$V{bl_u2})-($V{btl_u1}+$V{bl_u1}))/($V{btl_u1}+$V{bl_u1}))]]></textFieldExpression>
 				</textField>
@@ -1361,7 +1393,7 @@ Langsung]]></text>
 				<text><![CDATA[8]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="45" y="0" width="121" height="14"/>
+				<reportElement x="30" y="0" width="136" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -1374,7 +1406,7 @@ Langsung]]></text>
 				<text><![CDATA[2]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="0" width="45" height="14"/>
+				<reportElement x="0" y="0" width="30" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>

@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_rka_1" language="groovy" pageWidth="972" pageHeight="612" orientation="Landscape" columnWidth="911" leftMargin="54" rightMargin="7" topMargin="36" bottomMargin="14">
 	<property name="ireport.zoom" value="0.75"/>
 	<property name="ireport.x" value="2"/>
-	<property name="ireport.y" value="60"/>
+	<property name="ireport.y" value="353"/>
 	<parameter name="R4221_subreport1" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="R4221_subreport2" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="R4221_subreport3" class="java.lang.String" isForPrompting="false"/>
@@ -69,6 +69,15 @@
 	</field>
 	<field name="logo" class="java.lang.String">
 		<fieldDescription><![CDATA[logo]]></fieldDescription>
+	</field>
+	<field name="pa_nama" class="java.lang.String">
+		<fieldDescription><![CDATA[pa_nama]]></fieldDescription>
+	</field>
+	<field name="pa_nip" class="java.lang.String">
+		<fieldDescription><![CDATA[pa_nip]]></fieldDescription>
+	</field>
+	<field name="jabatan" class="java.lang.String">
+		<fieldDescription><![CDATA[jabatan]]></fieldDescription>
 	</field>
 	<variable name="jumlah1" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{anggaran1})]]></variableExpression>
@@ -393,6 +402,27 @@ Kuasa Pengguna Anggaran]]></text>
 					<reportElement x="346" y="0" width="55" height="60"/>
 					<imageExpression><![CDATA[$F{logo}]]></imageExpression>
 				</image>
+				<textField isBlankWhenNull="true">
+					<reportElement x="177" y="459" width="573" height="18"/>
+					<textElement verticalAlignment="Top">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{jabatan}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="177" y="437" width="573" height="18"/>
+					<textElement verticalAlignment="Top">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pa_nip}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="177" y="416" width="573" height="18"/>
+					<textElement verticalAlignment="Top">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pa_nama}]]></textFieldExpression>
+				</textField>
 			</band>
 			<band height="31"/>
 			<band height="54">
@@ -1073,14 +1103,16 @@ Perubahan
 				<textField isBlankWhenNull="true">
 					<reportElement x="562" y="94" width="183" height="16"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="8" isBold="true" isUnderline="true"/>
 					</textElement>
+					<textFieldExpression><![CDATA[$F{pa_nama}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="562" y="110" width="183" height="16"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
+					<textFieldExpression><![CDATA[$F{pa_nip}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement x="50" y="0" width="385" height="14"/>
@@ -1120,6 +1152,7 @@ Perubahan
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
+					<textFieldExpression><![CDATA[$F{jabatan}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement x="0" y="0" width="50" height="14"/>
@@ -1201,9 +1234,9 @@ Perubahan
 				<textField isBlankWhenNull="true">
 					<reportElement x="561" y="66" width="183" height="16"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="9" isBold="true" isUnderline="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Ir. H. EDI JUNAEDI"]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Ir. H. Edi Junaedi"]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="561" y="82" width="183" height="16"/>

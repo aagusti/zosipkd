@@ -49,6 +49,18 @@
 	<field name="tanggal" class="java.lang.String">
 		<fieldDescription><![CDATA[tanggal]]></fieldDescription>
 	</field>
+	<field name="unit_id" class="java.lang.String">
+		<fieldDescription><![CDATA[unit_id]]></fieldDescription>
+	</field>
+	<field name="pa_nama" class="java.lang.String">
+		<fieldDescription><![CDATA[pa_nama]]></fieldDescription>
+	</field>
+	<field name="pa_nip" class="java.lang.String">
+		<fieldDescription><![CDATA[pa_nip]]></fieldDescription>
+	</field>
+	<field name="jabatan" class="java.lang.String">
+		<fieldDescription><![CDATA[jabatan]]></fieldDescription>
+	</field>
 	<variable name="jumlah" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{jumlah1})]]></variableExpression>
 	</variable>
@@ -291,12 +303,18 @@ Rekening]]></text>
 					</graphicElement>
 				</rectangle>
 				<textField isBlankWhenNull="true">
-					<reportElement x="357" y="95" width="183" height="16"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<reportElement x="357" y="99" width="183" height="14"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pa_nama}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="357" y="41" width="183" height="16"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<reportElement x="357" y="41" width="183" height="14"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{jabatan}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="357" y="25" width="183" height="16"/>
@@ -306,8 +324,11 @@ Rekening]]></text>
 					<textFieldExpression><![CDATA["Tigaraksa, "+$V{tanggal}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="357" y="111" width="183" height="16"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<reportElement x="357" y="113" width="183" height="14"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pa_nip}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToBandHeight" x="420" y="0" width="120" height="16"/>
@@ -442,7 +463,7 @@ Rekening]]></text>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
-					<text><![CDATA[KEPALA BAGIAN SETDA]]></text>
+					<text><![CDATA[KEPALA BIDANG ANGGARAN BPKAD]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="5" y="33" width="31" height="14"/>

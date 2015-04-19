@@ -24,6 +24,17 @@
 				</textElement>
 				<text><![CDATA[Dasar hukum :]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="152" height="12"/>
+				<box leftPadding="1">
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<detail>
@@ -42,6 +53,17 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{no_urut}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="152" height="12"/>
+				<box leftPadding="1">
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
 		</band>
 	</detail>
 </jasperReport>

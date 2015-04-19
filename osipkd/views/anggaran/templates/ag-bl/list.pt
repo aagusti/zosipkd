@@ -338,6 +338,9 @@
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="2">Lampiran</label>
                             </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="3">Semua Lampiran</label>
+                            </div>
                         </div>
                         <!--DPA-->
                         <div class="col-sm-4" tal:attributes="style request.session['ag_step_id']!=2 and  'display:none'">
@@ -358,6 +361,9 @@
                             </div>
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="2">Lampiran</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="3">Semua Lampiran</label>
                             </div>
                         </div>
                         <!--DPPA-->

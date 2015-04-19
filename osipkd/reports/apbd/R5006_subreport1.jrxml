@@ -28,11 +28,23 @@
 		<band height="12" splitType="Stretch">
 			<printWhenExpression><![CDATA[!($F{no_urut}==null)]]></printWhenExpression>
 			<staticText>
-				<reportElement x="1" y="0" width="100" height="12"/>
+				<reportElement x="0" y="0" width="101" height="12"/>
+				<box leftPadding="1"/>
 				<textElement>
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Output :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="152" height="12"/>
+				<box leftPadding="1">
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
 			</staticText>
 		</band>
 	</pageHeader>
@@ -67,6 +79,17 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{satuan_1}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="152" height="12"/>
+				<box leftPadding="1">
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
 		</band>
 	</detail>
 </jasperReport>

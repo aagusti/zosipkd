@@ -96,6 +96,18 @@
 	<field name="customer" class="java.lang.String">
 		<fieldDescription><![CDATA[customer]]></fieldDescription>
 	</field>
+	<field name="tanggal" class="java.lang.String">
+		<fieldDescription><![CDATA[tanggal]]></fieldDescription>
+	</field>
+	<field name="pa_nama" class="java.lang.String">
+		<fieldDescription><![CDATA[pa_nama]]></fieldDescription>
+	</field>
+	<field name="pa_nip" class="java.lang.String">
+		<fieldDescription><![CDATA[pa_nip]]></fieldDescription>
+	</field>
+	<field name="jabatan" class="java.lang.String">
+		<fieldDescription><![CDATA[jabatan]]></fieldDescription>
+	</field>
 	<variable name="bln01" class="java.lang.Double">
 		<variableExpression><![CDATA[$F{bln01}==null ? 0 : Double.parseDouble($F{bln01})]]></variableExpression>
 	</variable>
@@ -167,6 +179,12 @@
 	</variable>
 	<variable name="twl4_1_1" class="java.lang.Double" resetType="Group" resetGroup="unit_kode" calculation="Sum">
 		<variableExpression><![CDATA[$V{bln10}+$V{bln11}+$V{bln12}]]></variableExpression>
+	</variable>
+	<variable name="tanggal" class="java.lang.String">
+		<variableExpression><![CDATA[$F{tanggal}=="None" ? "" : $F{tanggal}.substring(8,10)+" "+$V{nm_bulan}+" "+$F{tanggal}.substring(0,4)]]></variableExpression>
+	</variable>
+	<variable name="nm_bulan" class="java.lang.String">
+		<variableExpression><![CDATA[$F{tanggal}=="None" ? "" : $F{tanggal}.substring(5,7)=="01" ? "Januari" : $F{tanggal}.substring(5,7)=="02" ? "Februari" : $F{tanggal}.substring(5,7)=="03" ? "Maret" : $F{tanggal}.substring(5,7)=="04" ? "April" : $F{tanggal}.substring(5,7)=="05" ? "Mei" : $F{tanggal}.substring(5,7)=="06" ? "Juni" : $F{tanggal}.substring(5,7)=="07" ? "Juli" : $F{tanggal}.substring(5,7)=="08" ? "Agustus" : $F{tanggal}.substring(5,7)=="09" ? "September" : $F{tanggal}.substring(5,7)=="10" ? "Oktober" : $F{tanggal}.substring(5,7)=="11" ? "November" : $F{tanggal}.substring(5,7)=="12" ? "Desember" : ""]]></variableExpression>
 	</variable>
 	<group name="unit_kode" isStartNewPage="true" isResetPageNumber="true">
 		<groupExpression><![CDATA[$F{unit_kd}]]></groupExpression>
@@ -642,9 +660,9 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="117">
+			<band height="131">
 				<rectangle>
-					<reportElement x="0" y="15" width="864" height="102"/>
+					<reportElement x="0" y="15" width="864" height="116"/>
 					<graphicElement>
 						<pen lineWidth="0.25"/>
 					</graphicElement>
@@ -663,16 +681,21 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 					<text><![CDATA[JUMLAH]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="681" y="29" width="183" height="16"/>
+					<reportElement x="681" y="25" width="183" height="16"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA["Tigaraksa, "+$V{tanggal}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="681" y="45" width="183" height="16"/>
+					<reportElement x="681" y="41" width="183" height="16"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{jabatan}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="681" y="99" width="183" height="16"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<reportElement x="681" y="96" width="183" height="16"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true" isItalic="false" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pa_nama}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0;(#,##0)" isBlankWhenNull="true">
 					<reportElement x="502" y="0" width="72" height="15"/>
@@ -738,6 +761,13 @@ SATUAN KERJA PERANGKAT DAERAH]]></text>
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{twl1_1_1}+$V{twl2_1_1}+$V{twl3_1_1}+$V{twl4_1_1})]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="681" y="112" width="183" height="16"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="false" isItalic="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pa_nip}]]></textFieldExpression>
 				</textField>
 			</band>
 			<band height="15" splitType="Stretch"/>

@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_rka_1" language="groovy" pageWidth="612" pageHeight="972" columnWidth="540" leftMargin="54" rightMargin="18" topMargin="36" bottomMargin="14">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="846"/>
 	<queryString language="xPath">
 		<![CDATA[apbd/dpa/rekening]]>
 	</queryString>
@@ -71,6 +71,18 @@
 	</field>
 	<field name="logo" class="java.lang.String">
 		<fieldDescription><![CDATA[logo]]></fieldDescription>
+	</field>
+	<field name="unit_id" class="java.lang.String">
+		<fieldDescription><![CDATA[unit_id]]></fieldDescription>
+	</field>
+	<field name="pa_nama" class="java.lang.String">
+		<fieldDescription><![CDATA[pa_nama]]></fieldDescription>
+	</field>
+	<field name="pa_nip" class="java.lang.String">
+		<fieldDescription><![CDATA[pa_nip]]></fieldDescription>
+	</field>
+	<field name="jabatan" class="java.lang.String">
+		<fieldDescription><![CDATA[jabatan]]></fieldDescription>
 	</field>
 	<variable name="jumlah1" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{jumlah1})]]></variableExpression>
@@ -341,6 +353,27 @@ Kuasa Pengguna Anggaran]]></text>
 					<reportElement x="223" y="74" width="94" height="103"/>
 					<imageExpression><![CDATA[$F{logo}]]></imageExpression>
 				</image>
+				<textField isBlankWhenNull="true">
+					<reportElement x="180" y="581" width="360" height="18"/>
+					<textElement verticalAlignment="Top">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pa_nama}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="180" y="606" width="358" height="18"/>
+					<textElement verticalAlignment="Top">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pa_nip}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="180" y="631" width="360" height="18"/>
+					<textElement verticalAlignment="Top">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{jabatan}]]></textFieldExpression>
+				</textField>
 			</band>
 			<band height="33"/>
 			<band height="54">
@@ -745,11 +778,17 @@ Perubahan
 				</rectangle>
 				<textField isBlankWhenNull="true">
 					<reportElement x="357" y="95" width="183" height="16"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pa_nama}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="357" y="41" width="183" height="16"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{jabatan}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="357" y="25" width="183" height="16"/>
@@ -760,7 +799,10 @@ Perubahan
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="357" y="111" width="183" height="16"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pa_nip}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="7" y="20" width="240" height="14"/>
@@ -980,16 +1022,16 @@ Pejabat Pengelola Keuangan Daerah]]></text>
 				<textField isBlankWhenNull="true">
 					<reportElement x="357" y="77" width="183" height="16"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="9"/>
+						<font size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA["195803141983031010"]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="357" y="61" width="183" height="16"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true" isUnderline="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Ir. H. EDI JUNAEDI"]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Ir. H. Edi Junaedi"]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>

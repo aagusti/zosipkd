@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_lampiran_5" language="groovy" pageWidth="1008" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="972" leftMargin="18" rightMargin="18" topMargin="36" bottomMargin="72">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="20"/>
+	<property name="ireport.x" value="802"/>
 	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[apbd/perda/lamp5]]>
@@ -65,6 +65,12 @@
 	</field>
 	<field name="customer" class="java.lang.String">
 		<fieldDescription><![CDATA[customer]]></fieldDescription>
+	</field>
+	<field name="no_kep" class="java.lang.String">
+		<fieldDescription><![CDATA[no_kep]]></fieldDescription>
+	</field>
+	<field name="tanggal" class="java.lang.String">
+		<fieldDescription><![CDATA[tanggal]]></fieldDescription>
 	</field>
 	<variable name="btl_pegawai1" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{jml_btlpeg1})]]></variableExpression>
@@ -221,13 +227,11 @@
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement x="805" y="1" width="146" height="33"/>
+					<reportElement x="805" y="1" width="146" height="11"/>
 					<textElement>
 						<font size="8"/>
 					</textElement>
-					<text><![CDATA[PERATURAN DAERAH
-Nomor   :
-Tanggal :]]></text>
+					<text><![CDATA[PERATURAN DAERAH]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="753" y="1" width="52" height="33"/>
@@ -257,6 +261,34 @@ KETERPADUAN URUSAN PEMERINTAHAN DAERAH DAN FUNGSI DALAM]]></text>
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["KERANGKA PENGELOLAAN KEUANGAN NEGARA TAHUN ANGGARAN "+$F{tahun}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="805" y="11" width="61" height="11"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Nomor     :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="805" y="22" width="61" height="11"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Tanggal   :]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="846" y="11" width="108" height="12"/>
+					<textElement markup="none">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{no_kep}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="846" y="23" width="108" height="12"/>
+					<textElement markup="none">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tanggal}.substring(8,10)+"-"+$F{tanggal}.substring(5,7)+"-"+$F{tanggal}.substring(0,4)]]></textFieldExpression>
 				</textField>
 			</band>
 			<band height="54">
