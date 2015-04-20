@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lap_kas_budget" language="groovy" pageWidth="1008" pageHeight="612" orientation="Landscape" columnWidth="968" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="191"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="290"/>
+	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[apbd/budget]]>
 	</queryString>
@@ -71,6 +71,15 @@
 	</field>
 	<field name="defsign" class="java.lang.String">
 		<fieldDescription><![CDATA[defsign]]></fieldDescription>
+	</field>
+	<field name="pa_nama" class="java.lang.String">
+		<fieldDescription><![CDATA[pa_nama]]></fieldDescription>
+	</field>
+	<field name="pa_nip" class="java.lang.String">
+		<fieldDescription><![CDATA[pa_nip]]></fieldDescription>
+	</field>
+	<field name="jabatan" class="java.lang.String">
+		<fieldDescription><![CDATA[jabatan]]></fieldDescription>
 	</field>
 	<variable name="bln01" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{bln01})]]></variableExpression>
@@ -1580,24 +1589,24 @@
 	<summary>
 		<band height="171" splitType="Stretch">
 			<staticText>
-				<reportElement x="61" y="31" width="183" height="20"/>
+				<reportElement x="61" y="31" width="200" height="20"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Mengesahkan]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="61" y="51" width="183" height="20"/>
+				<reportElement x="61" y="51" width="200" height="20"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Pejabat Pengelola Keuangan Daerah]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="61" y="126" width="183" height="20"/>
+				<reportElement x="61" y="126" width="200" height="20"/>
 				<textElement textAlignment="Center">
 					<font isBold="true" isUnderline="true"/>
 				</textElement>
-				<text><![CDATA[Ir. H. EDI JUNAEDI]]></text>
+				<text><![CDATA[Ir. H. Edi Junaedi]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="61" y="146" width="183" height="20"/>
+				<reportElement x="61" y="146" width="200" height="20"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[NIP. 19580314 198303 1 010]]></text>
 			</staticText>
@@ -1613,7 +1622,7 @@
 				<textElement textAlignment="Center">
 					<font isBold="true" isUnderline="true"/>
 				</textElement>
-				<text><![CDATA[Ir. H. EDI JUNAEDI]]></text>
+				<text><![CDATA[Ir. H. Edi Junaedi]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="719" y="146" width="183" height="20"/>
@@ -1630,7 +1639,7 @@
 			<textField>
 				<reportElement x="719" y="31" width="183" height="20"/>
 				<textElement textAlignment="Center" markup="none"/>
-				<textFieldExpression><![CDATA["Tigaraksa, "]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Tigaraksa, "+new SimpleDateFormat("dd MMMM yyyy ").format(new Date()) ]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="program_kd" isBlankWhenNull="true">
 				<reportElement x="604" y="0" width="57" height="12"/>

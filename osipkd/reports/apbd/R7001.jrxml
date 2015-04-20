@@ -84,6 +84,15 @@
 	<field name="unit_nm" class="java.lang.String">
 		<fieldDescription><![CDATA[unit_nm]]></fieldDescription>
 	</field>
+	<field name="pa_nama" class="java.lang.String">
+		<fieldDescription><![CDATA[pa_nama]]></fieldDescription>
+	</field>
+	<field name="pa_nip" class="java.lang.String">
+		<fieldDescription><![CDATA[pa_nip]]></fieldDescription>
+	</field>
+	<field name="jabatan" class="java.lang.String">
+		<fieldDescription><![CDATA[jabatan]]></fieldDescription>
+	</field>
 	<variable name="bln01" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{bln01})]]></variableExpression>
 	</variable>
@@ -1648,43 +1657,36 @@
 				<textElement textAlignment="Center">
 					<font isBold="true" isUnderline="true"/>
 				</textElement>
-				<text><![CDATA[Ir. H. EDI JUNAEDI]]></text>
+				<text><![CDATA[Ir. H. Edi Junaedi]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="61" y="146" width="183" height="20"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[NIP. 19580314 198303 1 010]]></text>
 			</staticText>
-			<staticText>
+			<textField>
 				<reportElement x="719" y="51" width="183" height="20"/>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Kepala BPKAD]]></text>
-			</staticText>
-			<staticText>
+				<textFieldExpression><![CDATA[$F{jabatan}]]></textFieldExpression>
+			</textField>
+			<textField>
 				<reportElement x="719" y="126" width="183" height="20"/>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" markup="none">
 					<font isBold="true" isUnderline="true"/>
 				</textElement>
-				<text><![CDATA[Ir. H. EDI JUNAEDI]]></text>
-			</staticText>
-			<staticText>
+				<textFieldExpression><![CDATA[$F{pa_nama}]]></textFieldExpression>
+			</textField>
+			<textField>
 				<reportElement x="719" y="146" width="183" height="20"/>
-				<textElement textAlignment="Center"/>
-				<text><![CDATA[NIP. 19580314 198303 1 010]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="719" y="71" width="183" height="20"/>
-				<textElement textAlignment="Center">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[KABUPATEN TANGERANG]]></text>
-			</staticText>
+				<textElement textAlignment="Center" markup="none"/>
+				<textFieldExpression><![CDATA["NIP. "+$F{pa_nip}]]></textFieldExpression>
+			</textField>
 			<textField>
 				<reportElement x="719" y="31" width="183" height="20"/>
 				<textElement textAlignment="Center" markup="none"/>
-				<textFieldExpression><![CDATA["Tigaraksa, "]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Tigaraksa, "+new SimpleDateFormat("dd MMMM yyyy ").format(new Date()) ]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="program_kd" isBlankWhenNull="true">
 				<reportElement x="604" y="0" width="57" height="12"/>

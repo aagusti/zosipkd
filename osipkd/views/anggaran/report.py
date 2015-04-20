@@ -3003,7 +3003,7 @@ class ViewAnggaranLap(BaseViews):
                 func.sum(KegiatanItem.bln07).label('bln07'), func.sum(KegiatanItem.bln08).label('bln08'), func.sum(KegiatanItem.bln09).label('bln09'),
                 func.sum(KegiatanItem.bln10).label('bln10'), func.sum(KegiatanItem.bln11).label('bln11'), func.sum(KegiatanItem.bln12).label('bln12')
                 ).join(KegiatanItem).join(Kegiatan).join(Program
-                ).filter(KegiatanSub.tahun_id==self.session['tahun']
+                ).filter(not_(Kegiatan.kode=="0.00.00.99"), KegiatanSub.tahun_id==self.session['tahun']
                 ).group_by(KegiatanSub.tahun_id,
                 case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),"1 Pendapatan")], 
                 else_="2 Belanja"), case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),1)], 
@@ -3036,7 +3036,7 @@ class ViewAnggaranLap(BaseViews):
                 case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),"1 Pendapatan dan Penerimaan"),
                 (Kegiatan.kode.in_(["0.00.00.21","0.00.00.32"]),"2 Belanja Tidak Langsung dan Pengeluaran")], 
                 else_="3 Belanja Langsung").label('urut2'),
-                Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), 
+                Urusan.kode.label('urusan_kd'), Urusan.nama.label('urusan_nm'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), 
                 Program.kode.label('program_kd'), Program.nama.label('program_nm'), Kegiatan.kode.label('keg_kd'), Kegiatan.nama.label('keg_nm'),
                 func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran'),
                 func.sum(KegiatanItem.bln01).label('bln01'), func.sum(KegiatanItem.bln02).label('bln02'), func.sum(KegiatanItem.bln03).label('bln03'),
@@ -3044,7 +3044,7 @@ class ViewAnggaranLap(BaseViews):
                 func.sum(KegiatanItem.bln07).label('bln07'), func.sum(KegiatanItem.bln08).label('bln08'), func.sum(KegiatanItem.bln09).label('bln09'),
                 func.sum(KegiatanItem.bln10).label('bln10'), func.sum(KegiatanItem.bln11).label('bln11'), func.sum(KegiatanItem.bln12).label('bln12')
                 ).join(Unit).join(Urusan).join(KegiatanItem).join(Kegiatan).join(Program
-                ).filter(KegiatanSub.tahun_id==self.session['tahun'], KegiatanSub.unit_id==self.session['unit_id']
+                ).filter(not_(Kegiatan.kode=="0.00.00.99"), KegiatanSub.tahun_id==self.session['tahun'], KegiatanSub.unit_id==self.session['unit_id']
                 ).group_by(KegiatanSub.tahun_id,
                 case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),"1 Pendapatan")], 
                 else_="2 Belanja"), case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),1)], 
@@ -3052,7 +3052,7 @@ class ViewAnggaranLap(BaseViews):
                 case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),"1 Pendapatan dan Penerimaan"),
                 (Kegiatan.kode.in_(["0.00.00.21","0.00.00.32"]),"2 Belanja Tidak Langsung dan Pengeluaran")], 
                 else_="3 Belanja Langsung"),
-                Urusan.kode, Urusan.nama, Unit.kode, Unit.nama, 
+                Urusan.kode, Urusan.nama, Unit.id, Unit.kode, Unit.nama, 
                 Program.kode, Program.nama, Kegiatan.kode, Kegiatan.nama
                 ).order_by(case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),"1 Pendapatan")], 
                 else_="2 Belanja"),case([(Kegiatan.kode.in_(["0.00.00.10","0.00.00.31"]),"1 Pendapatan dan Penerimaan"),
@@ -6299,6 +6299,14 @@ class r701Generator(JasperGenerator):
             ET.SubElement(xml_a, "bln11").text = unicode(row.bln11)
             ET.SubElement(xml_a, "bln12").text = unicode(row.bln12)
             ET.SubElement(xml_a, "customer").text = customer
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
+               ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
+               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+            for row2 in rows :
+               ET.SubElement(xml_a, "jabatan").text = row2.jabatan
+               ET.SubElement(xml_a, "pa_nama").text = row2.pa_nama
+               ET.SubElement(xml_a, "pa_nip").text = row2.pa_nip
         return self.root
 
 if __name__ == '__main__':
