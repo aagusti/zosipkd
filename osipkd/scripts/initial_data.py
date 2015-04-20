@@ -1,3 +1,4 @@
+import csv
 from types import DictType
 from sqlalchemy import (
     Table,
@@ -35,6 +36,8 @@ def insert_(fixtures):
     metadata = MetaData(engine)
     tablenames = []
     for tablename, data in fixtures:
+        if 'csv' in data:
+            data['data'] = csv2fixture(data['csv'])
         if tablename == 'users':
             T = User
             table = T.__table__
@@ -82,3 +85,12 @@ def update_sequence(tablenames):
         class T(Base):
             __table__ = Table(tablename, metadata, autoload=True, schema=schema)
         set_sequence(T)    
+
+def csv2fixture(filename):
+    base_dir = os.path.split(__file__)[0]
+    filename = os.path.join(base_dir, 'data', filename)
+    csvfile = open(filename)    
+    reader = csv.DictReader(csvfile)
+    data = list(reader)
+    csvfile.close()
+    return data
