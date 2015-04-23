@@ -20,7 +20,7 @@ from ..models import (
     DBSession,
     User,
     )
-
+from ..tools import create_now
 from ..models.base_model import (
     App
     )
@@ -56,7 +56,7 @@ def login_validator(form, value):
 
 def get_login_headers(request, user):
     headers = remember(request, user.email)
-    user.last_login_date = datetime.now()
+    user.last_login_date = create_now()
     DBSession.add(user)
     DBSession.flush()
     transaction.commit()
