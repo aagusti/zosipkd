@@ -130,7 +130,6 @@ def view_add(request):
     b = '%s' % a
     if b == 'None':
         b = 0
-        print'XXXXXXXXXXX',b
     
     c = int(b)
     amount = int(c + hargac)
@@ -149,20 +148,21 @@ def view_add(request):
     g = f - c
     print'****--Sisa Anggaran------**** ',g
     
-    ### Kondisi Belanja Tidak Langsung (Gaji), kode rekening 5.1.1 bisa melebihi anggaran
-    z = DBSession.query(func.substr(Rekening.kode,1,5)
-                ).filter(KegiatanItem.rekening_id==Rekening.id, APInvoiceItem.kegiatan_item_id==KegiatanItem.id, 
-                APInvoiceItem.kegiatan_item_id==kegiatan_item_id
+    ### Kondisi Belanja Tidak Langsung (Gaji), kode rekening 5.1.1.01 dan 5.1.1.02.01 bisa melebihi anggaran
+    print'****--ID Item------------**** ',kegiatan_item_id
+    z = DBSession.query(func.substr(Rekening.kode,1,8).label('a')
+                ).filter(KegiatanItem.id==kegiatan_item_id,
+                         KegiatanItem.rekening_id==Rekening.id, 
                 ).first()    
     y = '%s' % z
-    print'******--',y
+    print'****--Kode Rekening------**** ',y
     
-    if y != '5.1.1' :
-       if amount > f:
-           return {"success": False, 'id': row.id, "msg":'Tidak boleh melebihi jumlah pagu anggaran, Sisa anggaran %s' % g}
-
-    DBSession.add(row)
-    DBSession.flush()
+    if y != '5.1.1.01' :
+        if amount > f:
+            return {"success": False, 'id': row.id, "msg":'Tidak boleh melebihi jumlah pagu anggaran, Sisa anggaran %s' % g}
+    else:
+        DBSession.add(row)
+        DBSession.flush()
     
     amount = "%d" % APInvoice.get_nilai(row.ap_invoice_id) 
     return {"success": True, 'id': row.id, "msg":'Success Tambah Item Invoice', 'jml_total':amount}

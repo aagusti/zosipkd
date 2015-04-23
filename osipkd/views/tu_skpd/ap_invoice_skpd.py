@@ -508,7 +508,7 @@ def view_edit(request):
 
     #Ketika pas edit, kode sama nama muncul sesuai id kegiatansub
     values['kegiatan_nm']=row.kegiatansubs.nama
-    kd=row.kegiatansubs.kode
+    kd=row.kegiatansubs.kegiatans.kode
     ur=row.kegiatansubs.no_urut
     values['kegiatan_kd']="%s" % kd + "-%d" % ur
     
