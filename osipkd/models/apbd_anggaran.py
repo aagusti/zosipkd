@@ -36,10 +36,10 @@ class Tahun(DefaultModel, Base):
                                                            #2 DPA 3 RPKA 4 DPPA
     tgl_entry      = Column(Date)
     tgl_evaluasi   = Column(Date)
-    tanggal_1      = Column(Date) #Tgl. RKA
-    tanggal_2      = Column(Date) #Tgl. DPA
-    tanggal_3      = Column(Date) #Tgl. RPKA
-    tanggal_4      = Column(Date)  #Tgl. DPPA
+    tanggal_1      = Column(Date, nullable=True) #Tgl. RKA
+    tanggal_2      = Column(Date, nullable=True) #Tgl. DPA
+    tanggal_3      = Column(Date, nullable=True) #Tgl. RPKA
+    tanggal_4      = Column(Date, nullable=True)  #Tgl. DPPA
     no_perda       = Column(String(50))
     tgl_perda      = Column(Date)
     no_perkdh      = Column(String(50))

@@ -37,17 +37,21 @@ class AddSchema(colander.Schema):
             min_length=1)
     kode = colander.SchemaNode(
                     colander.String(),
-                    validator=colander.Length(max=18))
+                    title="Kode",
+                    oid = "kode")
     program_nm = colander.SchemaNode(
                     colander.String(),
-                    widget=program_widget,
-                    oid = "program_nm")
+                    #widget=program_widget,
+                    oid = "program_nm",
+                    title="Program")
     program_id = colander.SchemaNode(
                     colander.Integer(),
-                    widget=widget.HiddenWidget(),
+                    #widget=widget.HiddenWidget(),
                     oid = "program_id")
     nama = colander.SchemaNode(
-                    colander.String())
+                    colander.String(),
+                    title="Nama",
+                    oid = "nama")
     disabled = colander.SchemaNode(
                     colander.Boolean())
                     
@@ -162,7 +166,7 @@ class view_kegiatan(BaseViews):
         if 'id' in self.request.matchdict:
             values['id'] = self.request.matchdict['id']
         row = self.save(values, self.request.user, row)
-        self.request.session.flash('kegiatan sudah disimpan.')
+        self.request.session.flash('Kegiatan sudah disimpan.')
     def route_list(self):
         return HTTPFound(location=self.request.route_url('kegiatan'))
     def session_failed(self, session_name):
@@ -179,26 +183,28 @@ class view_kegiatan(BaseViews):
         if req.POST:
             if 'simpan' in req.POST:
                 controls = req.POST.items()
+                controls_dicted = dict(controls)
 
                 #Cek Kode Sama ato tidak
-                a = form.validate(controls)
-                b = a['kode']
-                c = "%s" % b
-                cek  = DBSession.query(Kegiatan).filter(Kegiatan.kode==c).first()
-                if cek :
-                    self.request.session.flash('Kode sudah ada.', 'error')
-                    return HTTPFound(location=self.request.route_url('kegiatan-add'))
+                if not controls_dicted['kode']=='':
+                    a = form.validate(controls)
+                    b = a['kode']
+                    c = "%s" % b
+                    cek  = DBSession.query(Kegiatan).filter(Kegiatan.kode==c).first()
+                    if cek :
+                        self.request.session.flash('Kode sudah ada.', 'error')
+                        return HTTPFound(location=self.request.route_url('kegiatan-add'))
 
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    req.session[SESS_ADD_FAILED] = e.render()               
+                    return dict(form=form)                  
                     return HTTPFound(location=req.route_url('kegiatan-add'))
                 self.save_request(dict(controls))
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
-        return dict(form=form.render())
+        return dict(form=form)
     ########
     # Edit #
     ########
@@ -208,7 +214,7 @@ class view_kegiatan(BaseViews):
         msg = 'kegiatan ID %s Tidak Ditemukan.' % self.request.matchdict['id']
         request.session.flash(msg, 'error')
         return route_list()
-    @view_config(route_name='kegiatan-edit', renderer='templates/kegiatan/edit.pt',
+    @view_config(route_name='kegiatan-edit', renderer='templates/kegiatan/add.pt',
                  permission='edit')
     def view_edit(self):
         request = self.request
@@ -248,8 +254,9 @@ class view_kegiatan(BaseViews):
             return self.session_failed(SESS_EDIT_FAILED)
         values = row.to_dict()
         values['program_nm'] = row.programs.nama
-
-        return dict(form=form.render(appstruct=values))
+        form.set_appstruct(values)
+        return dict(form=form)
+        
     ##########
     # Delete #
     ##########    
@@ -264,12 +271,12 @@ class view_kegiatan(BaseViews):
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
-                msg = 'kegiatan ID %d %s sudah dihapus.' % (row.id, row.nama)
+                msg = 'Kegiatan ID %d %s sudah dihapus.' % (row.id, row.nama)
                 try:
                   q.delete()
                   DBSession.flush()
                 except:
-                  msg = 'kegiatan ID %d %s tidak dapat dihapus.' % (row.id, row.nama)
+                  msg = 'Kegiatan ID %d %s tidak dapat dihapus.' % (row.id, row.nama)
                 request.session.flash(msg)
             return self.route_list()
         return dict(row=row,

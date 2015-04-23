@@ -37,34 +37,43 @@ PERM_CHOICE = ((None,'None'),
       ('edit', 'Edit'),
       ('delete', 'Delete'),
       ('posting', 'Posting'),
-      ('unposting', 'UnPosting'),
+      ('unposting', 'Unposting'),
       )
                 
 class AddSchema(colander.Schema):
     kode = colander.SchemaNode(
-                    colander.String())
+                    colander.String(),
+                    oid = "kode",
+                    title = "Kode")
                     
     nama = colander.SchemaNode(
-                    colander.String())
+                    colander.String(),
+                    oid = "nama",
+                    title = "Nama")
                     
     path = colander.SchemaNode(
-                    colander.String())
+                    colander.String(),
+                    oid = "path",
+                    title = "Path")
                     
     factory = colander.SchemaNode(
                     colander.String(),
-                    missing=colander.drop)
+                    missing=colander.drop,
+                    oid = "factory",
+                    title = "Factory")
                     
     perm_name = colander.SchemaNode(
                     colander.String(),
                     missing=colander.drop,
-                    widget=widget.SelectWidget(values=PERM_CHOICE))
+                    widget=widget.SelectWidget(values=PERM_CHOICE),
+                    title = "Permission")
     disabled = colander.SchemaNode(
                     colander.Boolean())
 
 class EditSchema(AddSchema):
-    id = colander.SchemaNode(colander.String(),
-            missing=colander.drop,
-            widget=widget.HiddenWidget(readonly=True))
+    id = colander.SchemaNode(
+            colander.Integer(),
+            oid="id",)
             
 class view_routes(BaseViews):
     ########                    
@@ -153,7 +162,7 @@ class view_routes(BaseViews):
         if 'id' in self.request.matchdict:
             values['id'] = self.request.matchdict['id']
         row = self.save(values, self.request.user, row)
-        self.request.session.flash('routes sudah disimpan.')
+        self.request.session.flash('Routes sudah disimpan.')
             
     def routes_list(self):
         return HTTPFound(location=self.request.route_url('routes'))
@@ -175,13 +184,13 @@ class view_routes(BaseViews):
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    req.session[SESS_ADD_FAILED] = e.render()               
+                    return dict(form=form)               
                     return HTTPFound(location=req.route_url('routes-add'))
                 self.save_request(dict(controls))
             return self.routes_list()
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
-        return dict(form=form.render())
+        return dict(form=form)
 
         
     ########
@@ -195,7 +204,7 @@ class view_routes(BaseViews):
         request.session.flash(msg, 'error')
         return routes_list()
 
-    @view_config(route_name='routes-edit', renderer='templates/routes/edit.pt',
+    @view_config(route_name='routes-edit', renderer='templates/routes/add.pt',
                  permission='edit')
     def view_routes_edit(self):
         request = self.request
@@ -218,8 +227,9 @@ class view_routes(BaseViews):
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
         values = row.to_dict()
-        return dict(form=form.render(appstruct=values))
-
+        form.set_appstruct(values)
+        return dict(form=form)
+        
     ##########
     # Delete #
     ##########    

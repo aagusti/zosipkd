@@ -153,6 +153,9 @@ class view_ak_sp2d_skpd(BaseViews):
         
         if not row:
             return id_not_found(request)
+        if g == '5': 
+            request.session.flash('Data tidak dapat diposting, karena masih belum ada keputusan.', 'error')
+            return self.route_list()
         if row.posted:
             request.session.flash('Data sudah diposting jurnal SKPD', 'error')
             return self.route_list()
@@ -410,12 +413,8 @@ class view_ak_sp2d_skpd(BaseViews):
                         
                         #Tambah ke Item Jurnal PPKD
                         jui   = row.id
-                        rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
-                                                   Sap.nama.label('nama1'),
-                                                   KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                                   Spp.nominal.label('nilai1'),
-                                                   APInvoiceItem.amount.label('nilai2'),
-                                                   RekeningSap.db_lra_sap_id.label('sap1'),
+                        rows = DBSession.query(KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                                   func.sum(APInvoiceItem.amount).label('nilai2'),
                                                    RekeningSap.kr_lo_sap_id.label('sap2'),
                                                    Rekening.id.label('rek'),
                                             ).filter(Sp2d.id==id_sp2d,
@@ -427,18 +426,12 @@ class view_ak_sp2d_skpd(BaseViews):
                                                    APInvoice.is_bayar==1,
                                                    APInvoiceItem.ap_invoice_id==APInvoice.id,
                                                    APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
-                                                   KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                                                    KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                    RekeningSap.rekening_id==Rekening.id,
-                                                   RekeningSap.db_lra_sap_id==Sap.id
-                                            ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                                   Sap.nama.label('nama1'),
-                                                   KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                                   Spp.nominal.label('nilai1'),
-                                                   APInvoiceItem.amount.label('nilai2'),
-                                                   RekeningSap.db_lra_sap_id.label('sap1'),
-                                                   RekeningSap.kr_lo_sap_id.label('sap2'),
-                                                   Rekening.id.label('rek'),
+                                                   RekeningSap.kr_lo_sap_id==Sap.id
+                                            ).group_by(KegiatanItem.kegiatan_sub_id,
+                                                   RekeningSap.kr_lo_sap_id,
+                                                   Rekening.id,
                                             ).all()
                         
                         for row in rows:                    
@@ -645,13 +638,9 @@ class view_ak_sp2d_skpd(BaseViews):
                     
                     #Tambah ke Item Jurnal PPKD
                     jui   = row.id
-                    rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               Spp.nominal.label('nilai1'),
-                                               APInvoiceItem.amount.label('nilai2'),
+                    rows = DBSession.query(KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               func.sum(APInvoiceItem.amount).label('nilai2'),
                                                RekeningSap.db_lra_sap_id.label('sap1'),
-                                               RekeningSap.kr_lra_sap_id.label('sap2'),
                                                Rekening.id.label('rek'),
                                         ).filter(Sp2d.id==id_sp2d,
                                                Spm.id==Sp2d.ap_spm_id,
@@ -661,18 +650,12 @@ class view_ak_sp2d_skpd(BaseViews):
                                                APInvoice.kegiatan_sub_id==KegiatanSub.id,
                                                APInvoiceItem.ap_invoice_id==APInvoice.id,
                                                APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
-                                               KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                                                KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                RekeningSap.rekening_id==Rekening.id,
                                                RekeningSap.db_lra_sap_id==Sap.id
-                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               Spp.nominal.label('nilai1'),
-                                               APInvoiceItem.amount.label('nilai2'),
-                                               RekeningSap.db_lra_sap_id.label('sap1'),
-                                               RekeningSap.kr_lra_sap_id.label('sap2'),
-                                               Rekening.id.label('rek'),
+                                        ).group_by(KegiatanItem.kegiatan_sub_id,
+                                               RekeningSap.db_lra_sap_id,
+                                               Rekening.id,
                                         ).all()
                     
                     for row in rows:                    
@@ -788,13 +771,9 @@ class view_ak_sp2d_skpd(BaseViews):
                         
                         #Tambah ke Item Jurnal PPKD
                         jui   = row.id
-                        rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
-                                                   Sap.nama.label('nama1'),
-                                                   KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                                   Spp.nominal.label('nilai1'),
-                                                   APInvoiceItem.amount.label('nilai2'),
+                        rows = DBSession.query(KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                                   func.sum(APInvoiceItem.amount).label('nilai2'),
                                                    RekeningSap.db_lra_sap_id.label('sap1'),
-                                                   RekeningSap.kr_lra_sap_id.label('sap2'),
                                                    Rekening.id.label('rek'),
                                             ).filter(Sp2d.id==id_sp2d,
                                                    Spm.id==Sp2d.ap_spm_id,
@@ -804,18 +783,12 @@ class view_ak_sp2d_skpd(BaseViews):
                                                    APInvoice.kegiatan_sub_id==KegiatanSub.id,
                                                    APInvoiceItem.ap_invoice_id==APInvoice.id,
                                                    APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
-                                                   KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                                                    KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                    RekeningSap.rekening_id==Rekening.id,
                                                    RekeningSap.db_lra_sap_id==Sap.id
-                                            ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                                   Sap.nama.label('nama1'),
-                                                   KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                                   Spp.nominal.label('nilai1'),
-                                                   APInvoiceItem.amount.label('nilai2'),
-                                                   RekeningSap.db_lra_sap_id.label('sap1'),
-                                                   RekeningSap.kr_lra_sap_id.label('sap2'),
-                                                   Rekening.id.label('rek'),
+                                            ).group_by(KegiatanItem.kegiatan_sub_id,
+                                                   RekeningSap.db_lra_sap_id,
+                                                   Rekening.id,
                                             ).all()
                         
                         for row in rows:                    
@@ -916,12 +889,8 @@ class view_ak_sp2d_skpd(BaseViews):
                         
                         #Tambah ke Item Jurnal PPKD
                         jui   = row.id
-                        rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
-                                                   Sap.nama.label('nama1'),
-                                                   KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                                   Spp.nominal.label('nilai1'),
-                                                   APInvoiceItem.amount.label('nilai2'),
-                                                   RekeningSap.db_lra_sap_id.label('sap1'),
+                        rows = DBSession.query(KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                                   func.sum(APInvoiceItem.amount).label('nilai2'),
                                                    RekeningSap.kr_lo_sap_id.label('sap2'),
                                                    Rekening.id.label('rek'),
                                             ).filter(Sp2d.id==id_sp2d,
@@ -932,18 +901,12 @@ class view_ak_sp2d_skpd(BaseViews):
                                                    APInvoice.kegiatan_sub_id==KegiatanSub.id,
                                                    APInvoiceItem.ap_invoice_id==APInvoice.id,
                                                    APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
-                                                   KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                                                    KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                    RekeningSap.rekening_id==Rekening.id,
-                                                   RekeningSap.db_lra_sap_id==Sap.id
-                                            ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                                   Sap.nama.label('nama1'),
-                                                   KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                                   Spp.nominal.label('nilai1'),
-                                                   APInvoiceItem.amount.label('nilai2'),
-                                                   RekeningSap.db_lra_sap_id.label('sap1'),
-                                                   RekeningSap.kr_lo_sap_id.label('sap2'),
-                                                   Rekening.id.label('rek'),
+                                                   RekeningSap.kr_lo_sap_id==Sap.id
+                                            ).group_by(KegiatanItem.kegiatan_sub_id,
+                                                   RekeningSap.kr_lo_sap_id,
+                                                   Rekening.id,
                                             ).all()
                         
                         for row in rows:                    
@@ -1043,13 +1006,9 @@ class view_ak_sp2d_skpd(BaseViews):
                         
                         #Tambah ke Item Jurnal SKPD
                         jui   = row.id
-                        rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
-                                                   Sap.nama.label('nama1'),
-                                                   KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                                   Spp.nominal.label('nilai1'),
-                                                   APInvoiceItem.amount.label('nilai2'),
+                        rows = DBSession.query(KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                                   func.sum(APInvoiceItem.amount).label('nilai2'),
                                                    RekeningSap.db_lra_sap_id.label('sap1'),
-                                                   RekeningSap.kr_lra_sap_id.label('sap2'),
                                                    Rekening.id.label('rek'),
                                             ).filter(Sp2d.id==id_sp2d,
                                                    Spm.id==Sp2d.ap_spm_id,
@@ -1059,18 +1018,12 @@ class view_ak_sp2d_skpd(BaseViews):
                                                    APInvoice.kegiatan_sub_id==KegiatanSub.id,
                                                    APInvoiceItem.ap_invoice_id==APInvoice.id,
                                                    APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
-                                                   KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                                                    KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                    RekeningSap.rekening_id==Rekening.id,
                                                    RekeningSap.db_lra_sap_id==Sap.id
-                                            ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                                   Sap.nama.label('nama1'),
-                                                   KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                                   Spp.nominal.label('nilai1'),
-                                                   APInvoiceItem.amount.label('nilai2'),
-                                                   RekeningSap.db_lra_sap_id.label('sap1'),
-                                                   RekeningSap.kr_lra_sap_id.label('sap2'),
-                                                   Rekening.id.label('rek'),
+                                            ).group_by(KegiatanItem.kegiatan_sub_id,
+                                                   RekeningSap.db_lra_sap_id,
+                                                   Rekening.id,
                                             ).all()
                         
                         for row in rows:                    

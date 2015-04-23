@@ -27,6 +27,7 @@ AP_TYPE = (
     ('2', 'TU'),
     ('3', 'GU'),
     ('4', 'LS'),
+    ('5', 'SP2B'),
     )
 
 def deferred_kontrak_type(node, kw):
@@ -151,8 +152,10 @@ class view_ap_invoice_skpd(BaseViews):
             
         elif url_dict['act']=='headofkode1':
             term  = 'term'  in params and params['term'] or ''
+            jenis = 'jenis' in params and params['jenis'] or 0 
             #jenis = 'jenis' in params and params['jenis'] or ''
-            #jenis1= "%d" % jenis
+            jenis1= "%s" % jenis
+            print'XXXXXXXXXXXXXXX-------------------XXXXXXXXXXXXXX',jenis1
             q = DBSession.query(APInvoice.id,
                                 APInvoice.kode.label('kode1'),
                                 APInvoice.nama.label('nama1'),
@@ -164,7 +167,7 @@ class view_ap_invoice_skpd(BaseViews):
                                         APInvoice.tahun_id == ses['tahun'],
                                         APInvoice.status_spp == 0,
                                         APInvoice.amount != 0,
-                                        #APInvoice.jenis == jenis1,
+                                        APInvoice.jenis == jenis1,
                                         APInvoice.kode.ilike('%s%%' % term))
             rows = q.all()                               
             r = []

@@ -32,10 +32,14 @@ SESS_EDIT_FAILED = 'Edit group gagal'
 class AddSchema(colander.Schema):
     group_name = colander.SchemaNode(
                     colander.String(),
-                    validator=colander.Length(max=18))
+                    oid = "group_name",
+                    title = "Group",)
                     
     description = colander.SchemaNode(
-                    colander.String())
+                    colander.String(),
+                    oid = "description",
+                    title = "Deskripsi",)
+                    
 class EditSchema(AddSchema):
     id = colander.SchemaNode(colander.String(),
             missing=colander.drop,
@@ -121,7 +125,7 @@ class view_group(BaseViews):
         if 'id' in self.request.matchdict:
             values['id'] = self.request.matchdict['id']
         row = self.save(values, self.request.user, row)
-        self.request.session.flash('group sudah disimpan.')
+        self.request.session.flash('Group sudah disimpan.')
             
     def route_list(self):
         return HTTPFound(location=self.request.route_url('group'))
@@ -143,13 +147,13 @@ class view_group(BaseViews):
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    req.session[SESS_ADD_FAILED] = e.render()               
+                    return dict(form=form)              
                     return HTTPFound(location=req.route_url('group-add'))
                 self.save_request(dict(controls))
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
-        return dict(form=form.render())
+        return dict(form=form)
 
         
     ########
@@ -186,7 +190,8 @@ class view_group(BaseViews):
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
         values = row.to_dict()
-        return dict(form=form.render(appstruct=values))
+        form.set_appstruct(values)
+        return dict(form=form)
 
     ##########
     # Delete #

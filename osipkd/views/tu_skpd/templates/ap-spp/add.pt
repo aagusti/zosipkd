@@ -743,7 +743,7 @@
                 alert(hasil);*/
 
                 $('#ap_spp_item_id').val('');
-                  $('#detail').submit();
+                $('#detail').submit();
              })
             $('#kode1').typeahead({
                 "hint"     : true,
@@ -870,6 +870,8 @@
                         return 'GU';
                     } else if (data == "4") {
                         return 'LS';
+                    } else if (data == "5") {
+                        return 'SP2B';
                     }
                 }
             }],

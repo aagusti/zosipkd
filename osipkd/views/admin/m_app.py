@@ -33,14 +33,19 @@ SESS_EDIT_FAILED = 'Edit app gagal'
 class AddSchema(colander.Schema):
     kode = colander.SchemaNode(
                     colander.String(),
-                    validator=colander.Length(max=18))
+                    oid = "kode",
+                    title = "Kode")
                     
     nama = colander.SchemaNode(
-                    colander.String())
+                    colander.String(),
+                    oid = "nama",
+                    title = "Nama")
     tahun = colander.SchemaNode(
                     colander.Integer(),
                     default = datetime.now().year,
-                    missing=colander.drop)
+                    missing=colander.drop,
+                    oid = "tahun",
+                    title = "Tahun")
     disabled = colander.SchemaNode(
                     colander.Boolean())
 
@@ -126,7 +131,7 @@ class view_app(BaseViews):
         if 'id' in self.request.matchdict:
             values['id'] = self.request.matchdict['id']
         row = self.save(values, self.request.user, row)
-        self.request.session.flash('app sudah disimpan.')
+        self.request.session.flash('Modul aplikasi sudah disimpan.')
             
     def route_list(self):
         return HTTPFound(location=self.request.route_url('app'))
@@ -148,13 +153,13 @@ class view_app(BaseViews):
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    req.session[SESS_ADD_FAILED] = e.render()               
+                    return dict(form=form)             
                     return HTTPFound(location=req.route_url('app-add'))
                 self.save_request(dict(controls))
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
-        return dict(form=form.render())
+        return dict(form=form)
 
         
     ########
@@ -168,7 +173,7 @@ class view_app(BaseViews):
         request.session.flash(msg, 'error')
         return route_list()
 
-    @view_config(route_name='app-edit', renderer='templates/app/edit.pt',
+    @view_config(route_name='app-edit', renderer='templates/app/add.pt',
                  permission='edit')
     def view_app_edit(self):
         request = self.request
@@ -194,7 +199,8 @@ class view_app(BaseViews):
         if not values['tahun']:
             values['tahun'] = 0
 
-        return dict(form=form.render(appstruct=values))
+        form.set_appstruct(values)
+        return dict(form=form)
 
     ##########
     # Delete #

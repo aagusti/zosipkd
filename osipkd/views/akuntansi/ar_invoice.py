@@ -190,10 +190,12 @@ class view_ar_invoice_item(BaseViews):
             columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
             columns.append(ColumnDT('amount',  filter=self._number_format))
             columns.append(ColumnDT('posted'))
+            columns.append(ColumnDT('posted1'))
             
-            query = DBSession.query(ARItem).filter(ARItem.tahun==ses['tahun'],
-                      ARItem.unit_id==ses['unit_id'],
-                      ARItem.tanggal == ses['tanggal'])
+            query = DBSession.query(ARItem
+                            ).filter(ARItem.tahun   == ses['tahun'],
+                                     ARItem.unit_id == ses['unit_id'],
+                                     ARItem.tanggal == ses['tanggal'])
             rowTable = DataTables(req, ARItem, query, columns)
             return rowTable.output_result()
         
@@ -229,8 +231,8 @@ class view_ar_invoice_item(BaseViews):
         row.bulan  = tanggal.month
         row.hari   = tanggal.day
         row.minggu = tanggal.isocalendar()[1]
-        row.disable   = 'disable' in values and values['disable'] and 1 or 0
-        row.is_kota   = 'is_kota' in values and values['is_kota'] and 1 or 0
+        row.disabled = 'disabled' in values and values['disabled'] and 1 or 0
+        row.is_kota  = 'is_kota' in values and values['is_kota'] and 1 or 0
 
         DBSession.add(row)
         DBSession.flush()
@@ -302,6 +304,9 @@ class view_ar_invoice_item(BaseViews):
         if row.posted:
             request.session.flash('Data sudah diposting', 'error')
             return self.route_list()
+        if row.posted1:
+            request.session.flash('Data sudah diposting rekap', 'error')
+            return self.route_list()
             
         form = self.get_form(EditSchema)
         if request.POST:
@@ -352,6 +357,9 @@ class view_ar_invoice_item(BaseViews):
         if row.posted:
             request.session.flash('Data sudah diposting', 'error')
             return self.route_list()
+        if row.posted1:
+            request.session.flash('Data sudah diposting rekap', 'error')
+            return self.route_list()
             
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
@@ -372,7 +380,7 @@ class view_ar_invoice_item(BaseViews):
     ###########     
     def save_request2(self, row=None):
         row = ARItem()
-        self.request.session.flash('Penetapan/Tagihan sudah diposting dan dibuat Jurnalnya.')
+        self.request.session.flash('Penetapan/Tagihan sudah diposting transaksi dan dibuat Jurnalnya.')
         return row
         
     @view_config(route_name='ar-invoice-item-posting', renderer='templates/ar-invoice-item/posting.pt',
@@ -388,7 +396,7 @@ class view_ar_invoice_item(BaseViews):
             self.request.session.flash('Data tidak dapat di jurnal, karena bernilai 0.', 'error')
             return self.route_list()
         if row.posted:
-            self.request.session.flash('Data sudah dibuat jurnal', 'error')
+            self.request.session.flash('Data sudah dibuat jurnal transaksi', 'error')
             return self.route_list()
             
         form = Form(colander.Schema(), buttons=('jurnal','cancel'))
@@ -504,7 +512,7 @@ class view_ar_invoice_item(BaseViews):
     #############   
     def save_request3(self, row=None):
         row = ARItem()
-        self.request.session.flash('Penetapan/Tagihan sudah di Un-Jurnal.')
+        self.request.session.flash('Penetapan/Tagihan sudah di Un-Jurnal transaksi.')
         return row
         
     @view_config(route_name='ar-invoice-item-unposting', renderer='templates/ar-invoice-item/unposting.pt',
@@ -516,7 +524,7 @@ class view_ar_invoice_item(BaseViews):
         if not row:
             return id_not_found(request)
         if not row.posted:
-            self.request.session.flash('Data tidak dapat di Un-Jurnal, karena belum dibuat jurnal.', 'error')
+            self.request.session.flash('Data tidak dapat di Un-Jurnal, karena belum dibuat jurnal transaksi.', 'error')
             return self.route_list()
         if row.disabled:
             self.request.session.flash('Data jurnal Penetapan/Tagihan sudah diposting.', 'error')
@@ -542,4 +550,216 @@ class view_ar_invoice_item(BaseViews):
                 
             return self.route_list()
         return dict(row=row, form=form.render())
+    
+    #################
+    # Posting Rekap #
+    #################     
+    def save_request4(self, rowd=None):
+        rowd = ARItem()
+        #self.request.session.flash('Penetapan/Tagihan sudah diposting rekap dan dibuat Jurnalnya.')
+        return rowd
+        
+    @view_config(route_name='ar-invoice-item-posting1', renderer='templates/ar-invoice-item/posting1.pt',
+                 permission='posting')
+    def view_edit_posting1(self):
+        request = self.request
+        a = datetime.strftime(datetime.now(),'%Y-%m-%d')
+        b = " 00:00:00+07"
+        tanggal = a+b
+        #tanggal = datetime.datetime.fromtimestamp(1386181800).strftime('%Y-%m-%d %H:%M:%S')
             
+        rekaps = DBSession.query(ARItem.id.label('ar_id1'),
+                                ).filter(ARItem.tanggal==tanggal,
+                                         ARItem.posted1==0,
+                                         ARItem.amount!=0,
+                                         ARItem.disabled==0,
+                                ).group_by(ARItem.id.label('ar_id1'),
+                                ).all()
+        if not rekaps:
+            self.request.session.flash('Data posting rekap tidak ada.', 'error')
+            return self.route_list()
+            
+        form = Form(colander.Schema(), buttons=('jurnal','cancel'))
+        
+        if request.POST:
+            if 'jurnal' in request.POST: 
+                rekaps = DBSession.query(ARItem.id.label('ar_id1'),
+                                ).filter(ARItem.tanggal==tanggal,
+                                         ARItem.posted1==0,
+                                         ARItem.amount!=0,
+                                         ARItem.disabled==0,
+                                ).group_by(ARItem.id.label('ar_id1'),
+                                ).all()
+                for row in rekaps:
+                    a = row.ar_id1
+                    #Update posted1 pada ARInvoice
+                    rowd = DBSession.query(ARItem).filter(ARItem.id==a).first()
+                    rowd.posted1=1
+                    self.save_request4(rowd)
+                
+                self.request.session.flash('Penetapan/Tagihan sudah diposting rekap dan dibuat Jurnalnya.')
+                
+                #Tambah ke Jurnal
+                tanggal = datetime.strftime(datetime.now(),'%Y-%m-%d')
+                kode    = "Penetapan-%s" % tanggal
+                
+                row = Jurnal()
+                row.created    = datetime.now()
+                row.create_uid = self.request.user.id
+                row.updated    = datetime.now()
+                row.update_uid = self.request.user.id
+                row.tahun_id   = self.session['tahun']
+                row.unit_id    = self.session['unit_id']
+                row.nama       = "Diterima Rekap Penetapan/Tagihan pada tanggal %s" % tanggal
+                row.notes      = "Rekap Penetapan/Tagihan pada tanggal %s" % tanggal
+                row.periode    = self.session['bulan']
+                row.posted     = 0
+                row.disabled   = 0
+                row.is_skpd    = 1
+                row.jv_type    = 1
+                row.source     = "Rekap-inv"
+                row.source_no  = kode
+                row.tgl_source = tanggal
+                row.tanggal    = datetime.now()
+                row.tgl_transaksi = datetime.now()
+                row.no_urut = Jurnal.max_no_urut(row.tahun_id,row.unit_id)+1;
+                
+                if not row.kode:
+                    tahun    = self.session['tahun']
+                    unit_kd  = self.session['unit_kd']
+                    is_skpd  = row.is_skpd
+                    tipe     = Jurnal.get_tipe(row.jv_type)
+                    no_urut  = row.no_urut
+                    no       = "0000%d" % no_urut
+                    nomor    = no[-5:]     
+                    row.kode = "%d" % tahun + "-%s" % is_skpd + "-%s" % unit_kd + "-%s" % tipe + "-%s" % nomor
+                
+                DBSession.add(row)
+                DBSession.flush()
+                
+                #Tambah ke Item Jurnal SKPD
+                jui   = row.id
+                rekaps = DBSession.query(ARItem.id.label('ar_id1'),
+                                ).filter(ARItem.tanggal==tanggal,
+                                         ARItem.posted1==1,
+                                         ARItem.amount!=0,
+                                         ARItem.disabled==0,
+                                ).group_by(ARItem.id.label('ar_id1'),
+                                ).all()
+                for row in rekaps:
+                    a = row.ar_id1
+                    rows = DBSession.query(ARItem.rekening_id.label('rekening_id1'),
+                                           Sap.nama.label('nama1'),
+                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                           ARItem.amount.label('nilai1'),
+                                           RekeningSap.db_lo_sap_id.label('sap1'),
+                                           RekeningSap.kr_lo_sap_id.label('sap2'),
+                                           Rekening.id.label('rek'),
+                                    ).join(Rekening
+                                    #).outerjoin(KegiatanSub, KegiatanItem, RekeningSap 
+                                    ).filter(ARItem.id==a,
+                                             ARItem.rekening_id==KegiatanItem.rekening_id,
+                                             KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                                             KegiatanItem.rekening_id==RekeningSap.rekening_id,
+                                             RekeningSap.rekening_id==Rekening.id,
+                                             RekeningSap.kr_lo_sap_id==Sap.id
+                                    ).group_by(ARItem.rekening_id.label('rekening_id1'),
+                                               Sap.nama.label('nama1'),
+                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               ARItem.amount.label('nilai1'),
+                                               RekeningSap.db_lo_sap_id.label('sap1'),
+                                               RekeningSap.kr_lo_sap_id.label('sap2'),
+                                               Rekening.id.label('rek'),
+                                    ).all()
+                    
+                    for row in rows:
+                        ji = JurnalItem()
+                        
+                        ji.jurnal_id = "%d" % jui
+                        ji.kegiatan_sub_id = row.kegiatan_sub_id1
+                        ji.rekening_id  = row.rek
+                        ji.sap_id       = row.sap1
+                        ji.notes        = ""
+                        ji.amount       = row.nilai1
+                        
+                        DBSession.add(ji)
+                        DBSession.flush()
+                    
+                    n=0
+                    for row in rows:
+                        ji2 = JurnalItem()
+                        
+                        ji2.jurnal_id = "%d" % jui
+                        ji2.kegiatan_sub_id = row.kegiatan_sub_id1
+                        ji2.rekening_id  = row.rek
+                        ji2.sap_id       = row.sap2
+                        n = row.nilai1
+                        ji2.amount       = n * -1
+                        ji2.notes        = ""
+                        n = n + 1
+                        
+                        DBSession.add(ji2)
+                        DBSession.flush()
+                
+            return self.route_list()
+        return dict(form=form.render())    
+
+    ###################
+    # UnPosting Rekap #
+    ###################   
+    def save_request5(self, rowd=None):
+        rowd = ARItem()
+        #self.request.session.flash('Rekap Penetapan/Tagihan sudah di Un-Jurnal.')
+        return rowd
+        
+    @view_config(route_name='ar-invoice-item-unposting1', renderer='templates/ar-invoice-item/unposting1.pt',
+                 permission='unposting') 
+    def view_edit_unposting1(self):
+        request = self.request
+        tanggal = datetime.strftime(datetime.now(),'%Y-%m-%d')
+        kode    = "Penetapan-%s" % tanggal
+        #row     = self.query_id().first()
+        
+        rekaps = DBSession.query(ARItem.id.label('ar_id1'),
+                                ).filter(ARItem.tanggal==tanggal,
+                                         ARItem.posted1==1,
+                                         ARItem.amount!=0,
+                                         ARItem.disabled==0,
+                                ).group_by(ARItem.id.label('ar_id1'),
+                                ).all()
+        if not rekaps:
+            self.request.session.flash('Data rekap tidak dapat di Un-Jurnal, karena belum dibuat jurnal.', 'error')
+            return self.route_list()
+            
+        form = Form(colander.Schema(), buttons=('un-jurnal','cancel'))
+        
+        if request.POST:
+            if 'un-jurnal' in request.POST: 
+                
+                rekaps = DBSession.query(ARItem.id.label('ar_id1'),
+                                ).filter(ARItem.tanggal==tanggal,
+                                         ARItem.posted1==1,
+                                         ARItem.amount!=0,
+                                         ARItem.disabled==0,
+                                ).group_by(ARItem.id.label('ar_id1'),
+                                ).all()
+                for row in rekaps:
+                    a = row.ar_id1
+                    #Update posted1 pada ARInvoice
+                    rowd = DBSession.query(ARItem).filter(ARItem.id==a).first()
+                    rowd.posted1=0
+                    self.save_request5(rowd)
+                
+                self.request.session.flash('Rekap Penetapan/Tagihan sudah di Un-Jurnal.')           
+                
+                r = DBSession.query(Jurnal.id).filter(Jurnal.source_no==kode,Jurnal.source=='Rekap-inv',Jurnal.tgl_source==tanggal).first()
+                #Menghapus Item Jurnal
+                DBSession.query(JurnalItem).filter(JurnalItem.jurnal_id==r).delete()
+                DBSession.flush()
+                    
+                #Menghapus PIUTANG yang sudah menjadi jurnal
+                DBSession.query(Jurnal).filter(Jurnal.source_no==kode,Jurnal.source=='Rekap-inv',Jurnal.tgl_source==tanggal).delete()
+                DBSession.flush()
+                
+            return self.route_list()
+        return dict(form=form.render())    

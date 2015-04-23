@@ -109,10 +109,10 @@
             <th>Index</th>
             <th>No. Piutang</th>
             <th>Tgl. Ketetapan</th>
-            <th>Tgl. Validasi</th>
             <th>Uraian</th>
             <th>Nilai</th>
             <th>Posting</th>
+            <th>Rekap</th>
         </tr>
       </thead>
       <tbody>
@@ -126,9 +126,11 @@
       var oTableUrl = "/ak-arinvoice/act/grid";
       var tb_array = [
           '<div class="btn-group pull-left">',
-          '	<button id="btn_posting" class="btn btn btn-success" type="button">Jurnal</button>',
-          '	<button id="btn_unposting" class="btn btn btn-info" type="button">Un-Jurnal</button>',
-          ' <button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
+          '	<button id="btn_posting"    class="btn btn btn-success" type="button">Jurnal</button>',
+          '	<button id="btn_unposting"  class="btn btn btn-info"    type="button">Un-Jurnal</button>',
+          '	<button id="btn_posting1"   class="btn btn btn-success" type="button">Jurnal Rekap</button>',
+          '	<button id="btn_unposting1" class="btn btn btn-info"    type="button">Un-Jurnal Rekap</button>',
+          ' <button id="btn_close"      class="btn btn-warning"     type="button">Tutup</button>',
           '	&nbsp;',
           '</div>',
       ];
@@ -160,15 +162,24 @@
                "aTargets"   : [0]
             },{
                "sClass"     : "right",
-               "aTargets"   : [5],
+               "aTargets"   : [4],
                "mRender"    : function (data, type, full) {
                               return formatNumber(data);}
             },{
                "bSearchable": true,
                "bSortable"  : false,
-               "aTargets"   : [2,3,4,5]
+               "aTargets"   : [2,3,4]
             },{
-                "aTargets" : [6], // Untuk Posted
+                "aTargets" : [5], // Untuk Posted
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return 'N';
+                    } else if (data == "1") {
+                        return 'Y';
+                    }
+                }
+            },{
+                "aTargets" : [6], // Untuk Posted Rekap
                 "mRender"  : function (data, type, full) {
                     if (data == "0") {
                         return 'N';
@@ -179,17 +190,17 @@
             }],
             "aoColumns": [
                 null, {
-                    "sWidth": "70px"
+                    "sWidth": "50px"
                 }, {
                     "sWidth": "40px",
                 }, {
-                    "sWidth": "40px",
-                }, {
-                    "sWidth": "110px",
+                    "sWidth": "180px",
                 }, {
                     "sWidth": "60px",
                 }, {
-                    "sWidth": "30px","class":"right"
+                    "sWidth": "20px","class":"center"
+                }, {
+                    "sWidth": "20px","class":"center"
                 }
             ],
             
@@ -207,6 +218,11 @@
                         $(this).addClass('row_selected');
                     }
                 })
+                switch(aData[5]){
+                    case '1' :
+                        $('td',nRow).css("background-color","#ddffdd")
+                        break;
+                }
                 switch(aData[6]){
                     case '1' :
                         $('td',nRow).css("background-color","#ddffdd")
@@ -251,6 +267,48 @@
             }
         });
         
+        $('#btn_posting1').click(function () {
+            $('#dlgRpt').modal('show');
+        });
+        
+        $('#btn_pil_rpt').click(function () {
+          var tgl = $('#tanggal').val();
+          
+          window.location = "/ak-arinvoice/posting1?tanggal="+tgl;
+        });
+        
+        $('#tanggal').click(
+            function(){
+              if (!Modernizr.inputtypes['date'] ||
+                  "date" != "date"){
+                $('#tanggal').pickadate({"selectMonths": true,
+                  "submitFormat": "yyyy-mm-dd", 
+                  "selectYears": true, "format": "yyyy-mm-dd"});
+              }
+            }
+        );
+        
+        $('#btn_unposting1').click(function () {
+            $('#dlgRpt1').modal('show');
+        });
+        
+        $('#btn_pil_rpt1').click(function () {
+          var tgl = $('#tanggal1').val();
+          
+          window.location = "/ak-arinvoice/unposting1?tanggal="+tgl;
+        });
+        
+        $('#tanggal1').click(
+            function(){
+              if (!Modernizr.inputtypes['date'] ||
+                  "date" != "date"){
+                $('#tanggal1').pickadate({"selectMonths": true,
+                  "submitFormat": "yyyy-mm-dd", 
+                  "selectYears": true, "format": "yyyy-mm-dd"});
+              }
+            }
+        );
+        
         $("#btn_close").click(function () {
             window.location = '/ak-ppkd';
             return false;
@@ -258,5 +316,52 @@
      });
     </script>
     
+    <!-- Modal posting -->
+    <div class="modal fade" id="dlgRpt">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title">Pilih Tanggal Rekap</h4>
+          </div>
+
+        <div class="modal-body"> 
+        <label class="control-label col-md-2">Tanggal</label>
+          <div class="col-md-7">
+            <input id="tanggal" class="form-control typeahead" type="date"  name="tanggal" readonly="true">
+          </div>
+        </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+            <button type="button" class="btn btn-primary" id="btn_pil_rpt" name="btn_pil_rpt">Lanjutan</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    
+    <!-- Modal unposting -->
+    <div class="modal fade" id="dlgRpt1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title">Pilih Tanggal UnJurnal Rekap</h4>
+          </div>
+
+        <div class="modal-body"> 
+        <label class="control-label col-md-2">Tanggal</label>
+          <div class="col-md-7">
+            <input id="tanggal1" class="form-control typeahead" type="date"  name="tanggal1" readonly="true">
+          </div>
+        </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+            <button type="button" class="btn btn-primary" id="btn_pil_rpt1" name="btn_pil_rpt">Lanjutkan</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
   </div> <!--End Metal-->
 </html>

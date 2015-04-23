@@ -54,12 +54,16 @@ class AddSchema(colander.Schema):
                     
     chart_type = colander.SchemaNode(
                     colander.String(),
-                    widget=deferred_chart_type
+                    widget=deferred_chart_type,
+                    title="Tipe Chart",
+                    oid='chart_type'
                     )
     devider    = colander.SchemaNode(
                     colander.Integer(),
                     default = 1000,
-                    validator=colander.Range(min=1, max=1000000))
+                    validator=colander.Range(min=1, max=1000000),
+                    title="Pembagi",
+                    oid='devider')
                     
                     
 class EditSchema(AddSchema):
@@ -158,13 +162,13 @@ class view_eis_chart(BaseViews):
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    req.session[SESS_ADD_FAILED] = e.render()     
+                    return dict(form=form)    
                     return HTTPFound(location=req.route_url('eis-chart-add'))
                 self.save_request(dict(controls))
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
-        return dict(form=form.render())
+        return dict(form=form)
 
         
     ########
@@ -194,7 +198,7 @@ class view_eis_chart(BaseViews):
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    request.session[SESS_EDIT_FAILED] = e.render()               
+                    return dict(form=form)               
                     return HTTPFound(location=request.route_url('eis-chart-edit',
                                       id=row.id))
                 self.save_request(dict(controls), row)
@@ -202,7 +206,8 @@ class view_eis_chart(BaseViews):
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
         values = row.to_dict()
-        return dict(form=form.render(appstruct=values))
+        form.set_appstruct(values) 
+        return dict(form=form)
 
     ##########
     # Delete #

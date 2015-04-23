@@ -38,20 +38,23 @@ class AddSchema(colander.Schema):
                   
     rekening_nm = colander.SchemaNode(
                     colander.String(),
-                    widget=rek_widget,
-                    oid = "rekening_nm")
+                    #widget=rek_widget,
+                    oid = "rekening_nm",
+                    title="Rekening")
                     
     rekening_id = colander.SchemaNode(
                     colander.Integer(),
-                    widget=widget.HiddenWidget(),
+                    #widget=widget.HiddenWidget(),
                     oid = "rekening_id")
                     
     no_urut = colander.SchemaNode(
                     colander.Integer(),
+                    oid = "no_urut",
                     title="No Urut")
                     
     nama = colander.SchemaNode(
                     colander.String(),
+                    oid = "nama",
                     title="Uraian")
 
 class EditSchema(AddSchema):
@@ -158,6 +161,7 @@ class view_dasarhukum(BaseViews):
         r = dict(form=self.session[session_name])
         del self.session[session_name]
         return r
+        
     @view_config(route_name='dasarhukum-add', renderer='templates/dasarhukum/add.pt',
                  permission='add')
     def view_add(self):
@@ -170,13 +174,13 @@ class view_dasarhukum(BaseViews):
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    req.session[SESS_ADD_FAILED] = e.render()               
+                    return dict(form=form)               
                     return HTTPFound(location=req.route_url('dasarhukum-add'))
                 self.save_request(dict(controls))
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
-        return dict(form=form.render())
+        return dict(form=form)
         
     ########
     # Edit #
@@ -187,7 +191,7 @@ class view_dasarhukum(BaseViews):
         msg = 'Dasar Hukum ID %s Tidak Ditemukan.' % self.request.matchdict['id']
         request.session.flash(msg, 'error')
         return route_list()
-    @view_config(route_name='dasarhukum-edit', renderer='templates/dasarhukum/edit.pt',
+    @view_config(route_name='dasarhukum-edit', renderer='templates/dasarhukum/add.pt',
                  permission='edit')
     def view_edit(self):
         request = self.request
@@ -211,8 +215,9 @@ class view_dasarhukum(BaseViews):
             return self.session_failed(SESS_EDIT_FAILED)
         values = row.to_dict()
         values['rekening_nm'] = row.rekenings.nama
+        form.set_appstruct(values)
+        return dict(form=form)
         
-        return dict(form=form.render(appstruct=values))
     ##########
     # Delete #
     ##########    

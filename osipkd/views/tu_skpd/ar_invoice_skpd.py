@@ -27,6 +27,16 @@ JENIS_ID = (
     (2, 'Piutang'),
     (3, 'Ketetapan'))
 
+def deferred_sumber_id(node, kw):
+    values = kw.get('sumber_id', [])
+    return widget.SelectWidget(values=values)
+    
+SUMBER_ID = (
+    (1, 'Manual'),
+    (2, 'PBB'),
+    (3, 'BPHTB'),
+    (4, 'PADL'))
+    
 class view_ar_invoice_skpd(BaseViews):
 
     @view_config(route_name="ar-invoice-skpd", renderer="templates/ar-invoice-skpd/list.pt",
@@ -65,6 +75,7 @@ class view_ar_invoice_skpd(BaseViews):
                 columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('nilai'))
                 columns.append(ColumnDT('posted'))
+                columns.append(ColumnDT('posted1'))
 
                 query = DBSession.query(ARInvoice.id,
                           ARInvoice.kode,
@@ -76,6 +87,7 @@ class view_ar_invoice_skpd(BaseViews):
                           ARInvoice.nama,
                           ARInvoice.nilai,
                           ARInvoice.posted,
+                          ARInvoice.posted1,
                         ).filter(ARInvoice.tahun_id==ses['tahun'],
                                  ARInvoice.unit_id==ses['unit_id']
                         ).order_by(ARInvoice.id.asc()
@@ -122,6 +134,10 @@ class AddSchema(colander.Schema):
     tgl_terima       = colander.SchemaNode(
                           colander.Date(),
                           title="Tgl.Ketetapan")
+    sumber_id        = colander.SchemaNode(
+                          colander.String(),
+                          widget=widget.SelectWidget(values=SUMBER_ID),
+                          title = "Sumber")
     """
     tgl_validasi     = colander.SchemaNode(
                           colander.Date(),
@@ -172,7 +188,7 @@ class EditSchema(AddSchema):
 
 def get_form(request, class_form):
     schema = class_form(validator=form_validator)
-    schema = schema.bind(jenis_id=JENIS_ID)
+    schema = schema.bind(jenis_id=JENIS_ID,sumber_id=SUMBER_ID)
     schema.request = request
     return Form(schema, buttons=('simpan','batal'))
     
@@ -267,6 +283,9 @@ def view_edit(request):
     if row.posted:
         request.session.flash('Data sudah diposting', 'error')
         return route_list(request)
+    if row.posted1:
+        request.session.flash('Data sudah diposting rekap', 'error')
+        return route_list(request)
 
     form = get_form(request, EditSchema)
     if request.POST:
@@ -318,6 +337,9 @@ def view_delete(request):
         return id_not_found(request)
     if row.posted:
         request.session.flash('Data sudah diposting', 'error')
+        return route_list(request)
+    if row.posted1:
+        request.session.flash('Data sudah diposting rekap', 'error')
         return route_list(request)
     if row.nilai:
         request.session.flash('Data tidak bisa dihapus, karena memiliki data items')

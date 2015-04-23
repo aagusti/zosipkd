@@ -40,16 +40,19 @@ class AddSchema(colander.Schema):
                     oid = 'nama')
     source_type = colander.SchemaNode(
                     colander.String(),
-                    widget=deferred_slide_type)
+                    widget=deferred_slide_type,
+                    title="Tipe")
                                     
     source_id  = colander.SchemaNode(
                     colander.String(),
-                    missing = colander.drop)
+                    missing = colander.drop,
+                    title="Source/URL")
                     
     order_id   = colander.SchemaNode(
                     colander.Integer(),
                     default = 0,
-                    missing = 0)
+                    missing = 0,
+                    title="Id Order")
                 
     is_aktif   = colander.SchemaNode(
                     colander.Boolean())
@@ -126,6 +129,7 @@ class view_eis_slide(BaseViews):
         row.disabled = 'disabled' in values and values['disabled'] and 1 or 0
         DBSession.add(row)
         DBSession.flush()
+        
         if 'is_aktif' in values and values['is_aktif']:
             stmt = update(Slide).where(Slide.id!=row.id).\
                    values(is_aktif=0)
@@ -190,15 +194,17 @@ class view_eis_slide(BaseViews):
     def view_eis_slide_edit(self):
         request = self.request
         row = self.query_id().first()
+        
         if not row:
             return id_not_found(request)
+            
         #values = row.to_dict()
         rowd={}
         rowd['id']          = row.id
         rowd['kode']        = row.kode
         rowd['nama']        = row.nama
-        rowd['source_type']    = row.source_type
-        rowd['source_id']    = row.source_id
+        rowd['source_type'] = row.source_type
+        rowd['source_id']   = row.source_id
         rowd['order_id']    = row.order_id
         rowd['is_aktif']    = row.is_aktif
         rowd['disabled']    = row.disabled
@@ -234,6 +240,7 @@ class view_eis_slide(BaseViews):
         
         if not row:
             return self.id_not_found(request)
+            
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
@@ -245,6 +252,4 @@ class view_eis_slide(BaseViews):
                   msg = 'Slide ID %d %s tidak dapat dihapus.' % (row.id, row.nama)
                 request.session.flash(msg)
             return self.route_list()
-        return dict(row=row,
-                     form=form.render())
-
+        return dict(row=row, form=form.render())

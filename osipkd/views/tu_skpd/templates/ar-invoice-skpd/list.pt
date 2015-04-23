@@ -113,6 +113,7 @@
             <th>Uraian</th>
             <th>Nilai</th>
             <th>Posting</th>
+            <th>Rekap</th>
         </tr>
       </thead>
       <tbody>
@@ -175,9 +176,18 @@
                "aTargets"   : [1,2,4]
             },{
                "bSortable"  : false,
-               "aTargets"   : [3,5]
+               "aTargets"   : [3,5,6]
             },{
                 "aTargets" : [5], // Untuk Posted
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return 'N';
+                    } else if (data == "1") {
+                        return 'Y';
+                    }
+                }
+            },{
+                "aTargets" : [6], // Untuk Posted Rekap
                 "mRender"  : function (data, type, full) {
                     if (data == "0") {
                         return 'N';
@@ -192,11 +202,13 @@
                 }, {
                     "sWidth": "40px",
                 }, {
-                    "sWidth": "150px",
+                    "sWidth": "180px",
                 }, {
                     "sWidth": "60px",
                 }, {
-                    "sWidth": "30px","class":"right"
+                    "sWidth": "20px","class":"center"
+                }, {
+                    "sWidth": "20px","class":"center"
                 }
             ],
             
@@ -215,6 +227,11 @@
                     }
                 })
                 switch(aData[5]){
+                    case '1' :
+                        $('td',nRow).css("background-color","#ddffdd")
+                        break;
+                }
+                switch(aData[6]){
                     case '1' :
                         $('td',nRow).css("background-color","#ddffdd")
                         break;

@@ -272,7 +272,7 @@ class Sp2d(NamaModel, Base):
     @classmethod
     def get_tipe(cls, id):
         return DBSession.query(case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),
-                          (Spp.jenis==3,"GU"),(Spp.jenis==4,"LS")], else_="").label('jenis'))\
+                          (Spp.jenis==3,"GU"),(Spp.jenis==4,"LS"),(Spp.jenis==5,"SP2B")], else_="").label('jenis'))\
                 .join(Spm)\
                 .outerjoin(Spp)\
                 .filter(cls.id==id,
@@ -295,7 +295,7 @@ class APInvoice(NamaModel, Base):
     
     kegiatan_sub_id = Column(BigInteger, ForeignKey("apbd.kegiatan_subs.id"), nullable=False)
     nama            = Column(String(255))
-    jenis           = Column(SmallInteger, nullable=False, default=0) #1 up 2 tu 3 gu 4 LS
+    jenis           = Column(SmallInteger, nullable=False, default=0) #1 UP, 2 TU, 3 GU, 4 LS, 5 SP2B
     is_bayar        = Column(SmallInteger, default=0) #0 Lunas, 1 Cicilan
     is_beban        = Column(SmallInteger, default=0) #0 Beban, 1 Non Beban
     #ap_nomor        = Column(String(32))
@@ -362,7 +362,7 @@ class APInvoice(NamaModel, Base):
     @classmethod
     def get_tipe(cls, id):
         return DBSession.query(case([(cls.jenis==1,"UP"),(cls.jenis==2,"TU"),
-                          (cls.jenis==3,"GU"),(cls.jenis==4,"LS")], else_="").label('jenis'))\
+                          (cls.jenis==3,"GU"),(cls.jenis==4,"LS"),(cls.jenis==5,"SP2B")], else_="").label('jenis'))\
                 .filter(cls.id==id,
                 ).scalar() or 0
                  
@@ -410,7 +410,7 @@ class APPayment(NamaModel, Base):
     
     kegiatan_sub_id = Column(BigInteger, ForeignKey("apbd.kegiatan_subs.id"), nullable=False)
     nama            = Column(String(255))
-    jenis           = Column(SmallInteger, nullable=False, default=0) #1 up 2 tu 3 gu 4 LS
+    jenis           = Column(SmallInteger, nullable=False, default=0) #1 UP, 2 TU, 3 GU, 4 LS, 5 SP2B
     is_bayar        = Column(SmallInteger, default=0) #0 Lunas, 1 Cicilan
     is_uang         = Column(SmallInteger, default=0) #0 Uang Muka, 1 Panjar
     #ap_nomor        = Column(String(32))
@@ -477,7 +477,7 @@ class APPayment(NamaModel, Base):
     @classmethod
     def get_tipe(cls, id):
         return DBSession.query(case([(cls.jenis==1,"UP"),(cls.jenis==2,"TU"),
-                          (cls.jenis==3,"GU"),(cls.jenis==4,"LS")], else_="").label('jenis'))\
+                          (cls.jenis==3,"GU"),(cls.jenis==4,"LS"),(cls.jenis==5,"SP2B")], else_="").label('jenis'))\
                 .filter(cls.id==id,
                 ).scalar() or 0
                  
@@ -628,19 +628,21 @@ class ARInvoice(NamaModel, Base):
     tahun_id        = Column(BigInteger, ForeignKey("apbd.tahuns.id"),        nullable=False)
     unit_id         = Column(Integer,    ForeignKey("admin.units.id"),        nullable=False) 
     kegiatan_sub_id = Column(BigInteger, ForeignKey("apbd.kegiatan_subs.id"), nullable=False)
+    no_urut         = Column(BigInteger, nullable=True)
     kode            = Column(String(50))
     nama            = Column(String(255))
+    tgl_terima      = Column(Date)    
+    tgl_validasi    = Column(Date)
     nilai           = Column(BigInteger, nullable=False)
-    jenis           = Column(BigInteger, nullable=False) 
+    jenis           = Column(BigInteger, nullable=False, default=1) 
+    sumber_id       = Column(SmallInteger, default=1)#1, 2, 3, 4
     bendahara_uid   = Column(Integer)
     bendahara_nm    = Column(String(64))
     bendahara_nip   = Column(String(64))
     penyetor        = Column(String(64))
     alamat          = Column(String(150))
-    tgl_terima      = Column(Date)    
-    tgl_validasi    = Column(Date)
-    no_urut         = Column(BigInteger,   nullable=True)
     posted          = Column(SmallInteger, nullable=False, default=0)
+    posted1         = Column(SmallInteger, nullable=True,  default=0)
     disabled        = Column(Integer,      nullable=False, default=0)
 
     UniqueConstraint('tahun_id', 'unit_id', 'kode',
@@ -697,6 +699,26 @@ class ARInvoiceItem(DefaultModel, Base):
     harga            = Column(BigInteger,   nullable=False, default=0)
     nilai            = Column(BigInteger,   nullable=False, default=0)
     notes1           = Column(String(64))  
+    unit_id          = Column(Integer)
+    rekening_id      = Column(Integer)
+    kode             = Column(String(32))
+    ref_kode         = Column(String(32), unique=True)
+    ref_nama         = Column(String(64))
+    tanggal          = Column(Date)
+    kecamatan_kd     = Column(String(32))
+    kecamatan_nm     = Column(String(64))
+    kelurahan_kd     = Column(String(32))
+    kelurahan_nm     = Column(String(64))
+    is_kota          = Column(SmallInteger, default=0)
+    sumber_id        = Column(SmallInteger, default=1)#1, 2, 3, 4
+    sumber_data      = Column(String(32)) #Manual, PBB, BPHTB, PADL
+    tahun            = Column(Integer)
+    bulan            = Column(Integer)
+    minggu           = Column(Integer)
+    hari             = Column(Integer)
+    disabled         = Column(SmallInteger, default=0)
+    posted           = Column(SmallInteger, default=0)
+    posted1          = Column(SmallInteger, default=0)
     
     @classmethod
     def max_no_urut(cls, ar_invoice_id):

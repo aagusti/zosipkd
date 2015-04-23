@@ -196,8 +196,8 @@ class view_tahun(BaseViews):
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    req.session[SESS_ADD_FAILED] = e.render()               
-                    return HTTPFound(location=req.route_url('tahun-add'))
+                    return dict(form=form)     
+                    return HTTPFound(location=req.route_url('tahun-add'))     
                 self.save_request(dict(controls))
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:

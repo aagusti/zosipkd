@@ -41,7 +41,9 @@ class ARInvoiceItem(NamaModel, Base):
     bulan        = Column(Integer)
     minggu       = Column(Integer)
     hari         = Column(Integer)
+    disabled     = Column(SmallInteger, nullable=False, default=0)
     posted       = Column(SmallInteger, nullable=False, default=0)
+    posted1      = Column(SmallInteger, nullable=True,  default=0)
     
     @classmethod
     def get_periode(cls, id):
@@ -63,9 +65,11 @@ class ARPaymentItem(NamaModel, Base):
     rekening_id     = Column(Integer, ForeignKey("admin.rekenings.id"),    nullable=False)
     tahun           = Column(Integer)
     amount          = Column(BigInteger)
-    ref_kode        = Column(String(32))
+    no_urut         = Column(BigInteger, nullable=True)
+    ref_kode        = Column(String(64))
     ref_nama        = Column(String(64))
     tanggal         = Column(Date, nullable=True)
+    jenis           = Column(SmallInteger, default=1) #Piutang, Normal
     kecamatan_kd    = Column(String(32))
     kecamatan_nm    = Column(String(64))
     kelurahan_kd    = Column(String(32))
@@ -76,12 +80,12 @@ class ARPaymentItem(NamaModel, Base):
     bulan           = Column(Integer)
     minggu          = Column(Integer)
     hari            = Column(Integer)
-    posted          = Column(SmallInteger, nullable=False, default=0)
     bud_uid         = Column(BigInteger,   nullable=False)
     bud_nip         = Column(String(50),   nullable=False)
     bud_nama        = Column(String(64),   nullable=False)
-    jenis           = Column(SmallInteger, default=1) #Piutang, Normal
-    no_urut         = Column(BigInteger,   nullable=True)
+    disabled        = Column(SmallInteger, nullable=False, default=0)
+    posted          = Column(SmallInteger, nullable=False, default=0)
+    posted1         = Column(SmallInteger, nullable=True,  default=0)
     
     @classmethod
     def max_no_urut(cls, tahun, unit_id):

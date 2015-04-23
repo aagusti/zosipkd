@@ -33,10 +33,13 @@ SESS_EDIT_FAILED = 'Edit jabatan gagal'
 class AddSchema(colander.Schema):
     kode = colander.SchemaNode(
                     colander.String(),
-                    validator=colander.Length(max=18))
+                    oid = "kode",
+                    title = "Kode")
                     
     nama = colander.SchemaNode(
-                    colander.String())
+                    colander.String(),
+                    oid = "nama",
+                    title = "Nama")
     disabled = colander.SchemaNode(
                     colander.Boolean())
                     
@@ -168,13 +171,14 @@ class view_jabatan(BaseViews):
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    req.session[SESS_ADD_FAILED] = e.render()               
+                    return dict(form=form)               
                     return HTTPFound(location=req.route_url('jabatan-add'))
                 self.save_request(dict(controls))
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
-        return dict(form=form.render())
+        return dict(form=form)
+        
     ########
     # Edit #
     ########
@@ -184,7 +188,7 @@ class view_jabatan(BaseViews):
         msg = 'jabatan ID %s Tidak Ditemukan.' % self.request.matchdict['id']
         request.session.flash(msg, 'error')
         return route_list()
-    @view_config(route_name='jabatan-edit', renderer='templates/jabatan/edit.pt',
+    @view_config(route_name='jabatan-edit', renderer='templates/jabatan/add.pt',
                  permission='edit')
     def view_edit(self):
         request = self.request
@@ -207,7 +211,9 @@ class view_jabatan(BaseViews):
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
         values = row.to_dict()
-        return dict(form=form.render(appstruct=values))
+        form.set_appstruct(values)
+        return dict(form=form)
+        
     ##########
     # Delete #
     ##########    

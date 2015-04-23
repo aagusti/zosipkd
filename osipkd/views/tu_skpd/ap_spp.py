@@ -27,6 +27,7 @@ AP_TYPE = (
     ('2', 'TU'),
     ('3', 'GU'),
     ('4', 'LS'),
+    ('5', 'SP2B'),
     )
 
 class view_ap_spp(BaseViews):

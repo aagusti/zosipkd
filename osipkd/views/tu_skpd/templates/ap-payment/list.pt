@@ -187,6 +187,8 @@
                         return 'GU';
                     } else if (data == "4") {
                         return 'LS';
+                    } else if (data == "5") {
+                        return 'SP2B';
                     }
                 }
             

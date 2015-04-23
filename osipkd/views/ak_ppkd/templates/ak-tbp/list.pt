@@ -39,8 +39,8 @@
                 "selectYears": true, "format": "yyyy-mm-dd"});
             }
           }
-
       );
+      
       
       $('#tanggal').change(function(){
             $.ajax({
@@ -180,13 +180,14 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Kode</th>
-                <th>Uraian</th>
-                <th>Ref. Kode</th>
-                <th>Ref. Nama</th>
+                <th>Rekening</th>
+                <th>Uraian Rek.</th>
+                <th>No. TBP</th>
+                <th>Uraian TBP</th>
                 <th>Tanggal</th>
                 <th>Nilai</th>
-                <th>Posted</th>                
+                <th>Posted</th>    
+                <th>Rekap</th>               
             </tr>
         </thead>
         <tbody>
@@ -234,6 +235,15 @@
                         return 'Y';
                     }
                 }
+          },{
+                "aTargets" : [8], // Untuk Posting Rekap
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return 'N';
+                    } else if (data == "1") {
+                        return 'Y';
+                    }
+                }
           }],
           "aoColumns": [
               null,
@@ -243,6 +253,7 @@
               {"width": "100px"},
               {"width": "40px", "sClass":"center"},
               {"width": "60px", "sClass":"right"},
+              {"width": "30px", "sClass":"center"},
               {"width": "30px", "sClass":"center"},
           ],
           "fnRowCallback": function (nRow, aData, iDisplayIndex) {
@@ -265,14 +276,21 @@
                         $('td',nRow).css("background-color","#ddffdd")
                         break;
                 }
+                switch(aData[8]){
+                    case '1' :
+                        $('td',nRow).css("background-color","#ddffdd")
+                        break;
+                }
             },
         });
           
         var tb_array = [
           '<div class="btn-group pull-left">',
-          '	<button id="btn_posting" class="btn btn btn-success" type="button">Jurnal</button>',
-          '	<button id="btn_unposting" class="btn btn btn-info" type="button">Un-Jurnal</button>',
-          ' <button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
+          '	<button id="btn_posting"    class="btn btn btn-success" type="button">Jurnal</button>',
+          '	<button id="btn_unposting"  class="btn btn btn-info"    type="button">Un-Jurnal</button>',
+          '	<button id="btn_posting1"   class="btn btn btn-success" type="button">Jurnal Rekap</button>',
+          '	<button id="btn_unposting1" class="btn btn btn-info"    type="button">Un-Jurnal Rekap</button>',
+          ' <button id="btn_close"      class="btn btn-warning"     type="button">Tutup</button>',
           '	&nbsp;',
           '</div>',
         ];
@@ -312,12 +330,96 @@
                 alert('Silahkan pilih data yang akan diunposting jurnal');
             }
         });
+        
+        $('#tanggal2').click(
+            function(){
+              if (!Modernizr.inputtypes['date'] ||
+                  "date" != "date"){
+                $('#tanggal2').pickadate({"selectMonths": true,
+                  "submitFormat": "yyyy-mm-dd", 
+                  "selectYears": true, "format": "yyyy-mm-dd"});
+              }
+            }
+        );
+        $('#btn_posting1').click(function () {
+            $('#dlgRpt').modal('show');
+        });
+        $('#btn_pil_rpt').click(function () {
+            var tgl = $('#tanggal2').val();
+            window.location = '/ak-tbp/posting1?tanggal='+tgl;
+        });
 
+        $('#btn_unposting1').click(function () {
+            $('#dlgRpt1').modal('show');
+        });
+        $('#btn_pil_rpt1').click(function () {
+            var tgl = $('#tanggal1').val();
+            window.location = '/ak-tbp/unposting1?tanggal='+tgl;
+        });
+        $('#tanggal1').click(
+            function(){
+              if (!Modernizr.inputtypes['date'] ||
+                  "date" != "date"){
+                $('#tanggal1').pickadate({"selectMonths": true,
+                  "submitFormat": "yyyy-mm-dd", 
+                  "selectYears": true, "format": "yyyy-mm-dd"});
+              }
+            }
+        );
+        
         $("#btn_close").click(function () {
             window.location = '/ak-ppkd';
             return false;
         });
         })
     </script>
+    
+    <!-- Modal posting -->
+    <div class="modal fade" id="dlgRpt">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title">Pilih Tanggal Rekap</h4>
+          </div>
+
+        <div class="modal-body"> 
+        <label class="control-label col-md-2">Tanggal</label>
+          <div class="col-md-7">
+            <input id="tanggal2" class="form-control typeahead" type="date"  name="tanggal2" readonly="true">
+          </div>
+        </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+            <button type="button" class="btn btn-primary" id="btn_pil_rpt" name="btn_pil_rpt">Lanjutan</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    
+    <!-- Modal unposting -->
+    <div class="modal fade" id="dlgRpt1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title">Pilih Tanggal UnJurnal Rekap</h4>
+          </div>
+
+        <div class="modal-body"> 
+        <label class="control-label col-md-2">Tanggal</label>
+          <div class="col-md-7">
+            <input id="tanggal1" class="form-control typeahead" type="date"  name="tanggal1" readonly="true">
+          </div>
+        </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+            <button type="button" class="btn btn-primary" id="btn_pil_rpt1" name="btn_pil_rpt">Lanjutkan</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
   </div>
 </html>

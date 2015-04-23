@@ -57,7 +57,7 @@
           ],
           "aoColumnDefs": [{
                         "bSearchable": false,
-                        
+                        "bVisible": false,
                         "aTargets": [0]
                     }],
           "aoColumns": [
@@ -71,11 +71,11 @@
         });
           
         var tb_array = [
-          '<div class="btn pull-left">',
+          '<div class="btn-group pull-left">',
           '	<button id="btn_add" class="btn btn btn-primary" type="button">Tambah</button>',
           '	<button id="btn_edit" class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',
-          '	<button id="btn_csv" class="btn btn btn-default" type="button">CSV</button>',
+          '	<button id="btn_csv" class="btn btn btn-info" type="button">CSV</button>',
           '	<button id="btn_item" class="btn btn btn-warning" type="button">Item data</button>',
           '	&nbsp;',
           '</div>',

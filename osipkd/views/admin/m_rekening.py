@@ -33,25 +33,29 @@ rek_widget = widget.AutocompleteInputWidget(
 class AddSchema(colander.Schema):
     parent_id  = colander.SchemaNode(
                     colander.String(),
-                    widget = widget.HiddenWidget(),
+                    #widget = widget.HiddenWidget(),
                     missing = colander.drop,
                     oid = "parent_id"
                     )
     parent_nm = colander.SchemaNode(
                     colander.String(),
-                    widget = rek_widget,
+                    #widget = rek_widget,
                     missing = colander.drop,
                     oid = "parent_nm",
                     title = "Header"
                     )
     tahun = colander.SchemaNode(
-                    colander.Integer(),)
+                    colander.Integer(),
+                    oid = "tahun",
+                    title = "Tahun")
     kode = colander.SchemaNode(
                     colander.String(),
-                    validator=colander.Length(max=18)
-                    )
+                    oid = "kode",
+                    title = "Kode")
     nama = colander.SchemaNode(
-                    colander.String())
+                    colander.String(),
+                    oid = "nama",
+                    title = "Nama")
     disabled = colander.SchemaNode(
                     colander.Boolean())
                     
@@ -377,7 +381,7 @@ class view_rekening(BaseViews):
             values['level_id'] = 1
             values['parent_id'] = None
         row = self.save(values, self.request.user, row)
-        self.request.session.flash('rekening sudah disimpan.')
+        self.request.session.flash('Rekening sudah disimpan.')
         
     def route_list(self):
         return HTTPFound(location=self.request.route_url('rekening'))
@@ -396,16 +400,28 @@ class view_rekening(BaseViews):
         if req.POST:
             if 'simpan' in req.POST:
                 controls = req.POST.items()
+                controls_dicted = dict(controls)
+                
+                #Cek Kode Sama ato tidak
+                if not controls_dicted['kode']=='':
+                    a = form.validate(controls)
+                    b = a['kode']
+                    c = "%s" % b
+                    cek  = DBSession.query(Rekening).filter(Rekening.kode==c).first()
+                    if cek :
+                        self.request.session.flash('Kode sudah ada.', 'error')
+                        return HTTPFound(location=self.request.route_url('rekening-add'))
+                
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    req.session[SESS_ADD_FAILED] = e.render()               
+                    return dict(form=form)             
                     return HTTPFound(location=req.route_url('rekening-add'))
                 self.save_request(dict(controls))
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
-        return dict(form=form.render())
+        return dict(form=form)
         
     ########
     # Edit #
@@ -418,18 +434,34 @@ class view_rekening(BaseViews):
         request.session.flash(msg, 'error')
         return route_list()
         
-    @view_config(route_name='rekening-edit', renderer='templates/rekening/edit.pt',
+    @view_config(route_name='rekening-edit', renderer='templates/rekening/add.pt',
                  permission='edit')
     def view_rekening_edit(self):
         request = self.request
-        row = self.query_id().first()
+        row     = self.query_id().first()
+        uid     = row.id
+        kode    = row.kode
+        
         if not row:
             return id_not_found(request)
+            
         form = self.get_form(EditSchema)
         if request.POST:
             if 'simpan' in request.POST:
                 controls = request.POST.items()
-                print controls
+                
+                #Cek Kode Sama ato tidak
+                a = form.validate(controls)
+                b = a['kode']
+                c = "%s" % b
+                cek = DBSession.query(Rekening).filter(Rekening.kode==c).first()
+                if cek:
+                    kode1 = DBSession.query(Rekening).filter(Rekening.id==uid).first()
+                    d     = kode1.kode
+                    if d!=c:
+                        self.request.session.flash('Data sudah ada', 'error')
+                        return HTTPFound(location=request.route_url('rekening-edit',id=row.id))
+                        
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
@@ -442,7 +474,8 @@ class view_rekening(BaseViews):
             return self.session_failed(SESS_EDIT_FAILED)
         values = row.to_dict()
         values['parent_nm']= row.parent.nama if values['parent_id'] else ""
-        return dict(form=form.render(appstruct=values))
+        form.set_appstruct(values)
+        return dict(form=form)
         
     ##########
     # Delete #
@@ -458,12 +491,12 @@ class view_rekening(BaseViews):
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
-                msg = 'rekening ID %d %s sudah dihapus.' % (row.id, row.nama)
+                msg = 'Rekening ID %d %s sudah dihapus.' % (row.id, row.nama)
                 try:
                   q.delete()
                   DBSession.flush()
                 except:
-                  msg = 'rekening ID %d %s tidak dapat dihapus.' % (row.id, row.nama)
+                  msg = 'Rekening ID %d %s tidak dapat dihapus.' % (row.id, row.nama)
                 request.session.flash(msg)
             return self.route_list()
         return dict(row=row,

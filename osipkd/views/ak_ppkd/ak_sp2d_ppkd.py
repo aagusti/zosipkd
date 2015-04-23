@@ -153,6 +153,9 @@ class view_ak_sp2d_ppkd(BaseViews):
         
         if not row:
             return id_not_found(request)
+        if g == '5': 
+            request.session.flash('Data tidak dapat diposting, karena masih belum ada keputusan.', 'error')
+            return self.route_list()
         if row.posted1:
             request.session.flash('Data sudah diposting jurnal PPKD', 'error')
             return self.route_list()

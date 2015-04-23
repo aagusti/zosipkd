@@ -27,6 +27,7 @@ AP_TYPE = (
     ('2', 'TU'),
     ('3', 'GU'),
     ('4', 'LS'),
+    ('5', 'SP2B'),
     )
 
 def deferred_kontrak_type(node, kw):
@@ -151,6 +152,9 @@ def view_edit_posting(request):
     if g == '2': 
         request.session.flash('Data tidak dapat diposting, karena bukan tipe GU / LS.', 'error')
         return route_list(request)
+    if g == '5': 
+        request.session.flash('Data tidak dapat diposting, karena bukan tipe GU / LS.', 'error')
+        return route_list(request)
     if not row.amount:
         request.session.flash('Data tidak dapat diposting, karena bernilai 0.', 'error')
         return route_list(request)
@@ -215,11 +219,8 @@ def view_edit_posting(request):
                     DBSession.flush()
                     
                     jui   = row.id
-                    rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
-                                           Sap.nama.label('nama1'),
-                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                           APInvoiceItem.amount.label('nilai1'),
-                                           APInvoiceItem.ap_invoice_id.label('inv'),
+                    rows = DBSession.query(KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                           func.sum(APInvoiceItem.amount).label('nilai1'),
                                            RekeningSap.db_lo_sap_id.label('sap1'),
                                            Rekening.id.label('rek'),
                                     ).join(KegiatanSub, APInvoiceItem 
@@ -227,17 +228,12 @@ def view_edit_posting(request):
                                              APInvoice.kegiatan_sub_id==KegiatanSub.id,
                                              APInvoiceItem.ap_invoice_id==APInvoice.id,
                                              APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
-                                             KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                                              KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                              RekeningSap.rekening_id==Rekening.id,
                                              RekeningSap.db_lo_sap_id==Sap.id
-                                    ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               APInvoiceItem.amount.label('nilai1'),
-                                               APInvoiceItem.ap_invoice_id.label('inv'),
-                                               RekeningSap.db_lo_sap_id.label('sap1'),
-                                               Rekening.id.label('rek'),
+                                    ).group_by(KegiatanItem.kegiatan_sub_id,
+                                               RekeningSap.db_lo_sap_id,
+                                               Rekening.id,
                                     ).all()
                     
                     n=0
@@ -337,11 +333,8 @@ def view_edit_posting(request):
                 DBSession.flush()
                 
                 jui   = row.id
-                rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
-                                       Sap.nama.label('nama1'),
-                                       KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                       APInvoiceItem.amount.label('nilai1'),
-                                       APInvoiceItem.ap_invoice_id.label('inv'),
+                rows = DBSession.query(KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                       func.sum(APInvoiceItem.amount).label('nilai1'),
                                        RekeningSap.kr_lo_sap_id.label('sap2'),
                                        RekeningSap.db_lo_sap_id.label('sap1'),
                                        Rekening.id.label('rek'),
@@ -350,18 +343,13 @@ def view_edit_posting(request):
                                          APInvoice.kegiatan_sub_id==KegiatanSub.id,
                                          APInvoiceItem.ap_invoice_id==APInvoice.id,
                                          APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
-                                         KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                                          KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                          RekeningSap.rekening_id==Rekening.id,
                                          RekeningSap.db_lo_sap_id==Sap.id
-                                ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                           Sap.nama.label('nama1'),
-                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                           APInvoiceItem.amount.label('nilai1'),
-                                           APInvoiceItem.ap_invoice_id.label('inv'),
-                                           RekeningSap.kr_lo_sap_id.label('sap2'),
-                                           RekeningSap.db_lo_sap_id.label('sap1'),
-                                           Rekening.id.label('rek'),
+                                ).group_by(KegiatanItem.kegiatan_sub_id,
+                                           RekeningSap.kr_lo_sap_id,
+                                           RekeningSap.db_lo_sap_id,
+                                           Rekening.id,
                                 ).all()
                 
                 n=0

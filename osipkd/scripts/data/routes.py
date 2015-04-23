@@ -3654,5 +3654,61 @@ RouteData = {
         path='/ap-payment/item/{ap_payment_id}/{id}/delete',
         perm_name='delete',
         ),
-        
+    dict(
+        id=523,
+        kode='ar-invoice-item-posting1',
+        nama='Posting Rekap Ketetapan',
+        path='/ar-invoice-item/posting1',
+        perm_name='posting',
+        ),
+    dict(
+        id=524,
+        kode='ar-invoice-item-unposting1',
+        nama='Un-Jurnal Rekap Ketetapan',
+        path='/ar-invoice-item/unposting1',
+        perm_name='unposting',
+        ),
+    dict(
+        id=525,
+        kode='ar-payment-item-posting1',
+        nama='Posting Rekap Realisasi/TBP',
+        path='/ar-payment-item/posting1',
+        perm_name='posting',
+        ),
+    dict(
+        id=526,
+        kode='ar-payment-item-unposting1',
+        nama='Un-Jurnal Rekap Realisasi/TBP',
+        path='/ar-payment-item/unposting1',
+        perm_name='unposting',
+        ),   
+    dict(
+        id=527,
+        kode='ak-arinvoice-posting1',
+        nama='Posting Rekap Piutang',
+        path='/ak-arinvoice/posting1',
+        perm_name='posting',
+        ),
+    dict(
+        id=528,
+        kode='ak-arinvoice-unposting1',
+        nama='Un-Jurnal Rekap Piutang',
+        path='/ak-arinvoice/unposting1',
+        perm_name='unposting',
+        ),
+    dict(
+        id=529,
+        kode='ak-tbp-posting1',
+        nama='Posting Rekap TBP',
+        path='/ak-tbp/posting1',
+        perm_name='posting',
+        ),
+    dict(
+        id=530,
+        kode='ak-tbp-unposting1',
+        nama='Un-Jurnal Rekap TBP',
+        path='/ak-tbp/unposting1',
+        perm_name='unposting',
+        ),
+
 ]}

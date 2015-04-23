@@ -13,104 +13,92 @@
     </div>
     </div>
     
-    <div class="col-md-8">
       <div class="form-group">
-        <div class="col-md-6">
-          <div class="form-group" tal:define="field form['kode']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
+          <div tal:define="field form['kode']">
+            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                     ${field.title}</label>
-            <div class="col-md-8">
+            <div class="col-md-2">
                ${structure:field.serialize()}
               <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                  tal:repeat="error field.error.messages()">
                  ${error}</p>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="form-group" tal:define="field form['nama']" id="item-${field.oid}">
-        <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
-                ${field.title}</label>
-        <div class="col-md-10">
-           ${structure:field.serialize()}
-            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-               tal:repeat="error field.error.messages()">
-               ${error}</p>
-        </div>
-      </div>
-      
-      <div class="form-group" tal:define="field form['source_type']" id="item-${field.oid}">
-        <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
-                ${field.title}</label>
-        <div class="col-md-8">
-           ${structure:field.serialize()}
-            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-               tal:repeat="error field.error.messages()">
-               ${error}</p>
-        </div>
-      </div>
-      <div class="form-group" tal:define="field form['source_id']" id="item-${field.oid}">
-        <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
-                ${field.title}</label>
-        <div class="col-md-10">
-           ${structure:field.serialize()}
-            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-               tal:repeat="error field.error.messages()">
-               ${error}</p>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <div class="col-md-6">
-          <div class="form-group" tal:define="field form['order_id']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
-                    ${field.title}</label>
-            <div class="col-md-8">
-               ${structure:field.serialize()}
-              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                 tal:repeat="error field.error.messages()">
-                 ${error}</p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-md-3">
-          <div class="form-group" tal:define="field form['is_aktif']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-6" id="req-${field.oid}">
+          <div tal:define="field form['nama']">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
             <div class="col-md-6">
                ${structure:field.serialize()}
+                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                   tal:repeat="error field.error.messages()">
+                   ${error}</p>
+            </div>
+          </div>
+      </div>
+      
+      <div class="form-group">
+        <div tal:define="field form['source_type']">
+            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-2">
+               ${structure:field.serialize()}
+                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                   tal:repeat="error field.error.messages()">
+                   ${error}</p>
+            </div>
+        </div>
+        <div tal:define="field form['source_id']">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-4">
+               ${structure:field.serialize()}
+                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                   tal:repeat="error field.error.messages()">
+                   ${error}</p>
+            </div>
+        </div>
+        <div tal:define="field form['order_id']">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-1">
+               ${structure:field.serialize()}
               <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                  tal:repeat="error field.error.messages()">
                  ${error}</p>
             </div>
-          </div>
         </div>
-        <div class="col-md-3">
-          <div class="form-group" tal:define="field form['disabled']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
+      </div>
+     
+
+      <div class="form-group">
+          <div tal:define="field form['is_aktif']">
+            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                     ${field.title}</label>
-            <div class="col-md-8">
+            <div class="col-md-1">
                ${structure:field.serialize()}
               <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                  tal:repeat="error field.error.messages()">
                  ${error}</p>
             </div>
           </div>
-        </div>
-        
       </div>
-
-      <div class="col-md-6"></div>
-        <div class="form-group">
-            <button id="deformsave" name="simpan" type="submit" class="btn btn-primary "
-                  value="simpan">Simpan</button>
-            <button id="deformcancel" name="batal" type="submit" class="btn btn-default "
-                  value="batal">Batal</button>
-        
-        </div>
-    </div>
-
+      <div class="form-group">
+          <div tal:define="field form['disabled']">
+            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-1">
+               ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
+          </div>
+          <label class="control-label col-md-1"></label>
+          <button id="deformsave" name="simpan" type="submit" class="btn btn-primary "
+                value="simpan">Simpan</button>
+          <button id="deformcancel" name="batal" type="submit" class="btn btn-danger "
+                value="batal">Batal</button>
+      </div>
   </fieldset>
 </form>
 </div>

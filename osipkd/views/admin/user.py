@@ -118,24 +118,32 @@ STATUS = (
     )    
 
 class AddSchema(colander.Schema):
-    email = colander.SchemaNode(colander.String(),
-                                validator=email_validator)
+    email = colander.SchemaNode(
+                    colander.String(),
+                    validator=email_validator,
+                    oid = "email",
+                    title = "E-mail",)
     user_name = colander.SchemaNode(
                     colander.String(),
-                    missing=colander.drop)
-    status = colander.SchemaNode(
-                    colander.String(),
-                    widget=deferred_status)
+                    missing=colander.drop,
+                    oid = "user_name",
+                    title = "Username",)
     password = colander.SchemaNode(
                     colander.String(),
                     widget=widget.PasswordWidget(),
-                    missing=colander.drop)
+                    missing=colander.drop,
+                    oid = "password",
+                    title = "Password",)
+    status = colander.SchemaNode(
+                    colander.String(),
+                    widget=deferred_status)
+    
 
 
 class EditSchema(AddSchema):
-    id = colander.SchemaNode(colander.String(),
-            missing=colander.drop,
-            widget=widget.HiddenWidget(readonly=True))
+    id = colander.SchemaNode(
+            colander.Integer(),
+            oid="id")
                     
 
 def get_form(request, class_form):
@@ -173,18 +181,18 @@ def session_failed(request, session_name):
 def view_add(request):
     form = get_form(request, AddSchema)
     if request.POST:
-        if 'save' in request.POST:
+        if 'simpan' in request.POST:
             controls = request.POST.items()
             try:
                 c = form.validate(controls)
             except ValidationFailure, e:
-                request.session[SESS_ADD_FAILED] = e.render()               
+                return dict(form=form)             
                 return HTTPFound(location=request.route_url('user-add'))
             save_request(dict(controls), request)
         return route_list(request)
     elif SESS_ADD_FAILED in request.session:
         return session_failed(request, SESS_ADD_FAILED)
-    return dict(form=form.render())
+    return dict(form=form)
 
 ########
 # Edit #
@@ -197,7 +205,7 @@ def id_not_found(request):
     request.session.flash(msg, 'error')
     return route_list(request)
 
-@view_config(route_name='user-edit', renderer='templates/user/edit.pt',
+@view_config(route_name='user-edit', renderer='templates/user/add.pt',
              permission='edit')
 def view_edit(request):
     row = query_id(request).first()
@@ -205,7 +213,7 @@ def view_edit(request):
         return id_not_found(request)
     form = get_form(request, EditSchema)
     if request.POST:
-        if 'save' in request.POST:
+        if 'simpan' in request.POST:
             controls = request.POST.items()
             try:
                 c = form.validate(controls)
@@ -218,7 +226,8 @@ def view_edit(request):
     elif SESS_EDIT_FAILED in request.session:
         return session_failed(request, SESS_EDIT_FAILED)
     values = row.to_dict()
-    return dict(form=form.render(appstruct=values))
+    form.set_appstruct(values)
+    return dict(form=form)
 
 ##########
 # Delete #

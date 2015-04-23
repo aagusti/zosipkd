@@ -233,7 +233,8 @@ class view_ar_payment_item(BaseViews):
             columns.append(ColumnDT('ref_nama'))
             columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
             columns.append(ColumnDT('amount',  filter=self._number_format))
-            columns.append(ColumnDT('posted'))           
+            columns.append(ColumnDT('posted'))   
+            columns.append(ColumnDT('posted1'))   
             query = DBSession.query(ARPaymentItem).filter(ARPaymentItem.tahun == ses['tahun'],
                                                           ARPaymentItem.unit_id == ses['unit_id'],
                                                           ARPaymentItem.tanggal == ses['tanggal']
@@ -273,8 +274,9 @@ class view_ar_payment_item(BaseViews):
         row.bulan   = tanggal.month
         row.hari    = tanggal.day
         row.minggu  = tanggal.isocalendar()[1]
-        row.disable = 'disable' in values and values['disable'] and 1 or 0
-        row.is_kota = 'is_kota' in values and values['is_kota'] and 1 or 0
+        row.disabled = 'disabled' in values and values['disabled'] and 1 or 0
+        row.is_kota  = 'is_kota'  in values and values['is_kota']  and 1 or 0
+        row.posted1  = 'posted1'  in values and values['posted1']  and 1 or 0
         
         tahun    = self.session['tahun']
         unit_id  = self.session['unit_id']
@@ -369,6 +371,9 @@ class view_ar_payment_item(BaseViews):
         if row.posted:
             request.session.flash('Data sudah diposting', 'error')
             return self.route_list()
+        if row.posted1:
+            request.session.flash('Data sudah diposting rekap', 'error')
+            return self.route_list()
             
         form = self.get_form(EditSchema)
         if request.POST:
@@ -419,6 +424,9 @@ class view_ar_payment_item(BaseViews):
             return self.id_not_found(request)
         if row.posted:
             request.session.flash('Data sudah diposting', 'error')
+            return self.route_list()
+        if row.posted1:
+            request.session.flash('Data sudah diposting rekap', 'error')
             return self.route_list()
             
         form = Form(colander.Schema(), buttons=('hapus','batal'))

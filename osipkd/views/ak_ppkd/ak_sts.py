@@ -307,31 +307,21 @@ def view_edit_posting(request):
                 DBSession.add(ji3)
                 DBSession.flush()
                 
-                rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
-                                           Sap.nama.label('nama1'),
-                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                           Sts.nominal.label('nilai1'),
-                                           StsItem.amount.label('nilai2'),
+                rows = DBSession.query(KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                           func.sum(StsItem.amount).label('nilai2'),
                                            RekeningSap.db_lo_sap_id.label('sap1'),
-                                           RekeningSap.kr_lra_sap_id.label('sap2'),
                                            Rekening.id.label('rek'),
                                     ).join(Rekening
                                     ).outerjoin(KegiatanItem,RekeningSap,KegiatanSub,
                                     ).filter(Sts.id==id_sts,
                                            StsItem.ar_sts_id==Sts.id,
                                            StsItem.kegiatan_item_id==KegiatanItem.id,
-                                           KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                                            KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                            RekeningSap.rekening_id==Rekening.id,
                                            RekeningSap.db_lo_sap_id==Sap.id
-                                    ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                           Sap.nama.label('nama1'),
-                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                           Sts.nominal.label('nilai1'),
-                                           StsItem.amount.label('nilai2'),
-                                           RekeningSap.db_lo_sap_id.label('sap1'),
-                                           RekeningSap.kr_lra_sap_id.label('sap2'),
-                                           Rekening.id.label('rek'),
+                                    ).group_by(KegiatanItem.kegiatan_sub_id,
+                                           RekeningSap.db_lo_sap_id,
+                                           Rekening.id,
                                     ).all()
                 
                 n=0
@@ -431,12 +421,8 @@ def view_edit_posting(request):
                 DBSession.add(ji3)
                 DBSession.flush()
                 
-                rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
-                                           Sap.nama.label('nama1'),
-                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                           Sts.nominal.label('nilai1'),
-                                           StsItem.amount.label('nilai2'),
-                                           RekeningSap.db_lo_sap_id.label('sap1'),
+                rows = DBSession.query(KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                           func.sum(StsItem.amount).label('nilai2'),
                                            RekeningSap.kr_lra_sap_id.label('sap2'),
                                            Rekening.id.label('rek'),
                                     ).join(Rekening
@@ -444,18 +430,12 @@ def view_edit_posting(request):
                                     ).filter(Sts.id==id_sts,
                                            StsItem.ar_sts_id==Sts.id,
                                            StsItem.kegiatan_item_id==KegiatanItem.id,
-                                           KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                                            KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                            RekeningSap.rekening_id==Rekening.id,
-                                           RekeningSap.db_lo_sap_id==Sap.id
-                                    ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                           Sap.nama.label('nama1'),
-                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                           Sts.nominal.label('nilai1'),
-                                           StsItem.amount.label('nilai2'),
-                                           RekeningSap.db_lo_sap_id.label('sap1'),
-                                           RekeningSap.kr_lra_sap_id.label('sap2'),
-                                           Rekening.id.label('rek'),
+                                           RekeningSap.kr_lra_sap_id==Sap.id
+                                    ).group_by(KegiatanItem.kegiatan_sub_id,
+                                           RekeningSap.kr_lra_sap_id,
+                                           Rekening.id,
                                     ).all()
                 
                 n=0
@@ -556,31 +536,21 @@ def view_edit_posting(request):
                 DBSession.add(ji3)
                 DBSession.flush()
                 
-                rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
-                                           Sap.nama.label('nama1'),
-                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                           Sts.nominal.label('nilai1'),
-                                           StsItem.amount.label('nilai2'),
+                rows = DBSession.query(KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                           func.sum(StsItem.amount).label('nilai2'),
                                            RekeningSap.kr_lo_sap_id.label('sap1'),
-                                           RekeningSap.kr_lra_sap_id.label('sap2'),
                                            Rekening.id.label('rek'),
                                     ).join(Rekening
                                     ).outerjoin(KegiatanItem,RekeningSap,KegiatanSub,
                                     ).filter(Sts.id==id_sts,
                                            StsItem.ar_sts_id==Sts.id,
                                            StsItem.kegiatan_item_id==KegiatanItem.id,
-                                           KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                                            KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                            RekeningSap.rekening_id==Rekening.id,
                                            RekeningSap.kr_lo_sap_id==Sap.id
-                                    ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                           Sap.nama.label('nama1'),
-                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                           Sts.nominal.label('nilai1'),
-                                           StsItem.amount.label('nilai2'),
-                                           RekeningSap.kr_lo_sap_id.label('sap1'),
-                                           RekeningSap.kr_lra_sap_id.label('sap2'),
-                                           Rekening.id.label('rek'),
+                                    ).group_by(KegiatanItem.kegiatan_sub_id,
+                                           RekeningSap.kr_lo_sap_id,
+                                           Rekening.id,
                                     ).all()
                 
                 n=0
@@ -680,12 +650,8 @@ def view_edit_posting(request):
                 DBSession.add(ji3)
                 DBSession.flush()
                 
-                rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
-                                           Sap.nama.label('nama1'),
-                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                           Sts.nominal.label('nilai1'),
-                                           StsItem.amount.label('nilai2'),
-                                           RekeningSap.db_lo_sap_id.label('sap1'),
+                rows = DBSession.query(KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                           func.sum(StsItem.amount).label('nilai2'),
                                            RekeningSap.kr_lra_sap_id.label('sap2'),
                                            Rekening.id.label('rek'),
                                     ).join(Rekening
@@ -693,18 +659,12 @@ def view_edit_posting(request):
                                     ).filter(Sts.id==id_sts,
                                            StsItem.ar_sts_id==Sts.id,
                                            StsItem.kegiatan_item_id==KegiatanItem.id,
-                                           KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                                            KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                            RekeningSap.rekening_id==Rekening.id,
-                                           RekeningSap.db_lo_sap_id==Sap.id
-                                    ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                           Sap.nama.label('nama1'),
-                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                           Sts.nominal.label('nilai1'),
-                                           StsItem.amount.label('nilai2'),
-                                           RekeningSap.db_lo_sap_id.label('sap1'),
-                                           RekeningSap.kr_lra_sap_id.label('sap2'),
-                                           Rekening.id.label('rek'),
+                                           RekeningSap.kr_lra_sap_id==Sap.id
+                                    ).group_by(KegiatanItem.kegiatan_sub_id,
+                                           RekeningSap.kr_lra_sap_id,
+                                           Rekening.id,
                                     ).all()
                 
                 n=0
@@ -817,12 +777,8 @@ def view_edit_posting(request):
                     DBSession.add(ji3)
                     DBSession.flush()
                     
-                    rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               Sts.nominal.label('nilai1'),
-                                               StsItem.amount.label('nilai2'),
-                                               RekeningSap.db_lra_sap_id.label('sap1'),
+                    rows = DBSession.query(KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               func.sum(StsItem.amount).label('nilai2'),
                                                RekeningSap.kr_lo_sap_id.label('sap2'),
                                                Rekening.id.label('rek'),
                                         ).join(Rekening
@@ -830,18 +786,12 @@ def view_edit_posting(request):
                                         ).filter(Sts.id==id_sts,
                                                StsItem.ar_sts_id==Sts.id,
                                                StsItem.kegiatan_item_id==KegiatanItem.id,
-                                               KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                                                KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                RekeningSap.rekening_id==Rekening.id,
                                                RekeningSap.kr_lo_sap_id==Sap.id
-                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               Sts.nominal.label('nilai1'),
-                                               StsItem.amount.label('nilai2'),
-                                               RekeningSap.db_lra_sap_id.label('sap1'),
-                                               RekeningSap.kr_lo_sap_id.label('sap2'),
-                                               Rekening.id.label('rek'),
+                                        ).group_by(KegiatanItem.kegiatan_sub_id,
+                                               RekeningSap.kr_lo_sap_id,
+                                               Rekening.id,
                                         ).all()
                         
                     for row in rows:
@@ -939,12 +889,8 @@ def view_edit_posting(request):
                     DBSession.add(ji3)
                     DBSession.flush()
                     
-                    rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               Sts.nominal.label('nilai1'),
-                                               StsItem.amount.label('nilai2'),
-                                               RekeningSap.db_lo_sap_id.label('sap1'),
+                    rows = DBSession.query(KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               func.sum(StsItem.amount).label('nilai2'),
                                                RekeningSap.kr_lra_sap_id.label('sap2'),
                                                Rekening.id.label('rek'),
                                         ).join(Rekening
@@ -952,18 +898,12 @@ def view_edit_posting(request):
                                         ).filter(Sts.id==id_sts,
                                                StsItem.ar_sts_id==Sts.id,
                                                StsItem.kegiatan_item_id==KegiatanItem.id,
-                                               KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                                                KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                RekeningSap.rekening_id==Rekening.id,
                                                RekeningSap.kr_lra_sap_id==Sap.id
-                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               Sts.nominal.label('nilai1'),
-                                               StsItem.amount.label('nilai2'),
-                                               RekeningSap.db_lo_sap_id.label('sap1'),
-                                               RekeningSap.kr_lra_sap_id.label('sap2'),
-                                               Rekening.id.label('rek'),
+                                        ).group_by(KegiatanItem.kegiatan_sub_id,
+                                               RekeningSap.kr_lra_sap_id,
+                                               Rekening.id,
                                         ).all()
                     
                     for row in rows:
@@ -1061,12 +1001,8 @@ def view_edit_posting(request):
                     DBSession.add(ji3)
                     DBSession.flush()
                     
-                    rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               Sts.nominal.label('nilai1'),
-                                               StsItem.amount.label('nilai2'),
-                                               RekeningSap.db_lra_sap_id.label('sap1'),
+                    rows = DBSession.query(KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               func.sum(StsItem.amount).label('nilai2'),
                                                RekeningSap.kr_lra_sap_id.label('sap2'),
                                                Rekening.id.label('rek'),
                                         ).join(Rekening
@@ -1074,18 +1010,12 @@ def view_edit_posting(request):
                                         ).filter(Sts.id==id_sts,
                                                StsItem.ar_sts_id==Sts.id,
                                                StsItem.kegiatan_item_id==KegiatanItem.id,
-                                               KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                                                KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                RekeningSap.rekening_id==Rekening.id,
-                                               RekeningSap.db_lra_sap_id==Sap.id
-                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               Sts.nominal.label('nilai1'),
-                                               StsItem.amount.label('nilai2'),
-                                               RekeningSap.db_lra_sap_id.label('sap1'),
-                                               RekeningSap.kr_lra_sap_id.label('sap2'),
-                                               Rekening.id.label('rek'),
+                                               RekeningSap.kr_lra_sap_id==Sap.id
+                                        ).group_by(KegiatanItem.kegiatan_sub_id,
+                                               RekeningSap.kr_lra_sap_id,
+                                               Rekening.id,
                                         ).all()
                         
                     for row in rows:
@@ -1182,12 +1112,8 @@ def view_edit_posting(request):
                     DBSession.add(ji3)
                     DBSession.flush()
                     
-                    rows = DBSession.query(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               Sts.nominal.label('nilai1'),
-                                               StsItem.amount.label('nilai2'),
-                                               RekeningSap.db_lo_sap_id.label('sap1'),
+                    rows = DBSession.query(KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                               func.sum(StsItem.amount).label('nilai2'),
                                                RekeningSap.kr_lo_sap_id.label('sap2'),
                                                Rekening.id.label('rek'),
                                         ).join(Rekening
@@ -1195,18 +1121,12 @@ def view_edit_posting(request):
                                         ).filter(Sts.id==id_sts,
                                                StsItem.ar_sts_id==Sts.id,
                                                StsItem.kegiatan_item_id==KegiatanItem.id,
-                                               KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                                                KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                RekeningSap.rekening_id==Rekening.id,
-                                               RekeningSap.db_lo_sap_id==Sap.id
-                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               Sts.nominal.label('nilai1'),
-                                               StsItem.amount.label('nilai2'),
-                                               RekeningSap.db_lo_sap_id.label('sap1'),
-                                               RekeningSap.kr_lo_sap_id.label('sap2'),
-                                               Rekening.id.label('rek'),
+                                               RekeningSap.kr_lo_sap_id==Sap.id
+                                        ).group_by(KegiatanItem.kegiatan_sub_id,
+                                               RekeningSap.kr_lo_sap_id,
+                                               Rekening.id,
                                         ).all()
                     
                     for row in rows:

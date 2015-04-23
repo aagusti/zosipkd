@@ -49,38 +49,43 @@ class AddSchema(colander.Schema):
 
     unit_nm = colander.SchemaNode(
                     colander.String(),
-                    widget=unit_widget,
+                    #widget=unit_widget,
+                    title="Unit",
                     oid = "unit_nm")
                     
     unit_id = colander.SchemaNode(
                     colander.Integer(),
-                    widget=widget.HiddenWidget(),
+                    #widget=widget.HiddenWidget(),
                     oid = "unit_id")
 
     pegawai_nm = colander.SchemaNode(
                     colander.String(),
-                    widget=pegawai_widget,
+                    #widget=pegawai_widget,
+                    title="Pegawai",
                     oid = "pegawai_nm")
 
     pegawai_id = colander.SchemaNode(
                     colander.Integer(),
-                    widget=widget.HiddenWidget(),
+                    #widget=widget.HiddenWidget(),
                     titel="Pegawai",
                     oid = "pegawai_id")
                     
     jabatan_nm = colander.SchemaNode(
                     colander.String(),
-                    widget=jabatan_widget,
+                    #widget=jabatan_widget,,
+                    title="Jabatan",
                     oid = "jabatan_nm")
 
     jabatan_id = colander.SchemaNode(
                     colander.Integer(),
-                    widget=widget.HiddenWidget(),
+                    #widget=widget.HiddenWidget(),
                     titel="Jabatan",
                     oid = "jabatan_id")
                     
     uraian = colander.SchemaNode(
-                    colander.String())
+                    colander.String(),
+                    oid = "uraian",
+                    title = "Uraian")
                     
     mulai = colander.SchemaNode(
                     colander.Date())
@@ -546,13 +551,14 @@ class view_pejabat(BaseViews):
         if 'id' in self.request.matchdict:
             values['id'] = self.request.matchdict['id']
         row = self.save(values, self.request.user, row)
-        self.request.session.flash('pejabat sudah disimpan.')
+        self.request.session.flash('Pejabat sudah disimpan.')
     def route_list(self):
         return HTTPFound(location=self.request.route_url('pejabat'))
     def session_failed(self, session_name):
         r = dict(form=self.session[session_name])
         del self.session[session_name]
         return r
+        
     @view_config(route_name='pejabat-add', renderer='templates/pejabat/add.pt',
                  permission='add')
     def view_add(self):
@@ -565,13 +571,13 @@ class view_pejabat(BaseViews):
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    req.session[SESS_ADD_FAILED] = e.render()               
+                    return dict(form=form)              
                     return HTTPFound(location=req.route_url('pejabat-add'))
                 self.save_request(dict(controls))
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
-        return dict(form=form.render())
+        return dict(form=form)
         
     ########
     # Edit #
@@ -582,7 +588,7 @@ class view_pejabat(BaseViews):
         msg = 'pejabat ID %s Tidak Ditemukan.' % self.request.matchdict['id']
         request.session.flash(msg, 'error')
         return route_list()
-    @view_config(route_name='pejabat-edit', renderer='templates/pejabat/edit.pt',
+    @view_config(route_name='pejabat-edit', renderer='templates/pejabat/add.pt',
                  permission='edit')
     def view_edit(self):
         request = self.request
@@ -608,8 +614,9 @@ class view_pejabat(BaseViews):
         values['unit_nm'] = row.units.nama
         values['pegawai_nm'] = row.pegawais.nama
         values['jabatan_nm'] = row.jabatans.nama
+        form.set_appstruct(values)
+        return dict(form=form)
         
-        return dict(form=form.render(appstruct=values))
     ##########
     # Delete #
     ##########    

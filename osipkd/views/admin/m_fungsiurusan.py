@@ -40,25 +40,26 @@ class AddSchema(colander.Schema):
                      min_length=1)
     fungsi_nm   = colander.SchemaNode(
                     colander.String(),
-                    widget=fungsi_widget,
+                    #widget=fungsi_widget,
                     oid = "fungsi_nm",
                     title="Fungsi")
     fungsi_id   = colander.SchemaNode(
                     colander.Integer(),
-                    widget=widget.HiddenWidget(),
+                    #widget=widget.HiddenWidget(),
                     oid = "fungsi_id")
     urusan_nm   = colander.SchemaNode(
                     colander.String(),
-                    widget=urusan_widget,
+                    #widget=urusan_widget,
                     oid = "urusan_nm",
                     title="Urusan")
     urusan_id   = colander.SchemaNode(
                     colander.Integer(),
-                    widget=widget.HiddenWidget(),
+                    #widget=widget.HiddenWidget(),
                     oid = "urusan_id")
     nama        = colander.SchemaNode(
                     colander.String(),
-                    title="Nama Fungsi Urusan")
+                    oid = "nama",
+                    title="Uraian")
                     
 class EditSchema(AddSchema):
     id = colander.SchemaNode(colander.String(),
@@ -198,13 +199,13 @@ class view_fungsi_urusan(BaseViews):
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    req.session[SESS_ADD_FAILED] = e.render()               
+                    return dict(form=form)               
                     return HTTPFound(location=req.route_url('fungsiurusan-add'))
                 self.save_request(dict(controls))
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
-        return dict(form=form.render())
+        return dict(form=form)
         
     ########
     # Edit #
@@ -217,7 +218,7 @@ class view_fungsi_urusan(BaseViews):
         request.session.flash(msg, 'error')
         return route_list()
 
-    @view_config(route_name='fungsiurusan-edit', renderer='templates/fungsiurusan/edit.pt',
+    @view_config(route_name='fungsiurusan-edit', renderer='templates/fungsiurusan/add.pt',
                  permission='edit')
     def view_fungsi_urusan_edit(self):
         request = self.request
@@ -258,7 +259,8 @@ class view_fungsi_urusan(BaseViews):
         values = row.to_dict()
         values['urusan_nm'] = row.urusans.nama
         values['fungsi_nm'] = row.fungsis.nama
-        return dict(form=form.render(appstruct=values))
+        form.set_appstruct(values)
+        return dict(form=form)
 
     ##########
     # Delete #

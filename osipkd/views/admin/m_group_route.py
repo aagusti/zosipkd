@@ -41,19 +41,20 @@ class AddSchema(colander.Schema):
 
     group_id  = colander.SchemaNode(
                     colander.Integer(),
-                    widget = widget.HiddenWidget(),
+                    #widget = widget.HiddenWidget(),
                     oid = 'group_id')
     group_nm  = colander.SchemaNode(
                     colander.String(),
-                    widget = group_widget,
+                    #widget = group_widget,
+                    title ='Group',
                     oid = 'group_nm')
     route_id  = colander.SchemaNode(
                     colander.Integer(),
-                    widget = widget.HiddenWidget(),
+                    #widget = widget.HiddenWidget(),
                     oid = 'route_id')
     route_nm  = colander.SchemaNode(
                     colander.String(),
-                    widget = route_widget,
+                    #widget = route_widget,
                     title ='Route',
                     oid = 'route_nm')
 
@@ -161,13 +162,13 @@ class view_routes(BaseViews):
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    req.session[SESS_ADD_FAILED] = e.render()               
+                    return dict(form=form)               
                     return HTTPFound(location=req.route_url('group-routes-add'))
                 self.save_request(dict(controls))
             return self.routes_list()
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
-        return dict(form=form.render())
+        return dict(form=form)
 
         
     ########

@@ -165,6 +165,7 @@
                 <th>Tanggal</th>
                 <th>Nilai</th>
                 <th>Posted</th>
+                <th>Rekap</th>
             </tr>
         </thead>
         <tbody>
@@ -205,13 +206,22 @@
           },{
                 "bSearchable": true,
                 "bSortable"  : true,
-                "aTargets"   : [2,3,4,5,6,7,8]
+                "aTargets"   : [2,3,4,5,6,7,8,9]
           },{
                 "bSearchable": false,
                 "bSortable"  : false,
                 "aTargets"   : [1]
           },{
                 "aTargets" : [8], // Untuk Posting
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return 'N';
+                    } else if (data == "1") {
+                        return 'Y';
+                    }
+                }
+          },{
+                "aTargets" : [9], // Untuk Posting
                 "mRender"  : function (data, type, full) {
                     if (data == "0") {
                         return 'N';
@@ -229,6 +239,7 @@
               {"width": "100px"},
               {"width": "40px", "sClass":"center"},
               {"width": "60px", "sClass":"right"},
+              {"width": "30px", "sClass":"center"},
               {"width": "30px", "sClass":"center"},
           ],
           "fnRowCallback": function (nRow, aData, iDisplayIndex) {
@@ -251,6 +262,11 @@
                         $('td',nRow).css("background-color","#ddffdd")
                         break;
                 }
+                switch(aData[9]){
+                    case '1' :
+                        $('td',nRow).css("background-color","#ddffdd")
+                        break;
+                }
             },
         });
           
@@ -259,8 +275,10 @@
           '	<button id="btn_add"    class="btn btn btn-primary" type="button">Tambah</button>',
           '	<button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
-          '	<button id="btn_posting" class="btn btn btn-success" type="button">Posting Transaksi</button>',
-          '	<button id="btn_unposting" class="btn btn btn-info" type="button">Un-Jurnal Transaksi</button>',
+          '	<button id="btn_posting"   class="btn btn btn-success" type="button">Posting Transaksi</button>',
+          '	<button id="btn_unposting" class="btn btn btn-info"    type="button">Un-Jurnal Transaksi</button>',
+          '	<button id="btn_posting1"   class="btn btn btn-success" type="button">Posting Rekap</button>',
+          '	<button id="btn_unposting1" class="btn btn btn-info"    type="button">Un-Jurnal Rekap</button>',
           //'	<button id="btn_post_rkp" class="btn btn btn-success" type="button">Posting Rekap</button>',
           ' <button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
           '	&nbsp;',
@@ -321,6 +339,14 @@
             } else {
                 alert('Silahkan pilih data yang akan diunposting jurnal');
             }
+        });
+        
+        $('#btn_posting1').click(function () {
+            window.location = '/ar-invoice-item/posting1';
+        });
+        
+        $('#btn_unposting1').click(function () {
+            window.location = '/ar-invoice-item/unposting1';
         });
         
         $('#btn_post').click(function () {

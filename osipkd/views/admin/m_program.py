@@ -38,27 +38,30 @@ class AddSchema(colander.Schema):
                         min_length=1)
     urusan_nm   = colander.SchemaNode(
                     colander.String(),
-                    widget=urusan_widget,
+                    #widget=urusan_widget,
+                    #missing = colander.drop,
                     oid = "urusan_nm",
                     title="Urusan")
     urusan_id   = colander.SchemaNode(
                     colander.Integer(),
-                    widget=widget.HiddenWidget(),
+                    #widget=widget.HiddenWidget(),
+                    #missing = colander.drop,
                     oid = "urusan_id")
     kode        = colander.SchemaNode(
                     colander.String(),
-                    validator=colander.Length(max=32),
-                    title="Kode Program")
+                    title="Kode",
+                    oid = "kode")
     nama        = colander.SchemaNode(
                     colander.String(),
-                    title="Nama Program")
+                    title="Nama",
+                    oid = "nama")
     disabled    = colander.SchemaNode(
                     colander.Boolean())
                     
 class EditSchema(AddSchema):
-    id = colander.SchemaNode(colander.String(),
-            missing=colander.drop,
-            widget=widget.HiddenWidget(readonly=True))
+    id = colander.SchemaNode(
+            colander.Integer(),
+            oid="id",)
             
 class view_program(BaseViews):
     ########                    
@@ -179,26 +182,28 @@ class view_program(BaseViews):
         if req.POST:
             if 'simpan' in req.POST:
                 controls = req.POST.items()
+                controls_dicted = dict(controls)
 
                 #Cek Kode Sama ato tidak
-                a = form.validate(controls)
-                b = a['kode']
-                c = "%s" % b
-                cek  = DBSession.query(Program).filter(Program.kode==c).first()
-                if cek :
-                    self.request.session.flash('Kode sudah ada.', 'error')
-                    return HTTPFound(location=self.request.route_url('program-add'))
+                if not controls_dicted['kode']=='':
+                    a = form.validate(controls)
+                    b = a['kode']
+                    c = "%s" % b
+                    cek  = DBSession.query(Program).filter(Program.kode==c).first()
+                    if cek :
+                        self.request.session.flash('Kode sudah ada.', 'error')
+                        return HTTPFound(location=self.request.route_url('program-add'))
                                 
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    req.session[SESS_ADD_FAILED] = e.render()               
-                    return HTTPFound(location=req.route_url('program-add'))
-                self.save_request(dict(controls))
+                    return dict(form=form)       
+                    return HTTPFound(location=req.route_url('program-add'))    
+                self.save_request(dict(controls))     
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
-        return dict(form=form.render())
+        return dict(form=form)
         
     ########
     # Edit #
@@ -211,7 +216,7 @@ class view_program(BaseViews):
         request.session.flash(msg, 'error')
         return route_list()
         
-    @view_config(route_name='program-edit', renderer='templates/program/edit.pt',
+    @view_config(route_name='program-edit', renderer='templates/program/add.pt',
                  permission='edit')
     def view_edit(self):
         request = self.request
@@ -251,7 +256,8 @@ class view_program(BaseViews):
             return self.session_failed(SESS_EDIT_FAILED)
         values = row.to_dict()
         values['urusan_nm'] = row.urusans.nama
-        return dict(form=form.render(appstruct=values))
+        form.set_appstruct(values)
+        return dict(form=form)
         
         
     ##########

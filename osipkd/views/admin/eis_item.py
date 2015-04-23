@@ -65,7 +65,8 @@ class AddSchema(colander.Schema):
     kecamatan_nm = colander.SchemaNode(
                     colander.String(),
                     validator=colander.Length(max=64),
-                    missing=colander.drop)
+                    missing=colander.drop,
+                    title="Nama Kec.")
 
     kelurahan_kd = colander.SchemaNode(
                     colander.String(),
@@ -75,7 +76,8 @@ class AddSchema(colander.Schema):
     kelurahan_nm = colander.SchemaNode(
                     colander.String(),
                     validator=colander.Length(max=64),
-                    missing=colander.drop)
+                    missing=colander.drop,
+                    title="Nama Kel.")
     is_kota  = colander.SchemaNode(
                     colander.Boolean(),
                     ) # deferred_source_type)
@@ -86,7 +88,9 @@ class AddSchema(colander.Schema):
     sumber_id  =  colander.SchemaNode(
                     colander.String(),
                     validator=colander.Length(max=32),
-                    widget=widget.SelectWidget(values=SUMBER_ID)) # deferred_source_type)
+                    widget=widget.SelectWidget(values=SUMBER_ID),
+                    title="Sumber") # deferred_source_type)
+                    
 class EditSchema(AddSchema):
     id = colander.SchemaNode(colander.String(),
             missing=colander.drop,
