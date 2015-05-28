@@ -16,14 +16,22 @@
         $('#btn_cetak').click(function () {
             
             var jenis = $('input[name="jenis"]:checked').val();
-            var tipe = $('#tipe').val();
+            var tipe = $('input[name="tipe"]:checked').val();
+            var status = $('input[name="status"]:checked').val();
             var bulan = $('#bulan').val();
-            
             if(jenis==undefined) {
-                alert('Silahkan pilih format laporan yang akan ditampilkan!');
+                alert('Silahkan pilih jenis laporan yang akan ditampilkan!');
                 return;
             } 
-            window.open('/ap-report-real/act/'+jenis+'?bulan='+bulan);
+            if(status==undefined) {
+                alert('Silahkan pilih anggaran yang akan ditampilkan!');
+                return;
+            } 
+            if(tipe==undefined) {
+                alert('Silahkan pilih rekening yang akan ditampilkan!');
+                return;
+            } 
+            window.open('/ap-report-real/act/'+jenis+'?bulan='+bulan+'&tipe='+tipe+'&status='+status);
         });
 
         $('input[name="jenis"]').prop('checked', false);
@@ -144,9 +152,37 @@
             </div>
             <div class="radio">
                 <label><input type="radio" name="jenis" value="3">Realisasi/SKPD/Kegiatan</label>
+            </div>
         </div>
         </div>
-    </div>
+        <br>
+        <div class="form-group" id="div_status">
+        <label class="control-label col-xs-2" for="status">APBD/PAPBD</label>
+        <div class="col-sm-3">
+            <div class="radio">
+                <label><input type="radio" name="status" value="1">APBD</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="status" value="2">Perubahan APBD</label>
+            </div>
+        </div>
+        </div>
+        <br>
+        <div class="form-group" id="div_tipe">
+        <label class="control-label col-xs-2" for="tipe">Rekening</label>
+        <div class="col-sm-3">
+            <div class="radio">
+                <label><input type="radio" name="tipe" value="3">Jenis</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="tipe" value="4">Objek</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="tipe" value="5">Rincian Objek</label>
+            </div>
+        </div>
+        </div>
+        <br>
 
       <!--Priode S/d Bulan---------------------------------------------------------------->
       <div class="form-group">

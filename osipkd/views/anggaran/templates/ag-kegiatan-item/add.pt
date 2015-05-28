@@ -368,7 +368,7 @@
       <!--RPKA-->
       <div class="form-group"   tal:attributes="style request.session['ag_step_id']!=3 and  'display:none'">
         <div class="col-sm-12"> 
-          <div class="panel-heading">RPKA</div>
+          <div class="panel-heading">RDPPA</div>
           <div class="panel-body">
               <div class="form-group">
                 <div tal:define="field form['vol_3_1']">
@@ -432,7 +432,7 @@
                 </div>
                 <div>
                   <label for="jml3" class="control-label col-md-2" id="req-jml3">
-                          Jumlah RPKA</label>
+                          Jumlah RDPPA</label>
                   <div class="col-md-4">
                       <input class="form-control" type="text" id="jml3">
                   </div>
@@ -558,12 +558,15 @@
       <script type='text/javascript'>
         $(document).ready(function () {
             //Kondisi Sumberdana
-            var btl = $('#kegiatan_kd').val()
-            if (btl =='0.00.00.21-1'){
-                $('#sdana').show()
-            }else{
-                $('#sdana').hide()
-            }
+            //var btl = $('#kegiatan_kd').val()
+            if ($('#kegiatan_kd').val()=='0.00.00.10-1')
+                $('#sdana').hide();
+            else if ($('#kegiatan_kd').val()=='0.00.00.31-1')
+                $('#sdana').hide();
+            else if ($('#kegiatan_kd').val()=='0.00.00.32-1')
+                $('#sdana').hide();
+            else
+                $('#sdana').show();
             
             $("#btn_close").click(function () {
                 if ($('#kegiatan_kd').val()=='0.00.00.10-1')

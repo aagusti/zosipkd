@@ -132,13 +132,14 @@
             <tr>
                 <th>Index</th>
                 <th>Kode</th>
-                <th>No</th>
+                <th>No.Item</th>
                 <th>Kegiatan</th>
                 <th>Program</th>
                 <th>RKA</th>
                 <th>DPA</th>
                 <th>RDPPA</th>
                 <th>DPPA</th>
+                <th>Posted</th>
             </tr>
         </thead>
         <tbody>
@@ -157,6 +158,8 @@
           '	<button id="btn_print"     class="btn btn btn-primary" type="button">Cetak</button>',
           '	<button id="btn_item"      class="btn btn btn-success" type="button">Item</button>',
           '	<button id="btn_indikator" class="btn btn btn-primary" type="button">Indikator</button>',
+          '	<button id="btn_posting" class="btn btn btn-success" type="button">Posting</button>',
+          '	<button id="btn_unposting" class="btn btn btn-info" type="button">UnPosting</button>',
           ' <button id="btn_close"     class="btn btn-warning"     type="button" >Tutup</button>',
           '	&nbsp;',
           '</div>',
@@ -167,6 +170,7 @@
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
             "sAjaxSource"    : oTableUrl,
+            "bStateSave"     : true,
             "bServerSide"    : true,
             "bProcessing"    : true,           
             "sDom"           : '<"toolbar">lfrtip',
@@ -179,8 +183,8 @@
             "sPaginationType": "full_numbers",
 
             "lengthMenu": [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
+                [10, 25, 50, 100,],
+                [10, 25, 50, 100, "All"]
             ],
             "aoColumnDefs": [{
                 "bSearchable": false,
@@ -199,6 +203,16 @@
                 "aTargets" : [5,6,7,8],
                 "mRender"  : function (data, type, full) {
                 return formatNumber(data);}
+            },{
+                "sClass"   : "center",
+                "aTargets" : [9], // Untuk Posted
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return 'N';
+                    } else if (data == "1") {
+                        return 'Y';
+                    }
+                }
             }],
             "aoColumns": [
                 null, 
@@ -209,7 +223,8 @@
                 {"sWidth": "100px"}, 
                 {"sWidth": "100px"}, 
                 {"sWidth": "100px"}, 
-                {"sWidth": "100px"}
+                {"sWidth": "100px"},
+                {"sWidth": "50px"}, 
             ],
             "fnRowCallback": function (nRow, aData, iDisplayIndex) {
                 $(nRow).on("click", function (event) {
@@ -224,7 +239,13 @@
                         oTable.$('tr.row_selected').removeClass('row_selected');
                         $(this).addClass('row_selected');
                     }
-                })
+                });
+                switch(aData[9]){
+                    case '1' :
+                        $('td',nRow).css("background-color","#A9F5D0")
+                        break;
+                }
+                
             },
         });
 
@@ -305,11 +326,30 @@
                   url = "/ag-report/r${request.session['ag_step_id']}00/act/2211?id=0";
               window.open(url);
             } 
+            else if(rpt==4){
+                  url = "/ag-report/r${request.session['ag_step_id']}00/act/2212?id="+mID;
+              window.open(url);
+            } 
             else if(!rpt){
               alert('Silahkan pilih Jenis Laporan');
             }
         });  
 
+        $('#btn_posting').click(function () {
+            if (mID) {
+                window.location = '/ag-bl/' + mID +'/posting';
+            } else {
+                alert('Silahkan pilih data yang akan diposting');
+            }
+        });
+        $('#btn_unposting').click(function () {
+            if (mID) {
+                window.location = '/ag-bl/' + mID +'/unposting';
+            } else {
+                alert('Silahkan pilih data yang akan diunposting');
+            }
+        });
+        
         $("#btn_close").click(function () {
             window.location = '/anggaran';
             return false;
@@ -331,7 +371,7 @@
                     <div class="form-group">
                     <label class="control-label col-xs-3" for="rpt">Jenis Laporan</label>
                         <!--RKA-->
-                        <div class="col-sm-2" tal:attributes="style request.session['ag_step_id']!=1 and  'display:none'">
+                        <div class="col-sm-6" tal:attributes="style request.session['ag_step_id']!=1 and  'display:none'">
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="1">RKA-2.2.1</label>
                             </div>
@@ -341,9 +381,12 @@
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="3">Semua Lampiran</label>
                             </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="4">Jadwal Pelaksanaan</label>
+                            </div>
                         </div>
                         <!--DPA-->
-                        <div class="col-sm-4" tal:attributes="style request.session['ag_step_id']!=2 and  'display:none'">
+                        <div class="col-sm-6" tal:attributes="style request.session['ag_step_id']!=2 and  'display:none'">
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="1">DPA-2.2.1</label>
                             </div>
@@ -353,9 +396,12 @@
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="3">Semua Lampiran</label>
                             </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="4">Jadwal Pelaksanaan</label>
+                            </div>
                         </div>
                         <!--RDPPA-->
-                        <div class="col-sm-2" tal:attributes="style request.session['ag_step_id']!=3 and  'display:none'">
+                        <div class="col-sm-6" tal:attributes="style request.session['ag_step_id']!=3 and  'display:none'">
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="1">RDPPA-2.2.1</label>
                             </div>
@@ -365,9 +411,12 @@
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="3">Semua Lampiran</label>
                             </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="4">Jadwal Pelaksanaan</label>
+                            </div>
                         </div>
                         <!--DPPA-->
-                        <div class="col-sm-4" tal:attributes="style request.session['ag_step_id']!=4 and  'display:none'">
+                        <div class="col-sm-6" tal:attributes="style request.session['ag_step_id']!=4 and  'display:none'">
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="1">DPPA-2.2.1</label>
                             </div>
@@ -376,6 +425,9 @@
                             </div>
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="3">Semua Lampiran</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="4">Jadwal Pelaksanaan</label>
                             </div>
                         </div>
                     </div><br><br><br><br>

@@ -296,41 +296,13 @@ Rekening]]></text>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="135">
+			<band height="128">
 				<rectangle>
-					<reportElement x="0" y="0" width="540" height="135"/>
+					<reportElement x="0" y="0" width="540" height="128"/>
 					<graphicElement>
 						<pen lineWidth="0.25"/>
 					</graphicElement>
 				</rectangle>
-				<textField isBlankWhenNull="true">
-					<reportElement x="357" y="99" width="183" height="14"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="8" isBold="true" isUnderline="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{pa_nama}]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement x="357" y="41" width="183" height="14"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{jabatan}]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement x="357" y="25" width="183" height="16"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-					<textFieldExpression><![CDATA["Tigaraksa, "+$V{tanggal}]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement x="357" y="113" width="183" height="14"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{pa_nip}]]></textFieldExpression>
-				</textField>
 				<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToBandHeight" x="420" y="0" width="120" height="16"/>
 					<box rightPadding="1">
@@ -368,6 +340,48 @@ Rekening]]></text>
 						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Jumlah Penerimaan"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="420" y="28" width="60" height="12"/>
+					<textElement verticalAlignment="Top">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{tanggal}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="377" y="28" width="43" height="12"/>
+					<textElement verticalAlignment="Top">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Tigaraksa, "]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="306" y="109" width="234" height="12"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA["NIP. "+$F{pa_nip}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="306" y="98" width="234" height="12"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="8" isBold="true" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pa_nama}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="306" y="50" width="234" height="12"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{unit_nm}.toUpperCase()]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="306" y="39" width="234" height="12"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{jabatan}]]></textFieldExpression>
 				</textField>
 			</band>
 			<band height="68">
@@ -689,13 +703,13 @@ Rekening]]></text>
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="50">
+		<band height="25">
 			<textField isBlankWhenNull="true">
 				<reportElement x="349" y="5" width="191" height="14"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{unit_kd}+" - "+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{PAGE_NUMBER})]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

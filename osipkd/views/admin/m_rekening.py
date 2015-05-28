@@ -78,7 +78,8 @@ class view_rekening(BaseViews):
     def get_kode_dict(self, term, prefix=''):
         q = DBSession.query(Rekening.id, Rekening.kode, Rekening.nama
                   ).filter(Rekening.kode.ilike('%s%%' % prefix),
-                           Rekening.kode.ilike('%%%s%%' % term))
+                           Rekening.kode.ilike('%%%s%%' % term),
+                           Rekening.level_id==5)
         rows = q.all()
         r = []
         for k in rows:
@@ -93,7 +94,8 @@ class view_rekening(BaseViews):
     def get_nama_dict(self, term, prefix=''):
         q = DBSession.query(Rekening.id, Rekening.kode, Rekening.nama
                   ).filter(Rekening.kode.ilike('%s%%' % prefix),
-                           Rekening.nama.ilike('%%%s%%' % term))
+                           Rekening.nama.ilike('%%%s%%' % term),
+                           Rekening.level_id==5)
         rows = q.all()
         r = []
         for k in rows:
@@ -250,6 +252,9 @@ class view_rekening(BaseViews):
         elif url_dict['act']=='headofkode7':
             term = 'term' in params and params['term'] or '' 
             return self.get_kode_dict(term,'7')
+        elif url_dict['act']=='headofnama7':
+            term = 'term' in params and params['term'] or '' 
+            return self.get_nama_dict(term,'7')
 
             
         #######################################################################

@@ -176,6 +176,30 @@
                 $('#is_bayar1').hide();
             }
             });
+            
+            $("#jenis").change(function(){
+                var jenis2 = $("#jenis").val();
+                var kode1 = $("#kode").val();
+              if( kode1.length > 0 ){
+                
+                if (jenis2 == '1' ){
+                   kd_jenis = 'UP';
+                } else if (jenis2 == '2' ){
+                   kd_jenis = 'TU';
+                } else if (jenis2 == '3' ){
+                   kd_jenis = 'GU';
+                } else if (jenis2 == '4' ){
+                   kd_jenis = 'LS';
+                } else if (jenis2 == '5' ){
+                   kd_jenis = 'SP2B';
+                }
+                
+                var kode2 = kode1.substring(0,5)+kd_jenis+kode1.substring(kode1.length-14);
+                $("#kode").val(kode2);
+               }
+            //alert(kode2);
+            });
+            
         });
         </script>
         </div>
@@ -421,9 +445,9 @@
           <!---ap_tgl_kontrak------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['ap_tgl_kontrak']" id="item-${field.oid}">
-              <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
+              <label for="${field.oid}" class="control-label col-md-5" id="req-${field.oid}">
                       ${field.title}</label>
-              <div class="col-md-8">
+              <div class="col-md-7">
                  ${structure:field.serialize()}
                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                    tal:repeat="error field.error.messages()">
@@ -435,9 +459,9 @@
           <!---ap_nilai------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['ap_nilai']" id="item-${field.oid}">
-              <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
+              <label for="${field.oid}" class="control-label col-md-5" id="req-${field.oid}">
                       ${field.title}</label>
-              <div class="col-md-8">
+              <div class="col-md-7">
                  ${structure:field.serialize()}
                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                    tal:repeat="error field.error.messages()">
@@ -463,9 +487,9 @@
           <!---ap_kwitansi_tanggal------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['ap_kwitansi_tgl']" id="item-${field.oid}">
-              <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
+              <label for="${field.oid}" class="control-label col-md-5" id="req-${field.oid}">
                       ${field.title}</label>
-              <div class="col-md-8">
+              <div class="col-md-7">
                  ${structure:field.serialize()}
                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                    tal:repeat="error field.error.messages()">
@@ -477,9 +501,9 @@
           <!---ap_kwitansi_nilai------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['ap_kwitansi_nilai']" id="item-${field.oid}">
-              <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
+              <label for="${field.oid}" class="control-label col-md-5" id="req-${field.oid}">
                       ${field.title}</label>
-              <div class="col-md-8">
+              <div class="col-md-7">
                  ${structure:field.serialize()}
                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                    tal:repeat="error field.error.messages()">
@@ -504,9 +528,9 @@
           <!---ap_bap_tanggal------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['ap_bap_tgl']" id="item-${field.oid}">
-              <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
+              <label for="${field.oid}" class="control-label col-md-5" id="req-${field.oid}">
                       ${field.title}</label>
-              <div class="col-md-8">
+              <div class="col-md-7">
                  ${structure:field.serialize()}
                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                    tal:repeat="error field.error.messages()">
@@ -548,7 +572,7 @@
       
   <div  class="panel panel-default">
     <div class="panel-heading">
-        <h5 class="panel-title">Item Tagihan / Utang</h5>
+        <h5 class="panel-title">Item Tagihan / SPJ</h5>
     </div>
   <div class="panel-body">
       <form method="post" id="detail" accept-charset="utf-8" id="myform" class="form-horizontal" enctype="multipart/form-data">
@@ -557,6 +581,7 @@
           <input id="ap_invoice_item_id" type="hidden" value="" name="ap_invoice_item_id">
           <input id="kegiatan_item_id" type="hidden" value="" name="kegiatan_item_id">
           <input id="nilai" type="hidden" value="" name="nilai">
+          <input id="kegiatan_kode" type="hidden" value="" name="kegiatan_kode">
           <div class="form-group">
             <label for="no_urut1" class="control-label col-md-1" id="req-no_urut1">
                     Item </label>
@@ -735,6 +760,8 @@
                   } else {
                     $("#errors").css('display', 'inline', 'important');
                     $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                    var a = html.msg;
+                    //alert(a);
                   }
                 },
                 beforeSend: function () {
@@ -787,8 +814,8 @@
             "sPaginationType": "full_numbers",
 
             "lengthMenu": [
-                [5, 10, 15, 25, 50, -1],
-                [5, 10, 15, 25, 50, "All"]
+                [5, 10, 15, 25, 50, 100],
+                [5, 10, 15, 25, 50, 100]
             ],
             "aoColumnDefs": [{
                 "bSearchable": false,
@@ -832,6 +859,7 @@
                         $("#no_urut1").val(data[1]);
                         $("#nama").val(data[2]);
                         $("#item_nm").val(data[3]+'-'+data[10]);   
+                        $("#kegiatan_kode").val(data[3]);
                         $("#ppn").val(data[5]);
                         $("#pph").val(data[6]);
                         $("#vol_1").val(data[7]);

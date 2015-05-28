@@ -8,10 +8,11 @@
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Akuntansi SKPD<b class="caret"></b></a>
         <ul class="dropdown-menu">
           <li><a href="/ak-jurnal-skpd">Jurnal SKPD</a></li>
-          <li><a href="/ak-arinvoice">Posting Tagihan/Piutang</a></li>
+          <li><a href="/ak-arinvoice">Posting Tagihan / Piutang</a></li>
           <li><a href="/ak-tbp">Posting TBP</a></li>
           <li><a href="/ak-sts">Posting STS</a></li>
-          <li><a href="/ak-apinvoice">Posting Tagihan/Utang</a></li>
+          <li><a href="/ak-apinvoice">Posting Tagihan / SPJ</a></li>
+          <li><a href="/ak-payment">Posting Pembayaran Tagihan</a></li>
           <li><a href="/ak-sp2d">Posting SP2D</a></li>
           <li><a href="/ak-report-skpd">Laporan</a></li>
         </ul>

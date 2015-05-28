@@ -162,11 +162,12 @@
               <tr>
                   <th>ID</th>
                   <th>Rekening</th>
-                  <th>No. Urut</th>
+                  <th>No. Item</th>
                   <th>Uraian</th>
                   <th>Nilai</th>
                   <th>RekeningNm</th>
                   <th>RekeningID</th>
+                  <th>Posted</th>
              </tr>
           </thead>
           <tbody>
@@ -207,7 +208,7 @@
             <div class="col-md-3">
               <div id="item-no_urut">
                 <label for="no_urut" class="control-label col-md-3" id="req-no_urut">
-                        No.</label>
+                        No.Item</label>
                 <div class="col-md-9">
                    <input id="no_urut" class=" form-control " type="text" value="" name="no_urut">
                 </div>
@@ -348,10 +349,11 @@
       var oTableUrl = "/ag-kegiatan-item/act/grid?type=4";  
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
-          "sDom"           : '<"toolbar">lfrtip',
           "sAjaxSource"    : oTableUrl,
+          "bStateSave"     : true,
           "bServerSide"    : true,
           "bProcessing"    : true,
+          "sDom"           : '<"toolbar">lfrtip',
           "bScrollCollapse": true,
           "bSort"          : true,
           "bInfo"          : false,
@@ -376,6 +378,16 @@
               "bSearchable": false,
               "bSortable"  : false,
               "aTargets"   : [1,2,4]
+            },{
+                "sClass"   : "center",
+                "aTargets" : [7], // Untuk Posted
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return 'N';
+                    } else if (data == "1") {
+                        return 'Y';
+                    }
+                }
           }],
           "aoColumns": [
               null,
@@ -385,7 +397,30 @@
               {"width": "150px", "sClass":"right"},
               null,
               null,
-          ]
+              {"width": "50px", "sClass":"center"},
+          ],
+            "fnRowCallback": function (nRow, aData, iDisplayIndex) {
+                $(nRow).on("click", function (event) {
+                    if ($(this).hasClass('row_selected')) {
+                        /* mID = '';
+                        $(this).removeClass('row_selected'); */
+                    } else {
+
+                        var data = oTable.fnGetData(this);
+                        mID = data[0];
+
+                        oTable.$('tr.row_selected').removeClass('row_selected');
+                        $(this).addClass('row_selected');
+                    }
+                });
+                switch(aData[7]){
+                    case '1' :
+                        $('td',nRow).css("background-color","#A9F5D0")
+                        break;
+                }
+                
+            },
+          
         });
           
         var tb_array = [
@@ -394,7 +429,9 @@
           '	<button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
           '	<button id="btn_pdf"    class="btn btn btn-primary" type="button">Cetak</button>',
-          '	<button id="btn_close"  class="btn btn btn-warning" type="button">Tutup</button>',
+          '	<button id="btn_posting" class="btn btn btn-success" type="button">Posting</button>',
+          '	<button id="btn_unposting" class="btn btn btn-info" type="button">UnPosting</button>',
+         '	<button id="btn_close"  class="btn btn btn-warning" type="button">Tutup</button>',
           '	<!--button id="btn_csv" class="btn btn btn-default" type="button">CSV</button-->',
           '	&nbsp;',
           '</div>',
@@ -503,6 +540,13 @@
 
         $(function(){
             reload_kegiatan();
+        });
+        
+        $('#btn_posting').click(function () {
+            window.location = '/ag-bl/' +$('#kegiatan_sub_id').val()+'/posting';
+        });
+        $('#btn_unposting').click(function () {
+            window.location = '/ag-bl/' +$('#kegiatan_sub_id').val()+'/unposting';
         });
         
         $("#btn_close").click(function () {

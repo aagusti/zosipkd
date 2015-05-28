@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime,date
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, extract
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
@@ -56,6 +56,7 @@ class view_ap_spm(BaseViews):
         pk_id = 'id' in params and params['id'] and int(params['id']) or 0
         if url_dict['act']=='grid':
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+            bulan = 'bulan' in params and params['bulan'] and int(params['bulan']) or 0
             if url_dict['act']=='grid':
                 # defining columns
                 columns = []
@@ -67,7 +68,9 @@ class view_ap_spm(BaseViews):
                 columns.append(ColumnDT('nominal'))
                 columns.append(ColumnDT('posted'))
                 columns.append(ColumnDT('nilai'))
-                query = DBSession.query(Spm.id,
+                
+                if bulan==0 :
+                  query = DBSession.query(Spm.id,
                                         Spm.kode,
                                         Spm.tanggal,
                                         Spp.jenis,
@@ -88,11 +91,40 @@ class view_ap_spm(BaseViews):
                                         Spp.nominal,
                                         Spm.posted,
                                         #func.sum(SpmPotongan.nilai).label('nilai')
+                                ).order_by(Spm.kode.desc())
+                else :
+                  query = DBSession.query(Spm.id,
+                                        Spm.kode,
+                                        Spm.tanggal,
+                                        Spp.jenis,
+                                        Spm.nama,
+                                        Spp.nominal,
+                                        Spm.posted,
+                                        func.sum(SpmPotongan.nilai).label('nilai')
                                         )\
-
+                                .outerjoin(SpmPotongan)\
+                                .filter(Spm.ap_spp_id==Spp.id,
+                                        Spp.tahun_id==ses['tahun'],
+                                        Spp.unit_id==ses['unit_id'],
+                                        extract('month',Spm.tanggal)==bulan)\
+                                .group_by(Spm.id,
+                                        Spm.kode,
+                                        Spm.tanggal,
+                                        Spp.jenis,
+                                        Spm.nama,
+                                        Spp.nominal,
+                                        Spm.posted,
+                                        #func.sum(SpmPotongan.nilai).label('nilai')
+                                ).order_by(Spm.kode.desc())
+                  
                 rowTable = DataTables(req, Spm, query, columns)
                 return rowTable.output_result()
         
+        elif url_dict['act']=='reload':
+            bulan = params['bulan']
+            
+            return {'success':True, 'msg':'Sukses ubah bulan'}
+            
         elif url_dict['act']=='grid2':
             ap_spp_id = 'ap_spp_id' in params and params['ap_spp_id'] or 0
             # defining columns
@@ -118,12 +150,12 @@ class view_ap_spm(BaseViews):
                                     Spm.ap_spp_id==ap_spp_id,
                                     Spm.ap_spp_id==Spp.id
                             ).group_by(Spm.id,
-                                    Spp.kode.label('kode'),
-                                    Spp.tanggal.label('tanggal'),
-                                    Spp.jenis.label('jenis'),
-                                    Spp.nama.label('nama'),
-                                    Spp.nominal.label('nominal'),
-                                    Spp.posted.label('posted'),
+                                    Spp.kode,
+                                    Spp.tanggal,
+                                    Spp.jenis,
+                                    Spp.nama,
+                                    Spp.nominal,
+                                    Spp.posted,
                             )
  
             rowTable = DataTables(req, Spm, query, columns)
@@ -465,13 +497,13 @@ class AddSchema(colander.Schema):
     ttd_uid         = colander.SchemaNode(
                           colander.Integer(),
                           missing=colander.drop,
-                          title = "PA",
+                          title = "PA / KPA",
                           oid = "ttd_uid"
                           )
     ttd_nip         = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title = "PA",
+                          title = "PA / KPA",
                           oid = "ttd_nip"
                           )
     ttd_nama        = colander.SchemaNode(

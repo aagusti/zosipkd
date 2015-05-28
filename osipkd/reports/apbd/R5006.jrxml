@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_lampiran_3" language="groovy" pageWidth="612" pageHeight="1008" columnWidth="540" leftMargin="54" rightMargin="18" topMargin="36" bottomMargin="72">
-	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="227"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_lampiran_3" language="groovy" pageWidth="972" pageHeight="612" orientation="Landscape" columnWidth="900" leftMargin="54" rightMargin="18" topMargin="36" bottomMargin="14">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="266"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
@@ -132,70 +132,69 @@
 		<groupHeader>
 			<band height="111">
 				<line>
-					<reportElement x="405" y="33" width="135" height="1"/>
+					<reportElement x="723" y="33" width="135" height="1"/>
 					<graphicElement>
 						<pen lineWidth="0.5"/>
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement x="353" y="0" width="52" height="33"/>
+					<reportElement x="671" y="0" width="52" height="33"/>
 					<textElement>
 						<font size="8"/>
 					</textElement>
 					<text><![CDATA[Lampiran II  :]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="405" y="0" width="135" height="11"/>
+					<reportElement x="723" y="0" width="135" height="11"/>
 					<textElement>
 						<font size="8"/>
 					</textElement>
 					<text><![CDATA[PERATURAN WALIKOTA/BUPATI]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="0" y="47" width="540" height="15"/>
+					<reportElement x="0" y="47" width="861" height="15"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="0" y="62" width="540" height="26"/>
+					<reportElement x="0" y="62" width="861" height="15"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-					<text><![CDATA[RINGKASAN APBD MENURUT URUSAN PEMERINTAHAN DAERAH,
-ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
+					<text><![CDATA[PENJABARAN APBD]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="0" y="88" width="540" height="15"/>
+					<reportElement x="0" y="77" width="861" height="15"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["TAHUN ANGGARAN "+$F{tahun}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="405" y="11" width="55" height="11"/>
+					<reportElement x="723" y="11" width="55" height="11"/>
 					<textElement>
 						<font size="8"/>
 					</textElement>
 					<text><![CDATA[Nomor     :]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="405" y="22" width="55" height="11"/>
+					<reportElement x="723" y="22" width="55" height="11"/>
 					<textElement>
 						<font size="8"/>
 					</textElement>
 					<text><![CDATA[Tanggal   :]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="446" y="23" width="94" height="12"/>
+					<reportElement x="764" y="23" width="94" height="12"/>
 					<textElement markup="none">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{tanggal}.substring(8,10)+"-"+$F{tanggal}.substring(5,7)+"-"+$F{tanggal}.substring(0,4)]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="446" y="11" width="94" height="12"/>
+					<reportElement x="764" y="11" width="94" height="12"/>
 					<textElement markup="none">
 						<font size="8"/>
 					</textElement>
@@ -218,7 +217,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<text><![CDATA[ORGANISASI SKPD]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="182" y="1" width="358" height="14"/>
+					<reportElement x="182" y="1" width="679" height="14"/>
 					<textElement>
 						<font size="9" isBold="true"/>
 					</textElement>
@@ -232,7 +231,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<textFieldExpression><![CDATA[": "+$F{unit_kd}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="183" y="15" width="357" height="14"/>
+					<reportElement x="183" y="15" width="678" height="14"/>
 					<textElement>
 						<font size="9" isBold="true"/>
 					</textElement>
@@ -246,9 +245,9 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<textFieldExpression><![CDATA[": "+$F{urusan_kd}]]></textFieldExpression>
 				</textField>
 			</band>
-			<band height="32">
+			<band height="17">
 				<staticText>
-					<reportElement x="0" y="0" width="60" height="32"/>
+					<reportElement x="0" y="0" width="146" height="17"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -261,7 +260,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<text><![CDATA[KODE REKENING]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="60" y="0" width="248" height="32"/>
+					<reportElement x="146" y="0" width="331" height="17"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -274,7 +273,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<text><![CDATA[URAIAN]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="308" y="0" width="80" height="32"/>
+					<reportElement x="477" y="0" width="100" height="17"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -287,7 +286,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<text><![CDATA[JUMLAH]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="388" y="0" width="152" height="32"/>
+					<reportElement x="577" y="0" width="284" height="17"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -297,12 +296,12 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="9" isBold="true"/>
 					</textElement>
-					<text><![CDATA[DASAR HUKUM]]></text>
+					<text><![CDATA[PENJELASAN]]></text>
 				</staticText>
 			</band>
 			<band height="14">
 				<staticText>
-					<reportElement x="0" y="0" width="60" height="14"/>
+					<reportElement x="0" y="0" width="146" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -315,7 +314,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<text><![CDATA[1]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="60" y="0" width="248" height="14"/>
+					<reportElement x="146" y="0" width="331" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -328,7 +327,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<text><![CDATA[2]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="308" y="0" width="80" height="14"/>
+					<reportElement x="477" y="0" width="100" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -341,7 +340,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<text><![CDATA[3]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="388" y="0" width="152" height="14"/>
+					<reportElement x="577" y="0" width="284" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -358,15 +357,15 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 		<groupFooter>
 			<band height="99">
 				<textField isBlankWhenNull="true">
-					<reportElement x="353" y="10" width="183" height="16"/>
+					<reportElement x="678" y="10" width="183" height="16"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="353" y="26" width="183" height="16"/>
+					<reportElement x="678" y="26" width="183" height="16"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="353" y="80" width="183" height="16"/>
+					<reportElement x="678" y="80" width="183" height="16"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				</textField>
 			</band>
@@ -378,7 +377,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 			<band height="15">
 				<printWhenExpression><![CDATA[$V{surplus_defisit}=="Surplus/(Defisit)"]]></printWhenExpression>
 				<textField isBlankWhenNull="true">
-					<reportElement x="0" y="0" width="308" height="15"/>
+					<reportElement x="0" y="0" width="477" height="15"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -391,7 +390,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<textFieldExpression><![CDATA["SURPLUS/(DEFISIT)"]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="388" y="0" width="152" height="15"/>
+					<reportElement x="577" y="0" width="284" height="15"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -403,7 +402,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					</textElement>
 				</textField>
 				<textField pattern="#,##0;(#,##0)" isBlankWhenNull="true">
-					<reportElement x="308" y="0" width="80" height="15"/>
+					<reportElement x="477" y="0" width="100" height="15"/>
 					<box rightPadding="1">
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -424,7 +423,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 			<band height="15">
 				<printWhenExpression><![CDATA[$V{pend_bel_biaya}=="2"||$V{pend_bel_biaya}=="3"]]></printWhenExpression>
 				<textField isBlankWhenNull="true">
-					<reportElement x="0" y="0" width="308" height="15"/>
+					<reportElement x="0" y="0" width="477" height="15"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -437,7 +436,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<textFieldExpression><![CDATA[$V{pend_bel_biaya}=="1" ? "JUMLAH PENDAPATAN" : $V{pend_bel_biaya}=="2" ? "JUMLAH BELANJA" : "PEMBIAYAAN NETTO"]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0;(#,##0)" isBlankWhenNull="true">
-					<reportElement x="308" y="0" width="80" height="15"/>
+					<reportElement x="477" y="0" width="100" height="15"/>
 					<box rightPadding="1">
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -450,7 +449,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<textFieldExpression><![CDATA[$V{jumlah_pbb}<0 ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_pbb}*-1) : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_pbb})]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="388" y="0" width="152" height="15"/>
+					<reportElement x="577" y="0" width="284" height="15"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -469,9 +468,9 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 		<groupHeader>
 			<band height="15">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="15"/>
-					<box leftPadding="3">
-						<leftPen lineWidth="0.25"/>
+					<reportElement stretchType="RelativeToBandHeight" x="91" y="0" width="55" height="15"/>
+					<box>
+						<leftPen lineWidth="0.4" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement verticalAlignment="Middle">
@@ -479,7 +478,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					</textElement>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="308" y="0" width="80" height="15"/>
+					<reportElement stretchType="RelativeToBandHeight" x="477" y="0" width="100" height="15"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -489,7 +488,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					</textElement>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="60" y="0" width="248" height="15"/>
+					<reportElement stretchType="RelativeToBandHeight" x="146" y="0" width="331" height="15"/>
 					<box leftPadding="3">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -500,7 +499,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<textFieldExpression><![CDATA[$F{jenis}=="1" ? "PENDAPATAN" : $F{jenis}=="2" ? "BELANJA TIDAK LANGSUNG" : $F{jenis}=="3" ? "BELANJA LANGSUNG" : $F{jenis}=="4" ? "PENERIMAAN PEMBIAYAAN" : $F{jenis}=="5" ? "PENGELUARAN PEMBIAYAAN" : ""]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="388" y="0" width="152" height="15"/>
+					<reportElement stretchType="RelativeToBandHeight" x="577" y="0" width="284" height="15"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -509,12 +508,61 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 						<font size="9"/>
 					</textElement>
 				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="76" y="0" width="15" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="9" isBold="false"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="25" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineStyle="Solid"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="9" isBold="false"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="61" y="0" width="15" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="9" isBold="false"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="25" y="0" width="36" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="9" isBold="false"/>
+					</textElement>
+				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
 			<band height="15">
 				<textField pattern="#,##0;(#,##0)" isBlankWhenNull="true">
-					<reportElement x="308" y="0" width="80" height="15"/>
+					<reportElement x="477" y="0" width="100" height="15"/>
 					<box rightPadding="1">
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -527,7 +575,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<textFieldExpression><![CDATA[$V{jumlah_j}<0 ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_j}*-1) : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_j})]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="0" y="0" width="308" height="15"/>
+					<reportElement x="0" y="0" width="477" height="15"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -540,7 +588,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<textFieldExpression><![CDATA["JUMLAH "+($F{jenis}=="1" ? "PENDAPATAN" : $F{jenis}=="2" ? "BELANJA TIDAK LANGSUNG" : $F{jenis}=="3" ? "BELANJA LANGSUNG" : $F{jenis}=="4" ? "PENERIMAAN PEMBIAYAAN" : $F{jenis}=="5" ? "PENGELUARAN PEMBIAYAAN" : "")]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="388" y="0" width="152" height="15"/>
+					<reportElement x="577" y="0" width="284" height="15"/>
 					<box>
 						<topPen lineWidth="0.25"/>
 						<leftPen lineWidth="0.25"/>
@@ -559,7 +607,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 		<groupHeader>
 			<band height="15">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="388" y="0" width="152" height="15"/>
+					<reportElement stretchType="RelativeToBandHeight" x="577" y="0" width="284" height="15"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -569,7 +617,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					</textElement>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="program_kd" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="308" y="0" width="80" height="15"/>
+					<reportElement stretchType="RelativeToBandHeight" x="477" y="0" width="100" height="15"/>
 					<box rightPadding="1">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -580,7 +628,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<textFieldExpression><![CDATA[$V{jumlah_p}<0 ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_p}*-1) : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_p})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="60" y="0" width="248" height="15"/>
+					<reportElement stretchType="RelativeToBandHeight" x="146" y="0" width="331" height="15"/>
 					<box leftPadding="3">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -591,15 +639,65 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<textFieldExpression><![CDATA[$F{program_nm}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="15"/>
-					<box leftPadding="3">
-						<leftPen lineWidth="0.25"/>
+					<reportElement stretchType="RelativeToBandHeight" x="91" y="0" width="55" height="15"/>
+					<box>
+						<leftPen lineWidth="0.4" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement>
 						<font size="9" isBold="true" isItalic="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{program_kd}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="76" y="0" width="15" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="9" isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{kegiatan_kd}.substring( 8 )]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="25" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineStyle="Solid"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="9" isBold="false"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="61" y="0" width="15" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="9" isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{program_kd}.substring( 5 )]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="25" y="0" width="36" height="15"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="9" isBold="false"/>
+					</textElement>
 				</textField>
 			</band>
 		</groupHeader>
@@ -609,7 +707,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 		<groupHeader>
 			<band height="14">
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="kegiatan_kd" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="308" y="0" width="80" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="477" y="0" width="100" height="14"/>
 					<box rightPadding="1">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -620,7 +718,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<textFieldExpression><![CDATA[$V{jumlah_k}<0 ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_k}*-1) : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_k})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="388" y="0" width="80" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="577" y="0" width="146" height="14"/>
 					<box leftPadding="2"/>
 					<textElement>
 						<font size="8"/>
@@ -628,14 +726,14 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<textFieldExpression><![CDATA[$F{lokasi}.toString()=="null" ? "" : "Lokasi: "+$F{lokasi}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="468" y="0" width="72" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="723" y="0" width="138" height="14"/>
 					<textElement>
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{sdana}.toString()=="null" ? "" : "Sbr. Dana: "+$F{sdana}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="60" y="0" width="248" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="146" y="0" width="331" height="14"/>
 					<box leftPadding="3">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -646,18 +744,17 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<textFieldExpression><![CDATA[$F{kegiatan_nm}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="14"/>
-					<box leftPadding="3">
-						<leftPen lineWidth="0.25"/>
+					<reportElement stretchType="RelativeToBandHeight" x="91" y="0" width="55" height="14"/>
+					<box>
+						<leftPen lineWidth="0.4" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement>
 						<font size="9" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{kegiatan_kd}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="388" y="0" width="152" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="577" y="0" width="284" height="14"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -666,10 +763,61 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 						<font size="9"/>
 					</textElement>
 				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="25" y="0" width="36" height="14"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="9" isBold="false"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="76" y="0" width="15" height="14"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{kegiatan_kd}.substring( 8 )]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="25" height="14"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineStyle="Solid"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="9" isBold="false"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="61" y="0" width="15" height="14"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{program_kd}.substring( 5 )]]></textFieldExpression>
+				</textField>
 			</band>
 			<band height="12">
 				<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="388" y="0" width="152" height="12"/>
+					<reportElement stretchType="RelativeToBandHeight" x="577" y="0" width="284" height="12"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -679,12 +827,12 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					</textElement>
 				</textField>
 				<subreport>
-					<reportElement stretchType="RelativeToBandHeight" x="388" y="0" width="152" height="12"/>
+					<reportElement stretchType="RelativeToBandHeight" x="577" y="0" width="284" height="12"/>
 					<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JRXmlDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("//indikator")]]></dataSourceExpression>
 					<subreportExpression><![CDATA[$P{R5006_subreport1}]]></subreportExpression>
 				</subreport>
 				<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="308" y="0" width="80" height="12"/>
+					<reportElement stretchType="RelativeToBandHeight" x="477" y="0" width="100" height="12"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -694,7 +842,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					</textElement>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="60" y="0" width="248" height="12"/>
+					<reportElement stretchType="RelativeToBandHeight" x="146" y="0" width="331" height="12"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -704,12 +852,61 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					</textElement>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="12"/>
+					<reportElement stretchType="RelativeToBandHeight" x="91" y="0" width="55" height="12"/>
 					<box>
-						<leftPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.4" lineStyle="Dashed"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
 					<textElement textAlignment="Right">
+						<font size="9" isBold="false"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="25" y="0" width="36" height="12"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="9" isBold="false"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="76" y="0" width="15" height="12"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="9" isBold="false"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="25" height="12"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineStyle="Solid"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="9" isBold="false"/>
+					</textElement>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="61" y="0" width="15" height="12"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
 						<font size="9" isBold="false"/>
 					</textElement>
 				</textField>
@@ -721,7 +918,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 		<groupHeader>
 			<band height="14">
 				<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="388" y="0" width="152" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="577" y="0" width="284" height="14"/>
 					<box>
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -731,10 +928,12 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					</textElement>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="14"/>
-					<box leftPadding="3">
-						<leftPen lineWidth="0.25"/>
-						<rightPen lineWidth="0.25"/>
+					<reportElement stretchType="RelativeToBandHeight" x="91" y="0" width="55" height="14"/>
+					<box leftPadding="2">
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Solid"/>
 					</box>
 					<textElement>
 						<font size="9" isBold="false"/>
@@ -742,7 +941,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<textFieldExpression><![CDATA[$F{rek_kd}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="rek_kd" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="308" y="0" width="80" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="477" y="0" width="100" height="14"/>
 					<box rightPadding="1">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -753,7 +952,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_r})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="60" y="0" width="248" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="146" y="0" width="331" height="14"/>
 					<box leftPadding="3">
 						<leftPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
@@ -764,18 +963,71 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 					<textFieldExpression><![CDATA[$F{rek_nm}]]></textFieldExpression>
 				</textField>
 				<subreport>
-					<reportElement stretchType="RelativeToBandHeight" x="388" y="0" width="152" height="14"/>
+					<reportElement stretchType="RelativeToBandHeight" x="577" y="0" width="284" height="14"/>
 					<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JRXmlDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("//hukum")]]></dataSourceExpression>
 					<subreportExpression><![CDATA[$P{R5006_subreport2}]]></subreportExpression>
 				</subreport>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="76" y="0" width="15" height="14"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="9" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{kegiatan_kd}.substring( 8 )]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="61" y="0" width="15" height="14"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="9" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{program_kd}.substring( 5 )]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="25" y="0" width="36" height="14"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="9" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{unit_kd}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="25" height="14"/>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.0" lineStyle="Dashed"/>
+						<leftPen lineStyle="Solid"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="9" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{urusan_kd}]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupHeader>
 	</group>
 	<pageHeader>
-		<band height="14">
+		<band height="31">
 			<printWhenExpression><![CDATA[$V{PAGE_NUMBER}>1]]></printWhenExpression>
 			<staticText>
-				<reportElement x="0" y="0" width="60" height="14"/>
+				<reportElement x="0" y="17" width="146" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -788,7 +1040,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 				<text><![CDATA[1]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="388" y="0" width="152" height="14"/>
+				<reportElement x="577" y="17" width="284" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -801,7 +1053,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 				<text><![CDATA[4]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="60" y="0" width="248" height="14"/>
+				<reportElement x="146" y="17" width="331" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -814,7 +1066,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 				<text><![CDATA[2]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="308" y="0" width="80" height="14"/>
+				<reportElement x="477" y="17" width="100" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -826,13 +1078,65 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 				</textElement>
 				<text><![CDATA[3]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="577" y="0" width="284" height="17"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PENJELASAN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="146" y="0" width="331" height="17"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[URAIAN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="477" y="0" width="100" height="17"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[JUMLAH]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="146" height="17"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[KODE REKENING]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<detail>
 		<band height="14" splitType="Stretch">
 			<printWhenExpression><![CDATA[$F{level_id}=="4"]]></printWhenExpression>
 			<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="388" y="0" width="152" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="577" y="0" width="284" height="14"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -842,9 +1146,9 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 				</textElement>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="14"/>
-				<box leftPadding="3">
-					<leftPen lineWidth="0.25"/>
+				<reportElement stretchType="RelativeToBandHeight" x="91" y="0" width="55" height="14"/>
+				<box>
+					<leftPen lineWidth="0.4" lineStyle="Dashed"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement>
@@ -852,7 +1156,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 				</textElement>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0;(#,##0)" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="308" y="0" width="80" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="477" y="0" width="100" height="14"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -862,7 +1166,7 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 				</textElement>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="60" y="0" width="248" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="146" y="0" width="331" height="14"/>
 				<box leftPadding="3">
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -872,20 +1176,69 @@ ORGANISASI, PENDAPATAN, BELANJA DAN PEMBIAYAAN]]></text>
 				</textElement>
 			</textField>
 			<subreport>
-				<reportElement stretchType="RelativeToBandHeight" x="388" y="0" width="152" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="577" y="0" width="284" height="14"/>
 				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JRXmlDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("//item")]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{R5006_subreport3}]]></subreportExpression>
 			</subreport>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="25" y="0" width="36" height="14"/>
+				<box>
+					<pen lineWidth="0.25" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="9" isBold="false"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="61" y="0" width="15" height="14"/>
+				<box>
+					<pen lineWidth="0.25" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="9" isBold="false"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="25" height="14"/>
+				<box>
+					<pen lineWidth="0.25" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
+					<leftPen lineStyle="Solid"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="9" isBold="false"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="76" y="0" width="15" height="14"/>
+				<box>
+					<pen lineWidth="0.25" lineStyle="Dashed"/>
+					<topPen lineWidth="0.0" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="9" isBold="false"/>
+				</textElement>
+			</textField>
 		</band>
 	</detail>
 	<pageFooter>
 		<band height="20">
 			<textField>
-				<reportElement x="440" y="6" width="100" height="14"/>
+				<reportElement x="761" y="4" width="100" height="14"/>
 				<textElement textAlignment="Right">
-					<font size="9"/>
+					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{PAGE_NUMBER})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{unit_kd}+" - "+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{PAGE_NUMBER})]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

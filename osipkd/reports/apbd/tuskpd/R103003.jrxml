@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R103003" language="groovy" pageWidth="612" pageHeight="972" columnWidth="564" leftMargin="30" rightMargin="18" topMargin="14" bottomMargin="14">
-	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="85"/>
+	<property name="ireport.y" value="388"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["Z:\\py_os\\osipkd\\osipkd\\reports\\apbd\\tuskpd\\"]]></defaultValueExpression>
 	</parameter>
@@ -106,6 +106,9 @@
 	<field name="pph" class="java.lang.String">
 		<fieldDescription><![CDATA[pph]]></fieldDescription>
 	</field>
+	<field name="jabatan" class="java.lang.String">
+		<fieldDescription><![CDATA[jabatan]]></fieldDescription>
+	</field>
 	<variable name="nilai_pot" class="java.lang.Double">
 		<variableExpression><![CDATA[$F{nilai_pot}=="None" ? 0 : Double.parseDouble($F{nilai_pot})]]></variableExpression>
 	</variable>
@@ -174,12 +177,12 @@
 			</textField>
 			<textField>
 				<reportElement x="0" y="60" width="559" height="16"/>
-				<box>
+				<box rightPadding="4">
 					<leftPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["No. SPM : "+$F{spm_kd}.substring(13)+"/"+$V{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun}]]></textFieldExpression>
@@ -191,7 +194,7 @@
 		</band>
 	</title>
 	<detail>
-		<band height="823" splitType="Stretch">
+		<band height="846" splitType="Stretch">
 			<staticText>
 				<reportElement x="297" y="238" width="143" height="16"/>
 				<box>
@@ -233,7 +236,7 @@
 				<subreportExpression><![CDATA[$P{R103003_subreport2}]]></subreportExpression>
 			</subreport>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="697" width="275" height="79"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="719" width="275" height="79"/>
 				<box leftPadding="1">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -246,7 +249,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="289" width="275" height="408"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="289" width="275" height="430"/>
 				<box leftPadding="1">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -259,7 +262,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<subreport>
-				<reportElement x="0" y="288" width="275" height="407"/>
+				<reportElement x="0" y="288" width="275" height="431"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRXmlDataSource($P{XML_FILE}, "/apbd/spm/rekening")]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{R103003_subreport1}]]></subreportExpression>
 			</subreport>
@@ -303,7 +306,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="275" y="254" width="284" height="551"/>
+				<reportElement stretchType="RelativeToBandHeight" x="275" y="254" width="284" height="574"/>
 				<box leftPadding="1">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -869,63 +872,63 @@ Supaya menerbitkan SP2D kepada :]]></text>
 				<text><![CDATA[Uang Sejumlah]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1" y="697" width="136" height="17"/>
+				<reportElement x="1" y="720" width="136" height="17"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Jumlah SPP yang diminta]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1" y="714" width="72" height="32"/>
+				<reportElement x="1" y="737" width="72" height="32"/>
 				<textElement verticalAlignment="Top">
 					<font size="9"/>
 				</textElement>
 				<text><![CDATA[Uang Sejumlah :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="137" y="697" width="139" height="17"/>
+				<reportElement stretchType="RelativeToBandHeight" x="137" y="720" width="139" height="17"/>
 				<textElement verticalAlignment="Middle" markup="none">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Rp. "+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{nominal})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="1" y="745" width="96" height="17"/>
+				<reportElement x="1" y="768" width="96" height="17"/>
 				<textElement verticalAlignment="Top">
 					<font size="9"/>
 				</textElement>
 				<text><![CDATA[No dan Tanggal SPP]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="105" y="746" width="171" height="17"/>
+				<reportElement stretchType="RelativeToBandHeight" x="105" y="769" width="171" height="17"/>
 				<textElement verticalAlignment="Top" markup="none">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{spp_kd}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="97" y="762" width="179" height="17"/>
+				<reportElement stretchType="RelativeToBandHeight" x="105" y="785" width="171" height="17"/>
 				<textElement verticalAlignment="Top" markup="none">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{spp_tgl}.substring(8,10)+"-"+$F{spp_tgl}.substring(5,7)+"-"+$F{spp_tgl}.substring(0,4)]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="97" y="746" width="8" height="17"/>
+				<reportElement x="97" y="769" width="8" height="17"/>
 				<textElement verticalAlignment="Top">
 					<font size="9"/>
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="133" y="697" width="8" height="17"/>
+				<reportElement x="133" y="720" width="8" height="17"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="776" width="275" height="29"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="798" width="275" height="30"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -939,7 +942,7 @@ Supaya menerbitkan SP2D kepada :]]></text>
 **)  Pilih yang sesuai]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="805" width="559" height="17"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="828" width="559" height="17"/>
 				<box leftPadding="1">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -952,39 +955,39 @@ Supaya menerbitkan SP2D kepada :]]></text>
 				<text><![CDATA[SPM ini sah apabila telah ditandatangani dan di stempel oleh SKPD]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="275" y="680" width="283" height="14"/>
+				<reportElement x="275" y="703" width="283" height="14"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["PENGGUNA ANGGARAN"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{jabatan}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="275" y="666" width="283" height="14"/>
+				<reportElement x="275" y="689" width="283" height="14"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Tigaraksa, "+$F{spm_tgl}.substring(8,10)+" "+$V{nm_bulan}+" "+$F{spm_tgl}.substring(0,4)]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="275" y="778" width="283" height="14"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="275" y="801" width="283" height="14"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["NIP. "+$F{ttd_nip}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="275" y="764" width="283" height="14"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="275" y="787" width="283" height="14"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
-					<font isBold="true"/>
+					<font isBold="true" isUnderline="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ttd_nama}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="275" y="694" width="283" height="27"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="275" y="717" width="283" height="27"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{unit_nm}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{unit_nm}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="376" y="254" width="144" height="18"/>
@@ -994,7 +997,7 @@ Supaya menerbitkan SP2D kepada :]]></text>
 				<textFieldExpression><![CDATA["Rp. "+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{nominal}-$V{nilai_pot})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="73" y="714" width="201" height="31"/>
+				<reportElement stretchType="RelativeToBandHeight" x="73" y="737" width="201" height="31"/>
 				<textElement verticalAlignment="Top" markup="none">
 					<font size="9"/>
 				</textElement>

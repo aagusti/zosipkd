@@ -327,6 +327,7 @@ class APInvoice(NamaModel, Base):
     disabled        = Column(SmallInteger, nullable=False, default=0)
     posted          = Column(SmallInteger, nullable=False, default=0)
     status_spp      = Column(SmallInteger, nullable=False, default=0)
+    status_pay      = Column(SmallInteger, default=0)
 
     UniqueConstraint('tahun_id', 'unit_id', 'no_urut',
                 name = 'invoice_ukey')
@@ -402,6 +403,7 @@ class APPayment(NamaModel, Base):
 
     kegiatansubs   = relationship("KegiatanSub", backref="appayments")
     units          = relationship("Unit",        backref="appayments")
+    apinvoices     = relationship("APInvoice",   backref="appayments")
     
     tahun_id        = Column(BigInteger, ForeignKey("apbd.tahuns.id"), nullable=False)
     unit_id         = Column(Integer,    ForeignKey("admin.units.id"), nullable=False) 
@@ -409,6 +411,7 @@ class APPayment(NamaModel, Base):
     tanggal         = Column(Date,    nullable=False)
     
     kegiatan_sub_id = Column(BigInteger, ForeignKey("apbd.kegiatan_subs.id"), nullable=False)
+    invoice_id      = Column(Integer,    ForeignKey("apbd.ap_invoices.id"),   nullable=False)
     nama            = Column(String(255))
     jenis           = Column(SmallInteger, nullable=False, default=0) #1 UP, 2 TU, 3 GU, 4 LS, 5 SP2B
     is_bayar        = Column(SmallInteger, default=0) #0 Lunas, 1 Cicilan

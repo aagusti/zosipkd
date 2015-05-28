@@ -77,6 +77,7 @@ class view_ap_invoice_skpd(BaseViews):
                 columns.append(ColumnDT('amount'))
                 columns.append(ColumnDT('posted'))
                 columns.append(ColumnDT('status_spp'))
+                columns.append(ColumnDT('status_pay'))
 
                 query = DBSession.query(APInvoice.id,
                           APInvoice.kode,
@@ -87,6 +88,7 @@ class view_ap_invoice_skpd(BaseViews):
                           APInvoice.amount,
                           APInvoice.posted,
                           APInvoice.status_spp,
+                          APInvoice.status_pay,
                         ).outerjoin(APInvoiceItem
                         ).filter(APInvoice.tahun_id==ses['tahun'],
                               APInvoice.unit_id==ses['unit_id'],
@@ -96,11 +98,12 @@ class view_ap_invoice_skpd(BaseViews):
                           APInvoice.kode,
                           APInvoice.jenis,
                           APInvoice.tanggal,
-                          KegiatanSub.nama.label('kegiatan_sub_nm'),
+                          KegiatanSub.nama,
                           APInvoice.nama,
                           APInvoice.amount,
                           APInvoice.posted,
                           APInvoice.status_spp,
+                          APInvoice.status_pay,
                         )
                 rowTable = DataTables(req, APInvoice, query, columns)
                 return rowTable.output_result()
@@ -265,12 +268,12 @@ def view_edit_posting(request):
                                              KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                              RekeningSap.rekening_id==Rekening.id,
                                              RekeningSap.kr_lo_sap_id==Sap.id
-                                    ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               APInvoice.amount.label('nilai1'),
-                                               APInvoiceItem.ap_invoice_id.label('inv'),
-                                               RekeningSap.kr_lo_sap_id.label('sap2'),
+                                    ).group_by(KegiatanItem.rekening_id,
+                                               Sap.nama,
+                                               KegiatanItem.kegiatan_sub_id,
+                                               APInvoice.amount,
+                                               APInvoiceItem.ap_invoice_id,
+                                               RekeningSap.kr_lo_sap_id,
                                     ).first()
                                     
                     ji2 = AkJurnalItem()

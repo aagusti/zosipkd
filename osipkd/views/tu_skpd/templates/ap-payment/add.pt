@@ -52,7 +52,176 @@
                  name="unit_nm" value="${request.session.unit_nm}" readonly>
         </div>
       </div>
+      
+      <!--Invoice--===-------------------------------------------------------------------->
+      <div class="form-group"> 
+        <div tal:define="field form['invoice_id']" style="display: none;">
+            ${structure:field.serialize()}
+        </div>
+        <div tal:define="field form['inv_kd']" id="item-${field.oid}">
+          <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                  ${field.title}</label>
+          <div class="col-md-2">
+             ${structure:field.serialize()}
+            <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+               tal:repeat="error field.error.messages()">
+               ${error}</p>
+          </div>
+        </div>
+        
+        <div class="col-md-8" tal:define="field form['inv_nm']" id="item-${field.oid}">
+          ${structure:field.serialize()}
+          <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+             tal:repeat="error field.error.messages()">
+             ${error}</p>
+        </div>
+        <script>
+            $('#inv_kd').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/ap-invoice-skpd/act/headofkode2?term=%QUERY",
+            },{
+             "name"      : 'inv_kd',
+             "displayKey": 'value',
+            });
+            $('#inv_nm').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "remote"   : "/ap-invoice-skpd/act/headofnama2?term=%QUERY",
+            },{
+             "name"      : 'inv_nm',
+             "displayKey": 'value',
+            });
 
+        
+        $('#inv_kd').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#inv_nm').val(datum.nama);
+              $('#invoice_id').val(datum.id);
+              $('#jml_total').val(datum.amount);
+              $('#nama').val(datum.nama);
+              $('#no_bku').val(datum.no_bku);
+              
+              if(datum.tgl_bku == 'None'){
+                  $('#tgl_bku').val('');
+              }else{
+                  $('#tgl_bku').val(datum.tgl_bku);
+              }
+              
+              $('#jenis').val(datum.jenis);
+              $('#no_bast').val(datum.no_bast);
+              
+              if(datum.tgl_bast == 'None'){
+                  $('#tgl_bast').val('');
+              }else{
+                  $('#tgl_bast').val(datum.tgl_bast);
+              }
+              
+              $('#is_bayar').val(datum.is_bayar);
+              $('#ap_nama').val(datum.ap_nama);
+              $('#ap_rekening').val(datum.ap_rekening);
+              $('#ap_npwp').val(datum.ap_npwp);
+              $('#ap_waktu').val(datum.ap_waktu);
+              $('#ap_uraian').val(datum.ap_uraian);
+              $('#ap_pemilik').val(datum.ap_pemilik);
+              $('#ap_alamat').val(datum.ap_alamat);
+              $('#ap_bentuk').val(datum.ap_bentuk);
+              $('#ap_kontrak').val(datum.ap_kontrak);
+              
+              if(datum.ap_tgl_kontrak == 'None'){
+                  $('#ap_tgl_kontrak').val('');
+              }else{
+                  $('#ap_tgl_kontrak').val(datum.ap_tgl_kontrak);
+              }
+              
+              $('#ap_nilai').val(datum.ap_nilai);
+              $('#ap_kwitansi_no').val(datum.ap_kwitansi_no);
+              
+              if(datum.ap_kwitansi_tgl == 'None'){
+                  $('#ap_kwitansi_tgl').val('');
+              }else{
+                  $('#ap_kwitansi_tgl').val(datum.ap_kwitansi_tgl);
+              }
+              
+              $('#ap_kwitansi_nilai').val(datum.ap_kwitansi_nilai);
+              $('#ap_bap_no').val(datum.ap_bap_no);
+              
+              if(datum.ap_bap_tgl == 'None'){
+                  $('#ap_bap_tgl').val('');
+              }else{
+                  $('#ap_bap_tgl').val(datum.ap_bap_tgl);
+              }
+              
+              $('#kegiatan_nm').val(datum.kegiatan_nm);
+              $('#kegiatan_kd').val(datum.kegiatan_kd);
+              $('#kegiatan_sub_id').val(datum.kegiatan_sub_id);
+        });
+        $('#inv_nm').bind('typeahead:selected', function(obj, datum, name) {  
+              $('#inv_kd').val(datum.kode);
+              $('#invoice_id').val(datum.id);
+              $('#jml_total').val(datum.amount);
+              $('#nama').val(datum.nama);
+              $('#no_bku').val(datum.no_bku);
+              
+              if(datum.tgl_bku == 'None'){
+                  $('#tgl_bku').val('');
+              }else{
+                  $('#tgl_bku').val(datum.tgl_bku);
+              }
+              
+              $('#jenis').val(datum.jenis);
+              $('#no_bast').val(datum.no_bast);
+              
+              if(datum.tgl_bast == 'None'){
+                  $('#tgl_bast').val('');
+              }else{
+                  $('#tgl_bast').val(datum.tgl_bast);
+              }
+              
+              $('#is_bayar').val(datum.is_bayar);
+              $('#ap_nama').val(datum.ap_nama);
+              $('#ap_rekening').val(datum.ap_rekening);
+              $('#ap_npwp').val(datum.ap_npwp);
+              $('#ap_waktu').val(datum.ap_waktu);
+              $('#ap_uraian').val(datum.ap_uraian);
+              $('#ap_pemilik').val(datum.ap_pemilik);
+              $('#ap_alamat').val(datum.ap_alamat);
+              $('#ap_bentuk').val(datum.ap_bentuk);
+              $('#ap_kontrak').val(datum.ap_kontrak);
+              
+              if(datum.ap_tgl_kontrak == 'None'){
+                  $('#ap_tgl_kontrak').val('');
+              }else{
+                  $('#ap_tgl_kontrak').val(datum.ap_tgl_kontrak);
+              }
+              
+              $('#ap_nilai').val(datum.ap_nilai);
+              $('#ap_kwitansi_no').val(datum.ap_kwitansi_no);
+              
+              if(datum.ap_kwitansi_tgl == 'None'){
+                  $('#ap_kwitansi_tgl').val('');
+              }else{
+                  $('#ap_kwitansi_tgl').val(datum.ap_kwitansi_tgl);
+              }
+              
+              $('#ap_kwitansi_nilai').val(datum.ap_kwitansi_nilai);
+              $('#ap_bap_no').val(datum.ap_bap_no);
+              
+              if(datum.ap_bap_tgl == 'None'){
+                  $('#ap_bap_tgl').val('');
+              }else{
+                  $('#ap_bap_tgl').val(datum.ap_bap_tgl);
+              }
+              
+              $('#kegiatan_nm').val(datum.kegiatan_nm);
+              $('#kegiatan_kd').val(datum.kegiatan_kd);
+              $('#kegiatan_sub_id').val(datum.kegiatan_sub_id);
+        });
+        //$("#inv_nm").attr('readonly',true);
+        </script>
+      </div>
+      
       <!--Kegiatans-------------------------------------------------------------------->
       <div class="form-group"> 
         <div tal:define="field form['kegiatan_sub_id']" style="display: none;">
@@ -104,9 +273,11 @@
               $('#kegiatan_kd').val(datum.kode);
               $('#kegiatan_sub_id').val(datum.id);
         });
-        //$("#kegiatan_nm").attr('readonly',true);
+        $("#kegiatan_nm").attr('readonly',true);
+        $("#kegiatan_kd").attr('readonly',true);
         </script>
       </div>
+      
       <!--No Urut-------------------------------------------------------------------->
       <div class="form-group"> 
         <div tal:define="field form['no_urut']" id="item-${field.oid}">
@@ -530,228 +701,7 @@
       </form>
      </div>
     </div>
-    
-    <table class="table table-bordered table-hover table-condensed" id="table1">
-      <thead>
-          <tr>
-              <th>Index</th>
-              <th>No</th>
-              <th>Uraian</th>
-              <th>Rekening</th>
-              <th>Jumlah</th>
-              <th>PPn</th>
-              <th>PPh</th>
-          </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table><br><br><br>
-      
-  <div  class="panel panel-default">
-    <div class="panel-heading">
-        <h5 class="panel-title">Item Payment</h5>
-    </div>
-  <div class="panel-body">
-      <form method="post" id="detail" accept-charset="utf-8" id="myform" class="form-horizontal" enctype="multipart/form-data">
-        <fieldset class="deformFormFieldset">
-          <!--REKENING------------------------------------------------------------->
-          <input id="ap_payment_item_id" type="hidden" value="" name="ap_payment_item_id">
-          <input id="kegiatan_item_id" type="hidden" value="" name="kegiatan_item_id">
-          <input id="nilai" type="hidden" value="" name="nilai">
-          <div class="form-group">
-            <label for="no_urut1" class="control-label col-md-1" id="req-no_urut1">
-                    Item </label>
-            <div class="col-md-1">
-               <input id="no_urut1" class=" form-control " type="text" value="" name="no_urut1">
-            </div>
-        
-            <div class="col-md-4">
-               <input id="item_nm" class=" form-control " type="text" value="" name="item_nm">
-            </div>
-          
-            <div class="col-md-2">
-                <label for="vol_1" class="control-label col-md-3" id="req-vol_1">
-                       Vol.1</label>
-                <div class="col-md-9">
-                   <input id="vol_1" class=" form-control " type="text" value="1" name="vol_1">
-                </div>
-            </div>
-            <div class="col-md-2">
-                <label for="vol_2" class="control-label col-md-3" id="req-vol_2">
-                       Vol.2</label>
-                <div class="col-md-9">
-                   <input id="vol_2" class=" form-control " type="text" value="1" name="vol_2">
-                </div>
-            </div>
-            
-            <div class="col-md-2">
-                <label for="harga" class="control-label col-md-3" id="req-harga">
-                       Harga</label>
-                <div class="col-md-9">
-                   <input id="harga" class=" form-control " type="text" value="0" name="harga">
-                </div>
-            </div>
-          </div>
-          
-          <!--Internal Kode Item-->
-          <div class="form-group">
-              <label for="amount" class="control-label col-md-1" id="req-amount">
-                       Uraian</label>
-              <div class="col-md-5">
-                 <input id="nama" class=" form-control " type="text" value="" name="nama">
-              </div>
-              <div class="col-md-2">
-                  <label for="ppn" class="control-label col-md-3" id="req-ppn">
-                           PPn</label>
-                  <div class="col-md-9">
-                     <input id="ppn" class=" form-control " type="text" value="0" name="ppn">
-                  </div>
-              </div>
-              
-              <div class="col-md-2">
-                  <label for="pph" class="control-label col-md-3" id="req-pph">
-                           PPh</label>
-                  <div class="col-md-9">
-                     <input id="pph" class=" form-control " type="text" value="0" name="pph">
-                  </div>
-              </div>
-            <!--Button----------------------------------------------------------->
-            <div class="col-md-2">
-                  <button id="rekening_add" name="baru" type="button" class="btn btn-primary "
-                        value="baru">Baru</button>
-                  <button id="rekening_save" name="simpan" type="button" class="btn btn-primary "
-                        value="simpan">Update</button>
-                  <button id="rekening_cancel" name="batal" type="reset" class="btn btn-danger "
-                        value="batal">Batal</button>
-              
-            </div> 
-          </div>            
-        <script>
-          $('#rekening_add').click(function () {
-          $('#ap_payment_item_id').val('');
-          $('#detail').submit();
-          /**
-            var kegiatan_item_id, jml;
-            var vol_1 = parseInt($('#vol_1').val()); 
-            var vol_2 = parseInt($('#vol_2').val()); 
-            var nilai = parseInt($('#nilai').val()); 
-            var harga = parseInt($('#harga').val());
-            kegiatan_item_id = $('#kegiatan_item_id').val();
 
-            jml = (vol_1 * vol_2) * harga;
-            if(jml<0){
-            alert('Harga tidak boleh negatif');
-            }else{
-                if (kegiatan_item_id==''){
-                    alert('Data untuk entry masih kosong');
-                }
-                else{
-                    if(harga > nilai){
-                        alert('Harga tidak boleh besar dari anggaran Rp.'+$('#nilai').val());
-                    }
-                    else{
-                        $('#ap_invoice_item_id').val('');
-                        $('#detail').submit();
-                    }
-                }
-            }*/
-           })
-          // save update
-          $('#rekening_save').click(function () {
-          $('#ap_payment_item_id').val();
-          $('#detail').submit();
-          /**
-            var kegiatan_item_id,jml;
-            var vol_1 = parseInt($('#vol_1').val()); 
-            var vol_2 = parseInt($('#vol_2').val()); 
-            var nilai = parseInt($('#nilai').val());
-            var harga = parseInt($('#harga').val());
-            kegiatan_item_id = $('#kegiatan_item_id').val();
-            
-            jml = (vol_1 * vol_2) * harga;
-            if(jml<0){
-            alert('Harga tidak boleh negatif');
-            }else{
-                if (kegiatan_item_id==''){
-                    alert('Data harus dipilih terlebih dahulu');
-                }
-                else{
-                    if(harga >  nilai){
-                        alert('Harga tidak boleh besar dari anggaran Rp.'+$('#nilai').val());
-                    }
-                    else{
-                        $('#ap_invoice_item_id').val();
-                        $('#detail').submit();
-                    }
-                }
-            }*/
-           })
-//
-          $('#item_nm').typeahead({
-              "hint"     : true,
-              "highlight": true,
-              "minLength": 1,
-              "remote"   : "/ag-kegiatan-item/act/headofnama?kegiatan_sub_id="+$("#kegiatan_sub_id").val()+"&term=%QUERY", 
-          },{
-             "name"      : 'item_nm',
-             "displayKey": 'value',
-          }); 
-
-          $('#item_nm').bind('typeahead:selected', function(obj, datum, name) {  
-                $('#kegiatan_item_id').val(datum.id);
-                $('#nama').val(datum.nama);
-                $('#nilai').val(datum.amount);
-          });
-            
-          $( "#detail" ).submit(function( event ) {
-            var ap_payment_id;
-            var is_success;
-            is_success = true;
-            ap_payment_id = $('#id').val();
-            if (!ap_payment_id) {
-                is_success = false;
-                $("#errors").css('display', 'inline', 'important');
-                $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + 'Simpan Dulu Headernya');
-            }
-
-            if (is_success){
-              $.ajax({
-                type: "POST",
-                url: "/ap-payment/item/"+ap_payment_id+"/add",
-                data: $('#detail').serialize(),
-                success: function (html) {
-                  if (html.success == true) {
-                    $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                    $('#no_urut1').val('');
-                    $('#item_nm').val('');
-                    $('#nama').val('');
-                    $('#vol_1').val(1);
-                    $('#vol_2').val(1);
-                    $('#amount').val(0);
-                    $('#harga').val(0);
-                    $('#pph').val(0);
-                    $('#ppn').val(0);
-                    $('#jml_total').val(formatNumber(html.jml_total)); 
-                    oTable.fnReloadAjax(oTableUrl);
-                  } else {
-                    $("#errors").css('display', 'inline', 'important');
-                    $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
-                  }
-                },
-                beforeSend: function () {
-                  $("#errors").css('display', 'inline', 'important');
-                  $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
-                }
-              });
-            }
-            event.preventDefault();
-          });
-        </script>
-        </fieldset>
-       </form>  
-      </div> <!--panel-body-->
-    </div>      
-  
     <script>
       var mID;
       var oTable;
@@ -760,7 +710,7 @@
       var oTableUrl = "/ap-payment/item/"+ap_payment_id+"/act/grid";
       var tb_array = [
           '<div class="btn-group pull-left">',
-          '<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
+          '<!--button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button-->',
           '<!--button id="btn_print"  class="btn btn btn-primary" type="button">Print</button-->',
           '<!--button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button-->',
           '&nbsp;',
@@ -916,6 +866,40 @@
         $("#jml_total").attr('readonly',true);
         jml_total=$("#jml_total").val();
         $("#jml_total").val(formatNumber(jml_total));
+        
+        $('#no_urut1').attr('readonly',true);
+        $('#item_nm').attr('readonly',true);
+        $('#nama1').attr('readonly',true);
+        $('#vol_1').attr('readonly',true);
+        $('#vol_2').attr('readonly',true);
+        $('#amount').attr('readonly',true);
+        $('#harga').attr('readonly',true);
+        $('#pph').attr('readonly',true);
+        $('#ppn').attr('readonly',true);
+        
+        $('#nama').attr('readonly',true);
+        $('#no_bku').attr('readonly',true);
+        $('#tgl_bku').attr('readonly',true);
+        $('#jenis').attr('readonly',true);
+        $('#no_bast').attr('readonly',true);
+        $('#tgl_bast').attr('readonly',true);
+        $('#is_bayar').attr('readonly',true);
+        $('#ap_nama').attr('readonly',true);
+        $('#ap_rekening').attr('readonly',true);
+        $('#ap_npwp').attr('readonly',true);
+        $('#ap_waktu').attr('readonly',true);
+        $('#ap_uraian').attr('readonly',true);
+        $('#ap_pemilik').attr('readonly',true);
+        $('#ap_alamat').attr('readonly',true);
+        $('#ap_bentuk').attr('readonly',true);
+        $('#ap_kontrak').attr('readonly',true);
+        $('#ap_tgl_kontrak').attr('readonly',true);
+        $('#ap_nilai').attr('readonly',true);
+        $('#ap_kwitansi_no').attr('readonly',true);
+        $('#ap_kwitansi_tgl').attr('readonly',true);
+        $('#ap_kwitansi_nilai').attr('readonly',true);
+        $('#ap_bap_no').attr('readonly',true);
+        $('#ap_bap_tgl').attr('readonly',true);
      });
     </script>
   </div>

@@ -231,13 +231,13 @@ class view_ak_sp2d_skpd(BaseViews):
                                                KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                RekeningSap.rekening_id==Rekening.id,
                                                RekeningSap.db_lra_sap_id==Sap.id
-                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               Spp.nominal.label('nilai1'),
-                                               RekeningSap.db_lra_sap_id.label('sap1'),
-                                               RekeningSap.kr_lra_sap_id.label('sap2'),
-                                               Rekening.id.label('rek'),
+                                        ).group_by(KegiatanItem.rekening_id,
+                                               Sap.nama,
+                                               KegiatanItem.kegiatan_sub_id,
+                                               Spp.nominal,
+                                               RekeningSap.db_lra_sap_id,
+                                               RekeningSap.kr_lra_sap_id,
+                                               Rekening.id,
                                         ).first()
                         
                     ji1 = AkJurnalItem()
@@ -327,13 +327,13 @@ class view_ak_sp2d_skpd(BaseViews):
                                                KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                RekeningSap.rekening_id==Rekening.id,
                                                RekeningSap.db_lra_sap_id==Sap.id
-                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               Spp.nominal.label('nilai1'),
-                                               RekeningSap.db_lra_sap_id.label('sap1'),
-                                               RekeningSap.kr_lra_sap_id.label('sap2'),
-                                               Rekening.id.label('rek'),
+                                        ).group_by(KegiatanItem.rekening_id,
+                                               Sap.nama,
+                                               KegiatanItem.kegiatan_sub_id,
+                                               Spp.nominal,
+                                               RekeningSap.db_lra_sap_id,
+                                               RekeningSap.kr_lra_sap_id,
+                                               Rekening.id,
                                         ).first()
                         
                     ji1 = AkJurnalItem()
@@ -360,6 +360,7 @@ class view_ak_sp2d_skpd(BaseViews):
                     DBSession.flush()
                 
                 elif g == '3':
+                    '''
                     x = DBSession.query(APInvoice.id).filter(Sp2d.id==id_sp2d,
                                                              Spm.id==Sp2d.ap_spm_id,
                                                              Spp.id==Spm.ap_spp_id,
@@ -466,14 +467,14 @@ class view_ak_sp2d_skpd(BaseViews):
                                                    KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                    RekeningSap.rekening_id==Rekening.id,
                                                    RekeningSap.db_lra_sap_id==Sap.id
-                                            ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                                   Sap.nama.label('nama1'),
-                                                   KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                                   Spp.nominal.label('nilai1'),
-                                                   APInvoice.amount.label('nilai2'),
-                                                   RekeningSap.db_lra_sap_id.label('sap1'),
-                                                   RekeningSap.kr_lra_sap_id.label('sap2'),
-                                                   Rekening.id.label('rek'),
+                                            ).group_by(KegiatanItem.rekening_id,
+                                                   Sap.nama,
+                                                   KegiatanItem.kegiatan_sub_id,
+                                                   Spp.nominal,
+                                                   APInvoice.amount,
+                                                   RekeningSap.db_lra_sap_id,
+                                                   RekeningSap.kr_lra_sap_id,
+                                                   Rekening.id,
                                             ).first()
                         
                         ji2 = AkJurnalItem()
@@ -498,6 +499,7 @@ class view_ak_sp2d_skpd(BaseViews):
                         ji2.amount       = ni * -1
                         DBSession.add(ji2)
                         DBSession.flush()
+                        '''
                     
                     #Tambah ke Jurnal SKPD
                     nama    = nam
@@ -562,13 +564,13 @@ class view_ak_sp2d_skpd(BaseViews):
                                                KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                RekeningSap.rekening_id==Rekening.id,
                                                RekeningSap.db_lra_sap_id==Sap.id
-                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               Spp.nominal.label('nilai1'),
-                                               RekeningSap.db_lra_sap_id.label('sap1'),
-                                               RekeningSap.kr_lra_sap_id.label('sap2'),
-                                               Rekening.id.label('rek'),
+                                        ).group_by(KegiatanItem.rekening_id,
+                                               Sap.nama,
+                                               KegiatanItem.kegiatan_sub_id,
+                                               Spp.nominal,
+                                               RekeningSap.db_lra_sap_id,
+                                               RekeningSap.kr_lra_sap_id,
+                                               Rekening.id,
                                         ).first()
                         
                     ji1 = AkJurnalItem()
@@ -689,14 +691,14 @@ class view_ak_sp2d_skpd(BaseViews):
                                                KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                RekeningSap.rekening_id==Rekening.id,
                                                RekeningSap.db_lra_sap_id==Sap.id
-                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               Spp.nominal.label('nilai1'),
-                                               APInvoiceItem.amount.label('nilai2'),
-                                               RekeningSap.db_lra_sap_id.label('sap1'),
-                                               RekeningSap.kr_lra_sap_id.label('sap2'),
-                                               Rekening.id.label('rek'),
+                                        ).group_by(KegiatanItem.rekening_id,
+                                               Sap.nama,
+                                               KegiatanItem.kegiatan_sub_id,
+                                               Spp.nominal,
+                                               APInvoiceItem.amount,
+                                               RekeningSap.db_lra_sap_id,
+                                               RekeningSap.kr_lra_sap_id,
+                                               Rekening.id,
                                         ).first()
                     
                     ji2 = AkJurnalItem()
@@ -822,14 +824,14 @@ class view_ak_sp2d_skpd(BaseViews):
                                                    KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                    RekeningSap.rekening_id==Rekening.id,
                                                    RekeningSap.db_lra_sap_id==Sap.id
-                                            ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                                   Sap.nama.label('nama1'),
-                                                   KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                                   Spp.nominal.label('nilai1'),
-                                                   APInvoiceItem.amount.label('nilai2'),
-                                                   RekeningSap.db_lra_sap_id.label('sap1'),
-                                                   RekeningSap.kr_lra_sap_id.label('sap2'),
-                                                   Rekening.id.label('rek'),
+                                            ).group_by(KegiatanItem.rekening_id,
+                                                   Sap.nama,
+                                                   KegiatanItem.kegiatan_sub_id,
+                                                   Spp.nominal,
+                                                   APInvoiceItem.amount,
+                                                   RekeningSap.db_lra_sap_id,
+                                                   RekeningSap.kr_lra_sap_id,
+                                                   Rekening.id,
                                             ).first()
                         
                         ji2 = AkJurnalItem()
@@ -940,14 +942,14 @@ class view_ak_sp2d_skpd(BaseViews):
                                                    KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                    RekeningSap.rekening_id==Rekening.id,
                                                    RekeningSap.db_lra_sap_id==Sap.id
-                                            ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                                   Sap.nama.label('nama1'),
-                                                   KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                                   Spp.nominal.label('nilai1'),
-                                                   APInvoiceItem.amount.label('nilai2'),
-                                                   RekeningSap.db_lra_sap_id.label('sap1'),
-                                                   RekeningSap.kr_lra_sap_id.label('sap2'),
-                                                   Rekening.id.label('rek'),
+                                            ).group_by(KegiatanItem.rekening_id,
+                                                   Sap.nama,
+                                                   KegiatanItem.kegiatan_sub_id,
+                                                   Spp.nominal,
+                                                   APInvoiceItem.amount,
+                                                   RekeningSap.db_lra_sap_id,
+                                                   RekeningSap.kr_lra_sap_id,
+                                                   Rekening.id,
                                             ).first()
                         
                         ji2 = AkJurnalItem()
@@ -1057,14 +1059,14 @@ class view_ak_sp2d_skpd(BaseViews):
                                                    KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                    RekeningSap.rekening_id==Rekening.id,
                                                    RekeningSap.db_lra_sap_id==Sap.id
-                                            ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                                   Sap.nama.label('nama1'),
-                                                   KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                                   Spp.nominal.label('nilai1'),
-                                                   APInvoiceItem.amount.label('nilai2'),
-                                                   RekeningSap.db_lra_sap_id.label('sap1'),
-                                                   RekeningSap.kr_lra_sap_id.label('sap2'),
-                                                   Rekening.id.label('rek'),
+                                            ).group_by(KegiatanItem.rekening_id,
+                                                   Sap.nama,
+                                                   KegiatanItem.kegiatan_sub_id,
+                                                   Spp.nominal,
+                                                   APInvoiceItem.amount,
+                                                   RekeningSap.db_lra_sap_id,
+                                                   RekeningSap.kr_lra_sap_id,
+                                                   Rekening.id,
                                             ).first()
                         
                         ji2 = AkJurnalItem()

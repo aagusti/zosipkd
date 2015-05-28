@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime,date
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, extract
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
@@ -54,6 +54,7 @@ class view_ap_spp(BaseViews):
         url_dict = req.matchdict
         if url_dict['act']=='grid':
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+            bulan = 'bulan' in params and params['bulan'] and int(params['bulan']) or 0
             if url_dict['act']=='grid':
                 # defining columns
                 columns = []
@@ -65,7 +66,8 @@ class view_ap_spp(BaseViews):
                 columns.append(ColumnDT('nominal'))
                 columns.append(ColumnDT('posted'))
  
-                query = DBSession.query(Spp.id,
+                if bulan==0 :
+                  query = DBSession.query(Spp.id,
                           Spp.kode,
                           Spp.tanggal,
                           Spp.jenis,
@@ -76,9 +78,27 @@ class view_ap_spp(BaseViews):
                               Spp.unit_id==ses['unit_id'],
                         ).order_by(Spp.no_urut.desc()
                         )
+                else :
+                  query = DBSession.query(Spp.id,
+                          Spp.kode,
+                          Spp.tanggal,
+                          Spp.jenis,
+                          Spp.nama,
+                          Spp.nominal,
+                          Spp.posted
+                        ).filter(Spp.tahun_id==ses['tahun'],
+                              Spp.unit_id==ses['unit_id'],
+                              extract('month',Spp.tanggal)==bulan
+                        ).order_by(Spp.no_urut.desc()
+                        )
  
                 rowTable = DataTables(req, Spp, query, columns)
                 return rowTable.output_result()
+                
+        elif url_dict['act']=='reload':
+            bulan = params['bulan']
+            
+            return {'success':True, 'msg':'Sukses ubah bulan'}
                 
         elif url_dict['act']=='headofnama':
             term = 'term' in params and params['term'] or '' 

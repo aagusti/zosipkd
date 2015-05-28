@@ -45,8 +45,8 @@ class view_ap_spd_item(BaseViews):
             columns.append(ColumnDT('sisa',filter=self._number_format))
             
             query = DBSession.query(SpdItem.id,
-                                    Kegiatan.kode.label('kode'),
-                                    KegiatanSub.nama.label('nama'),
+                                    Kegiatan.kode,
+                                    KegiatanSub.nama,
                                     SpdItem.anggaran,
                                     SpdItem.lalu,
                                     SpdItem.nominal,

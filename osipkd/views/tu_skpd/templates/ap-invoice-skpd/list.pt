@@ -22,7 +22,6 @@
         <div class="col-md-5">
            <input id="tahun_nm" class=" form-control " type="text" value="${request.session['ag_step_nm']}" name="tahun_nm" readonly>
         </div>
-        
       </div>
 
       <!----------------------------------------------------------------------->
@@ -99,17 +98,64 @@
               change_unit()
         });
       </script> 
-        
       </div>
+      
+      <div class="form-group"><!--BULAN-->
+        <div class="col-md-3">
+          <div id="bulan1">
+            <label for="bulan1" class="control-label col-md-3" id="req-bulan">
+                    Bulan</label>
+            <div class="col-md-9">
+                  <select class="form-control" id="bulan" name="bulan" onchange="reload_bulan()">
+                      <option value="0" selected="selected">Semua</option>
+                      <option value="1" >Januari</option>
+                      <option value="2" >Februari</option>
+                      <option value="3" >Maret</option>
+                      <option value="4" >April</option>
+                      <option value="5" >Mei</option>
+                      <option value="6" >Juni</option>
+                      <option value="7" >Juli</option>
+                      <option value="8" >Agustus</option>
+                      <option value="9" >September</option>
+                      <option value="10" >Oktober</option>
+                      <option value="11" >Nopember</option>
+                      <option value="12" >Desember</option>
+                  </select>
+            </div>
+          </div>
+        </div>
     </fieldset>
+    <script>
+      function reload_bulan(){
+          $.ajax({
+            type: "POST",
+            url : "/ap-invoice-skpd/act/reload",
+            data: "bulan="+$('#bulan').val(),
+            success: function (html) {
+              if (html.success == true) {
+                  var bln = $('#bulan').val();
+                  oTableUrl = "/ap-invoice-skpd/act/grid?bulan="+bln;  
+                  oTable.fnReloadAjax(oTableUrl);
+                  $("#errors").html("<span class=''></span> " + '');
+              } else {
+                $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                $('#bulan').val('');
+              }
+            },
+            beforeSend: function () {
+              $("#errors").css('display', 'inline', 'important');
+              $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+            }
+          });
+      };
+    </script>    
     </form>
-    
 
     <table class="table table-bordered table-hover table-condensed" id="table1">
       <thead>
         <tr>
             <th>Index</th>
-            <th>No. Tagihan</th>
+            <th>No. Tagihan / SPJ</th>
             <th>Jenis</th>
             <th>Tanggal</th>
             <th>Kegiatan</th>
@@ -117,6 +163,7 @@
             <th>Nilai</th>
             <th>Posting</th>
             <th>SPP</th>
+            <th>Pay</th>
         </tr>
       </thead>
       <tbody>
@@ -127,7 +174,7 @@
       var mID, mID2;
       var oTable;
       var iPos;
-      var oTableUrl = "/ap-invoice-skpd/act/grid";
+      var oTableUrl = "/ap-invoice-skpd/act/grid?bulan=0";
       var tb_array = [
           '<div class="btn-group pull-left">',
           '	<button id="btn_tambah" class="btn btn btn-primary" type="button">Tambah</button>',
@@ -146,6 +193,7 @@
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
             "sAjaxSource"    : oTableUrl,
+            "bStateSave"     : true,
             "bServerSide"    : true,
             "bProcessing"    : true,           
             "sDom"           : '<"toolbar">lfrtip',
@@ -158,8 +206,8 @@
             "sPaginationType": "full_numbers",
 
             "lengthMenu": [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
+                [10, 25, 50, 100],
+                [10, 25, 50, 100]
             ],
             "aoColumnDefs": [{
                 "bSearchable": false,
@@ -168,7 +216,7 @@
             },{
                 "bSearchable": false,
                 "bSortable"  : false,
-                "aTargets"   : [3,4,6,7,8]
+                "aTargets"   : [3,4,6,7,8,9]
             },{
                 "bSearchable": true,
                 "bSortable"  : false,
@@ -211,6 +259,16 @@
                         return 'Y';
                     }
                 }
+            },{
+                "aTargets" : [9], // Column number which needs to be modified
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return 'N';
+                    } else if (data == "1") {
+                        return 'Y';
+                    }
+                }
+            
             }],
             "aoColumns": [
                 null, {
@@ -225,6 +283,8 @@
                     "sWidth": "200px",
                 }, {
                     "sWidth": "70px",
+                }, {
+                    "sWidth": "20px", "class":"right"
                 }, {
                     "sWidth": "20px", "class":"right"
                 }, {
@@ -276,6 +336,10 @@
                 mID = aData[0];
                 nilai = aData[6];
                 mID2 = aData[6];
+                kode = aData[1];
+                uraian = aData[4];
+                jenis  = aData[2];
+                
 
                 oTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
@@ -318,13 +382,32 @@
             }
         });
         
-        $('#btn_print').click(function () {
+        /*$('#btn_print').click(function () {
             url = "/ap-report-skpd/act/apinvoice?id="+mID;
             if (mID) {
                    window.open(url);
             } else {
                 alert('Silahkan pilih Kegiatan ID');
             }
+        });
+        */
+        $('#btn_print').click(function () {
+            if (mID) {
+                $('#kode').val(kode);
+                $('#uraian').val(uraian);
+                $('#dlgRpt').modal('show');
+            } else {
+                alert('Silahkan pilih Kegiatan ID');
+            }
+        });
+        
+        $('#btn_pil_rpt').click(function () {
+          var nama = $('#nama').val();
+          var nip = $('#nip').val();
+          var kpa_nm = $('#kpa_nm').val();
+          var kpa_nip = $('#kpa_nip').val();
+          url = "/ap-report-skpd/act/apinvoice?id="+mID+"&nama="+nama+"&nip="+nip+"&kpa_nm="+kpa_nm+"&kpa_nip="+kpa_nip;
+          window.open(url);
         });
         
         $("#btn_close").click(function () {
@@ -334,6 +417,57 @@
         
      });
     </script>
+      <!-- Modal Report -->
+      <div class="modal fade" id="dlgRpt">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              <h4 class="modal-title">Pilih Report</h4>
+            </div>
+
+            <div class="modal-body">
+              <div class="col-md-4">
+                <input id="kode" class="form-control typeahead" type="text" value="" name="kode" readonly="true">
+              </div>
+              <div class="col-md-8">
+                <input id="uraian" class=" form-control" type="text" value="" name="uraian" readonly="true">
+              </div>
+            </div>
+            <div class="modal-body">
+              <label class="col-md-3">Nama PPTK</label>
+              <div class="col-md-9">
+                <input id="nama" class=" form-control" type="text" value="" name="nama">
+              </div>
+            </div>
+            <div class="modal-body">
+              <label class="col-md-3">NIP PPTK</label>
+              <div class="col-md-9">
+                <input id="nip" class=" form-control" type="text" value="" name="nip">
+              </div>
+            </div>
+            <div class="modal-body">
+              <label class="col-md-3">Nama KPA</label>
+              <div class="col-md-9">
+                <input id="kpa_nm" class=" form-control" type="text" value="" name="kpa_nm">
+              </div>
+            </div>
+            <div class="modal-body">
+              <label class="col-md-3">NIP KPA</label>
+              <div class="col-md-9">
+                <input id="kpa_nip" class=" form-control" type="text" value="" name="kpa_nip">
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+              <button type="button" class="btn btn-primary" id="btn_pil_rpt" name="btn_pil_rpt">Cetak</button>
+            </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- End Modal -->
     
   </div> <!--End Metal-->
 </html>

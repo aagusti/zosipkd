@@ -50,7 +50,7 @@
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="208" y="0" width="67" height="14"/>
 				<box rightPadding="1">
-					<leftPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
@@ -62,7 +62,7 @@
 				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="96" height="14"/>
 				<box leftPadding="1">
 					<leftPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement>
 					<font size="8"/>
@@ -72,8 +72,8 @@
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="96" y="0" width="112" height="14"/>
 				<box leftPadding="1">
-					<leftPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement>
 					<font size="8"/>

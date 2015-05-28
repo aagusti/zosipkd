@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime,date
-from sqlalchemy import not_, func, or_
+from sqlalchemy import not_, func, or_, extract
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
@@ -43,6 +43,7 @@ class view_ap_sp2d(BaseViews):
         url_dict = req.matchdict
         if url_dict['act']=='grid':
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+            bulan = 'bulan' in params and params['bulan'] and int(params['bulan']) or 0
             if url_dict['act']=='grid':
                 columns = []
                 columns.append(ColumnDT('id'))
@@ -54,7 +55,9 @@ class view_ap_sp2d(BaseViews):
                 columns.append(ColumnDT('nominal1'))
                 columns.append(ColumnDT('posted'))
                 columns.append(ColumnDT('posted1'))
-                query = DBSession.query(Sp2d.id, 
+                
+                if bulan==0 :
+                  query = DBSession.query(Sp2d.id, 
                                         Sp2d.kode, 
                                         Sp2d.tanggal,
                                         Sp2d.nama, 
@@ -68,11 +71,33 @@ class view_ap_sp2d(BaseViews):
                         ).filter(Spp.tahun_id==ses['tahun'],
                                  Spp.unit_id==ses['unit_id'],
                                  Sp2d.ap_spm_id==Spm.id,
-                        )
-                           
+                        ).order_by(Spm.kode.desc())
+                else :
+                  query = DBSession.query(Sp2d.id, 
+                                        Sp2d.kode, 
+                                        Sp2d.tanggal,
+                                        Sp2d.nama, 
+                                        Sp2d.no_validasi, 
+                                        Spm.kode.label('kode1'), 
+                                        Spp.nominal.label('nominal1'),
+                                        Sp2d.posted,
+                                        Sp2d.posted1,
+                        ).join(Spm 
+                        ).outerjoin(Spp
+                        ).filter(Spp.tahun_id==ses['tahun'],
+                                 Spp.unit_id==ses['unit_id'],
+                                 Sp2d.ap_spm_id==Spm.id,
+                                 extract('month',Sp2d.tanggal)==bulan
+                        ).order_by(Spm.kode.desc())
+                  
                 rowTable = DataTables(req, Sp2d, query, columns)
                 return rowTable.output_result()
         
+        elif url_dict['act']=='reload':
+            bulan = params['bulan']
+            
+            return {'success':True, 'msg':'Sukses ubah bulan'}
+            
         elif url_dict['act']=='grid1':
             cari = 'cari' in params and params['cari'] or ''
             columns = []
@@ -131,12 +156,12 @@ class view_ap_sp2d(BaseViews):
                                     Sp2d.ap_spm_id==Spm.id,
                                     Spm.ap_spp_id==Spp.id,
                             ).group_by(Sp2d.id,
-                                    Spm.kode.label('kode'),
-                                    Spm.tanggal.label('tanggal'),
-                                    Spp.jenis.label('jenis'),
-                                    Spm.nama.label('nama'),
-                                    Spp.nominal.label('nominal'),
-                                    Spm.posted.label('posted'),
+                                    Spm.kode,
+                                    Spm.tanggal,
+                                    Spp.jenis,
+                                    Spm.nama,
+                                    Spp.nominal,
+                                    Spm.posted,
                             )
                                   
             rowTable = DataTables(req, Sp2d, query, columns)

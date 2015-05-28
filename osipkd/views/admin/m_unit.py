@@ -55,7 +55,10 @@ class AddSchema(colander.Schema):
                     colander.String(),
                     oid = "alamat",
                     title = "Alamat",
-                    missing = colander.drop,)
+                    #default = "",
+                    #missing = colander.null
+                    missing = None
+                    )
     kategori = colander.SchemaNode(
                     colander.String(),
                     oid = "kategori",
@@ -208,6 +211,7 @@ class view_unit(BaseViews):
             row.created = datetime.now()
             row.create_uid = user.id
         row.from_dict(values)
+        print "---------------------------------------->>", values
         row.updated = datetime.now()
         row.update_uid = user.id
         row.disabled = 'disabled' in values and values['disabled'] and 1 or 0

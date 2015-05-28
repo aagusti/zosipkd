@@ -303,6 +303,14 @@ def session_failed(request, session_name):
 def view_add(request):
     form = get_form(request, AddSchema)
     kegiatan_sub_id = request.matchdict['kegiatan_sub_id']
+    
+    ## Cek sudah Posting atau belum    
+    q = DBSession.query(KegiatanSub.disabled).filter(KegiatanSub.id==request.matchdict['kegiatan_sub_id'])
+    rowsub = q.first()
+    if rowsub.disabled:
+        request.session.flash('Data tidak dapat ditambah karena sudah Posting', 'error')
+        return route_list(request, kegiatan_sub_id)
+    
     ses = request.session
     rows = KegiatanSub.query_id(kegiatan_sub_id).filter(KegiatanSub.unit_id == ses['unit_id']).first()
     if request.POST:
@@ -343,6 +351,14 @@ def view_edit(request):
     row = query_id(request).first()
     if not row:
         return id_not_found(request,kegiatan_sub_id)
+        
+    ## Cek sudah Posting atau belum    
+    q = DBSession.query(KegiatanSub.disabled).filter(KegiatanSub.id==request.matchdict['kegiatan_sub_id'])
+    rowsub = q.first()
+    if rowsub.disabled:
+        request.session.flash('Data tidak dapat diupdate karena sudah Posting', 'error')
+        return route_list(request, kegiatan_sub_id)
+        
     rows = KegiatanSub.query_id(kegiatan_sub_id).filter(KegiatanSub.unit_id==ses['unit_id']).first()
     if request.POST:
         if 'simpan' in request.POST:
@@ -373,6 +389,13 @@ def view_delete(request):
     if not row:
         return id_not_found(request,kegiatan_sub_id)
         
+    ## Cek sudah Posting atau belum    
+    q = DBSession.query(KegiatanSub.disabled).filter(KegiatanSub.id==request.matchdict['kegiatan_sub_id'])
+    rowsub = q.first()
+    if rowsub.disabled:
+        request.session.flash('Data tidak dapat dihapus karena sudah Posting', 'error')
+        return route_list(request, kegiatan_sub_id)
+    
     form = Form(colander.Schema(), buttons=('hapus','cancel'))
     values= {}
     

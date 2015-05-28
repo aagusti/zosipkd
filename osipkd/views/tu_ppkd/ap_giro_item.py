@@ -52,7 +52,7 @@ class view_ap_giro_item(BaseViews):
                                         Spp.nominal.label('nominal'),
                                         #func.sum(SpmPotongan.nilai).label('nominal1'),
                                         Sp2d.no_validasi.label('no_validasi'),
-                          ).join(Sp2d, Spm, Spp,
+                          #).join(Sp2d, Spm, Spp,
                           #).outerjoin(Spm, SpmPotongan.ap_spm_id==Spm.id
                           ).filter(GiroItem.ap_giro_id==ap_giro_id,
                                    GiroItem.ap_sp2d_id==Sp2d.id,
@@ -60,11 +60,11 @@ class view_ap_giro_item(BaseViews):
                                    Spm.ap_spp_id==Spp.id,
                           ).group_by(GiroItem.id, 
                                      GiroItem.ap_sp2d_id,
-                                     Sp2d.kode.label('kode'),
-                                     Sp2d.tanggal.label('tanggal'),
-                                     Sp2d.nama.label('nama'),
-                                     Spp.nominal.label('nominal'),
-                                     Sp2d.no_validasi.label('no_validasi'),
+                                     Sp2d.kode,
+                                     Sp2d.tanggal,
+                                     Sp2d.nama,
+                                     Spp.nominal,
+                                     Sp2d.no_validasi,
                           )
                 rowTable = DataTables(req, GiroItem, query, columns)
                 return rowTable.output_result()
@@ -90,21 +90,21 @@ class view_ap_giro_item(BaseViews):
                                     Spp.nominal.label('nominal'),
                                     #func.sum(SpmPotongan.nilai).label('nominal1'),
                                     Sp2d.no_validasi.label('no_validasi'),
-                      ).join(Sp2d, Spm, Spp,
+                      #).join(Sp2d, Spm, Spp,
                       #).outerjoin(Spm, SpmPotongan.ap_spm_id==Spm.id
-                      ).group_by(GiroItem.id, 
-                                 GiroItem.ap_sp2d_id,
-                                 Sp2d.kode.label('kode'),
-                                 Sp2d.tanggal.label('tanggal'),
-                                 Sp2d.nama.label('nama'),
-                                 Spp.nominal.label('nominal'),
-                                 Sp2d.no_validasi.label('no_validasi'),
                       ).filter(GiroItem.ap_giro_id==ap_giro_id,
                                GiroItem.ap_sp2d_id==Sp2d.id,
                                Sp2d.ap_spm_id==Spm.id,
                                Spm.ap_spp_id==Spp.id,
                                or_(Sp2d.kode.ilike('%%%s%%' % cari),
                                    Sp2d.nama.ilike('%%%s%%' % cari))
+                      ).group_by(GiroItem.id, 
+                                 GiroItem.ap_sp2d_id,
+                                 Sp2d.kode,
+                                 Sp2d.tanggal,
+                                 Sp2d.nama,
+                                 Spp.nominal,
+                                 Sp2d.no_validasi,
                       )
             rowTable = DataTables(req, GiroItem, query, columns)
             return rowTable.output_result()

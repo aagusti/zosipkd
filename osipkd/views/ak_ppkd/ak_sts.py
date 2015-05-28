@@ -192,14 +192,14 @@ def view_edit_posting(request):
                                            KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                            RekeningSap.rekening_id==Rekening.id,
                                            RekeningSap.db_lra_sap_id==Sap.id
-                                    ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                           Sap.nama.label('nama1'),
-                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                           Sts.nominal.label('nilai1'),
-                                           StsItem.amount.label('nilai2'),
-                                           RekeningSap.db_lra_sap_id.label('sap1'),
-                                           RekeningSap.kr_lra_sap_id.label('sap2'),
-                                           Rekening.id.label('rek'),
+                                    ).group_by(KegiatanItem.rekening_id,
+                                           Sap.nama,
+                                           KegiatanItem.kegiatan_sub_id,
+                                           Sts.nominal,
+                                           StsItem.amount,
+                                           RekeningSap.db_lra_sap_id,
+                                           RekeningSap.kr_lra_sap_id,
+                                           Rekening.id,
                                     ).first()
                     
                 ji3 = AkJurnalItem()
@@ -286,14 +286,14 @@ def view_edit_posting(request):
                                            KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                            RekeningSap.rekening_id==Rekening.id,
                                            RekeningSap.db_lra_sap_id==Sap.id
-                                    ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                           Sap.nama.label('nama1'),
-                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                           Sts.nominal.label('nilai1'),
-                                           StsItem.amount.label('nilai2'),
-                                           RekeningSap.db_lra_sap_id.label('sap1'),
-                                           RekeningSap.kr_lra_sap_id.label('sap2'),
-                                           Rekening.id.label('rek'),
+                                    ).group_by(KegiatanItem.rekening_id,
+                                           Sap.nama,
+                                           KegiatanItem.kegiatan_sub_id,
+                                           Sts.nominal,
+                                           StsItem.amount,
+                                           RekeningSap.db_lra_sap_id,
+                                           RekeningSap.kr_lra_sap_id,
+                                           Rekening.id,
                                     ).first()
                                     
                 ji3 = AkJurnalItem()
@@ -400,14 +400,14 @@ def view_edit_posting(request):
                                            KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                            RekeningSap.rekening_id==Rekening.id,
                                            RekeningSap.db_lra_sap_id==Sap.id
-                                    ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                           Sap.nama.label('nama1'),
-                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                           Sts.nominal.label('nilai1'),
-                                           StsItem.amount.label('nilai2'),
-                                           RekeningSap.db_lra_sap_id.label('sap1'),
-                                           RekeningSap.kr_lra_sap_id.label('sap2'),
-                                           Rekening.id.label('rek'),
+                                    ).group_by(KegiatanItem.rekening_id,
+                                           Sap.nama,
+                                           KegiatanItem.kegiatan_sub_id,
+                                           Sts.nominal,
+                                           StsItem.amount,
+                                           RekeningSap.db_lra_sap_id,
+                                           RekeningSap.kr_lra_sap_id,
+                                           Rekening.id,
                                     ).first()
                                     
                 ji3 = AkJurnalItem()
@@ -515,14 +515,14 @@ def view_edit_posting(request):
                                            KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                            RekeningSap.rekening_id==Rekening.id,
                                            RekeningSap.db_lra_sap_id==Sap.id
-                                    ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                           Sap.nama.label('nama1'),
-                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                           Sts.nominal.label('nilai1'),
-                                           StsItem.amount.label('nilai2'),
-                                           RekeningSap.db_lra_sap_id.label('sap1'),
-                                           RekeningSap.kr_lra_sap_id.label('sap2'),
-                                           Rekening.id.label('rek'),
+                                    ).group_by(KegiatanItem.rekening_id,
+                                           Sap.nama,
+                                           KegiatanItem.kegiatan_sub_id,
+                                           Sts.nominal,
+                                           StsItem.amount,
+                                           RekeningSap.db_lra_sap_id,
+                                           RekeningSap.kr_lra_sap_id,
+                                           Rekening.id,
                                     ).first()
                                     
                 ji3 = AkJurnalItem()
@@ -629,14 +629,14 @@ def view_edit_posting(request):
                                            KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                            RekeningSap.rekening_id==Rekening.id,
                                            RekeningSap.db_lra_sap_id==Sap.id
-                                    ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                           Sap.nama.label('nama1'),
-                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                           Sts.nominal.label('nilai1'),
-                                           StsItem.amount.label('nilai2'),
-                                           RekeningSap.db_lra_sap_id.label('sap1'),
-                                           RekeningSap.kr_lra_sap_id.label('sap2'),
-                                           Rekening.id.label('rek'),
+                                    ).group_by(KegiatanItem.rekening_id,
+                                           Sap.nama,
+                                           KegiatanItem.kegiatan_sub_id,
+                                           Sts.nominal,
+                                           StsItem.amount,
+                                           RekeningSap.db_lra_sap_id,
+                                           RekeningSap.kr_lra_sap_id,
+                                           Rekening.id,
                                     ).first()
                                     
                 ji3 = AkJurnalItem()
@@ -756,14 +756,14 @@ def view_edit_posting(request):
                                                KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                RekeningSap.rekening_id==Rekening.id,
                                                RekeningSap.db_lra_sap_id==Sap.id
-                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               Sts.nominal.label('nilai1'),
-                                               StsItem.amount.label('nilai2'),
-                                               RekeningSap.db_lra_sap_id.label('sap1'),
-                                               RekeningSap.kr_lra_sap_id.label('sap2'),
-                                               Rekening.id.label('rek'),
+                                        ).group_by(KegiatanItem.rekening_id,
+                                               Sap.nama,
+                                               KegiatanItem.kegiatan_sub_id,
+                                               Sts.nominal,
+                                               StsItem.amount,
+                                               RekeningSap.db_lra_sap_id,
+                                               RekeningSap.kr_lra_sap_id,
+                                               Rekening.id,
                                         ).first()
                         
                     ji3 = AkJurnalItem()
@@ -868,14 +868,14 @@ def view_edit_posting(request):
                                                KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                RekeningSap.rekening_id==Rekening.id,
                                                RekeningSap.db_lo_sap_id==Sap.id
-                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               Sts.nominal.label('nilai1'),
-                                               StsItem.amount.label('nilai2'),
-                                               RekeningSap.db_lo_sap_id.label('sap1'),
-                                               RekeningSap.kr_lo_sap_id.label('sap2'),
-                                               Rekening.id.label('rek'),
+                                        ).group_by(KegiatanItem.rekening_id,
+                                               Sap.nama,
+                                               KegiatanItem.kegiatan_sub_id,
+                                               Sts.nominal,
+                                               StsItem.amount,
+                                               RekeningSap.db_lo_sap_id,
+                                               RekeningSap.kr_lo_sap_id,
+                                               Rekening.id,
                                         ).first()
                         
                     ji3 = AkJurnalItem()
@@ -980,14 +980,14 @@ def view_edit_posting(request):
                                                KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                RekeningSap.rekening_id==Rekening.id,
                                                RekeningSap.db_lra_sap_id==Sap.id
-                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               Sts.nominal.label('nilai1'),
-                                               StsItem.amount.label('nilai2'),
-                                               RekeningSap.db_lra_sap_id.label('sap1'),
-                                               RekeningSap.kr_lra_sap_id.label('sap2'),
-                                               Rekening.id.label('rek'),
+                                        ).group_by(KegiatanItem.rekening_id,
+                                               Sap.nama,
+                                               KegiatanItem.kegiatan_sub_id,
+                                               Sts.nominal,
+                                               StsItem.amount,
+                                               RekeningSap.db_lra_sap_id,
+                                               RekeningSap.kr_lra_sap_id,
+                                               Rekening.id,
                                         ).first()
                         
                     ji3 = AkJurnalItem()
@@ -1091,14 +1091,14 @@ def view_edit_posting(request):
                                                KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                                RekeningSap.rekening_id==Rekening.id,
                                                RekeningSap.db_lo_sap_id==Sap.id
-                                        ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               Sts.nominal.label('nilai1'),
-                                               StsItem.amount.label('nilai2'),
-                                               RekeningSap.db_lo_sap_id.label('sap1'),
-                                               RekeningSap.kr_lo_sap_id.label('sap2'),
-                                               Rekening.id.label('rek'),
+                                        ).group_by(KegiatanItem.rekening_id,
+                                               Sap.nama,
+                                               KegiatanItem.kegiatan_sub_id,
+                                               Sts.nominal,
+                                               StsItem.amount,
+                                               RekeningSap.db_lo_sap_id,
+                                               RekeningSap.kr_lo_sap_id,
+                                               Rekening.id,
                                         ).first()
                         
                     ji3 = AkJurnalItem()
@@ -1202,13 +1202,13 @@ def view_edit_posting(request):
                                            KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                            RekeningSap.rekening_id==Rekening.id,
                                            RekeningSap.db_lra_sap_id==Sap.id
-                                    ).group_by(KegiatanItem.rekening_id.label('rekening_id1'),
-                                           Sap.nama.label('nama1'),
-                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                           Sts.nominal.label('nilai1'),
-                                           RekeningSap.db_lra_sap_id.label('sap1'),
-                                           RekeningSap.kr_lra_sap_id.label('sap2'),
-                                           Rekening.id.label('rek'),
+                                    ).group_by(KegiatanItem.rekening_id,
+                                           Sap.nama,
+                                           KegiatanItem.kegiatan_sub_id,
+                                           Sts.nominal,
+                                           RekeningSap.db_lra_sap_id,
+                                           RekeningSap.kr_lra_sap_id,
+                                           Rekening.id,
                                     ).first()
                     
                 ji3 = AkJurnalItem()

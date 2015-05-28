@@ -132,6 +132,7 @@
         oTable = $('#table1').dataTable({
           "sDom"           : '<"toolbar">lfrtip',
           "sAjaxSource"    : oTableUrl,
+          "bStateSave"     : true,
           "bServerSide"    : true,
           "bProcessing"    : true,
           "bScrollCollapse": true,

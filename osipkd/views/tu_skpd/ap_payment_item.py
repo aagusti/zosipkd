@@ -10,7 +10,7 @@ from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
 from osipkd.models.pemda_model import Unit, Rekening
-from osipkd.models.apbd_tu import APPayment, APPaymentItem 
+from osipkd.models.apbd_tu import APPayment, APPaymentItem, APInvoiceItem 
     
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews

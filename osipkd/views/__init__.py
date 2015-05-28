@@ -20,7 +20,7 @@ from ..models import (
     DBSession,
     User,
     )
-
+from ..tools import create_now
 from ..models.base_model import (
     App
     )
@@ -56,7 +56,7 @@ def login_validator(form, value):
 
 def get_login_headers(request, user):
     headers = remember(request, user.email)
-    user.last_login_date = datetime.now()
+    user.last_login_date = create_now()
     DBSession.add(user)
     DBSession.flush()
     transaction.commit()
@@ -121,12 +121,13 @@ def password_validator(form, value):
                                           
 
 @view_config(route_name='password', renderer='templates/password.pt',
-             permission='edit')
+             permission='view')
 def view_password(request):
+    print "LEWAT----------------------------"
     schema = Password(validator=password_validator)
-    form = Form(schema, buttons=('save','cancel'))
+    form = Form(schema, buttons=('Simpan','Batal'))
     if request.POST:
-        if 'save' in request.POST:
+        if 'Simpan' in request.POST:
             schema.request = request
             controls = request.POST.items()
             try:

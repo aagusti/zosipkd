@@ -57,8 +57,8 @@ class view_ap_spm_potongan(BaseViews):
                                         SpmPotongan.ap_spm_id,
                                         SpmPotongan.rekening_id,
                                         SpmPotongan.no_urut,
-                                        Rekening.kode.label('kode_rek'),
-                                        Rekening.nama.label('nama_rek'),
+                                        Rekening.kode,
+                                        Rekening.nama,
                                         SpmPotongan.nilai)
                             
                 rowTable = DataTables(req, SpmPotongan, query, columns)

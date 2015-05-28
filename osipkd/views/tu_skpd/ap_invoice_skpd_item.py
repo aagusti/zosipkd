@@ -65,7 +65,8 @@ class view_ap_invoice_skpd_item(BaseViews):
                                         cast(KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2,BigInteger).label('nilai')).\
                                   join(KegiatanItem).\
                                   outerjoin(Rekening).\
-                                  filter(APInvoiceItem.ap_invoice_id==ap_invoice_id)
+                                  filter(APInvoiceItem.ap_invoice_id==ap_invoice_id
+                                  ).order_by(APInvoiceItem.no_urut)
                                   
                 rowTable = DataTables(req, APInvoiceItem, query, columns)
                 return rowTable.output_result()
@@ -160,12 +161,24 @@ def view_add(request):
     if y != '5.1.1.01' :
         if amount > f:
             return {"success": False, 'id': row.id, "msg":'Tidak boleh melebihi jumlah pagu anggaran, Sisa anggaran %s' % g}
-    else:
-        DBSession.add(row)
-        DBSession.flush()
+    #else:
+    DBSession.add(row)
+    DBSession.flush()
     
-    amount = "%d" % APInvoice.get_nilai(row.ap_invoice_id) 
-    return {"success": True, 'id': row.id, "msg":'Success Tambah Item Invoice', 'jml_total':amount}
+    api = row.ap_invoice_id
+    print'****--Invoice ID---------**** ',api
+    g = DBSession.query(func.sum(APInvoiceItem.amount)
+                ).filter(APInvoiceItem.ap_invoice_id==api 
+                ).first() or 0
+    g1 = "%s" % g
+    if g1 == 'None':
+        g1 = 0
+        jml = g1
+    else:
+        jml = g1
+    
+    print'****--Jumlah Total-------**** ',jml
+    return {"success": True, 'id': row.id, "msg":'Success Tambah Item Invoice', 'jml_total':jml}
 
 ########
 # Edit #

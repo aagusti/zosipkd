@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, extract
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
@@ -83,6 +83,7 @@ class view_ap_payment(BaseViews):
         url_dict = req.matchdict
         if url_dict['act']=='grid':
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+            bulan = 'bulan' in params and params['bulan'] and int(params['bulan']) or 0
             if url_dict['act']=='grid':
                 # defining columns
                 columns = []
@@ -92,31 +93,62 @@ class view_ap_payment(BaseViews):
                 columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
                 columns.append(ColumnDT('kegiatan_sub_nm'))
                 columns.append(ColumnDT('nama'))
+                columns.append(ColumnDT('invoice_kd'))
                 columns.append(ColumnDT('amount'))
+                columns.append(ColumnDT('posted'))
 
-                query = DBSession.query(APPayment.id,
+                if bulan==0 :
+                  query = DBSession.query(APPayment.id,
                           APPayment.kode,
                           APPayment.jenis,                          
                           APPayment.tanggal,
                           KegiatanSub.nama.label('kegiatan_sub_nm'),
                           APPayment.nama,
+                          APInvoice.kode.label('invoice_kd'),
                           APPayment.amount,
+                          APPayment.posted,
                         ).outerjoin(APPaymentItem
                         ).filter(APPayment.tahun_id==ses['tahun'],
-                              APPayment.unit_id==ses['unit_id'],
-                              APPayment.kegiatan_sub_id==KegiatanSub.id,
-                        ).order_by(APPayment.no_urut.desc()
+                                 APPayment.unit_id==ses['unit_id'],
+                                 APPayment.kegiatan_sub_id==KegiatanSub.id,
+                                 APPayment.invoice_id==APInvoice.id,
                         ).group_by(APPayment.id,
+                                   APPayment.tanggal,
+                                   KegiatanSub.nama,
+                                   APInvoice.kode,
+                        ).order_by(APPayment.no_urut.desc()
+                        )
+                else :
+                  query = DBSession.query(APPayment.id,
                           APPayment.kode,
-                          APPayment.jenis,
+                          APPayment.jenis,                          
                           APPayment.tanggal,
                           KegiatanSub.nama.label('kegiatan_sub_nm'),
                           APPayment.nama,
+                          APInvoice.kode.label('invoice_kd'),
                           APPayment.amount,
+                          APPayment.posted,
+                        ).outerjoin(APPaymentItem
+                        ).filter(APPayment.tahun_id==ses['tahun'],
+                                 APPayment.unit_id==ses['unit_id'],
+                                 APPayment.kegiatan_sub_id==KegiatanSub.id,
+                                 APPayment.invoice_id==APInvoice.id,
+                                 extract('month',APPayment.tanggal)==bulan
+                        ).group_by(APPayment.id,
+                                   APPayment.tanggal,
+                                   KegiatanSub.nama,
+                                   APInvoice.kode,
+                        ).order_by(APPayment.no_urut.desc()
                         )
+                  
                 rowTable = DataTables(req, APPayment, query, columns)
                 return rowTable.output_result()
 
+        elif url_dict['act']=='reload':
+            bulan = params['bulan']
+            
+            return {'success':True, 'msg':'Sukses ubah bulan'}
+            
         elif url_dict['act']=='headofnama':
             query = DBSession.query(APPayment.id, 
                                     APPayment.no_urut,
@@ -199,43 +231,58 @@ class AddSchema(colander.Schema):
     kode            = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
+                          oid = "kode",
                           title="No.Payment")
     jenis           = colander.SchemaNode(
                           colander.String(),
-                          missing=colander.drop,
                           widget=widget.SelectWidget(values=AP_TYPE),
                           oid="jenis",
                           title="Jenis")
     is_bayar        = colander.SchemaNode(
                           colander.String(),
-                          missing=colander.drop,
                           widget=widget.SelectWidget(values=IS_BAYAR),
                           oid="is_bayar",
                           title="Dibayar")
     is_uang        = colander.SchemaNode(
                           colander.String(),
-                          missing=colander.drop,
                           widget=widget.SelectWidget(values=IS_UANG),
                           oid="is_uang",
                           title="U.M/Panjar")
     tanggal         = colander.SchemaNode(
                           colander.Date())
+           
+    invoice_id      = colander.SchemaNode(
+                          colander.Integer(),
+                          oid="invoice_id")
+    inv_kd          = colander.SchemaNode(
+                          colander.String(),
+                          title = "Invoice",
+                          oid="inv_kd")
+                          
+    inv_nm          = colander.SchemaNode(
+                          colander.String(),
+                          oid="inv_nm")
                           
     kegiatan_sub_id = colander.SchemaNode(
                           colander.Integer(),
+                          missing=colander.drop,
                           oid="kegiatan_sub_id")
     kegiatan_kd     = colander.SchemaNode(
                           colander.String(),
+                          missing=colander.drop,
                           title = "Kegiatan",
                           oid="kegiatan_kd")
                           
     kegiatan_nm     = colander.SchemaNode(
                           colander.String(),
+                          missing=colander.drop,
                           oid="kegiatan_nm")
                           
     nama            = colander.SchemaNode(
                           colander.String(),
-                          title="Uraian")
+                          missing=colander.drop,
+                          title="Uraian",
+                          oid="nama")
     """
     ap_nomor        = colander.SchemaNode(
                           colander.String(),
@@ -246,13 +293,19 @@ class AddSchema(colander.Schema):
     """
     ap_nama         = colander.SchemaNode(
                           colander.String(),
-                          title="Nama")
+                          missing=colander.drop,
+                          title="Nama",
+                          oid="ap_nama")
     ap_rekening     = colander.SchemaNode(
                           colander.String(),
-                          title="Rekening")
+                          missing=colander.drop,
+                          title="Rekening",
+                          oid="ap_rekening")
     ap_npwp         = colander.SchemaNode(
                           colander.String(),
-                          title="NPWP")
+                          missing=colander.drop,
+                          title="NPWP",
+                          oid="ap_npwp")
     amount          = colander.SchemaNode(
                           colander.String(),
                           default=0,
@@ -261,15 +314,17 @@ class AddSchema(colander.Schema):
     no_bast         = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="No. BAST")
+                          title="No. BAST",
+                          oid="no_bast")
     tgl_bast        = colander.SchemaNode(
                           colander.Date(),
                           missing=colander.drop,
-                          title="Tgl. BAST")
+                          title="Tgl. BAST",
+                          oid="tgl_bast")
     no_bku          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-						  oid="no_bku",
+                          oid="no_bku",
                           title="No. BKU")
     tgl_bku         = colander.SchemaNode(
                           colander.Date(),
@@ -279,40 +334,39 @@ class AddSchema(colander.Schema):
     ap_bentuk       = colander.SchemaNode(
                           colander.String(),
                           widget=widget.SelectWidget(values=KONTRAK_TYPE),
-                          title="Bentuk"
-                          )
+                          title="Bentuk",
+                          oid="ap_bentuk")
     ap_alamat       = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="Alamat"
-                          )
+                          title="Alamat",
+                          oid="ap_alamat")
     ap_pemilik      = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="Pemimpin Perusahaan"
-                          )
+                          title="Pemimpin Perusahaan",
+                          oid="ap_pemilik")
     ap_kontrak      = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="No Kontrak"
-                          )
+                          title="No Kontrak",
+                          oid="ap_kontrak")
     ap_waktu        = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="Waktu"
-                          )
+                          title="Waktu",
+                          oid="ap_waktu")
     ap_nilai        = colander.SchemaNode(
                           colander.Integer(),
                           oid="ap_nilai",
                           missing=colander.drop,
                           title="Nilai Kontrak",
-                          default=0
-                          )
+                          default=0)
     ap_tgl_kontrak  = colander.SchemaNode(
                           colander.Date(),
                           missing=colander.drop,
-                          title="Tgl Kontrak"
-                          )
+                          title="Tgl Kontrak",
+                          oid="ap_tgl_kontrak")
     """
     ap_kegiatankd   = colander.SchemaNode(
                           colander.String(),
@@ -329,36 +383,35 @@ class AddSchema(colander.Schema):
     ap_uraian       = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="Pekerjaan"
-                          )
+                          title="Pekerjaan",
+                          oid="ap_uraian")
 
     ap_bap_no       = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="No BAP"
-                          )
+                          title="No BAP",
+                          oid="ap_bap_no")
     ap_bap_tgl      = colander.SchemaNode(
                           colander.Date(),
                           missing=colander.drop,
-                          title="Tgl BAP"
-                          )
+                          title="Tgl BAP",
+                          oid="ap_bap_tgl")
     ap_kwitansi_no  = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="No.Kwitansi"
-                          )
+                          title="No.Kwitansi",
+                          oid="ap_kwitansi_no")
     ap_kwitansi_tgl = colander.SchemaNode(
                           colander.Date(),
                           missing=colander.drop,
-                          title="Tgl Kwitansi"
-                          )
-    ap_kwitansi_nilai        = colander.SchemaNode(
+                          title="Tgl Kwitansi",
+                          oid="ap_kwitansi_tgl")
+    ap_kwitansi_nilai   = colander.SchemaNode(
                           colander.Integer(),
                           oid="ap_kwitansi_nilai",
                           missing=colander.drop,
                           title="Nilai Kwitansi",
-                          default=0
-                          )      
+                          default=0)      
       
 class EditSchema(AddSchema):
     id             = colander.SchemaNode(
@@ -395,8 +448,47 @@ def save(request, values, row=None):
     
     DBSession.add(row)
     DBSession.flush()
-    return row
-                                      
+    #return row
+    
+    #Untuk update status posted dan status_pay pada APInvoice
+    inv_id = row.invoice_id
+    row = DBSession.query(APInvoice).filter(APInvoice.id==inv_id).first()   
+    row.status_pay = 1
+    save_request2(row)
+    """
+    p = row.id
+    i = row.invoice_id
+    
+    cek = DBSession.query(APPaymentItem).filter(APPaymentItem.ap_payment_id==p).first()
+    if not cek:          
+        rows = DBSession.query(APInvoiceItem.kegiatan_item_id.label('item1'),
+                              APInvoiceItem.no_urut.label('urut1'),
+                              APInvoiceItem.nama.label('nm1'),
+                              APInvoiceItem.vol_1.label('v1'),
+                              APInvoiceItem.vol_2.label('v2'),
+                              APInvoiceItem.harga.label('h1'),
+                              APInvoiceItem.ppn.label('pn'),
+                              APInvoiceItem.pph.label('ph'),
+                              APInvoiceItem.amount.label('am'),
+                       ).filter(APInvoiceItem.ap_invoice_id==i
+                       ).all()
+                
+        for row in rows:                                        
+            AI = APPaymentItem()
+            AI.ap_payment_id    = i
+            AI.kegiatan_item_id = row.item1
+            AI.no_urut          = row.urut1
+            AI.nama             = row.nm1
+            AI.vol_1            = row.v1
+            AI.vol_2            = row.v2
+            AI.harga            = row.h1
+            AI.ppn              = row.pn
+            AI.pph              = row.ph
+            AI.amount           = row.am
+            DBSession.add(AI)
+            DBSession.flush()
+    """
+    
 def save_request(values, request, row=None):
     if 'id' in request.matchdict:
         values['id'] = request.matchdict['id']
@@ -412,6 +504,10 @@ def session_failed(request, session_name):
     r = dict(form=request.session[session_name])
     del request.session[session_name]
     return r
+ 
+def save_request2(row=None):
+    row = APInvoice()
+    return row
     
 @view_config(route_name='ap-payment-add', renderer='templates/ap-payment/add.pt',
              permission='add')
@@ -437,7 +533,7 @@ def view_add(request):
             except ValidationFailure, e:
                 return dict(form=form)
             row = save_request(controls_dicted, request)
-            return HTTPFound(location=request.route_url('ap-payment-edit',id=row.id))
+            #return HTTPFound(location=request.route_url('ap-payment-edit',id=row.id))
         return route_list(request)
     elif SESS_ADD_FAILED in request.session:
         del request.session[SESS_ADD_FAILED]
@@ -500,10 +596,16 @@ def view_edit(request):
 
     #Ketika pas edit, kode sama nama muncul sesuai id kegiatansub
     values['kegiatan_nm']=row.kegiatansubs.nama
-    kd=row.kegiatansubs.kode
+    kd=row.kegiatansubs.kegiatans.kode
     ur=row.kegiatansubs.no_urut
     values['kegiatan_kd']="%s" % kd + "-%d" % ur
     
+    #Menampilkan data invoice sesuai ID
+    inv = DBSession.query(APInvoice).filter(APInvoice.id==row.invoice_id).first()
+    kode = inv.kode
+    nama = inv.nama
+    values['inv_kd']=row.apinvoices.kode
+    values['inv_nm']=row.apinvoices.nama
     """
     if values['ap_kegiatankd']:
         r = DBSession.query(Kegiatan).filter(Kegiatan.id==values['ap_kegiatankd']).first()
@@ -530,10 +632,11 @@ def view_delete(request):
     if row.status_spp:
         request.session.flash('Data sudah di SPP', 'error')
         return route_list(request)
+    """
     if row.amount:
         request.session.flash('Data tidak bisa dihapus, karena memiliki data items', 'error')
         return route_list(request)
-        
+    """    
     form = Form(colander.Schema(), buttons=('hapus','cancel'))
     values= {}
     if request.POST:
@@ -542,6 +645,13 @@ def view_delete(request):
             DBSession.query(APPayment).filter(APPayment.id==request.matchdict['id']).delete()
             DBSession.flush()
             request.session.flash(msg)
+            
+            #Untuk update status posted dan status_pay pada APInvoice
+            inv_id = row.invoice_id
+            row = DBSession.query(APInvoice).filter(APInvoice.id==inv_id).first()   
+            row.status_pay = 0
+            save_request2(row)
+    
         return route_list(request)
     return dict(row=row, form=form.render())
     

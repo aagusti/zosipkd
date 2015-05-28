@@ -255,7 +255,8 @@ class view_rekening_sap(BaseViews):
                               ).outerjoin(sap1kr, RekeningSap.kr_lo_sap_id  == sap1kr.id
                               ).outerjoin(sap2db, RekeningSap.db_lra_sap_id == sap2db.id
                               ).outerjoin(sap2kr, RekeningSap.kr_lra_sap_id == sap2kr.id
-                              ).outerjoin(sap3, RekeningSap.neraca_sap_id   == sap3.id)
+                              ).outerjoin(sap3, RekeningSap.neraca_sap_id   == sap3.id
+                              ).order_by(Rekening.kode)
                               
             rowTable = DataTables(req, RekeningSap, query, columns)
             return rowTable.output_result()

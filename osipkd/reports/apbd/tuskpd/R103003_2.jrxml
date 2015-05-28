@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R103003" language="groovy" pageWidth="612" pageHeight="972" columnWidth="504" leftMargin="54" rightMargin="54" topMargin="36" bottomMargin="36">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="73"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["Z:\\py_os\\osipkd\\osipkd\\reports\\apbd\\tuskpd\\"]]></defaultValueExpression>
 	</parameter>
@@ -60,6 +60,9 @@
 	</field>
 	<field name="alamat" class="java.lang.String">
 		<fieldDescription><![CDATA[alamat]]></fieldDescription>
+	</field>
+	<field name="jabatan" class="java.lang.String">
+		<fieldDescription><![CDATA[jabatan]]></fieldDescription>
 	</field>
 	<variable name="nm_bulan" class="java.lang.String">
 		<variableExpression><![CDATA[$F{spm_tgl}.substring(5,7)=="01" ? "Januari" : $F{spm_tgl}.substring(5,7)=="02" ? "Februari" : $F{spm_tgl}.substring(5,7)=="03" ? "Maret" : $F{spm_tgl}.substring(5,7)=="04" ? "April" : $F{spm_tgl}.substring(5,7)=="05" ? "Mei" : $F{spm_tgl}.substring(5,7)=="06" ? "Juni" : $F{spm_tgl}.substring(5,7)=="07" ? "Juli" : $F{spm_tgl}.substring(5,7)=="08" ? "Agustus" : $F{spm_tgl}.substring(5,7)=="09" ? "September" : $F{spm_tgl}.substring(5,7)=="10" ? "Oktober" : $F{spm_tgl}.substring(5,7)=="11" ? "November" : $F{spm_tgl}.substring(5,7)=="12" ? "Desember" : ""]]></variableExpression>
@@ -188,35 +191,35 @@
 	<summary>
 		<band height="150" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="239" y="49" width="248" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="220" y="49" width="275" height="14"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{unit_nm}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{unit_nm}.toUpperCase()]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="239" y="35" width="248" height="14"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="220" y="35" width="275" height="14"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["PENGGUNA ANGGARAN"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{jabatan}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="239" y="124" width="248" height="14"/>
+				<reportElement x="220" y="124" width="275" height="14"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["NIP. "+$F{ttd_nip}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="239" y="110" width="248" height="14"/>
+				<reportElement x="220" y="110" width="275" height="14"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font isBold="true" isUnderline="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ttd_nama}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="239" y="21" width="248" height="14"/>
+				<reportElement x="220" y="21" width="275" height="14"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>

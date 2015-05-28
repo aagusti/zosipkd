@@ -688,7 +688,7 @@
 				</textElement>
 			</textField>
 			<subreport>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="545" height="16"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="545" height="16" isRemoveLineWhenBlank="true"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRXmlDataSource($P{XML_FILE}, "/apbd/sp2d/potongan")]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{R203001_subreport2}]]></subreportExpression>
 			</subreport>

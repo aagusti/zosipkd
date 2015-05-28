@@ -211,14 +211,16 @@ class ViewAKPPKDLap(BaseViews):
                  AkJurnalItem.amount.label('amount_kini'), AkJurnal.tahun_id.label('tahun_kini'),
                  literal_column('0').label('amount_lalu'), literal_column(str(tahun_lalu)).label('tahun_lalu'),
                  ).filter(AkJurnalItem.sap_id==Sap.id, AkJurnalItem.ak_jurnal_id==AkJurnal.id, 
-                 AkJurnal.unit_id==Unit.id, AkJurnalItem.amount>0, AkJurnal.is_skpd==1,
+                 AkJurnal.unit_id==Unit.id, AkJurnal.is_skpd==1,
+                 #AkJurnalItem.amount>0, 
                  AkJurnal.tahun_id==self.session['tahun'], AkJurnal.unit_id==self.session['unit_id']
                  )
               subq2 = DBSession.query(Unit.nama.label('unit_nm'),Sap.kode.label('subrek_kd'), Sap.nama.label('rek_nm'), 
                  literal_column('0').label('amount_kini'), literal_column(str(tahun_kini)).label('tahun_kini'),
                  AkJurnalItem.amount.label('amount_lalu'), AkJurnal.tahun_id.label('tahun_lalu'),
                  ).filter(AkJurnalItem.sap_id==Sap.id, AkJurnalItem.ak_jurnal_id==AkJurnal.id, 
-                 AkJurnal.unit_id==Unit.id, AkJurnalItem.amount>0, AkJurnal.is_skpd==1,
+                 AkJurnal.unit_id==Unit.id, AkJurnal.is_skpd==1,
+                 #AkJurnalItem.amount>0, 
                  AkJurnal.tahun_id==tahun_lalu, AkJurnal.unit_id==self.session['unit_id']
                  )
                  
@@ -293,14 +295,16 @@ class ViewAKPPKDLap(BaseViews):
                  AkJurnalItem.amount.label('amount_kini'), AkJurnal.tahun_id.label('tahun_kini'),
                  literal_column('0').label('amount_lalu'), literal_column(str(tahun_lalu)).label('tahun_lalu'),
                  ).filter(AkJurnalItem.sap_id==Sap.id, AkJurnalItem.ak_jurnal_id==AkJurnal.id, 
-                 AkJurnal.unit_id==Unit.id, AkJurnalItem.amount>0, AkJurnal.is_skpd==1,
+                 AkJurnal.unit_id==Unit.id, AkJurnal.is_skpd==1,
+                 #AkJurnalItem.amount>0, 
                  AkJurnal.tahun_id==self.session['tahun'], AkJurnal.unit_id==self.session['unit_id']
                  )
               subq2 = DBSession.query(Unit.nama.label('unit_nm'),Sap.kode.label('subrek_kd'), Sap.nama.label('rek_nm'), 
                  literal_column('0').label('amount_kini'), literal_column(str(tahun_kini)).label('tahun_kini'),
                  AkJurnalItem.amount.label('amount_lalu'), AkJurnal.tahun_id.label('tahun_lalu'),
                  ).filter(AkJurnalItem.sap_id==Sap.id, AkJurnalItem.ak_jurnal_id==AkJurnal.id, 
-                 AkJurnal.unit_id==Unit.id, AkJurnalItem.amount>0, AkJurnal.is_skpd==1,
+                 AkJurnal.unit_id==Unit.id, AkJurnal.is_skpd==1,
+                 #AkJurnalItem.amount>0, 
                  AkJurnal.tahun_id==tahun_lalu, AkJurnal.unit_id==self.session['unit_id']
                  )
                  
@@ -326,14 +330,16 @@ class ViewAKPPKDLap(BaseViews):
                  AkJurnalItem.amount.label('amount_kini'), AkJurnal.tahun_id.label('tahun_kini'),
                  literal_column('0').label('amount_lalu'), literal_column(str(tahun_lalu)).label('tahun_lalu'),
                  ).filter(AkJurnalItem.sap_id==Sap.id, AkJurnalItem.ak_jurnal_id==AkJurnal.id, 
-                 AkJurnal.unit_id==Unit.id, AkJurnalItem.amount>0, AkJurnal.is_skpd==1,
+                 AkJurnal.unit_id==Unit.id, AkJurnal.is_skpd==1,
+                 #AkJurnalItem.amount>0, 
                  AkJurnal.tahun_id==self.session['tahun'], AkJurnal.unit_id==self.session['unit_id']
                  )
               subq2 = DBSession.query(Unit.nama.label('unit_nm'),Sap.kode.label('subrek_kd'), Sap.nama.label('rek_nm'), 
                  literal_column('0').label('amount_kini'), literal_column(str(tahun_kini)).label('tahun_kini'),
                  AkJurnalItem.amount.label('amount_lalu'), AkJurnal.tahun_id.label('tahun_lalu'),
                  ).filter(AkJurnalItem.sap_id==Sap.id, AkJurnalItem.ak_jurnal_id==AkJurnal.id, 
-                 AkJurnal.unit_id==Unit.id, AkJurnalItem.amount>0, AkJurnal.is_skpd==1,
+                 AkJurnal.unit_id==Unit.id, AkJurnal.is_skpd==1,
+                 #AkJurnalItem.amount>0, 
                  AkJurnal.tahun_id==tahun_lalu, AkJurnal.unit_id==self.session['unit_id']
                  )
                  
@@ -400,14 +406,16 @@ class ViewAKPPKDLap(BaseViews):
                  AkJurnalItem.amount.label('amount_kini'), AkJurnal.tahun_id.label('tahun_kini'),
                  literal_column('0').label('amount_lalu'), literal_column(str(tahun_lalu)).label('tahun_lalu'),
                  ).filter(AkJurnalItem.sap_id==Sap.id, AkJurnalItem.ak_jurnal_id==AkJurnal.id, 
-                 AkJurnal.unit_id==Unit.id, AkJurnalItem.amount>0, AkJurnal.is_skpd==1,
+                 AkJurnal.unit_id==Unit.id, AkJurnal.is_skpd==1,
+                 #AkJurnalItem.amount>0, 
                  AkJurnal.tahun_id==self.session['tahun'], AkJurnal.unit_id==self.session['unit_id']
                  )
               subq2 = DBSession.query(Unit.nama.label('unit_nm'),Sap.kode.label('subrek_kd'), Sap.nama.label('rek_nm'), 
                  literal_column('0').label('amount_kini'), literal_column(str(tahun_kini)).label('tahun_kini'),
                  AkJurnalItem.amount.label('amount_lalu'), AkJurnal.tahun_id.label('tahun_lalu'),
                  ).filter(AkJurnalItem.sap_id==Sap.id, AkJurnalItem.ak_jurnal_id==AkJurnal.id, 
-                 AkJurnal.unit_id==Unit.id, AkJurnalItem.amount>0, AkJurnal.is_skpd==1,
+                 AkJurnal.unit_id==Unit.id, AkJurnal.is_skpd==1,
+                 #AkJurnalItem.amount>0, 
                  AkJurnal.tahun_id==tahun_lalu, AkJurnal.unit_id==self.session['unit_id']
                  )
                  

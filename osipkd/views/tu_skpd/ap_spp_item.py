@@ -59,13 +59,13 @@ class view_ap_spp_item(BaseViews):
                           ).filter(SppItem.ap_spp_id==ap_spp_id
                           ).group_by(SppItem.id, 
                                      SppItem.ap_invoice_id,
-                                     APInvoice.kode.label('kode'),
-                                     APInvoice.jenis.label('jenis'),
-                                     APInvoice.tanggal.label('tanggal'),
-                                     APInvoice.nama.label('nama'),
-                                     APInvoice.amount.label('amount'),
-                                     APInvoice.no_bku.label('nbku'),
-                                     APInvoice.tgl_bku.label('tbku'))
+                                     APInvoice.kode,
+                                     APInvoice.jenis,
+                                     APInvoice.tanggal,
+                                     APInvoice.nama,
+                                     APInvoice.amount,
+                                     APInvoice.no_bku,
+                                     APInvoice.tgl_bku)
                 rowTable = DataTables(req, SppItem, query, columns)
                 return rowTable.output_result()
 #######    

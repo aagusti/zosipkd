@@ -33,4 +33,4 @@ class view_ag_pendapatan(BaseViews):
         row['rekeninghead'] = 4
         
         return dict(project='EIS', row = row)
-        
+       

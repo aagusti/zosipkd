@@ -23,13 +23,22 @@ def deferred_sdana(node, kw):
     return widget.SelectWidget(values=values)
     
 SDANA = (
-    ('PAD', 'PAD'),
     ('DAU', 'DAU'),
     ('DAK', 'DAK'),
-    ('APBD Provinsi', 'APBD Provinsi'),
+    ('PAD', 'PAD'),
+    #('APBD Provinsi', 'APBD Provinsi'),
+    ('APBD Banten', 'APBD Banten'),
+    ('APBD Non Banten', 'APBD Non Banten'),
     ('APBN', 'APBN'),
     ('LOAN', 'LOAN'),
+    ('Transfer Pusat', 'Transfer Pusat'),
     ('Bagi Hasil', 'Bagi Hasil'),
+    ('Cukai Rokok', 'Cukai Rokok'),
+    ('Dana Desa (ADD)', 'Dana Desa (ADD)'),
+    ('Kapitasi', 'Kapitasi'),
+    ('Dana Insentif Daerah (DID)', 'Dana Insentif Daerah (DID)'),
+    ('Retribusi BLUD', 'Retribusi BLUD'),
+    ('Lain-lain', 'Lain-lain'),
     )
 
 class view_kegiatan_sub(BaseViews):
@@ -72,6 +81,7 @@ class view_kegiatan_sub(BaseViews):
                 columns.append(ColumnDT('dpa'))
                 columns.append(ColumnDT('rdppa'))
                 columns.append(ColumnDT('dppa'))
+                columns.append(ColumnDT('disabled'))
                 #columns.append(ColumnDT('pegawai_nama'))
 
                 query = DBSession.query(KegiatanSub.id,
@@ -87,7 +97,8 @@ class view_kegiatan_sub(BaseViews):
                     func.sum(KegiatanItem.vol_3_1*KegiatanItem.vol_3_2*
                              KegiatanItem.hsat_3).label('rdppa'),                      
                     func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*
-                             KegiatanItem.hsat_4).label('dppa'))\
+                             KegiatanItem.hsat_4).label('dppa'),
+                        KegiatanSub.disabled)\
                     .join(Kegiatan)\
                     .join(Program)\
                     .join(Urusan)\
@@ -235,9 +246,10 @@ class view_kegiatan_sub(BaseViews):
 
         elif url_dict['act']=='headofkode2':
             term = 'term' in params and params['term'] or ''
+            unit_id    = 'unit_id' in params and params['unit_id'] or 0
             q = DBSession.query(KegiatanSub.id, Kegiatan.kode, KegiatanSub.no_urut,
                                 KegiatanSub.nama
-                      ).join(Kegiatan).filter(KegiatanSub.unit_id == ses['unit_id'],
+                      ).join(Kegiatan).filter(KegiatanSub.unit_id == unit_id,
                            KegiatanSub.tahun_id==ses['tahun'],
                            KegiatanSub.kegiatan_id==Kegiatan.id,
                            Kegiatan.kode.ilike('%%%s%%' % term))
@@ -256,9 +268,10 @@ class view_kegiatan_sub(BaseViews):
 
         elif url_dict['act']=='headofnama2':
             term = 'term' in params and params['term'] or ''
+            unit_id    = 'unit_id' in params and params['unit_id'] or 0
             q = DBSession.query(KegiatanSub.id, Kegiatan.kode, KegiatanSub.no_urut,
                                 KegiatanSub.nama).join(Kegiatan).filter(
-                      KegiatanSub.unit_id == ses['unit_id'],
+                      KegiatanSub.unit_id == unit_id,
                       KegiatanSub.tahun_id==ses['tahun'],
                       Kegiatan.kode=='0.00.00.10', 
                       Kegiatan.nama.ilike('%%%s%%' % term))
@@ -276,6 +289,7 @@ class view_kegiatan_sub(BaseViews):
         elif url_dict['act']=='headofkode3':
             term         = 'term' in params and params['term'] or ''
             ap_spd_id    = 'ap_spd_id' in params and params['ap_spd_id'] or 0
+            unit_id    = 'unit_id' in params and params['unit_id'] or 0
             
             q = DBSession.query(KegiatanSub.id.label('kegiatan_sub_id'), Kegiatan.kode.label('kode'), KegiatanSub.nama.label('nama'),
                                 func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran'),
@@ -284,7 +298,7 @@ class view_kegiatan_sub(BaseViews):
                                 func.sum(KegiatanItem.bln07+KegiatanItem.bln08+KegiatanItem.bln09).label('trw3'),
                                 func.sum(KegiatanItem.bln10+KegiatanItem.bln11+KegiatanItem.bln12).label('trw4')
                         ).join(Kegiatan).join(KegiatanItem
-                        ).filter(KegiatanSub.unit_id == ses['unit_id'],
+                        ).filter(KegiatanSub.unit_id == unit_id,
                                KegiatanSub.tahun_id==ses['tahun'],
                                Kegiatan.kode.ilike('%%%s%%' % term)
                         ).group_by(KegiatanSub.id, Kegiatan.kode, KegiatanSub.nama)
@@ -327,7 +341,7 @@ class view_kegiatan_sub(BaseViews):
         elif url_dict['act']=='headofnama3':
             term         = 'term' in params and params['term'] or ''
             ap_spd_id    = 'ap_spd_id' in params and params['ap_spd_id'] or 0
-            
+            unit_id    = 'unit_id' in params and params['unit_id'] or 0
             q = DBSession.query(KegiatanSub.id.label('kegiatan_sub_id'), Kegiatan.kode.label('kode'), KegiatanSub.nama.label('nama'),
                                 func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran'),
                                 func.sum(KegiatanItem.bln01+KegiatanItem.bln02+KegiatanItem.bln03).label('trw1'),
@@ -335,7 +349,7 @@ class view_kegiatan_sub(BaseViews):
                                 func.sum(KegiatanItem.bln07+KegiatanItem.bln08+KegiatanItem.bln09).label('trw3'),
                                 func.sum(KegiatanItem.bln10+KegiatanItem.bln11+KegiatanItem.bln12).label('trw4')
                         ).join(Kegiatan).join(KegiatanItem
-                        ).filter(KegiatanSub.unit_id == ses['unit_id'],
+                        ).filter(KegiatanSub.unit_id == unit_id,
                                KegiatanSub.tahun_id==ses['tahun'],
                                KegiatanSub.nama.ilike('%%%s%%' % term)
                         ).group_by(KegiatanSub.id, Kegiatan.kode, KegiatanSub.nama)
@@ -406,6 +420,7 @@ class view_kegiatan_sub(BaseViews):
         except:
             return {'success':False, 'msg':'Gagal Tambah Kegiatan'}
             
+
 #######    
 # Add #
 #######
@@ -457,7 +472,8 @@ class AddSchema(colander.Schema):
 
     no_urut          = colander.SchemaNode(
                           colander.Integer(),
-                          missing=colander.drop)
+                          missing=colander.drop,
+                          title="No. Item")
                           
     nama             = colander.SchemaNode(
                           colander.String(),
@@ -706,11 +722,20 @@ def view_edit(request):
     row = query_id(request).first()
     if not row:
         return id_not_found(request)
+    #if row.disabled:
+    #    request.session.flash('Data sudah diposting', 'error')
+    #    return route_list(request)
+        
     form = get_form(request, EditSchema)
     if request.POST:
         if 'simpan' in request.POST:
+          
+            # Cek Posting
+            if row.disabled:
+                request.session.flash('Data tidak dapat diupdate karena sudah Posting', 'error')
+                return route_list(request)
+                
             controls = request.POST.items()
-            
             try:
                 c = form.validate(controls)
             except ValidationFailure, e:
@@ -739,6 +764,11 @@ def view_delete(request):
     row = q.first()
     if not row:
         return id_not_found(request)
+    # Cek posting
+    if row.disabled:
+        request.session.flash('Data tidak dapat dihapus karena sudah Posting', 'error')
+        return route_list(request)
+        
     form = Form(colander.Schema(), buttons=('hapus','cancel'))
     values= {}
     if request.POST:
@@ -751,5 +781,82 @@ def view_delete(request):
     return dict(row=row,
                  form=form.render())
 
+###########
+# Posting #
+###########   
+
+def route_list1(request, kegiatan_sub_id):
+    kegiatan_sub_id
+    q = DBSession.query(Kegiatan.kode.label('kegiatan_kd')
+    ).filter(Kegiatan.id==KegiatanSub.kegiatan_id, 
+    KegiatanSub.id==kegiatan_sub_id)
+    print "-----------------------------------", kegiatan_sub_id
+    rows = q.all()
+    for k in rows:
+        a =k[0]
+        if a =='0.00.00.10':
+            return HTTPFound(location=request.route_url('ag-pendapatan',kegiatan_sub_id=kegiatan_sub_id))
+        elif a =='0.00.00.21':
+            return HTTPFound(location=request.route_url('ag-btl',kegiatan_sub_id=kegiatan_sub_id))
+        elif a =='0.00.00.31':
+            return HTTPFound(location=request.route_url('ag-penerimaan',kegiatan_sub_id=kegiatan_sub_id))
+        elif a =='0.00.00.32':
+            return HTTPFound(location=request.route_url('ag-pengeluaran',kegiatan_sub_id=kegiatan_sub_id))
+    return HTTPFound(location=request.route_url('ag-bl'))
+
+def save_request2(request, row=None):
+    row = KegiatanSub()
+    #request.session.flash('Kegiatan sudah diposting.')
+    return row
+    
+@view_config(route_name='ag-bl-posting', renderer='templates/ag-bl/posting.pt', permission='posting')
+def view_edit_posting(request):
+    q = query_id(request)
+    row = q.first()
+    
+    if not row:
+        return id_not_found(request)
+    if row.disabled:
+        request.session.flash('Data sudah diposting', 'error')
+        return route_list1(request,row.id)
+        
+    form = Form(colander.Schema(), buttons=('posting','cancel'))
+    
+    if request.POST:
+        if 'posting' in request.POST: 
+            row.disabled=1
+            save_request2(row)
+        return route_list1(request,row.id)
+    return dict(row=row, form=form.render())                       
+        
+
+#############
+# UnPosting #
+#############
+
+def save_request3(request, row=None):
+    row = KegiatanSub()
+    #request.session.flash('Kegiatan sudah di UnPosting.')
+    return row
+    
+@view_config(route_name='ag-bl-unposting', renderer='templates/ag-bl/unposting.pt', permission='unposting') 
+def view_edit_unposting(request):
+    q = query_id(request)
+    row = q.first()
+    print "-----------------------------------------------------------------------"
+    if not row:
+        return id_not_found(request)
+    if not row.disabled:
+        request.session.flash('Data tidak dapat di Unposting, karena belum diposting.', 'error')
+        return route_list1(request, row.id)
+        
+    form = Form(colander.Schema(), buttons=('unposting','cancel'))
+    
+    if request.POST:
+        if 'unposting' in request.POST: 
+            row.disabled=0
+            save_request3(row)
+        return route_list1(request, row.id)
+    return dict(row=row, form=form.render())                       
             
             

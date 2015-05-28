@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R103033" language="groovy" pageWidth="612" pageHeight="972" columnWidth="504" leftMargin="54" rightMargin="54" topMargin="30" bottomMargin="72">
 	<property name="ireport.zoom" value="1.2100000000000004"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="470"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["Z:\\py_os\\zosipkd\\osipkd\\reports\\apbd\\tuskpd\\"]]></defaultValueExpression>
 	</parameter>
@@ -577,28 +577,28 @@
 	<title>
 		<band height="185" splitType="Stretch">
 			<textField>
-				<reportElement x="43" y="7" width="444" height="16"/>
+				<reportElement x="43" y="7" width="461" height="16"/>
 				<textElement textAlignment="Center" markup="none">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{customer}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="43" y="32" width="444" height="16"/>
+				<reportElement x="43" y="32" width="461" height="16"/>
 				<textElement textAlignment="Center" markup="none">
-					<font size="12" isBold="true"/>
+					<font size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["SURAT PERMINTAAN PEMBAYARAN "+$V{jenis_nm}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="43" y="48" width="444" height="16"/>
+				<reportElement x="43" y="48" width="461" height="16"/>
 				<textElement textAlignment="Center" markup="none">
-					<font size="12" isBold="true"/>
+					<font size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["SPP-"+$V{jenis}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="43" y="73" width="444" height="16"/>
+				<reportElement x="43" y="73" width="461" height="16"/>
 				<textElement textAlignment="Center" markup="none">
 					<font isBold="true"/>
 				</textElement>

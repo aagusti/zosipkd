@@ -2,10 +2,11 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, extract
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
+from colander import (null)
 from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
@@ -83,6 +84,8 @@ class view_ap_invoice_skpd(BaseViews):
         url_dict = req.matchdict
         if url_dict['act']=='grid':
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+            bulan = 'bulan' in params and params['bulan'] and int(params['bulan']) or 0
+            print "-------------------------------->>", bulan
             if url_dict['act']=='grid':
                 # defining columns
                 columns = []
@@ -95,8 +98,10 @@ class view_ap_invoice_skpd(BaseViews):
                 columns.append(ColumnDT('amount'))
                 columns.append(ColumnDT('posted'))
                 columns.append(ColumnDT('status_spp'))
+                columns.append(ColumnDT('status_pay'))
 
-                query = DBSession.query(APInvoice.id,
+                if bulan==0 :
+                  query = DBSession.query(APInvoice.id,
                           APInvoice.kode,
                           APInvoice.jenis,                          
                           APInvoice.tanggal,
@@ -104,25 +109,61 @@ class view_ap_invoice_skpd(BaseViews):
                           APInvoice.nama,
                           APInvoice.amount,
                           APInvoice.posted,
-                          APInvoice.status_spp,
+                              APInvoice.status_spp,
+                              APInvoice.status_pay,
                         ).outerjoin(APInvoiceItem
                         ).filter(APInvoice.tahun_id==ses['tahun'],
                               APInvoice.unit_id==ses['unit_id'],
                               APInvoice.kegiatan_sub_id==KegiatanSub.id,
-                        ).order_by(APInvoice.no_urut.desc()
                         ).group_by(APInvoice.id,
                           APInvoice.kode,
                           APInvoice.jenis,
+                          APInvoice.tanggal,
+                          KegiatanSub.nama,
+                          APInvoice.nama,
+                          APInvoice.amount,
+                          APInvoice.posted,
+                          APInvoice.status_spp,
+                          APInvoice.status_pay,
+                        ).order_by(APInvoice.no_urut.desc()
+                        )
+                else :
+                  query = DBSession.query(APInvoice.id,
+                          APInvoice.kode,
+                          APInvoice.jenis,                          
                           APInvoice.tanggal,
                           KegiatanSub.nama.label('kegiatan_sub_nm'),
                           APInvoice.nama,
                           APInvoice.amount,
                           APInvoice.posted,
+                              APInvoice.status_spp,
+                              APInvoice.status_pay,
+                        ).outerjoin(APInvoiceItem
+                        ).filter(APInvoice.tahun_id==ses['tahun'],
+                              APInvoice.unit_id==ses['unit_id'],
+                              APInvoice.kegiatan_sub_id==KegiatanSub.id,
+                              extract('month',APInvoice.tanggal)==bulan
+                        ).group_by(APInvoice.id,
+                          APInvoice.kode,
+                          APInvoice.jenis,
+                          APInvoice.tanggal,
+                          KegiatanSub.nama,
+                          APInvoice.nama,
+                          APInvoice.amount,
+                          APInvoice.posted,
                           APInvoice.status_spp,
+                          APInvoice.status_pay,
+                        ).order_by(APInvoice.no_urut.desc()
                         )
+                  
                 rowTable = DataTables(req, APInvoice, query, columns)
                 return rowTable.output_result()
 
+        elif url_dict['act']=='reload':
+            bulan = params['bulan']
+            
+            return {'success':True, 'msg':'Sukses ubah bulan'}
+                
         elif url_dict['act']=='headofnama':
             query = DBSession.query(APInvoice.id, 
                                     APInvoice.no_urut,
@@ -184,6 +225,163 @@ class view_ap_invoice_skpd(BaseViews):
             print '---****----',r              
             return r
             
+        #Untuk Payment
+        elif url_dict['act']=='headofkode2':
+            term  = 'term'  in params and params['term'] or ''
+            q = DBSession.query(APInvoice.id,
+                                APInvoice.kode.label('kode1'),
+                                APInvoice.nama.label('nama1'),
+                                APInvoice.amount.label('amount1'),
+                                APInvoice.no_bku.label('nbku'),
+                                APInvoice.tgl_bku.label('tbku'),
+                                APInvoice.kegiatan_sub_id.label('sub'),
+                                APInvoice.jenis.label('jen'),
+                                APInvoice.no_bast.label('nbast'),
+                                APInvoice.tgl_bast.label('tbast'),
+                                APInvoice.is_bayar.label('bay'),
+                                APInvoice.ap_nama.label('n'),
+                                APInvoice.ap_rekening.label('rek'),
+                                APInvoice.ap_npwp.label('np'),
+                                APInvoice.ap_waktu.label('wk'),
+                                APInvoice.ap_uraian.label('ur'),
+                                APInvoice.ap_pemilik.label('pm'),
+                                APInvoice.ap_alamat.label('al'),
+                                APInvoice.ap_bentuk.label('bn'),
+                                APInvoice.ap_kontrak.label('kn'),
+                                APInvoice.ap_tgl_kontrak.label('tgk'),
+                                APInvoice.ap_nilai.label('ni'),
+                                APInvoice.ap_kwitansi_no.label('kwn'),
+                                APInvoice.ap_kwitansi_tgl.label('tgkw'),
+                                APInvoice.ap_kwitansi_nilai.label('kwni'),
+                                APInvoice.ap_bap_no.label('bno'),
+                                APInvoice.ap_bap_tgl.label('tgb'),
+                                KegiatanSub.nama.label('snm'),
+                                Kegiatan.kode.label('kkd'),
+                                )\
+                                .filter(APInvoice.unit_id == ses['unit_id'],
+                                        APInvoice.tahun_id == ses['tahun'],
+                                        APInvoice.kegiatan_sub_id==KegiatanSub.id,
+                                        KegiatanSub.kegiatan_id==Kegiatan.id,
+                                        APInvoice.status_pay == 0,
+                                        APInvoice.amount != 0,
+                                        APInvoice.jenis == '3',
+                                        APInvoice.kode.ilike('%s%%' % term))
+            rows = q.all()                               
+            r = []
+            for k in rows:
+                d={}
+                d['id']                = k[0]
+                d['value']             = k[1]
+                d['kode']              = k[1]
+                d['nama']              = k[2]
+                d['amount']            = k[3]
+                d['no_bku']            = k[4]
+                d['tgl_bku']           = "%s" % k[5]
+                d['kegiatan_sub_id']   = k[6]
+                d['jenis']             = k[7]
+                d['no_bast']           = k[8]
+                d['tgl_bast']          = "%s" % k[9]
+                d['is_bayar']          = k[10]
+                d['ap_nama']           = k[11]
+                d['ap_rekening']       = k[12]
+                d['ap_npwp']           = k[13]
+                d['ap_waktu']          = k[14]
+                d['ap_uraian']         = k[15]
+                d['ap_pemilik']        = k[16]
+                d['ap_alamat']         = k[17]
+                d['ap_bentuk']         = k[18]
+                d['ap_kontrak']        = k[19]
+                d['ap_tgl_kontrak']    = "%s" % k[20]
+                d['ap_nilai']          = k[21]
+                d['ap_kwitansi_no']    = k[22]
+                d['ap_kwitansi_tgl']   = "%s" % k[23]
+                d['ap_kwitansi_nilai'] = k[24]
+                d['ap_bap_no']         = k[25]
+                d['ap_bap_tgl']        = "%s" % k[26]
+                d['kegiatan_nm']       = k[27]
+                d['kegiatan_kd']       = k[28]
+                r.append(d)
+            print '---****----',r              
+            return r
+        
+        elif url_dict['act']=='headofnama2':
+            term  = 'term'  in params and params['term'] or ''
+            q = DBSession.query(APInvoice.id,
+                                APInvoice.kode.label('kode1'),
+                                APInvoice.nama.label('nama1'),
+                                APInvoice.amount.label('amount1'),
+                                APInvoice.no_bku.label('nbku'),
+                                APInvoice.tgl_bku.label('tbku'),
+                                APInvoice.kegiatan_sub_id.label('sub'),
+                                APInvoice.jenis.label('jen'),
+                                APInvoice.no_bast.label('nbast'),
+                                APInvoice.tgl_bast.label('tbast'),
+                                APInvoice.is_bayar.label('bay'),
+                                APInvoice.ap_nama.label('n'),
+                                APInvoice.ap_rekening.label('rek'),
+                                APInvoice.ap_npwp.label('np'),
+                                APInvoice.ap_waktu.label('wk'),
+                                APInvoice.ap_uraian.label('ur'),
+                                APInvoice.ap_pemilik.label('pm'),
+                                APInvoice.ap_alamat.label('al'),
+                                APInvoice.ap_bentuk.label('bn'),
+                                APInvoice.ap_kontrak.label('kn'),
+                                APInvoice.ap_tgl_kontrak.label('tgk'),
+                                APInvoice.ap_nilai.label('ni'),
+                                APInvoice.ap_kwitansi_no.label('kwn'),
+                                APInvoice.ap_kwitansi_tgl.label('tgkw'),
+                                APInvoice.ap_kwitansi_nilai.label('kwni'),
+                                APInvoice.ap_bap_no.label('bno'),
+                                APInvoice.ap_bap_tgl.label('tgb'),
+                                KegiatanSub.nama.label('snm'),
+                                Kegiatan.kode.label('kkd'),
+                                )\
+                                .filter(APInvoice.unit_id == ses['unit_id'],
+                                        APInvoice.tahun_id == ses['tahun'],
+                                        APInvoice.kegiatan_sub_id==KegiatanSub.id,
+                                        KegiatanSub.kegiatan_id==Kegiatan.id,
+                                        APInvoice.status_pay == 0,
+                                        APInvoice.amount != 0,
+                                        APInvoice.jenis == '3',
+                                        APInvoice.nama.ilike('%%%s%%' % term))
+            rows = q.all()                               
+            r = []
+            for k in rows:
+                d={}
+                d['id']                = k[0]
+                d['value']             = k[2]
+                d['kode']              = k[1]
+                d['nama']              = k[2]
+                d['amount']            = k[3]
+                d['no_bku']            = k[4]
+                d['tgl_bku']           = "%s" % k[5]
+                d['kegiatan_sub_id']   = k[6]
+                d['jenis']             = k[7]
+                d['no_bast']           = k[8]
+                d['tgl_bast']          = "%s" % k[9]
+                d['is_bayar']          = k[10]
+                d['ap_nama']           = k[11]
+                d['ap_rekening']       = k[12]
+                d['ap_npwp']           = k[13]
+                d['ap_waktu']          = k[14]
+                d['ap_uraian']         = k[15]
+                d['ap_pemilik']        = k[16]
+                d['ap_alamat']         = k[17]
+                d['ap_bentuk']         = k[18]
+                d['ap_kontrak']        = k[19]
+                d['ap_tgl_kontrak']    = "%s" % k[20]
+                d['ap_nilai']          = k[21]
+                d['ap_kwitansi_no']    = k[22]
+                d['ap_kwitansi_tgl']   = "%s" % k[23]
+                d['ap_kwitansi_nilai'] = k[24]
+                d['ap_bap_no']         = k[25]
+                d['ap_bap_tgl']        = "%s" % k[26]
+                d['kegiatan_nm']       = k[27]
+                d['kegiatan_kd']       = k[28]
+                r.append(d)
+            print '---****----',r              
+            return r
+    
 #######    
 # Add #
 #######
@@ -207,7 +405,8 @@ class AddSchema(colander.Schema):
     kode            = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="No Utang")
+                          oid = "kode",
+                          title="No.Tagihan")
     jenis           = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
@@ -277,7 +476,7 @@ class AddSchema(colander.Schema):
     no_bku          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-						  oid="no_bku",
+						              oid="no_bku",
                           title="No. BKU")
     tgl_bku         = colander.SchemaNode(
                           colander.Date(),
@@ -306,7 +505,7 @@ class AddSchema(colander.Schema):
                           )
     ap_waktu        = colander.SchemaNode(
                           colander.String(),
-                          missing=colander.drop,
+                          missing=None,
                           title="Waktu"
                           )
     ap_nilai        = colander.SchemaNode(
@@ -336,7 +535,7 @@ class AddSchema(colander.Schema):
     """
     ap_uraian       = colander.SchemaNode(
                           colander.String(),
-                          missing=colander.drop,
+                          missing=colander.null,
                           title="Pekerjaan"
                           )
 
@@ -353,18 +552,18 @@ class AddSchema(colander.Schema):
     ap_kwitansi_no  = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="No.Kwitansi"
+                          title="No.Kwitansi/Nota"
                           )
     ap_kwitansi_tgl = colander.SchemaNode(
                           colander.Date(),
                           missing=colander.drop,
-                          title="Tgl Kwitansi"
+                          title="Tgl Kwitansi/Nota"
                           )
-    ap_kwitansi_nilai        = colander.SchemaNode(
+    ap_kwitansi_nilai   = colander.SchemaNode(
                           colander.Integer(),
                           oid="ap_kwitansi_nilai",
                           missing=colander.drop,
-                          title="Nilai Kwitansi",
+                          title="Nilai Kwitansi/Nota",
                           default=0
                           )      
       
@@ -390,11 +589,23 @@ def save(request, values, row=None):
     if not row.kode:
         tahun    = request.session['tahun']
         unit_kd  = request.session['unit_kd']
+        if row.jenis == "1": jns ="UP"
+        elif row.jenis == "2": jns = "TU"
+        elif row.jenis == "3": jns = "GU"
+        elif row.jenis == "4": jns = "LS"
+        elif row.jenis == "5": jns = "SP2B"
         no_urut  = row.no_urut
         no       = "0000%d" % no_urut
         nomor    = no[-5:]     
-        row.kode = "%d" % tahun + "-%s" % unit_kd + "-%s" % nomor
-        
+        row.kode = "%d" % tahun + "-%s" % jns + "-%s" % unit_kd + "-%s" % nomor
+    
+    #kode1 = row.kode
+    #if row.jenis == "5" :
+    #   jns_kd = row.kode[5:9]
+    #else:
+    #   jns_kd = row.kode[5:7]
+    #row.kode = kode1[0:3] + jns_kd + kode1[8:25]
+    
     j='3'
     j1 = row.jenis
     if j1 != j:
@@ -472,7 +683,10 @@ def view_edit(request):
     if not row:
         return id_not_found(request)
     if row.status_spp:
-        request.session.flash('Data sudah di SPP', 'error')
+        request.session.flash('Data sudah masuk di SPP', 'error')
+        return route_list(request)
+    if row.status_pay:
+        request.session.flash('Data sudah masuk di Pembayaran Tagihan', 'error')
         return route_list(request)
     if row.posted:
         request.session.flash('Data sudah diposting', 'error')
@@ -536,7 +750,10 @@ def view_delete(request):
         request.session.flash('Data sudah diposting', 'error')
         return route_list(request)
     if row.status_spp:
-        request.session.flash('Data sudah di SPP', 'error')
+        request.session.flash('Data sudah masuk di SPP', 'error')
+        return route_list(request)
+    if row.status_pay:
+        request.session.flash('Data sudah masuk di Pembayaran Tagihan', 'error')
         return route_list(request)
     if row.amount:
         request.session.flash('Data tidak bisa dihapus, karena memiliki data items', 'error')

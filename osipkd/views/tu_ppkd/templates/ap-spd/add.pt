@@ -258,7 +258,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
-              "remote"   : "/ag-kegiatan-sub/act/headofkode3?ap_spd_id="+$("#id").val()+"&term=%QUERY",
+              "remote"   : "/ag-kegiatan-sub/act/headofkode3?unit_id="+$("#unit_id").val()+"&ap_spd_id="+$("#id").val()+"&term=%QUERY",
             },{
               "name"      : 'kegiatan_kd',
               "displayKey": 'value',
@@ -268,7 +268,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
-              "remote"   : "/ag-kegiatan-sub/act/headofnama3?ap_spd_id="+$("#id").val()+"&term=%QUERY",
+              "remote"   : "/ag-kegiatan-sub/act/headofnama3?unit_id="+$("#unit_id").val()+"&ap_spd_id="+$("#id").val()+"&term=%QUERY",
             },{
              "name"      : 'kegiatan_nm',
              "displayKey": 'value',

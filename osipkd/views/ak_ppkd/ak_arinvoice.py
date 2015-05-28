@@ -290,7 +290,7 @@ def view_edit_posting1(request):
                                      ARInvoice.posted1==0,
                                      ARInvoice.nilai!=0,
                                      ARInvoice.disabled==0,
-                            ).group_by(ARInvoice.id.label('ar_id1'),
+                            ).group_by(ARInvoice.id,
                             ).all()
     if not rekaps:
         request.session.flash('Data posting rekap tidak ada.', 'error')
@@ -305,7 +305,7 @@ def view_edit_posting1(request):
                                      ARInvoice.posted1==0,
                                      ARInvoice.nilai!=0,
                                      ARInvoice.disabled==0,
-                            ).group_by(ARInvoice.id.label('ar_id1'),
+                            ).group_by(ARInvoice.id,
                             ).all()
             for row in rekaps:
                 a = row.ar_id1
@@ -435,7 +435,7 @@ def view_edit_unposting1(request):
                                      ARInvoice.posted1==1,
                                      ARInvoice.nilai!=0,
                                      ARInvoice.disabled==0,
-                            ).group_by(ARInvoice.id.label('ar_id1'),
+                            ).group_by(ARInvoice.id,
                             ).all()
     if not rekaps:
         request.session.flash('Data rekap tidak dapat di Un-Jurnal, karena belum dibuat jurnal.', 'error')
@@ -451,7 +451,7 @@ def view_edit_unposting1(request):
                                      ARInvoice.posted1==1,
                                      ARInvoice.nilai!=0,
                                      ARInvoice.disabled==0,
-                            ).group_by(ARInvoice.id.label('ar_id1'),
+                            ).group_by(ARInvoice.id,
                             ).all()
             for row in rekaps:
                 a = row.ar_id1

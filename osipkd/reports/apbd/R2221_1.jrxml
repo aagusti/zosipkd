@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RKA LAMP1" language="groovy" pageWidth="612" pageHeight="972" columnWidth="542" leftMargin="50" rightMargin="20" topMargin="60" bottomMargin="14">
-	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="543"/>
-	<property name="ireport.y" value="537"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["Z:\\py_os\\zosipkd\\osipkd\\reports\\apbd\\"]]></defaultValueExpression>
 	</parameter>
@@ -439,7 +439,6 @@ Sdana]]></text>
 					<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 						<font size="8" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{sdana}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="106" y="40" width="77" height="17"/>
@@ -545,7 +544,7 @@ Sdana]]></text>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="112">
+			<band height="123">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="396" height="14"/>
 					<box rightPadding="3">
@@ -584,33 +583,47 @@ Sdana]]></text>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{anggaran_tot})]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement x="354" y="20" width="183" height="16"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="301" y="44" width="234" height="12"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Tigaraksa, "+$V{tanggal}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{unit_nm}.toUpperCase()]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="354" y="97" width="183" height="12"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<reportElement x="415" y="22" width="60" height="12"/>
+					<textElement verticalAlignment="Top">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{pa_nip}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{tanggal}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="354" y="85" width="183" height="12"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="8" isBold="true" isUnderline="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{pa_nama}]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement x="354" y="36" width="183" height="12"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<reportElement x="301" y="33" width="234" height="12"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{jabatan}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="301" y="103" width="234" height="12"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA["NIP. "+$F{pa_nip}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="372" y="22" width="43" height="12"/>
+					<textElement verticalAlignment="Top">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Tigaraksa, "]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="301" y="92" width="234" height="12"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="8" isBold="true" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pa_nama}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -933,7 +946,7 @@ Sdana]]></text>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="493" y="0" width="42" height="14"/>
-				<box>
+				<box leftPadding="1">
 					<leftPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.25"/>
@@ -941,17 +954,18 @@ Sdana]]></text>
 				<textElement verticalAlignment="Top" markup="none">
 					<font size="8" isBold="false"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{sdana}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="50">
+		<band height="25">
 			<textField isBlankWhenNull="true">
 				<reportElement x="346" y="5" width="191" height="14"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{unit_kd}+" - "+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{PAGE_NUMBER})]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

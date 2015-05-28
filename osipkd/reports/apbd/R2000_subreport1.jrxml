@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R2000_subreport1" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="124"/>
+	<property name="ireport.x" value="111"/>
 	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[apbd/unit/rekening]]>
@@ -53,11 +53,11 @@
 		<groupFooter>
 			<band height="14">
 				<printWhenExpression><![CDATA[!($V{surplus_defisit}=="")]]></printWhenExpression>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement x="447" y="0" width="93" height="14"/>
+				<textField isBlankWhenNull="true">
+					<reportElement x="437" y="0" width="103" height="14"/>
 					<box rightPadding="1">
 						<topPen lineWidth="0.25"/>
-						<leftPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.0"/>
 						<bottomPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
@@ -66,7 +66,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$V{jumlah_defsign_surplus}<0 ? "("+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_defsign_surplus}*-1)+")" : NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_defsign_surplus})]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField isBlankWhenNull="true">
 					<reportElement x="63" y="0" width="384" height="14"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.25"/>
@@ -79,7 +79,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA["Surplus/(Defisit)"]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField isBlankWhenNull="true">
 					<reportElement x="0" y="0" width="63" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
@@ -99,7 +99,7 @@
 		<groupFooter>
 			<band height="14">
 				<printWhenExpression><![CDATA[$V{rek1}=="4"||$V{rek1}=="5"]]></printWhenExpression>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField isBlankWhenNull="true">
 					<reportElement x="0" y="0" width="63" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
@@ -111,11 +111,11 @@
 						<font size="9" isBold="true"/>
 					</textElement>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement x="447" y="0" width="93" height="14"/>
+				<textField isBlankWhenNull="true">
+					<reportElement x="437" y="0" width="103" height="14"/>
 					<box rightPadding="1">
 						<topPen lineWidth="0.25"/>
-						<leftPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.0"/>
 						<bottomPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
@@ -124,7 +124,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_rek1})]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField isBlankWhenNull="true">
 					<reportElement x="63" y="0" width="384" height="14"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.25"/>
@@ -140,11 +140,11 @@
 			</band>
 			<band height="14">
 				<printWhenExpression><![CDATA[$V{rek1}=="6"]]></printWhenExpression>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement x="447" y="0" width="93" height="14"/>
+				<textField isBlankWhenNull="true">
+					<reportElement x="437" y="0" width="103" height="14"/>
 					<box rightPadding="1">
 						<topPen lineWidth="0.25"/>
-						<leftPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.0"/>
 						<bottomPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
@@ -153,7 +153,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jumlah_defsign_rek1})]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField isBlankWhenNull="true">
 					<reportElement x="0" y="0" width="63" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
@@ -165,7 +165,7 @@
 						<font size="9" isBold="true"/>
 					</textElement>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField isBlankWhenNull="true">
 					<reportElement x="63" y="0" width="384" height="14"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.25"/>
@@ -186,7 +186,7 @@
 		<groupFooter>
 			<band height="14">
 				<printWhenExpression><![CDATA[$F{level_id}=="5" && $V{rek1}=="6"]]></printWhenExpression>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField isBlankWhenNull="true">
 					<reportElement x="63" y="0" width="384" height="14"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.25"/>
@@ -199,7 +199,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{level_id}=="5" ? ($F{rek_kd}.substring( 0,3 )=="6.1" ? "Jumlah Penerimaan" : $F{rek_kd}.substring( 0,3 )=="6.2" ? "Jumlah Pengeluaran" : "") : ""]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField isBlankWhenNull="true">
 					<reportElement x="0" y="0" width="63" height="14"/>
 					<box>
 						<topPen lineWidth="0.25"/>
@@ -211,11 +211,11 @@
 						<font size="9" isBold="true"/>
 					</textElement>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement x="447" y="0" width="93" height="14"/>
+				<textField isBlankWhenNull="true">
+					<reportElement x="437" y="0" width="103" height="14"/>
 					<box rightPadding="1">
 						<topPen lineWidth="0.25"/>
-						<leftPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.0"/>
 						<bottomPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
@@ -255,9 +255,9 @@
 				<textFieldExpression><![CDATA[$F{rek_nm}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="447" y="0" width="93" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="437" y="0" width="103" height="14"/>
 				<box rightPadding="1">
-					<leftPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">

@@ -109,7 +109,7 @@
       <thead>
         <tr>
             <th>Index</th>
-            <th>No. Tagihan</th>
+            <th>No. Tagihan / NPD</th>
             <th>Jenis</th>
             <th>Tanggal</th>
             <th>Kegiatan</th>
@@ -117,6 +117,7 @@
             <th>Nilai</th>
             <th>Posting</th>
             <th>SPP</th>
+            <th>Pay</th>
         </tr>
       </thead>
       <tbody>
@@ -142,6 +143,7 @@
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
             "sAjaxSource"    : oTableUrl,
+            "bStateSave"     : true,
             "bServerSide"    : true,
             "bProcessing"    : true,           
             "sDom"           : '<"toolbar">lfrtip',
@@ -154,8 +156,8 @@
             "sPaginationType": "full_numbers",
 
             "lengthMenu": [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
+                [10, 25, 50, 100],
+                [10, 25, 50, 100]
             ],
             "aoColumnDefs": [{
                 "bSearchable": false,
@@ -164,7 +166,7 @@
             },{
                 "bSearchable": false,
                 "bSortable"  : false,
-                "aTargets"   : [3,4,6,7,8]
+                "aTargets"   : [3,4,6,7,8,9]
             },{
                 "bSearchable": true,
                 "bSortable"  : false,
@@ -207,6 +209,15 @@
                         return 'Y';
                     }
                 }
+            },{
+                "aTargets" : [9], // Column number which needs to be modified
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return 'N';
+                    } else if (data == "1") {
+                        return 'Y';
+                    }
+                }
             }],
             "aoColumns": [
                 null, {
@@ -221,6 +232,8 @@
                     "sWidth": "200px",
                 }, {
                     "sWidth": "70px",
+                }, {
+                    "sWidth": "20px", "class":"right"
                 }, {
                     "sWidth": "20px", "class":"right"
                 }, {

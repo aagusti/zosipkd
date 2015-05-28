@@ -25,21 +25,16 @@
             <label for="tanggal" class="control-label col-md-4" id="req-tanggal">
                     Tanggal</label>
             <div class="col-md-3">
-               <input id="tanggal" class="form-control" type="text" readonly 
+               <input id="tanggal" class="form-control" type="date" readonly 
                       value="${request.session['tanggal']}" name="tanggal">
             </div>
           </div>
       <script>
-      $('#tanggal').click(
-          function(){
-            if (!Modernizr.inputtypes['date'] ||
-                "date" != "date"){
-              $('#tanggal').pickadate({"selectMonths": true,
-                "submitFormat": "yyyy-mm-dd", 
-                "selectYears": true, "format": "yyyy-mm-dd"});
-            }
-          }
-      );
+      $('#tanggal').pickadate({"selectMonths": true,
+        "submitFormat": "yyyy-mm-dd", 
+        "selectYears": true, 
+        "format": "yyyy-mm-dd",
+        });
       
       
       $('#tanggal').change(function(){
@@ -207,6 +202,7 @@
         oTable = $('#table1').dataTable({
           "sDom"           : '<"toolbar">lfrtip',
           "sAjaxSource"    : oTableUrl,
+          "bStateSave"     : true,
           "bServerSide"    : true,
           "bProcessing"    : true,
           "bScrollCollapse": true,

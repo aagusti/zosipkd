@@ -69,7 +69,7 @@
             <tr>
                 <th>ID</th>
                 <th>Rekening</th>
-                <th>No. Urut</th>
+                <th>No. Item</th>
                 <th>Uraian</th>
                 <th>Nilai</th>
                 <th>RekeningNm</th>
@@ -115,7 +115,7 @@
             <div class="col-md-3">
               <div id="item-no_urut">
                 <label for="no_urut" class="control-label col-md-3" id="req-no_urut">
-                        No.</label>
+                        No.Item</label>
                 <div class="col-md-9">
                    <input id="no_urut" class=" form-control " type="text" value="" name="no_urut">
                 </div>
@@ -270,6 +270,7 @@
         oTable = $('#table1').dataTable({
           "sDom"           : '<"toolbar">lfrtip',
           "sAjaxSource"    : oTableUrl,
+          "bStateSave"     : true,
           "bServerSide"    : true,
           "bProcessing"    : true,
           "bScrollCollapse": true,

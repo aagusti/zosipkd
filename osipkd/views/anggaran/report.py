@@ -127,8 +127,6 @@ class ViewAnggaranLap(BaseViews):
 
         row = DBSession.query(Tahun.status_apbd).filter(Tahun.tahun==self.tahun).first()
         self.session['status_apbd'] = row and row[0] or 0
-
-
         self.status_apbd =  'status_apbd' in self.session and self.session['status_apbd'] or 0        
         #self.status_apbd_nm =  status_apbd[str(self.status_apbd)]        
         
@@ -696,7 +694,7 @@ class ViewAnggaranLap(BaseViews):
                    Urusan.nama.label('urusan_nm'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
                    Program.kode.label('program_kd'), Program.nama.label('program_nm'),
                    Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
-                   KegiatanSub.sdana, KegiatanSub.lokasi, KegiatanSub.id,
+                   KegiatanItem.sdana, KegiatanSub.lokasi, KegiatanSub.id,
                    Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
                    KegiatanItem.no_urut, KegiatanItem.nama.label('item_nm'), KegiatanItem.vol_1_1.label('volume1'), KegiatanItem.sat_1_1.label('satuan1'), 
                    KegiatanItem.vol_1_2.label('volume2'), KegiatanItem.sat_1_2.label('satuan2'), KegiatanItem.hsat_1.label('harga'), 
@@ -713,7 +711,7 @@ class ViewAnggaranLap(BaseViews):
                    Urusan.nama.label('urusan_nm'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
                    Program.kode.label('program_kd'), Program.nama.label('program_nm'),
                    Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
-                   KegiatanSub.sdana, KegiatanSub.lokasi, KegiatanSub.id,
+                   KegiatanItem.sdana, KegiatanSub.lokasi, KegiatanSub.id,
                    Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
                    KegiatanItem.no_urut, KegiatanItem.nama.label('item_nm'), KegiatanItem.vol_1_1.label('volume1'), KegiatanItem.sat_1_1.label('satuan1'), 
                    KegiatanItem.vol_1_2.label('volume2'), KegiatanItem.sat_1_2.label('satuan2'), KegiatanItem.hsat_1.label('harga'), 
@@ -727,6 +725,33 @@ class ViewAnggaranLap(BaseViews):
                    ).order_by(KegiatanSub.tahun_id, Urusan.kode, Unit.kode, Program.kode, Kegiatan.kode, KegiatanSub.id, Rekening.kode, KegiatanItem.no_urut)
                    
             generator = r1041Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+            
+        ## BL RKA Jadwal
+        elif url_dict['act']=='2212' :
+            #pid = self.request.params['id']
+            query = DBSession.query(Unit.nama.label('unit_nm'), Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                   KegiatanSub.id.label('kegiatan_sub_id'), KegiatanItem.no_urut, KegiatanItem.nama.label('item_nm'),
+                   KegiatanSub.unit_id, Unit.kode.label('unit_kd'),
+                   KegiatanItem.mulai, KegiatanItem.selesai,
+                   (KegiatanItem.bln01+KegiatanItem.bln02+KegiatanItem.bln03).label('twl1'), 
+                   (KegiatanItem.bln04+KegiatanItem.bln05+KegiatanItem.bln06).label('twl2'), 
+                   (KegiatanItem.bln07+KegiatanItem.bln08+KegiatanItem.bln09).label('twl3'), 
+                   (KegiatanItem.bln10+KegiatanItem.bln11+KegiatanItem.bln12).label('twl4'), 
+                   Tahun.tanggal_1.label('tanggal')
+                   ).filter(KegiatanSub.unit_id==Unit.id, Kegiatan.id==KegiatanSub.kegiatan_id, 
+                     KegiatanSub.id==KegiatanItem.kegiatan_sub_id, Tahun.id==KegiatanSub.tahun_id,
+                     KegiatanSub.tahun_id==self.session['tahun'],
+                     KegiatanSub.unit_id==self.session['unit_id'], 
+                     KegiatanSub.id==self.request.params['id']
+                   ).order_by(Kegiatan.kode, KegiatanItem.no_urut)
+                   
+            generator = r1042Generator()
             pdf = generator.generate(query)
             response=req.response
             response.content_type="application/pdf"
@@ -1154,7 +1179,7 @@ class ViewAnggaranLap(BaseViews):
                    Urusan.nama.label('urusan_nm'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
                    Program.kode.label('program_kd'), Program.nama.label('program_nm'),
                    Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
-                   KegiatanSub.sdana, KegiatanSub.lokasi, KegiatanSub.id,
+                   KegiatanItem.sdana, KegiatanSub.lokasi, KegiatanSub.id,
                    Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
                    KegiatanItem.no_urut, KegiatanItem.nama.label('item_nm'), KegiatanItem.vol_2_1.label('volume1'), KegiatanItem.sat_2_1.label('satuan1'), 
                    KegiatanItem.vol_2_2.label('volume2'), KegiatanItem.sat_2_2.label('satuan2'), KegiatanItem.hsat_2.label('harga'), 
@@ -1172,7 +1197,7 @@ class ViewAnggaranLap(BaseViews):
                    Urusan.nama.label('urusan_nm'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
                    Program.kode.label('program_kd'), Program.nama.label('program_nm'),
                    Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
-                   KegiatanSub.sdana, KegiatanSub.lokasi, KegiatanSub.id,
+                   KegiatanItem.sdana, KegiatanSub.lokasi, KegiatanSub.id,
                    Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
                    KegiatanItem.no_urut, KegiatanItem.nama.label('item_nm'), KegiatanItem.vol_2_1.label('volume1'), KegiatanItem.sat_2_1.label('satuan1'), 
                    KegiatanItem.vol_2_2.label('volume2'), KegiatanItem.sat_2_2.label('satuan2'), KegiatanItem.hsat_2.label('harga'), 
@@ -1195,6 +1220,33 @@ class ViewAnggaranLap(BaseViews):
             response.write(pdf)
             return response
 
+        ## BL DPA Jadwal
+        elif url_dict['act']=='2212' :
+            #pid = self.request.params['id']
+            query = DBSession.query(Unit.nama.label('unit_nm'), Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                   KegiatanSub.id.label('kegiatan_sub_id'), KegiatanItem.no_urut, KegiatanItem.nama.label('item_nm'),
+                   KegiatanSub.unit_id, Unit.kode.label('unit_kd'),
+                   KegiatanItem.mulai, KegiatanItem.selesai,
+                   (KegiatanItem.bln01+KegiatanItem.bln02+KegiatanItem.bln03).label('twl1'), 
+                   (KegiatanItem.bln04+KegiatanItem.bln05+KegiatanItem.bln06).label('twl2'), 
+                   (KegiatanItem.bln07+KegiatanItem.bln08+KegiatanItem.bln09).label('twl3'), 
+                   (KegiatanItem.bln10+KegiatanItem.bln11+KegiatanItem.bln12).label('twl4'), 
+                   Tahun.tanggal_2.label('tanggal')
+                   ).filter(KegiatanSub.unit_id==Unit.id, Kegiatan.id==KegiatanSub.kegiatan_id, 
+                     KegiatanSub.id==KegiatanItem.kegiatan_sub_id, Tahun.id==KegiatanSub.tahun_id,
+                     KegiatanSub.tahun_id==self.session['tahun'],
+                     KegiatanSub.unit_id==self.session['unit_id'], 
+                     KegiatanSub.id==self.request.params['id']
+                   ).order_by(Kegiatan.kode, KegiatanItem.no_urut)
+                   
+            generator = r1042Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+		
        ## Biaya DPA
         elif url_dict['act']=='3' :
             subq1 = DBSession.query(Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
@@ -1624,7 +1676,7 @@ class ViewAnggaranLap(BaseViews):
                    Urusan.nama.label('urusan_nm'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
                    Program.kode.label('program_kd'), Program.nama.label('program_nm'),
                    Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
-                   KegiatanSub.sdana, KegiatanSub.lokasi, KegiatanSub.id,
+                   KegiatanItem.sdana, KegiatanSub.lokasi, KegiatanSub.id,
                    Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
                    KegiatanItem.no_urut, KegiatanItem.nama.label('item_nm'), 
                    Tahun.tanggal_3.label('tanggal'),                 
@@ -1645,7 +1697,7 @@ class ViewAnggaranLap(BaseViews):
                    Urusan.nama.label('urusan_nm'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
                    Program.kode.label('program_kd'), Program.nama.label('program_nm'),
                    Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
-                   KegiatanSub.sdana, KegiatanSub.lokasi, KegiatanSub.id,
+                   KegiatanItem.sdana, KegiatanSub.lokasi, KegiatanSub.id,
                    Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
                    KegiatanItem.no_urut, KegiatanItem.nama.label('item_nm'), 
                    Tahun.tanggal_3.label('tanggal'),                 
@@ -1670,6 +1722,33 @@ class ViewAnggaranLap(BaseViews):
             response.write(pdf)
             return response
 
+        ## BL RPKA Jadwal
+        elif url_dict['act']=='2212' :
+            #pid = self.request.params['id']
+            query = DBSession.query(Unit.nama.label('unit_nm'), Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                   KegiatanSub.id.label('kegiatan_sub_id'), KegiatanItem.no_urut, KegiatanItem.nama.label('item_nm'),
+                   KegiatanSub.unit_id, Unit.kode.label('unit_kd'),
+                   KegiatanItem.mulai, KegiatanItem.selesai,
+                   (KegiatanItem.bln01+KegiatanItem.bln02+KegiatanItem.bln03).label('twl1'), 
+                   (KegiatanItem.bln04+KegiatanItem.bln05+KegiatanItem.bln06).label('twl2'), 
+                   (KegiatanItem.bln07+KegiatanItem.bln08+KegiatanItem.bln09).label('twl3'), 
+                   (KegiatanItem.bln10+KegiatanItem.bln11+KegiatanItem.bln12).label('twl4'), 
+                   Tahun.tanggal_3.label('tanggal')
+                   ).filter(KegiatanSub.unit_id==Unit.id, Kegiatan.id==KegiatanSub.kegiatan_id, 
+                     KegiatanSub.id==KegiatanItem.kegiatan_sub_id, Tahun.id==KegiatanSub.tahun_id,
+                     KegiatanSub.tahun_id==self.session['tahun'],
+                     KegiatanSub.unit_id==self.session['unit_id'], 
+                     KegiatanSub.id==self.request.params['id']
+                   ).order_by(Kegiatan.kode, KegiatanItem.no_urut)
+                   
+            generator = r1042Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+		
         ## Biaya RPKA
         elif url_dict['act']=='3' :
             subq1 = DBSession.query(Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
@@ -2112,7 +2191,7 @@ class ViewAnggaranLap(BaseViews):
                    Urusan.nama.label('urusan_nm'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
                    Program.kode.label('program_kd'), Program.nama.label('program_nm'),
                    Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
-                   KegiatanSub.sdana, KegiatanSub.lokasi, KegiatanSub.id,
+                   KegiatanItem.sdana, KegiatanSub.lokasi, KegiatanSub.id,
                    Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
                    KegiatanItem.no_urut, KegiatanItem.nama.label('item_nm'), 
                    Tahun.tanggal_4.label('tanggal'),                 
@@ -2133,7 +2212,7 @@ class ViewAnggaranLap(BaseViews):
                    Urusan.nama.label('urusan_nm'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
                    Program.kode.label('program_kd'), Program.nama.label('program_nm'),
                    Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
-                   KegiatanSub.sdana, KegiatanSub.lokasi, KegiatanSub.id,
+                   KegiatanItem.sdana, KegiatanSub.lokasi, KegiatanSub.id,
                    Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'),
                    KegiatanItem.no_urut, KegiatanItem.nama.label('item_nm'), 
                    Tahun.tanggal_4.label('tanggal'),                 
@@ -2158,7 +2237,34 @@ class ViewAnggaranLap(BaseViews):
             response.write(pdf)
             return response
 
-        ## Biaya DPPA
+        ## BL DPPA Jadwal
+        elif url_dict['act']=='2212' :
+            #pid = self.request.params['id']
+            query = DBSession.query(Unit.nama.label('unit_nm'), Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
+                   KegiatanSub.id.label('kegiatan_sub_id'), KegiatanItem.no_urut, KegiatanItem.nama.label('item_nm'),
+                   KegiatanSub.unit_id, Unit.kode.label('unit_kd'),
+                   KegiatanItem.mulai, KegiatanItem.selesai,
+                   (KegiatanItem.bln01+KegiatanItem.bln02+KegiatanItem.bln03).label('twl1'), 
+                   (KegiatanItem.bln04+KegiatanItem.bln05+KegiatanItem.bln06).label('twl2'), 
+                   (KegiatanItem.bln07+KegiatanItem.bln08+KegiatanItem.bln09).label('twl3'), 
+                   (KegiatanItem.bln10+KegiatanItem.bln11+KegiatanItem.bln12).label('twl4'), 
+                   Tahun.tanggal_4.label('tanggal')
+                   ).filter(KegiatanSub.unit_id==Unit.id, Kegiatan.id==KegiatanSub.kegiatan_id, 
+                     KegiatanSub.id==KegiatanItem.kegiatan_sub_id, Tahun.id==KegiatanSub.tahun_id,
+                     KegiatanSub.tahun_id==self.session['tahun'],
+                     KegiatanSub.unit_id==self.session['unit_id'], 
+                     KegiatanSub.id==self.request.params['id']
+                   ).order_by(Kegiatan.kode, KegiatanItem.no_urut)
+                   
+            generator = r1042Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+		
+## Biaya DPPA
         elif url_dict['act']=='3' :
             subq1 = DBSession.query(Rekening.kode.label('subrek_kd'),Rekening.nama.label('subrek_nm'),
                 (KegiatanItem.vol_3_1* KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('jml3'),
@@ -3510,7 +3616,7 @@ class r100Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "unit_id").text = unicode(row.unit_id)
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_greeting, "jabatan").text = row2.jabatan
                ET.SubElement(xml_greeting, "pa_nama").text = row2.pa_nama
@@ -3544,7 +3650,7 @@ class r101Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_a, "jabatan").text = row2.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row2.pa_nama
@@ -3585,7 +3691,7 @@ class r1011Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_a, "jabatan").text = row2.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row2.pa_nama
@@ -3618,7 +3724,7 @@ class r102Generator(JasperGenerator):
             ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_a, "jabatan").text = row2.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row2.pa_nama
@@ -3655,7 +3761,7 @@ class r103Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "tanggal").text = unicode(row.tanggal)
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_greeting, "jabatan").text = row2.jabatan
                ET.SubElement(xml_greeting, "pa_nama").text = row2.pa_nama
@@ -3695,7 +3801,7 @@ class r104Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
             rowttd = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row4 in rowttd :
                ET.SubElement(xml_a, "jabatan").text = row4.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row4.pa_nama
@@ -3775,7 +3881,7 @@ class r1041Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "customer").text = customer
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_a, "jabatan").text = row2.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row2.pa_nama
@@ -3783,6 +3889,58 @@ class r1041Generator(JasperGeneratorWithSubreport):
             
         return self.root
 
+class r1042Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/R1222.jrxml')
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/R1222_subreport1.jrxml'))
+        self.xpath = '/apbd/kegiatan'
+        self.root = ET.Element('apbd')
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_a  =  ET.SubElement(self.root, 'kegiatan')
+            ET.SubElement(xml_a, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_a, "kegiatan_kd").text = row.kegiatan_kd
+            ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
+            ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.kegiatan_sub_id)
+            ET.SubElement(xml_a, "no_urut").text = unicode(row.no_urut)
+            ET.SubElement(xml_a, "item_nm").text = row.item_nm
+            ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
+            ET.SubElement(xml_a, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_a, "twl1").text = unicode(row.twl1)
+            ET.SubElement(xml_a, "twl2").text = unicode(row.twl2)
+            ET.SubElement(xml_a, "twl3").text = unicode(row.twl3)
+            ET.SubElement(xml_a, "twl4").text = unicode(row.twl4)
+            ET.SubElement(xml_a, "mulai").text = unicode(row.mulai)
+            ET.SubElement(xml_a, "selesai").text = unicode(row.selesai)
+            ET.SubElement(xml_a, "tanggal").text = unicode(row.tanggal)
+            ET.SubElement(xml_a, "customer").text = customer
+            rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
+               ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
+            for row2 in rows :
+               ET.SubElement(xml_a, "jabatan").text = row2.jabatan
+               ET.SubElement(xml_a, "pa_nama").text = row2.pa_nama
+               ET.SubElement(xml_a, "pa_nip").text = row2.pa_nip
+               
+            rowitem = DBSession.query(Kegiatan.kode.label('keg_kd'), Kegiatan.nama.label('keg_nm'),
+                   KegiatanItem.no_urut, KegiatanItem.nama.label('item_nm'),
+                   KegiatanItem.mulai, KegiatanItem.selesai          
+                   ).filter(Kegiatan.id==KegiatanSub.kegiatan_id, 
+                     KegiatanSub.id==KegiatanItem.kegiatan_sub_id, 
+                     KegiatanSub.id==row.kegiatan_sub_id
+                   ).order_by(Kegiatan.kode, KegiatanItem.no_urut)
+            for row2 in rowitem :
+                xml_b = ET.SubElement(xml_a, "item")
+                ET.SubElement(xml_b, "keg_kd").text =row2.keg_kd
+                ET.SubElement(xml_b, "keg_nm").text =row2.keg_nm
+                ET.SubElement(xml_b, "no_urut").text =unicode(row2.no_urut)
+                ET.SubElement(xml_b, "item_nm").text =row2.item_nm
+                ET.SubElement(xml_b, "mulai").text =unicode(row2.mulai)
+                ET.SubElement(xml_b, "selesai").text =unicode(row2.selesai)
+        return self.root
+        
 class r105Generator(JasperGenerator):
     def __init__(self):
         super(r105Generator, self).__init__()
@@ -3813,7 +3971,7 @@ class r105Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "unit_id").text = unicode(row.unit_id)
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_greeting, "jabatan").text = row2.jabatan
                ET.SubElement(xml_greeting, "pa_nama").text = row2.pa_nama
@@ -3846,7 +4004,7 @@ class r106Generator(JasperGenerator):
             ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_a, "jabatan").text = row2.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row2.pa_nama
@@ -3879,7 +4037,7 @@ class r107Generator(JasperGenerator):
             ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_a, "jabatan").text = row2.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row2.pa_nama
@@ -3910,7 +4068,7 @@ class r200Generator(JasperGeneratorWithSubreport):
             
             rowttd = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row4 in rowttd :
                ET.SubElement(xml_a, "jabatan").text = row4.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row4.pa_nama
@@ -3996,7 +4154,7 @@ class r201Generator(JasperGenerator):
             ET.SubElement(xml_a, "logo").text = logo
             rowttd = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row4 in rowttd :
                ET.SubElement(xml_a, "jabatan").text = row4.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row4.pa_nama
@@ -4039,7 +4197,7 @@ class r2011Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "customer").text = customer
             rowttd = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row4 in rowttd :
                ET.SubElement(xml_a, "jabatan").text = row4.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row4.pa_nama
@@ -4079,7 +4237,7 @@ class r202Generator(JasperGenerator):
             ET.SubElement(xml_a, "logo").text = logo
             rowttd = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row4 in rowttd :
                ET.SubElement(xml_a, "jabatan").text = row4.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row4.pa_nama
@@ -4117,7 +4275,7 @@ class r203Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "customer").text = customer
             rowttd = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row4 in rowttd :
                ET.SubElement(xml_greeting, "jabatan").text = row4.jabatan
                ET.SubElement(xml_greeting, "pa_nama").text = row4.pa_nama
@@ -4160,7 +4318,7 @@ class r204Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "customer").text = customer
             rowttd = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row5 in rowttd :
                ET.SubElement(xml_a, "jabatan").text = row5.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row5.pa_nama
@@ -4261,7 +4419,7 @@ class r2041Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "customer").text = customer
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_a, "jabatan").text = row2.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row2.pa_nama
@@ -4300,7 +4458,7 @@ class r205Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "unit_id").text = unicode(row.unit_id)
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_greeting, "jabatan").text = row2.jabatan
                ET.SubElement(xml_greeting, "pa_nama").text = row2.pa_nama
@@ -4339,7 +4497,7 @@ class r206Generator(JasperGenerator):
             ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_a, "jabatan").text = row2.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row2.pa_nama
@@ -4378,7 +4536,7 @@ class r207Generator(JasperGenerator):
             ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_a, "jabatan").text = row2.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row2.pa_nama
@@ -4408,7 +4566,7 @@ class r300Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "tanggal").text = unicode(row.tanggal)
             rowttd = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row4 in rowttd :
                ET.SubElement(xml_a, "jabatan").text = row4.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row4.pa_nama
@@ -4472,6 +4630,11 @@ class r301Generator(JasperGenerator):
 
     def generate_xml(self, tobegreeted):
         for row in tobegreeted:
+            if row.jumlah1==0 : 
+               persen = 0; 
+            else :
+               persen = (row.jumlah2-row.jumlah1)*100/row.jumlah1;
+               
             xml_a  =  ET.SubElement(self.root, 'rekening')
             ET.SubElement(xml_a, "rek_kd").text = row.rek_kd
             ET.SubElement(xml_a, "rek_nm").text = row.rek_nm
@@ -4489,11 +4652,11 @@ class r301Generator(JasperGenerator):
             ET.SubElement(xml_a, "jumlah1").text = unicode(row.jumlah1)
             ET.SubElement(xml_a, "jumlah2").text = unicode(row.jumlah2)
             ET.SubElement(xml_a, "selisih").text = unicode(row.jumlah2-row.jumlah1)
-            ET.SubElement(xml_a, "persen").text = unicode((row.jumlah2-row.jumlah1)*100/row.jumlah1)
+            ET.SubElement(xml_a, "persen").text = unicode(persen)
             ET.SubElement(xml_a, "customer").text = customer
             rowttd = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row4 in rowttd :
                ET.SubElement(xml_a, "jabatan").text = row4.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row4.pa_nama
@@ -4541,7 +4704,7 @@ class r3011Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "customer").text = customer
             rowttd = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row4 in rowttd :
                ET.SubElement(xml_a, "jabatan").text = row4.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row4.pa_nama
@@ -4557,6 +4720,11 @@ class r302Generator(JasperGenerator):
 
     def generate_xml(self, tobegreeted):
         for row in tobegreeted:
+            if row.jumlah1==0 : 
+               persen = 0; 
+            else :
+               persen = (row.jumlah2-row.jumlah1)*100/row.jumlah1;
+          
             xml_a  =  ET.SubElement(self.root, 'rekening')
             ET.SubElement(xml_a, "rek_kd").text = row.rek_kd
             ET.SubElement(xml_a, "rek_nm").text = row.rek_nm
@@ -4573,8 +4741,15 @@ class r302Generator(JasperGenerator):
             ET.SubElement(xml_a, "jumlah1").text = unicode(row.jumlah1)
             ET.SubElement(xml_a, "jumlah2").text = unicode(row.jumlah2)
             ET.SubElement(xml_a, "selisih").text = unicode(row.jumlah2-row.jumlah1)
-            ET.SubElement(xml_a, "persen").text = unicode((row.jumlah2-row.jumlah1)*100/row.jumlah1)
+            ET.SubElement(xml_a, "persen").text = unicode(persen)
             ET.SubElement(xml_a, "customer").text = customer
+            rowttd = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
+               ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
+            for row4 in rowttd :
+               ET.SubElement(xml_a, "jabatan").text = row4.jabatan
+               ET.SubElement(xml_a, "pa_nama").text = row4.pa_nama
+               ET.SubElement(xml_a, "pa_nip").text = row4.pa_nip
         return self.root
 
 class r303Generator(JasperGenerator):
@@ -4608,7 +4783,7 @@ class r303Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "tanggal").text = unicode(row.tanggal)
             rowttd = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row4 in rowttd :
                ET.SubElement(xml_greeting, "jabatan").text = row4.jabatan
                ET.SubElement(xml_greeting, "pa_nama").text = row4.pa_nama
@@ -4621,7 +4796,7 @@ class r304Generator(JasperGeneratorWithSubreport):
         self.subreportlist = []
         self.subreportlist.append(get_rpath('apbd/R3221_subreport1.jrxml'))
         self.subreportlist.append(get_rpath('apbd/R3221_subreport2.jrxml'))
-        self.subreportlist.append(get_rpath('apbd/R3221_subreport3.jrxml'))
+        #self.subreportlist.append(get_rpath('apbd/R3221_subreport3.jrxml'))
         print self.mainreport,self.subreportlist
         self.xpath = '/apbd/kegiatan'
         self.root = ET.Element('apbd')
@@ -4650,7 +4825,7 @@ class r304Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "customer").text = customer
             rowttd = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row4 in rowttd :
                ET.SubElement(xml_a, "jabatan").text = row4.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row4.pa_nama
@@ -4747,7 +4922,7 @@ class r3041Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "customer").text = customer
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_a, "jabatan").text = row2.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row2.pa_nama
@@ -4788,7 +4963,7 @@ class r305Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "unit_id").text = unicode(row.unit_id)
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_greeting, "jabatan").text = row2.jabatan
                ET.SubElement(xml_greeting, "pa_nama").text = row2.pa_nama
@@ -4804,6 +4979,11 @@ class r306Generator(JasperGenerator):
 
     def generate_xml(self, tobegreeted):
         for row in tobegreeted:
+            if row.jumlah1==0 : 
+               persen = 0; 
+            else :
+               persen = (row.jumlah2-row.jumlah1)*100/row.jumlah1;
+               
             xml_a  =  ET.SubElement(self.root, 'rekening')
             ET.SubElement(xml_a, "rek_kd").text = row.rek_kd
             ET.SubElement(xml_a, "rek_nm").text = row.rek_nm
@@ -4820,12 +5000,12 @@ class r306Generator(JasperGenerator):
             ET.SubElement(xml_a, "jumlah1").text = unicode(row.jumlah1)
             ET.SubElement(xml_a, "jumlah2").text = unicode(row.jumlah2)
             ET.SubElement(xml_a, "selisih").text = unicode(row.jumlah2-row.jumlah1)
-            ET.SubElement(xml_a, "persen").text = unicode((row.jumlah2-row.jumlah1)*100/row.jumlah1)
+            ET.SubElement(xml_a, "persen").text = unicode(persen)
             ET.SubElement(xml_a, "customer").text = customer
             ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_a, "jabatan").text = row2.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row2.pa_nama
@@ -4841,6 +5021,11 @@ class r307Generator(JasperGenerator):
 
     def generate_xml(self, tobegreeted):
         for row in tobegreeted:
+            if row.jumlah1==0 : 
+               persen = 0; 
+            else :
+               persen = (row.jumlah2-row.jumlah1)*100/row.jumlah1;
+          
             xml_a  =  ET.SubElement(self.root, 'rekening')
             ET.SubElement(xml_a, "rek_kd").text = row.rek_kd
             ET.SubElement(xml_a, "rek_nm").text = row.rek_nm
@@ -4857,12 +5042,12 @@ class r307Generator(JasperGenerator):
             ET.SubElement(xml_a, "jumlah1").text = unicode(row.jumlah1)
             ET.SubElement(xml_a, "jumlah2").text = unicode(row.jumlah2)
             ET.SubElement(xml_a, "selisih").text = unicode(row.jumlah2-row.jumlah1)
-            ET.SubElement(xml_a, "persen").text = unicode((row.jumlah2-row.jumlah1)*100/row.jumlah1)
+            ET.SubElement(xml_a, "persen").text = unicode(persen)
             ET.SubElement(xml_a, "customer").text = customer
             ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_a, "jabatan").text = row2.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row2.pa_nama
@@ -4892,7 +5077,7 @@ class r400Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "customer").text = customer
             rowttd = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row4 in rowttd :
                ET.SubElement(xml_a, "jabatan").text = row4.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row4.pa_nama
@@ -4956,6 +5141,11 @@ class r401Generator(JasperGenerator):
 
     def generate_xml(self, tobegreeted):
         for row in tobegreeted:
+            if row.jumlah1==0 : 
+               persen = 0; 
+            else :
+               persen = (row.jumlah2-row.jumlah1)*100/row.jumlah1;
+               
             xml_a  =  ET.SubElement(self.root, 'rekening')
             ET.SubElement(xml_a, "rek_kd").text = row.rek_kd
             ET.SubElement(xml_a, "rek_nm").text = row.rek_nm
@@ -4973,7 +5163,7 @@ class r401Generator(JasperGenerator):
             ET.SubElement(xml_a, "jumlah1").text = unicode(row.jumlah1)
             ET.SubElement(xml_a, "jumlah2").text = unicode(row.jumlah2)
             ET.SubElement(xml_a, "selisih").text = unicode(row.jumlah2-row.jumlah1)
-            ET.SubElement(xml_a, "persen").text = unicode((row.jumlah2-row.jumlah1)*100/row.jumlah1)
+            ET.SubElement(xml_a, "persen").text = unicode(persen)
             ET.SubElement(xml_a, "trw1").text = unicode(row.trw1)
             ET.SubElement(xml_a, "trw2").text = unicode(row.trw2)
             ET.SubElement(xml_a, "trw3").text = unicode(row.trw3)
@@ -4982,7 +5172,7 @@ class r401Generator(JasperGenerator):
             ET.SubElement(xml_a, "logo").text = logo
             rowttd = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row4 in rowttd :
                ET.SubElement(xml_a, "jabatan").text = row4.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row4.pa_nama
@@ -5030,7 +5220,7 @@ class r4011Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "customer").text = customer
             rowttd = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row4 in rowttd :
                ET.SubElement(xml_a, "jabatan").text = row4.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row4.pa_nama
@@ -5046,6 +5236,11 @@ class r402Generator(JasperGenerator):
 
     def generate_xml(self, tobegreeted):
         for row in tobegreeted:
+            if row.jumlah1==0 : 
+               persen = 0; 
+            else :
+               persen = (row.jumlah2-row.jumlah1)*100/row.jumlah1;
+               
             xml_a  =  ET.SubElement(self.root, 'rekening')
             ET.SubElement(xml_a, "rek_kd").text = row.rek_kd
             ET.SubElement(xml_a, "rek_nm").text = row.rek_nm
@@ -5062,7 +5257,7 @@ class r402Generator(JasperGenerator):
             ET.SubElement(xml_a, "jumlah1").text = unicode(row.jumlah1)
             ET.SubElement(xml_a, "jumlah2").text = unicode(row.jumlah2)
             ET.SubElement(xml_a, "selisih").text = unicode(row.jumlah2-row.jumlah1)
-            ET.SubElement(xml_a, "persen").text = unicode((row.jumlah2-row.jumlah1)*100/row.jumlah1)
+            ET.SubElement(xml_a, "persen").text = unicode(persen)
             ET.SubElement(xml_a, "trw1").text = unicode(row.trw1)
             ET.SubElement(xml_a, "trw2").text = unicode(row.trw2)
             ET.SubElement(xml_a, "trw3").text = unicode(row.trw3)
@@ -5072,7 +5267,7 @@ class r402Generator(JasperGenerator):
             ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
             rowttd = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row4 in rowttd :
                ET.SubElement(xml_a, "jabatan").text = row4.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row4.pa_nama
@@ -5108,7 +5303,7 @@ class r403Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "customer").text = customer
             rowttd = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row4 in rowttd :
                ET.SubElement(xml_greeting, "jabatan").text = row4.jabatan
                ET.SubElement(xml_greeting, "pa_nama").text = row4.pa_nama
@@ -5151,7 +5346,7 @@ class r404Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "customer").text = customer
             rowttd = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row5 in rowttd :
                ET.SubElement(xml_a, "jabatan").text = row5.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row5.pa_nama
@@ -5262,7 +5457,7 @@ class r4041Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "customer").text = customer
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_a, "jabatan").text = row2.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row2.pa_nama
@@ -5303,7 +5498,7 @@ class r405Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "unit_id").text = unicode(row.unit_id)
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_greeting, "jabatan").text = row2.jabatan
                ET.SubElement(xml_greeting, "pa_nama").text = row2.pa_nama
@@ -5319,6 +5514,11 @@ class r406Generator(JasperGenerator):
 
     def generate_xml(self, tobegreeted):
         for row in tobegreeted:
+            if row.jumlah1==0 : 
+               persen = 0; 
+            else :
+               persen = (row.jumlah2-row.jumlah1)*100/row.jumlah1;
+               
             xml_a  =  ET.SubElement(self.root, 'rekening')
             ET.SubElement(xml_a, "rek_kd").text = row.rek_kd
             ET.SubElement(xml_a, "rek_nm").text = row.rek_nm
@@ -5335,7 +5535,7 @@ class r406Generator(JasperGenerator):
             ET.SubElement(xml_a, "jumlah1").text = unicode(row.jumlah1)
             ET.SubElement(xml_a, "jumlah2").text = unicode(row.jumlah2)
             ET.SubElement(xml_a, "selisih").text = unicode(row.jumlah2-row.jumlah1)
-            ET.SubElement(xml_a, "persen").text = unicode((row.jumlah2-row.jumlah1)*100/row.jumlah1)
+            ET.SubElement(xml_a, "persen").text = unicode(persen)
             ET.SubElement(xml_a, "trw1").text = unicode(row.trw1)
             ET.SubElement(xml_a, "trw2").text = unicode(row.trw2)
             ET.SubElement(xml_a, "trw3").text = unicode(row.trw3)
@@ -5345,7 +5545,7 @@ class r406Generator(JasperGenerator):
             ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_a, "jabatan").text = row2.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row2.pa_nama
@@ -5361,6 +5561,11 @@ class r407Generator(JasperGenerator):
 
     def generate_xml(self, tobegreeted):
         for row in tobegreeted:
+            if row.jumlah1==0 : 
+               persen = 0; 
+            else :
+               persen = (row.jumlah2-row.jumlah1)*100/row.jumlah1;
+               
             xml_a  =  ET.SubElement(self.root, 'rekening')
             ET.SubElement(xml_a, "rek_kd").text = row.rek_kd
             ET.SubElement(xml_a, "rek_nm").text = row.rek_nm
@@ -5377,7 +5582,7 @@ class r407Generator(JasperGenerator):
             ET.SubElement(xml_a, "jumlah1").text = unicode(row.jumlah1)
             ET.SubElement(xml_a, "jumlah2").text = unicode(row.jumlah2)
             ET.SubElement(xml_a, "selisih").text = unicode(row.jumlah2-row.jumlah1)
-            ET.SubElement(xml_a, "persen").text = unicode((row.jumlah2-row.jumlah1)*100/row.jumlah1)
+            ET.SubElement(xml_a, "persen").text = unicode(persen)
             ET.SubElement(xml_a, "trw1").text = unicode(row.trw1)
             ET.SubElement(xml_a, "trw2").text = unicode(row.trw2)
             ET.SubElement(xml_a, "trw3").text = unicode(row.trw3)
@@ -5387,7 +5592,7 @@ class r407Generator(JasperGenerator):
             ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_a, "jabatan").text = row2.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row2.pa_nama
@@ -6302,7 +6507,7 @@ class r701Generator(JasperGenerator):
             ET.SubElement(xml_a, "unit_id").text = unicode(row.unit_id)
             rows = DBSession.query(Pejabat.uraian.label('jabatan'), Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_a, "jabatan").text = row2.jabatan
                ET.SubElement(xml_a, "pa_nama").text = row2.pa_nama

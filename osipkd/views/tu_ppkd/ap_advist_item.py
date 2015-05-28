@@ -57,11 +57,11 @@ class view_ap_advist_item(BaseViews):
                                    Spm.ap_spp_id==Spp.id,
                           ).group_by(AdvistItem.id, 
                                      AdvistItem.ap_sp2d_id,
-                                     Sp2d.kode.label('kode'),
-                                     Sp2d.tanggal.label('tanggal'),
-                                     Sp2d.nama.label('nama'),
-                                     Spp.nominal.label('nominal'),
-                                     Sp2d.no_validasi.label('no_validasi'),)
+                                     Sp2d.kode,
+                                     Sp2d.tanggal,
+                                     Sp2d.nama,
+                                     Spp.nominal,
+                                     Sp2d.no_validasi)
                 rowTable = DataTables(req, AdvistItem, query, columns)
                 return rowTable.output_result()
                 
@@ -93,11 +93,11 @@ class view_ap_advist_item(BaseViews):
                                    Sp2d.nama.ilike('%%%s%%' % cari))
                       ).group_by(AdvistItem.id, 
                                  AdvistItem.ap_sp2d_id,
-                                 Sp2d.kode.label('kode'),
-                                 Sp2d.tanggal.label('tanggal'),
-                                 Sp2d.nama.label('nama'),
-                                 Spp.nominal.label('nominal'),
-                                 Sp2d.no_validasi.label('no_validasi'),)
+                                 Sp2d.kode,
+                                 Sp2d.tanggal,
+                                 Sp2d.nama,
+                                 Spp.nominal,
+                                 Sp2d.no_validasi)
             rowTable = DataTables(req, AdvistItem, query, columns)
             return rowTable.output_result()
                 

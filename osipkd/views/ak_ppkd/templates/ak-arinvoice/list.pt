@@ -140,6 +140,7 @@
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
             "sAjaxSource"    : oTableUrl,
+            "bStateSave"     : true,
             "bServerSide"    : true,
             "bProcessing"    : true,           
             "sDom"           : '<"toolbar">lfrtip',
@@ -152,8 +153,8 @@
             "sPaginationType": "full_numbers",
 
             "lengthMenu": [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
+                [10, 25, 50, 100],
+                [10, 25, 50, 100]
             ],
             "aoColumnDefs": [
             {

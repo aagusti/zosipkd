@@ -34,10 +34,19 @@ SDANA = (
     ('DAU', 'DAU'),
     ('DAK', 'DAK'),
     ('PAD', 'PAD'),
-    ('APBD Provinsi', 'APBD Provinsi'),
+    #('APBD Provinsi', 'APBD Provinsi'),
+    ('APBD Banten', 'APBD Banten'),
+    ('APBD Non Banten', 'APBD Non Banten'),
     ('APBN', 'APBN'),
     ('LOAN', 'LOAN'),
+    ('Transfer Pusat', 'Transfer Pusat'),
     ('Bagi Hasil', 'Bagi Hasil'),
+    ('Cukai Rokok', 'Cukai Rokok'),
+    ('Dana Desa (ADD)', 'Dana Desa (ADD)'),
+    ('Kapitasi', 'Kapitasi'),
+    ('Dana Insentif Daerah (DID)', 'Dana Insentif Daerah (DID)'),
+    ('Retribusi BLUD', 'Retribusi BLUD'),
+    ('Lain-lain', 'Lain-lain'),
     )
     
 class view_ak_jurnal(BaseViews):
@@ -49,6 +58,7 @@ class view_ak_jurnal(BaseViews):
         params = req.params
         url_dict = req.matchdict
         kegiatan_sub_id =  url_dict['kegiatan_sub_id']
+        
         row = KegiatanSub.query_id(kegiatan_sub_id).filter(KegiatanSub.unit_id==ses['unit_id']).first()
         rek_head = 5
         return dict(project='OSIPKD', row = row, rek_head=rek_head)
@@ -63,7 +73,9 @@ class view_ak_jurnal(BaseViews):
                   (KegiatanItem.vol_1_1*KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('amount_1'),
                   (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('amount_2'),
                   (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('amount_3'),
-                  (KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('amount_4')).join(Rekening)
+                  (KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('amount_4'),
+                  KegiatanSub.disabled
+                  ).join(Rekening).join(KegiatanSub)
                   
     @view_config(route_name='ag-kegiatan-item-act', renderer='json',
                  permission='read')
@@ -72,6 +84,7 @@ class view_ak_jurnal(BaseViews):
         req = self.request
         params = req.params
         url_dict = req.matchdict
+        
         if url_dict['act']=='grid':
             ag_step_id = ses['ag_step_id']
             kegiatan_sub_id = 'kegiatan_sub_id' in params and params['kegiatan_sub_id'] or 0
@@ -83,6 +96,7 @@ class view_ak_jurnal(BaseViews):
             columns.append(ColumnDT('amount_%s' %ag_step_id, filter=self._number_format))
             columns.append(ColumnDT('rekening_nm'))
             columns.append(ColumnDT('rekening_id'))
+            columns.append(ColumnDT('disabled'))
             query = self.get_row_item().filter(KegiatanItem.kegiatan_sub_id==kegiatan_sub_id
                       ).order_by(Rekening.kode.asc())
             rowTable = DataTables(req, KegiatanItem,  query, columns)
@@ -194,6 +208,7 @@ class view_ak_jurnal(BaseViews):
         kegiatan_sub_id = 'kegiatan_sub_id' in params and params['kegiatan_sub_id'] or None
         rekening_id     = 'rekening_id' in params and params['rekening_id'] or None
         kegiatan_item_id = 'kegiatan_item_id' in params and params['kegiatan_item_id'] or None
+            
         if not kegiatan_item_id:
             row = KegiatanItem()
             row_dict = {}
@@ -223,6 +238,15 @@ class view_ak_jurnal(BaseViews):
             row_dict['hsat_4'] = amount 
             
         row.from_dict(row_dict)
+
+        ## Cek sudah Posting atau belum    
+        q = DBSession.query(KegiatanSub.disabled).filter(KegiatanSub.id==row_dict['kegiatan_sub_id'])
+        rowsub = q.first()
+        if rowsub.disabled:
+            return {'success':False, 'msg':'Data tidak dapat diupdate karena sudah Posting'}
+            #ses.flash('Data tidak dapat diupdate karena sudah diposting', 'error')
+            #return route_list(req, kegiatan_sub_id)
+        
         DBSession.add(row)
         DBSession.flush()
         return {"success": True, 'id': row.id, "msg":'Success Tambah Data'}
@@ -269,7 +293,7 @@ class AddSchema(colander.Schema):
     no_urut          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="No.Urut",
+                          title="No.Item",
                           )
     header_id        = colander.SchemaNode(
                           colander.String(),
@@ -393,13 +417,11 @@ class AddSchema(colander.Schema):
                           missing=colander.drop,
                           )
     mulai            = colander.SchemaNode(
-                          colander.String(),
-                          missing=colander.drop,
-                          )
+                        colander.Date(),
+                        missing = colander.drop)
     selesai          = colander.SchemaNode(
-                          colander.String(),
-                          missing=colander.drop,
-                          )
+                        colander.Date(),
+                        missing = colander.drop)
     bln01            = colander.SchemaNode(
                           colander.Integer(),
                           missing=colander.drop,
@@ -563,8 +585,11 @@ def save_request(values, request, row=None):
         
 def route_list(request, kegiatan_sub_id):
     kegiatan_sub_id
-    q = DBSession.query(Kegiatan.kode.label('kegiatan_kd')).join(KegiatanSub, KegiatanItem, Kegiatan).filter(Kegiatan.id==KegiatanSub.kegiatan_id, 
-                                                                                        KegiatanItem.kegiatan_sub_id==kegiatan_sub_id)
+    q = DBSession.query(Kegiatan.kode.label('kegiatan_kd')
+    #).join(KegiatanSub, KegiatanItem, Kegiatan
+    ).filter(Kegiatan.id==KegiatanSub.kegiatan_id, 
+    KegiatanItem.kegiatan_sub_id==KegiatanSub.id, 
+    KegiatanItem.kegiatan_sub_id==kegiatan_sub_id)
     rows = q.all()
     for k in rows:
         a =k[0]
@@ -591,6 +616,14 @@ def session_failed(request, session_name):
 def view_add(request):
     form = get_form(request, AddSchema)
     kegiatan_sub_id = request.matchdict['kegiatan_sub_id']
+    
+    ## Cek sudah Posting atau belum    
+    q = DBSession.query(KegiatanSub.disabled).filter(KegiatanSub.id==request.matchdict['kegiatan_sub_id'])
+    rowsub = q.first()
+    if rowsub.disabled:
+        request.session.flash('Data tidak dapat ditambah karena sudah Posting', 'error')
+        return route_list(request, kegiatan_sub_id)
+    
     ses = request.session
     rows = KegiatanSub.query_id(kegiatan_sub_id).filter(KegiatanSub.unit_id == ses['unit_id']).first()
     if request.POST:
@@ -636,29 +669,28 @@ def view_add(request):
             if ag_step_id==1:
                 if bln>rka1:
                     request.session.flash('Tidak boleh melebihi jumlah RKA', 'error')
-                    return HTTPFound(location=request.route_url('ag-kegiatan-item-add',kegiatan_sub_id=kegiatan_sub_id))
+                    return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
             elif ag_step_id==2:
-                if bln>dpa1:
-                    request.session.flash('Tidak boleh melebihi jumlah DPA', 'error')
-                    return HTTPFound(location=request.route_url('ag-kegiatan-item-add',kegiatan_sub_id=kegiatan_sub_id))
+                if bln!=dpa1:
+                    request.session.flash('Jumlah DPA dengan Rencana Biaya tidak sama', 'error')
+                    return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
             elif ag_step_id==3:
-                if bln>rdppa1:
-                    request.session.flash('Tidak boleh melebihi jumlah RDPPA', 'error')
-                    return HTTPFound(location=request.route_url('ag-kegiatan-item-add',kegiatan_sub_id=kegiatan_sub_id))
+                if bln!=rdppa1:
+                    request.session.flash('Jumlah RDPPA dengan Rencana Biaya tidak sama', 'error')
+                    return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
             elif ag_step_id==4:
-                if bln>dppa1:
-                    request.session.flash('Tidak boleh melebihi jumlah DPPA', 'error')
-                    return HTTPFound(location=request.route_url('ag-kegiatan-item-add',kegiatan_sub_id=kegiatan_sub_id))
+                if bln!=dppa1:
+                    request.session.flash('Jumlah pagu anggaran dengan Rencana Biaya tidak sama', 'error')
+                    return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
 
             #return dict(form=form.render(appstruct=controls_dicted))
             try:
                 c = form.validate(controls)
             except ValidationFailure, e:
                 return dict(form=form, row=rows, rek_head=5)
-                #request.session[SESS_ADD_FAILED] = e.render()               
-                #return HTTPFound(location=request.route_url('ag-kegiatan-item-add'))
             save_request(controls_dicted, request)
-            return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
+            #print "--------------------------",id
+            #return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=kegiatan_sub_id,pid=id))
         return route_list(request,kegiatan_sub_id)
     elif SESS_ADD_FAILED in request.session:
         del request.session[SESS_ADD_FAILED]
@@ -686,10 +718,26 @@ def view_edit(request):
     i=row.id
     if not row:
         return id_not_found(request,kegiatan_sub_id)
+        
+    ## Cek sudah Posting atau belum    
+    #q = DBSession.query(KegiatanSub.disabled).filter(KegiatanSub.id==request.matchdict['kegiatan_sub_id'])
+    #rowsub = q.first()
+    #if rowsub.disabled:
+    #    request.session.flash('Data sudah diposting', 'error')
+    #    return route_list(request, kegiatan_sub_id)
+    
     form = get_form(request, EditSchema)
     rows = KegiatanSub.query_id(kegiatan_sub_id).filter(KegiatanSub.unit_id==ses['unit_id']).first()
     if request.POST:
         if 'simpan' in request.POST:
+          
+            ## Cek sudah Posting atau belum    
+            q = DBSession.query(KegiatanSub.disabled).filter(KegiatanSub.id==request.matchdict['kegiatan_sub_id'])
+            rowsub = q.first()
+            if rowsub.disabled:
+                request.session.flash('Data tidak dapat diupdate karena sudah Posting', 'error')
+                return route_list(request, kegiatan_sub_id)
+        
             controls = request.POST.items()
             
             a    = form.validate(controls)
@@ -733,16 +781,16 @@ def view_edit(request):
                     request.session.flash('Tidak boleh melebihi jumlah RKA', 'error')
                     return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
             elif ag_step_id==2:
-                if bln>dpa1:
-                    request.session.flash('Tidak boleh melebihi jumlah DPA', 'error')
+                if bln!=dpa1:
+                    request.session.flash('Jumlah DPA dengan Rencana Biaya tidak sama', 'error')
                     return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
             elif ag_step_id==3:
-                if bln>rdppa1:
-                    request.session.flash('Tidak boleh melebihi jumlah RDPPA', 'error')
+                if bln!=rdppa1:
+                    request.session.flash('Jumlah RDPPA dengan Rencana Biaya tidak sama', 'error')
                     return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
             elif ag_step_id==4:
-                if bln>dppa1:
-                    request.session.flash('Tidak boleh melebihi jumlah DPPA', 'error')
+                if bln!=dppa1:
+                    request.session.flash('Jumlah pagu anggaran dengan Rencana Biaya tidak sama', 'error')
                     return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
 
             try:
@@ -772,6 +820,13 @@ def view_delete(request):
     kegiatan_sub_id = request.matchdict['kegiatan_sub_id']
     if not row:
         return {'success':False, "msg":self.id_not_found()}
+
+    ## Cek sudah Posting atau belum    
+    q = DBSession.query(KegiatanSub.disabled).filter(KegiatanSub.id==request.matchdict['kegiatan_sub_id'])
+    rowsub = q.first()
+    if rowsub.disabled:
+        request.session.flash('Data tidak dapat dihapus karena sudah Posting', 'error')
+        return route_list(request, kegiatan_sub_id)
         
     form = Form(colander.Schema(), buttons=('hapus','cancel'))
     values= {}
