@@ -47,7 +47,7 @@ class view_ap_advist_ppkd(BaseViews):
                 columns.append(ColumnDT('id'))
                 columns.append(ColumnDT('kode'))
                 columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
-                columns.append(ColumnDT('nama'))
+                #columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('nominal'))
                 query = DBSession.query(Advist
                         ).filter(Advist.tahun_id==ses['tahun'],
@@ -236,10 +236,10 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           missing=colander.drop,
                           title="No. Advist")
-    nama            = colander.SchemaNode(
-                          colander.String(),
-                          title = "Bank/Tujuan"
-                          )
+    #nama            = colander.SchemaNode(
+    #                      colander.String(),
+    #                      title = "Bank/Tujuan"
+    #                      )
     tanggal         = colander.SchemaNode(
                           colander.Date(),
                           title = "Tanggal"
