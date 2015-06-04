@@ -116,6 +116,13 @@ def view_add(request):
     
     amount = "%d" % Spp.get_nilai(row.ap_spp_id) 
     
+    # untuk kondisi simpan langsung nominal ke SPP
+    if amount:
+        rows = DBSession.query(Spp).filter(Spp.id==row.ap_spp_id).first()
+        rows.nominal=amount
+        DBSession.add(rows)
+        DBSession.flush()
+        
     #Untuk update status posted dan status_spp pada APInvoice
     row = DBSession.query(APInvoice).filter(APInvoice.id==controls['ap_invoice_id']).first()   
     #row.disabled=1
@@ -176,6 +183,15 @@ def view_delete(request):
 
     amount = "%s" % Spp.get_nilai(row.ap_spp_id)
 
+    # untuk kondisi hapus langsung nominal ke SPP
+    if amount == 'None':
+        amount=0
+        
+    rows = DBSession.query(Spp).filter(Spp.id==row.ap_spp_id).first()
+    rows.nominal=amount
+    DBSession.add(rows)
+    DBSession.flush()
+        
     #Untuk update status posted dan status_spp pada APInvoice    
     row = DBSession.query(APInvoice).filter(APInvoice.id==row.ap_invoice_id).first()   
     #row.disabled=0

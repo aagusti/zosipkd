@@ -46,7 +46,7 @@ class KodeModel(DefaultModel):
     
     
 class UraianModel(KodeModel):
-    uraian = Column(String(128))
+    uraian = Column(String(255))
     @classmethod
     def get_by_uraian(uraian):
         return cls.query().filter_by(uraian=uraian).first()
@@ -57,7 +57,7 @@ class UraianModel(KodeModel):
 
 
 class NamaModel(KodeModel):
-    nama = Column(String(128))
+    nama = Column(String(255))
     @classmethod
     def get_by_nama(nama):
         return cls.query().filter_by(nama=nama).first()

@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, or_
 from sqlalchemy.sql.expression import and_
 from ziggurat_foundations.models import groupfinder
 from pyramid.view import (
@@ -19,7 +19,8 @@ from deform import (
     )
 from osipkd.models import (
     DBSession,
-    Group
+    Group,
+    UserGroup
     )
 from osipkd.models.pemda_model import Unit, Urusan, UserUnit
 from datatables import ColumnDT, DataTables
@@ -128,8 +129,14 @@ class view_unit(BaseViews):
             
         elif url_dict['act']=='changeid':
             ids  = UserUnit.unit_granted(req.user.id, params['unit_id'])
+            
+            ## kondisi group ppkd (semua unit)
+            grp = DBSession.query(func.substr(func.lower(Group.group_name),1,4)).filter(UserGroup.user_id==req.user.id, Group.id==UserGroup.group_id).first()
+            grps = '%s' % grp
+            print'fffffffffffffffffffffffffff',grps
+            
             if req.user.id>1 and 'g:admin' not in groupfinder(req.user, req)\
-                    and not ids:
+                    and not ids and grps !='ppkd':
                 return {'success':False, 'msg':'Anda tidak boleh mengubah ke unit yang bukan hak akses anda'}
 
             row = Unit.get_by_id('unit_id' in params and params['unit_id'] or 0)
@@ -167,6 +174,24 @@ class view_unit(BaseViews):
                 d['kode']        = k[1]
                 d['nama']        = k[2]
                 r.append(d)
+            return r
+            
+        elif url_dict['act']=='headofnama_asistensi':
+            term = 'term' in params and params['term'] or '' 
+            rows = DBSession.query(Unit.id, Unit.kode, Unit.nama
+                      ).filter(or_(Unit.kode=='1.20.09',
+                                   Unit.kode=='1.20.05',
+                                   Unit.kode=='1.06.01'),
+                               Unit.nama.ilike('%%%s%%' % term) ).all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[2]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
+            print '-------------------Unit-----------------',r
             return r
             
         elif url_dict['act']=='import':

@@ -71,9 +71,10 @@
                 <th>Rekening</th>
                 <th>No. Item</th>
                 <th>Uraian</th>
+                <th>Harga</th>
                 <th>Nilai</th>
-                <th>RekeningNm</th>
-                <th>RekeningID</th>
+                <th>Rekening Nama</th>
+                <th>Rekening Id</th>
            </tr>
         </thead>
         <tbody>
@@ -103,7 +104,7 @@
             <div class="col-md-3">
               <div id="item-amount">
                 <label for="amount" class="control-label col-md-3" id="req-amount">
-                         Nilai</label>
+                         Harga</label>
                 <div class="col-md-9">
                    <input id="amount" class=" form-control " type="text" value="" name="amount">
                 </div>
@@ -125,6 +126,17 @@
             <div class="col-md-4">
                <input id="nama" class=" form-control " type="text" value="" name="nama">
             </div>
+            
+            <div class="col-md-3">
+              <div id="item-nilai">
+                <label for="nilai" class="control-label col-md-3" id="req-nilai">
+                         Nilai</label>
+                <div class="col-md-9">
+                   <input id="nilai" class=" form-control " type="text" value="" name="nilai">
+                </div>
+              </div>
+            </div>
+            
             <!--Button----------------------------------------------------------->
             <div class="col-md-2">
                   <button id="rekening_add" name="baru" type="button" class="btn btn-primary "
@@ -140,16 +152,16 @@
                 $('#kegiatan_item_id').val('');
                 $('#header').submit();
            })
-          if ($('#kegiatan_kd').val()=='0.00.00.10-1')
-            var  url = 4;
-          else if ($('#kegiatan_kd').val()=='0.00.00.21-1')
-            var  url = 51;
-          else if ($('#kegiatan_kd').val()=='0.00.00.31-1')
-            var  url = 61;
-          else if ($('#kegiatan_kd').val()=='0.00.00.32-1')
-            var  url = 62;
-          else 
-            var  url = 52;
+            if ($('#kegiatan_kd').val()=='0.00.00.10-1')
+                var  url = 4;
+            else if ($('#kegiatan_kd').val()=='0.00.00.21-1')
+                var  url = 51;
+            else if ($('#kegiatan_kd').val()=='0.00.00.31-1')
+                var  url = 61;
+            else if ($('#kegiatan_kd').val()=='0.00.00.32-1')
+                var  url = 62;
+            else 
+                var  url = 52;
                     
           $('#rekening_kd').typeahead({
               "hint"     : true,
@@ -231,6 +243,7 @@
                     $('#kegiatan_item_id').val('');
                     $('#nama').val('');
                     $('#amount').val('');
+                    $('#nilai').val('');
                     $('#rekening_kd').val('');
                     $('#no_urut').val('');
                     $('#rekening_nm').val('');
@@ -288,7 +301,7 @@
          "aoColumnDefs": [{
               "bSearchable": false,
               "bVisible"   : false,
-              "aTargets"   : [0,5,6]
+              "aTargets"   : [0,6,7]
           },{
               "bSearchable": true,
               "bSortable"  : false,
@@ -296,13 +309,14 @@
           },{
               "bSearchable": false,
               "bSortable"  : false,
-              "aTargets"   : [1,2,4]
+              "aTargets"   : [1,2,4,5]
           }],
           "aoColumns": [
               null,
               {"width": "80px"},
               {"width": "50px"},
               null,
+              {"width": "150px", "sClass":"right"},
               {"width": "150px", "sClass":"right"},
               null,
               null,
@@ -334,10 +348,11 @@
                 $('#kegiatan_item_id').val(aData[0]);
                 $('#nama').val(aData[3]);
                 $('#amount').val(aData[4]);
+                $('#nilai').val(aData[5]);
                 $('#rekening_kd').val(aData[1]);
                 $('#no_urut').val(aData[2]);
-                $('#rekening_nm').val(aData[5]);
-                $('#rekening_id').val(aData[6]);
+                $('#rekening_nm').val(aData[6]);
+                $('#rekening_id').val(aData[7]);
                 mID = aData[0];
                 oTable.$('tr.row_selected').removeClass('row_selected');
                 $(this).addClass('row_selected');
@@ -379,6 +394,8 @@
             return false;
         });
 
+        $('#nilai').attr('readonly','true');
+        
         })
     </script>
   </div>

@@ -518,6 +518,26 @@ class view_pejabat(BaseViews):
                 r.append(d)    
             return r
 
+        #Pegawai Unit Asistensi
+        elif url_dict['act']=='headofnama_asistensi':
+            term = 'term' in params and params['term'] or ''
+            unit_id = 'unit_id' in params and params['unit_id'] or 0
+            q = DBSession.query(Pejabat.id, Pegawai.kode, Pegawai.nama
+                      ).join(Pegawai,Jabatan,Unit
+                      ).filter(Pejabat.unit_id == unit_id,
+                               Pegawai.nama.ilike('%%%s%%' % term))
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']      = k[0]
+                d['value']   = k[2]
+                d['nip']     = k[1]
+                d['nama']    = k[2]
+                r.append(d) 
+            print '-------------------Pegawai-----------------',r                
+            return r
+            
     #######    
     # Add #
     #######

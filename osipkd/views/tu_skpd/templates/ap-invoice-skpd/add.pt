@@ -445,9 +445,9 @@
           <!---ap_tgl_kontrak------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['ap_tgl_kontrak']" id="item-${field.oid}">
-              <label for="${field.oid}" class="control-label col-md-5" id="req-${field.oid}">
+              <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
                       ${field.title}</label>
-              <div class="col-md-7">
+              <div class="col-md-8">
                  ${structure:field.serialize()}
                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                    tal:repeat="error field.error.messages()">
@@ -459,9 +459,9 @@
           <!---ap_nilai------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['ap_nilai']" id="item-${field.oid}">
-              <label for="${field.oid}" class="control-label col-md-5" id="req-${field.oid}">
+              <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
                       ${field.title}</label>
-              <div class="col-md-7">
+              <div class="col-md-8">
                  ${structure:field.serialize()}
                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                    tal:repeat="error field.error.messages()">
@@ -487,9 +487,9 @@
           <!---ap_kwitansi_tanggal------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['ap_kwitansi_tgl']" id="item-${field.oid}">
-              <label for="${field.oid}" class="control-label col-md-5" id="req-${field.oid}">
+              <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
                       ${field.title}</label>
-              <div class="col-md-7">
+              <div class="col-md-8">
                  ${structure:field.serialize()}
                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                    tal:repeat="error field.error.messages()">
@@ -501,9 +501,9 @@
           <!---ap_kwitansi_nilai------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['ap_kwitansi_nilai']" id="item-${field.oid}">
-              <label for="${field.oid}" class="control-label col-md-5" id="req-${field.oid}">
+              <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
                       ${field.title}</label>
-              <div class="col-md-7">
+              <div class="col-md-8">
                  ${structure:field.serialize()}
                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                    tal:repeat="error field.error.messages()">
@@ -528,9 +528,9 @@
           <!---ap_bap_tanggal------------------------------------------------------------------->
           <div class="col-md-4"> 
             <div tal:define="field form['ap_bap_tgl']" id="item-${field.oid}">
-              <label for="${field.oid}" class="control-label col-md-5" id="req-${field.oid}">
+              <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
                       ${field.title}</label>
-              <div class="col-md-7">
+              <div class="col-md-8">
                  ${structure:field.serialize()}
                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                    tal:repeat="error field.error.messages()">
@@ -644,24 +644,21 @@
                   <button id="rekening_add" name="baru" type="button" class="btn btn-primary "
                         value="baru">Baru</button>
                   <button id="rekening_save" name="simpan" type="button" class="btn btn-primary "
-                        value="simpan">Update</button>
+                        value="save">Update</button>
                   <button id="rekening_cancel" name="batal" type="reset" class="btn btn-danger "
                         value="batal">Batal</button>
               
             </div> 
           </div>            
         <script>
+          // save
           $('#rekening_add').click(function () {
-          $('#ap_invoice_item_id').val('');
-          $('#detail').submit();
-          /**
             var kegiatan_item_id, jml;
             var vol_1 = parseInt($('#vol_1').val()); 
             var vol_2 = parseInt($('#vol_2').val()); 
             var nilai = parseInt($('#nilai').val()); 
             var harga = parseInt($('#harga').val());
             kegiatan_item_id = $('#kegiatan_item_id').val();
-
             jml = (vol_1 * vol_2) * harga;
             if(jml<0){
             alert('Harga tidak boleh negatif');
@@ -670,47 +667,72 @@
                     alert('Data untuk entry masih kosong');
                 }
                 else{
-                    if(harga > nilai){
-                        alert('Harga tidak boleh besar dari anggaran Rp.'+$('#nilai').val());
-                    }
-                    else{
-                        $('#ap_invoice_item_id').val('');
-                        $('#detail').submit();
-                    }
+                    $('#ap_invoice_item_id').val('');
+                    $('#detail').submit();
                 }
-            }*/
-           })
+            }
+           });
+           
           // save update
           $('#rekening_save').click(function () {
-          $('#ap_invoice_item_id').val();
-          $('#detail').submit();
-          /**
             var kegiatan_item_id,jml;
             var vol_1 = parseInt($('#vol_1').val()); 
             var vol_2 = parseInt($('#vol_2').val()); 
             var nilai = parseInt($('#nilai').val());
             var harga = parseInt($('#harga').val());
-            kegiatan_item_id = $('#kegiatan_item_id').val();
+            var kode = $('#kegiatan_kode').val();
+            var kodee = kode.substring(0, 8);
+            kegiatan_item_id = parseInt($('#kegiatan_item_id').val());
             
             jml = (vol_1 * vol_2) * harga;
             if(jml<0){
             alert('Harga tidak boleh negatif');
             }else{
-                if (kegiatan_item_id==''){
+                if (!kegiatan_item_id){
                     alert('Data harus dipilih terlebih dahulu');
                 }
                 else{
-                    if(harga >  nilai){
-                        alert('Harga tidak boleh besar dari anggaran Rp.'+$('#nilai').val());
-                    }
-                    else{
-                        $('#ap_invoice_item_id').val();
-                        $('#detail').submit();
+                    var is_success;
+                    $('#ap_invoice_item_id').val();
+                    is_success = true;
+                    
+                    if (is_success){
+                    $.ajax({
+                        type: "POST",
+                        url: "/ap-invoice-skpd/item/"+ap_invoice_id+"/"+kegiatan_item_id+"/edit",
+                        data: $('#detail').serialize(),
+                        success: function (html) {
+                        if (html.success == true) {
+                            $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                            $('#no_urut1').val('');
+                            $('#item_nm').val('');
+                            $('#nama').val('');
+                            $('#vol_1').val(1);
+                            $('#vol_2').val(1);
+                            $('#amount').val(0);
+                            $('#harga').val(0);
+                            $('#pph').val(0);
+                            $('#ppn').val(0);
+                            $('#jml_total').val(formatNumber(html.jml_total)); 
+                            oTable.fnReloadAjax(oTableUrl);
+                        } else {
+                            $("#errors").css('display', 'inline', 'important');
+                            $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                            var a = html.msg;
+                            alert(a);
+                        }
+                        },
+                        beforeSend: function () {
+                        $("#errors").css('display', 'inline', 'important');
+                        $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+                        }
+                    });
                     }
                 }
-            }*/
-           })
-//
+            }
+           });
+           
+          //headofnama ag-kegiatan-item
           $('#item_nm').typeahead({
               "hint"     : true,
               "highlight": true,
@@ -725,52 +747,53 @@
                 $('#kegiatan_item_id').val(datum.id);
                 $('#nama').val(datum.nama);
                 $('#nilai').val(datum.amount);
+                $('#kegiatan_kode').val(datum.kode);
           });
             
           $( "#detail" ).submit(function( event ) {
-            var ap_invoice_id;
-            var is_success;
-            is_success = true;
-            ap_invoice_id = $('#id').val();
-            if (!ap_invoice_id) {
-                is_success = false;
-                $("#errors").css('display', 'inline', 'important');
-                $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + 'Simpan Dulu Headernya');
-            }
-
-            if (is_success){
+              var ap_invoice_id;
+              var is_success;
+              is_success = true;
+              ap_invoice_id = $('#id').val();
+              if (!ap_invoice_id) {
+                  is_success = false;
+                  $("#errors").css('display', 'inline', 'important');
+                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + 'Simpan Dulu Headernya');
+              }
+          
+              if (is_success){
               $.ajax({
-                type: "POST",
-                url: "/ap-invoice-skpd/item/"+ap_invoice_id+"/add",
-                data: $('#detail').serialize(),
-                success: function (html) {
+                  type: "POST",
+                  url: "/ap-invoice-skpd/item/"+ap_invoice_id+"/add",
+                  data: $('#detail').serialize(),
+                  success: function (html) {
                   if (html.success == true) {
-                    $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
-                    $('#no_urut1').val('');
-                    $('#item_nm').val('');
-                    $('#nama').val('');
-                    $('#vol_1').val(1);
-                    $('#vol_2').val(1);
-                    $('#amount').val(0);
-                    $('#harga').val(0);
-                    $('#pph').val(0);
-                    $('#ppn').val(0);
-                    $('#jml_total').val(formatNumber(html.jml_total)); 
-                    oTable.fnReloadAjax(oTableUrl);
+                      $("#errors").html("<span class='glyphicon glyphicon-ok'></span> " + html.msg);
+                      $('#no_urut1').val('');
+                      $('#item_nm').val('');
+                      $('#nama').val('');
+                      $('#vol_1').val(1);
+                      $('#vol_2').val(1);
+                      $('#amount').val(0);
+                      $('#harga').val(0);
+                      $('#pph').val(0);
+                      $('#ppn').val(0);
+                      $('#jml_total').val(formatNumber(html.jml_total)); 
+                      oTable.fnReloadAjax(oTableUrl);
                   } else {
-                    $("#errors").css('display', 'inline', 'important');
-                    $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
-                    var a = html.msg;
-                    //alert(a);
+                      $("#errors").css('display', 'inline', 'important');
+                      $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                      var a = html.msg;
+                      alert(a);
                   }
-                },
-                beforeSend: function () {
+                  },
+                  beforeSend: function () {
                   $("#errors").css('display', 'inline', 'important');
                   $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
-                }
+                  }
               });
-            }
-            event.preventDefault();
+              }
+              event.preventDefault();
           });
         </script>
         </fieldset>
@@ -802,6 +825,7 @@
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
             "sAjaxSource"    : oTableUrl,
+            "bStateSave"     : true,
             "bServerSide"    : true,
             "bProcessing"    : true,           
             "sDom"           : '<"toolbar">lfrtip',

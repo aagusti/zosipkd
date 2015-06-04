@@ -12,7 +12,7 @@ from osipkd.views.base_view import BaseViews
 # APP Home #
 ########
 class view_tu_ppkd(BaseViews):
-    @view_config(route_name='tu-ppkd', renderer='templates/home.pt', permission='view')
+    @view_config(route_name='tu-ppkd', renderer='templates/home.pt', permission='read')
     def view_app(self):
         session = self.request.session
         tahun = App.get_by_kode('tu-ppkd').tahun

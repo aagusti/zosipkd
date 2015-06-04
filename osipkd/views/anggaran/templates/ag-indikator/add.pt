@@ -325,7 +325,7 @@
         $('#satuan_3').attr('readonly', true)
         $('#satuan_4').attr('readonly', true)
         }
-        else if  (a == 'RPKA'){
+        else if  (a == 'RDPPA'){
         $('#tolok_ukur_1').attr('readonly', true)
         $('#tolok_ukur_2').attr('readonly', true)
         $('#tolok_ukur_3').attr('readonly', true)

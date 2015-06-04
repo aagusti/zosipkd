@@ -110,6 +110,14 @@ def view_add(request):
     DBSession.add(row)
     DBSession.flush()
     nilai = "%d" % ARInvoice.get_nilai(row.ar_invoice_id) 
+    
+    # untuk kondisi simpan langsung nilai ke ARInvoice
+    if nilai:
+        rows = DBSession.query(ARInvoice).filter(ARInvoice.id==ar_invoice_id).first()
+        rows.nilai= nilai  
+        DBSession.add(rows)
+        DBSession.flush()
+    
     return {"success": True, 'id': row.id, "msg":'Success Tambah Item Invoice', 'jml_total':nilai}
 
 ########
@@ -165,5 +173,15 @@ def view_delete(request):
     DBSession.flush()
     
     nilai = "%s" % ARInvoice.get_nilai(row.ar_invoice_id)
+    
+    # untuk kondisi hapus langsung nilai ke ARInvoice
+    if nilai == 'None':
+        nilai = 0
+        
+    rows = DBSession.query(ARInvoice).filter(ARInvoice.id==row.ar_invoice_id).first()
+    rows.nilai= nilai  
+    DBSession.add(rows)
+    DBSession.flush()
+    
     return {'success':True, "msg":msg, 'jml_total':nilai}
     

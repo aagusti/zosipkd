@@ -75,6 +75,9 @@
 	<field name="bend_nip" class="java.lang.String">
 		<fieldDescription><![CDATA[bend_nip]]></fieldDescription>
 	</field>
+	<field name="pa_nip" class="java.lang.String">
+		<fieldDescription><![CDATA[pa_nip]]></fieldDescription>
+	</field>
 	<variable name="LSG_lalu" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{LSG_lalu})]]></variableExpression>
 	</variable>
@@ -1153,13 +1156,6 @@ Anggaran]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rek_nm}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="40" y="28" width="130" height="12"/>
-				<textElement markup="none">
-					<font size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[Penerimaan]]></text>
-			</staticText>
 		</band>
 	</summary>
 </jasperReport>

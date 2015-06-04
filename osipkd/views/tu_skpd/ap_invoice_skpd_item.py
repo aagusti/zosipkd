@@ -70,7 +70,6 @@ class view_ap_invoice_skpd_item(BaseViews):
                                   
                 rowTable = DataTables(req, APInvoiceItem, query, columns)
                 return rowTable.output_result()
-                
 #######    
 # Add #
 #######
@@ -149,22 +148,28 @@ def view_add(request):
     g = f - c
     print'****--Sisa Anggaran------**** ',g
     
-    ### Kondisi Belanja Tidak Langsung (Gaji), kode rekening 5.1.1.01 dan 5.1.1.02.01 bisa melebihi anggaran
+    ### Kondisi Belanja Tidak Langsung (Gaji), kode rekening 5.1.1.01 dan 5.1.1.02.01 dan 7... bisa melebihi anggaran
     print'****--ID Item------------**** ',kegiatan_item_id
     z = DBSession.query(func.substr(Rekening.kode,1,8).label('a')
                 ).filter(KegiatanItem.id==kegiatan_item_id,
                          KegiatanItem.rekening_id==Rekening.id, 
+                ).first() 
+    #Cek Rek Non Anggaran 7.....                
+    z1 = DBSession.query(func.substr(Rekening.kode,1,1).label('b')
+                ).filter(KegiatanItem.id==kegiatan_item_id,
+                         KegiatanItem.rekening_id==Rekening.id, 
                 ).first()    
     y = '%s' % z
+    y1 = '%s' % z1
     print'****--Kode Rekening------**** ',y
     
-    if y != '5.1.1.01' :
+    if y1 != '7' :
+      if y != '5.1.1.01' :
         if amount > f:
             return {"success": False, 'id': row.id, "msg":'Tidak boleh melebihi jumlah pagu anggaran, Sisa anggaran %s' % g}
-    #else:
+
     DBSession.add(row)
     DBSession.flush()
-    
     api = row.ap_invoice_id
     print'****--Invoice ID---------**** ',api
     g = DBSession.query(func.sum(APInvoiceItem.amount)
@@ -177,8 +182,16 @@ def view_add(request):
     else:
         jml = g1
     
+    # untuk kondisi simpan langsung nilai ke APInvoice
+    if jml:
+        rows = DBSession.query(APInvoice).filter(APInvoice.id==ap_invoice_id).first()
+        rows.amount=jml
+        DBSession.add(rows)
+        DBSession.flush()
+        
     print'****--Jumlah Total-------**** ',jml
     return {"success": True, 'id': row.id, "msg":'Success Tambah Item Invoice', 'jml_total':jml}
+
 
 ########
 # Edit #
@@ -201,28 +214,134 @@ def id_not_found(request):
 @view_config(route_name='ap-invoice-skpd-item-edit', renderer='json',
              permission='edit')
 def view_edit(request):
-    row = query_id(request).first()
-    if not row:
-        return id_not_found(request)
-    form = get_form(request, EditSchema)
-    if request.POST:
-        if 'simpan' in request.POST:
-            controls = request.POST.items()
-            try:
-                c = form.validate(controls)
-            except ValidationFailure, e:
-                return dict(form=form)
-            save_request(dict(controls), request, row)
-        return route_list(request)
-    elif SESS_EDIT_FAILED in request.session:
-        del request.session[SESS_EDIT_FAILED]
-        return dict(form=form)
-    values = row.to_dict() 
-    values['kegiatan_nm']=row.kegiatan_subs.nama
-    values['kegiatan_kd']=row.kegiatan_subs.kode
-    form.set_appstruct(values) 
-    return dict(form=form)
+    req = request
+    ses = req.session
+    params = req.params
+    url_dict = req.matchdict
+    ap_invoice_id = 'ap_invoice_id' in url_dict and url_dict['ap_invoice_id'] or 0
+    controls = dict(request.POST.items())
+    ap_invoice_item_id = 'ap_invoice_item_id' in controls and controls['ap_invoice_item_id'] or 0
+    ##Hasil Param 
+    print'++++++++++++++ap_invoice id++++++++++++++++++++++++++',ap_invoice_id
+    ##Hasil Dict 
+    print'++++++++++++++ap_invoice_item id+++++++++++++++++++++',ap_invoice_item_id
 
+    #Cek lagi ditakutkan skpd ada yang iseng inject script
+    if ap_invoice_item_id:
+        row = DBSession.query(APInvoiceItem)\
+                  .join(APInvoice)\
+                  .filter(APInvoiceItem.id==ap_invoice_item_id,
+                          APInvoice.unit_id==ses['unit_id'],
+                          APInvoiceItem.ap_invoice_id==ap_invoice_id).first()
+        print'rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrroowwwww',row
+        if not row:
+            return {"success": False, 'msg':'Invoice tidak ditemukan'}
+    else:
+        row = APInvoiceItem()
+
+    kegiatan_item_id = controls['kegiatan_item_id']
+    print'++++++++++++++kegiatan_item_id+++++++++++++++++++++++',kegiatan_item_id
+    ### Sum dari APInvoiceItem sesuai APInvoiceItem.id 
+    a = DBSession.query(func.sum(APInvoiceItem.amount).label('jumlah')
+                ).filter(APInvoiceItem.kegiatan_item_id==kegiatan_item_id
+                ).first()
+    b = '%s' % a
+    jnai = int(b)
+    print'++++++++++++++Sum APInvoiceItem++++++++++++++++++++++',jnai
+
+    ### amount dari APInvoiceItem sesuai APInvoiceItem.id 
+    am = DBSession.query(APInvoiceItem.amount.label('jumlah')
+                ).filter(APInvoiceItem.kegiatan_item_id==kegiatan_item_id, APInvoiceItem.ap_invoice_id==ap_invoice_id
+                ).first()
+    bm = '%s' % am
+    jnaim = int(bm)
+    print'++++++++++++++amount APInvoiceItem++++++++++++++++++++++',jnaim
+    
+    ## Param Dict
+    vol_1            = controls['vol_1'].replace('.','')
+    vol_2            = controls['vol_2'].replace('.','')
+    harga            = controls['harga'].replace('.','')
+    ppn              = controls['ppn'].replace('.','')
+    pph              = controls['pph'].replace('.','')
+    amount           = float(controls['vol_1'].replace('.',''))*float(controls['vol_2'].replace('.',''))*float(controls['harga'].replace('.',''))
+    inputharga = int(amount)
+    print'++++++++++++++Hasil Inputan++++++++++++++++++++++++++',inputharga
+
+
+    ## Sum dari Kegiatan Item
+    x = DBSession.query((KegiatanItem.vol_4_1*KegiatanItem.vol_4_2)*KegiatanItem.hsat_4
+                ).filter(KegiatanItem.id==kegiatan_item_id
+                ).first()
+    z = '%s' % x 
+    jnki = int(float(z))
+    print'++++++++++++++Sum KegiatanItem+++++++++++++++++++++++',jnki
+    
+    ## Cek Kode Rekening
+    h = DBSession.query(func.substr(Rekening.kode,1,8).label('a')
+                ).filter(KegiatanItem.id==kegiatan_item_id,
+                         KegiatanItem.rekening_id==Rekening.id, 
+                ).first()    
+    # Cek Rek Non Anggaran 7....           
+    h1 = DBSession.query(func.substr(Rekening.kode,1,1).label('b')
+                ).filter(KegiatanItem.id==kegiatan_item_id,
+                         KegiatanItem.rekening_id==Rekening.id, 
+                ).first()    
+                
+    kr  = '%s' % h
+    kr1 = '%s' % h1
+    print'++++++++++++++Kode Rekening+++++++++++++++++++++++++++',kr
+    
+    sisa = jnki - jnai
+    inputaan = inputharga + jnai
+    seleksi = (jnai - jnaim) + inputharga
+    print'++++++++++++++Seleksi++++++++++++++++++++++++++++++++',seleksi
+    print'++++++++++++++Hasil Inputan++++++++++++++++++++++++++',inputharga
+    print'++++++++++++++Sum APInvoiceItem++++++++++++++++++++++',jnai
+    print'++++++++++++++Inputan++++++++++++++++++++++++++++++++',inputaan
+    print'++++++++++++++Sum KegiatanItem+++++++++++++++++++++++',jnki
+    
+    ## Kondisi Kode Rekening dan Pagu Anggaran
+    if kr1 != '7' :
+      if kr != '5.1.1.01' :
+        if seleksi > jnki:
+            return {"success": False, "msg":'Tidak boleh melebihi jumlah pagu anggaran, Sisa anggaran %s' % sisa}
+        #else:
+            #if inputaan > jnki:
+            #    return {"success": False, "msg":'Tidak boleh melebihi jumlah pagu anggaran, Sisa anggaran %s' % sisa}
+        
+    row.no_urut          = controls['no_urut1']
+    row.nama             = controls['nama']
+    row.vol_1            = controls['vol_1'].replace('.','')
+    row.vol_2            = controls['vol_2'].replace('.','')
+    row.harga            = controls['harga'].replace('.','')
+    row.ppn              = controls['ppn'].replace('.','')
+    row.pph              = controls['pph'].replace('.','')
+    row.amount           = float(controls['vol_1'].replace('.',''))*float(controls['vol_2'].replace('.',''))*float(controls['harga'].replace('.',''))
+    DBSession.add(row)
+    DBSession.flush()
+
+    api = row.ap_invoice_id
+    print'****--Invoice ID---------**** ',api
+    g = DBSession.query(func.sum(APInvoiceItem.amount)
+                ).filter(APInvoiceItem.ap_invoice_id==api 
+                ).first() or 0
+    g1 = "%s" % g
+    if g1 == 'None':
+        g1 = 0
+        jml = g1
+    else:
+        jml = g1
+    
+    # untuk kondisi update langsung nilai ke APInvoice
+    if jml:
+        rows = DBSession.query(APInvoice).filter(APInvoice.id==ap_invoice_id).first()
+        rows.amount=jml
+        DBSession.add(rows)
+        DBSession.flush()
+        
+    print'****--Jumlah Total-------**** ',jml
+    return {"success": True, 'id': row.id, "msg":'Success Update Item Invoice', 'jml_total':jml}
+    
 ##########
 # Delete #
 ##########    
@@ -240,5 +359,15 @@ def view_delete(request):
     DBSession.flush()
     
     amount = "%s" % APInvoice.get_nilai(row.ap_invoice_id) 
+    
+    # untuk kondisi update langsung nilai ke APInvoice
+    if amount =='None':
+        amount=0
+
+    rows = DBSession.query(APInvoice).filter(APInvoice.id==row.ap_invoice_id).first()
+    rows.amount=amount
+    DBSession.add(rows)
+    DBSession.flush()    
+    
     return {'success':True, "msg":msg, 'jml_total':amount}
     

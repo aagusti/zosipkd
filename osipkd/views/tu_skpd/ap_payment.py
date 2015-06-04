@@ -243,11 +243,12 @@ class AddSchema(colander.Schema):
                           widget=widget.SelectWidget(values=IS_BAYAR),
                           oid="is_bayar",
                           title="Dibayar")
-    is_uang        = colander.SchemaNode(
+    """is_uang        = colander.SchemaNode(
                           colander.String(),
                           widget=widget.SelectWidget(values=IS_UANG),
                           oid="is_uang",
                           title="U.M/Panjar")
+    """
     tanggal         = colander.SchemaNode(
                           colander.Date())
            

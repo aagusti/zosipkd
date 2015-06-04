@@ -3850,5 +3850,39 @@ RouteData = {
         path='/ag-bl/{id}/unposting',
         perm_name='unposting',
         ),
-
+    dict(
+        id=551,
+        kode='ag-asistensi',
+        nama='Asistensi Kegiatan',
+        path='/ag-asistensi/{kegiatan_sub_id}',
+        perm_name='read',
+        ),
+    dict(
+        id=552,
+        kode='ag-asistensi-act',
+        nama='Asistensi Kegiatan Act',
+        path='/ag-asistensi/act/{act}',
+        perm_name='read',
+        ),
+    dict(
+        id=553,
+        kode='ag-asistensi-add',
+        nama='Tambah Asistensi Kegiatan',
+        path='/ag-asistensi/{kegiatan_sub_id}/add',
+        perm_name='add',
+        ),
+    dict(
+        id=554,
+        kode='ag-asistensi-edit',
+        nama='Edit Asistensi Kegiatan',
+        path='/ag-asistensi/{kegiatan_sub_id}/{id}/edit',
+        perm_name='edit',
+        ),
+    dict(
+        id=555,
+        kode='ag-asistensi-delete',
+        nama='Hapus Asistensi Kegiatan',
+        path='/ag-asistensi/{kegiatan_sub_id}/{id}/delete',
+        perm_name='delete',
+        ),
 ]}

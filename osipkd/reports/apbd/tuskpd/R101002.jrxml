@@ -63,6 +63,9 @@
 	<variable name="jenis" class="java.lang.String">
 		<variableExpression><![CDATA[$F{jenis}=="1" ? "P" : $F{jenis}=="2" ? "CP" : $F{jenis}=="3" ? "L" : ""]]></variableExpression>
 	</variable>
+	<variable name="kode" class="java.lang.String">
+		<variableExpression><![CDATA[$F{kode}.substring($F{kode}.length()-5,$F{kode}.length())]]></variableExpression>
+	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -198,7 +201,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{kode}.substring(13)+"/"+$V{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{kode}+"/"+$V{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="405" y="0" width="77" height="18"/>

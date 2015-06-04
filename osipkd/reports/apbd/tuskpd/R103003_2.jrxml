@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R103003" language="groovy" pageWidth="612" pageHeight="972" columnWidth="504" leftMargin="54" rightMargin="54" topMargin="36" bottomMargin="36">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="73"/>
+	<property name="ireport.y" value="72"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["Z:\\py_os\\osipkd\\osipkd\\reports\\apbd\\tuskpd\\"]]></defaultValueExpression>
 	</parameter>
@@ -141,35 +141,35 @@
 				<textFieldExpression><![CDATA["No : "+$F{spm_kd}.substring(13)+"/"+$V{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="20" y="160" width="467" height="28"/>
+				<reportElement x="20" y="149" width="467" height="28"/>
 				<textElement textAlignment="Justified" verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Jumlah Pembayaran "+$V{jenis}+" tersebut di atas dipergunakan untuk keperluan guna membiayai kegiatan yang akan kami laksanakan sesuai dengan DPA-SKPD"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="160" width="20" height="14"/>
+				<reportElement x="0" y="149" width="20" height="14"/>
 				<textElement verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["1."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="20" y="199" width="467" height="44"/>
+				<reportElement x="20" y="188" width="467" height="44"/>
 				<textElement textAlignment="Justified" verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Jumlah Pembayaran "+$V{jenis}+" tersebut tidak akan digunakan untuk membiayai pengeluaran-pengeluaran yang menurut ketentuan yang berlaku harus dilakukan dengan membayar "+$V{non_jenis_nm}+"."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="201" width="20" height="14"/>
+				<reportElement x="0" y="188" width="20" height="14"/>
 				<textElement verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["2."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="252" width="487" height="31"/>
+				<reportElement x="0" y="241" width="487" height="31"/>
 				<textElement textAlignment="Justified" verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>

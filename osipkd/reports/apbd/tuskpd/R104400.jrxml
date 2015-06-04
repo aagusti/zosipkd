@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R00001" language="groovy" pageWidth="1008" pageHeight="612" orientation="Landscape" columnWidth="968" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.210000000000003"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="358"/>
 	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[/apbd/spj]]>
@@ -74,6 +74,9 @@
 	</field>
 	<field name="bend_nip" class="java.lang.String">
 		<fieldDescription><![CDATA[bend_nip]]></fieldDescription>
+	</field>
+	<field name="pa_nip" class="java.lang.String">
+		<fieldDescription><![CDATA[pa_nip]]></fieldDescription>
 	</field>
 	<variable name="LSG_lalu" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{LSG_lalu})]]></variableExpression>
@@ -1108,18 +1111,39 @@ Anggaran]]></text>
 				<textFieldExpression><![CDATA["Bendahara Pengeluaran"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="786" y="101" width="182" height="16"/>
+				<reportElement x="786" y="101" width="182" height="12"/>
 				<textElement textAlignment="Center" markup="none">
-					<font size="7" isBold="true"/>
+					<font size="7" isBold="true" isUnderline="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{bend_nama}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="786" y="117" width="182" height="16"/>
+				<reportElement x="786" y="112" width="182" height="12"/>
 				<textElement textAlignment="Center" markup="none">
 					<font size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["NIP. "+$F{bend_nip}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="61" y="48" width="182" height="12"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pengguna Anggaran"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="61" y="112" width="182" height="12"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["NIP. "+$F{pa_nip}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="61" y="101" width="182" height="12"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="7" isBold="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pa_nama}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

@@ -114,6 +114,14 @@ def view_add(request):
     DBSession.add(row)
     DBSession.flush()
     nilai = "%d" % Sts.get_nilai(row.ar_sts_id) 
+    
+    # untuk kondisi simpan langsung nominal ke Sts
+    if nilai:
+        rows = DBSession.query(Sts).filter(Sts.id==ar_sts_id).first()
+        rows.nominal= nilai  
+        DBSession.add(rows)
+        DBSession.flush()
+        
     return {"success": True, 'id': row.id, "msg":'Success Tambah Item STS', 'jml_total':nilai}
 
 ########
@@ -167,5 +175,15 @@ def view_delete(request):
     DBSession.flush()
     
     nilai = "%s" % Sts.get_nilai(row.ar_sts_id) 
+
+    # untuk kondisi hapus langsung nominal ke Sts
+    if nilai == 'None':
+        nilai = 0
+        
+    rows = DBSession.query(Sts).filter(Sts.id==row.ar_sts_id).first()
+    rows.nominal= nilai  
+    DBSession.add(rows)
+    DBSession.flush()
+
     return {'success':True, "msg":msg, 'jml_total':nilai}
     

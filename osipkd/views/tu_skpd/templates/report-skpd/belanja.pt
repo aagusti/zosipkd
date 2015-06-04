@@ -11,7 +11,7 @@
         $('input[name="rpt"]').click(function(){
             if($(this).val()=="1"){
                 $('#div_jenis').hide();
-                $('#div_tipe').hide();
+                $('#div_tipe').show();
                 $('#div_bulan').hide();
                 $('#div_tanggal').show();
                 $('#custom').hide();

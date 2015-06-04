@@ -145,6 +145,13 @@ def view_add(request):
     DBSession.flush()
     nominal = "%d" % Advist.get_nilai(row.ap_advist_id) 
     
+    # untuk kondisi simpan langsung nominal ke Advist
+    if nominal:
+        rows = DBSession.query(Advist).filter(Advist.id==ap_advist_id).first()
+        rows.nominal= nominal  
+        DBSession.add(rows)
+        DBSession.flush()
+        
     #Untuk update status disabled pada SP2D
     row = DBSession.query(Sp2d).filter(Sp2d.id==controls['ap_sp2d_id']).first()   
     row.status_advist = 1
@@ -208,6 +215,15 @@ def view_delete(request):
 
     nominal = "%s" % Advist.get_nilai(row.ap_advist_id)
     
+    # untuk kondisi hapus langsung nominal ke Advist
+    if nominal == 'None':
+        nominal = 0
+    
+    rows = DBSession.query(Advist).filter(Advist.id==row.ap_advist_id).first()
+    rows.nominal= nominal  
+    DBSession.add(rows)
+    DBSession.flush()
+        
     #Untuk update status disabled pada SP2D
     row = DBSession.query(Sp2d).filter(Sp2d.id==row.ap_sp2d_id).first()   
     row.status_advist=0

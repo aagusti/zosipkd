@@ -111,7 +111,7 @@ class view_ar_payment_item(BaseViews):
             return id_not_found(request)
         if not row.amount:
            request.session.flash('Data tidak dapat diposting jurnal, karena bernilai 0.', 'error')
-           return route_list()
+           return self.route_list()
         if row.posted:
             request.session.flash('Data sudah diposting jurnal.', 'error')
             return self.route_list()

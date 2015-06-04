@@ -12,6 +12,7 @@ from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
 from osipkd.models.pemda_model import Rekening
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
+from osipkd.models.apbd_tu import  APInvoiceItem 
 
 SESS_ADD_FAILED = 'Tambah ag-kegiatan-sub gagal'
 SESS_EDIT_FAILED = 'Edit ag-kegiatan-sub gagal'
@@ -74,6 +75,10 @@ class view_ak_jurnal(BaseViews):
                   (KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('amount_2'),
                   (KegiatanItem.vol_3_1*KegiatanItem.vol_3_2*KegiatanItem.hsat_3).label('amount_3'),
                   (KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('amount_4'),
+                  (KegiatanItem.hsat_1).label('harga_1'),
+                  (KegiatanItem.hsat_2).label('harga_2'),
+                  (KegiatanItem.hsat_3).label('harga_3'),
+                  (KegiatanItem.hsat_4).label('harga_4'),
                   KegiatanSub.disabled
                   ).join(Rekening).join(KegiatanSub)
                   
@@ -93,6 +98,7 @@ class view_ak_jurnal(BaseViews):
             columns.append(ColumnDT('rekening_kd'))
             columns.append(ColumnDT('no_urut'))
             columns.append(ColumnDT('nama'))
+            columns.append(ColumnDT('harga_%s' %ag_step_id, filter=self._number_format))
             columns.append(ColumnDT('amount_%s' %ag_step_id, filter=self._number_format))
             columns.append(ColumnDT('rekening_nm'))
             columns.append(ColumnDT('rekening_id'))
@@ -205,10 +211,11 @@ class view_ak_jurnal(BaseViews):
         req = self.request
         params = req.params
         url_dict = req.matchdict
-        kegiatan_sub_id = 'kegiatan_sub_id' in params and params['kegiatan_sub_id'] or None
-        rekening_id     = 'rekening_id' in params and params['rekening_id'] or None
+        kegiatan_sub_id  = 'kegiatan_sub_id'  in params and params['kegiatan_sub_id']  or None
+        rekening_id      = 'rekening_id'      in params and params['rekening_id']      or None
         kegiatan_item_id = 'kegiatan_item_id' in params and params['kegiatan_item_id'] or None
-            
+        print'++++++++++++++kegiatan_item_id++++++++++++++++++++++++',kegiatan_item_id 
+        
         if not kegiatan_item_id:
             row = KegiatanItem()
             row_dict = {}
@@ -227,6 +234,34 @@ class view_ak_jurnal(BaseViews):
         
         ag_step_id = ses['ag_step_id']
         amount = 'amount' in params and params['amount'].replace('.', '') or 0
+            
+        ### Sum dari APInvoiceItem sesuai APInvoiceItem.id 
+        q_ai = DBSession.query(func.sum(APInvoiceItem.amount).label('jumlah')
+                    ).filter(APInvoiceItem.kegiatan_item_id==kegiatan_item_id
+                    ).first()
+        q_aia = '%s' % q_ai 
+        #q_aiaa = int(q_aia)
+        if q_aia=='None':
+            q_aia=0
+        print'++++++++++++++Realisasi Sum APInvoiceItem++++++++++++++++++++++',q_aia
+
+        if q_aia:
+            q_aiaa = int(q_aia)
+            vol_3_1 = row_dict['vol_3_1']
+            vol_3_2 = row_dict['vol_3_2']
+            hsat_3  = row_dict['hsat_3'] = amount
+            vol_4_1 = row_dict['vol_4_1']
+            vol_4_2 = row_dict['vol_4_2']
+            hsat_4  = row_dict['hsat_3'] = amount 
+            rdppa   = (vol_3_1*vol_3_2)*int(hsat_3)
+            rdppa1  = int(float(rdppa))
+            dppa    = (vol_4_1*vol_4_2)*int(hsat_4)
+            dppa1   = int(float(rdppa)) 
+            print'xxxxxxxxxxxxxxxxhsat3 xxxxxxxxxxxxxxxxxx',rdppa1
+            print'xxxxxxxxxxxxxxxxhsat4 xxxxxxxxxxxxxxxxxx',dppa1
+            if rdppa1 < q_aiaa and dppa1 < q_aiaa:
+                print'xxxxxxxxxxxxxxxxAPInvoiceItemxxxxxxxxxxx',q_aiaa
+                return {'success':False, 'msg':'Gagal Update Data, Karena kurang dari nilai yang sudah terealisasi %s' % q_aiaa }
         
         if ag_step_id<2:
             row_dict['hsat_1'] = amount 
@@ -235,10 +270,10 @@ class view_ak_jurnal(BaseViews):
         if ag_step_id<4:
             row_dict['hsat_3'] = amount 
         if ag_step_id<5:
-            row_dict['hsat_4'] = amount 
-            
-        row.from_dict(row_dict)
+            row_dict['hsat_4'] = amount
 
+        row.from_dict(row_dict)
+        
         ## Cek sudah Posting atau belum    
         q = DBSession.query(KegiatanSub.disabled).filter(KegiatanSub.id==row_dict['kegiatan_sub_id'])
         rowsub = q.first()
@@ -715,10 +750,13 @@ def view_edit(request):
     ses = request.session
     kegiatan_sub_id = request.matchdict['kegiatan_sub_id']
     row = query_id(request).first()
-    i=row.id
+    ui=row.id
+    print'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxiiiiiiiiiiii',ui
     if not row:
         return id_not_found(request,kegiatan_sub_id)
-        
+    ##
+
+ 
     ## Cek sudah Posting atau belum    
     #q = DBSession.query(KegiatanSub.disabled).filter(KegiatanSub.id==request.matchdict['kegiatan_sub_id'])
     #rowsub = q.first()
@@ -739,7 +777,6 @@ def view_edit(request):
                 return route_list(request, kegiatan_sub_id)
         
             controls = request.POST.items()
-            
             a    = form.validate(controls)
             vol_1_1 = a['vol_1_1']
             vol_1_2 = a['vol_1_2']
@@ -765,16 +802,37 @@ def view_edit(request):
             bln10    = a['bln10']
             bln11    = a['bln11']
             bln12    = a['bln12']
-            rka  =  (vol_1_1*vol_1_2)*int(hsat_1)
-            rka1 = int(float(rka))
-            dpa  =  (vol_2_1*vol_2_2)*int(hsat_2)
-            dpa1 = int(float(dpa))
-            rdppa =  (vol_3_1*vol_3_2)*int(hsat_3)
-            rdppa1 = int(float(rdppa))
-            dppa =  (vol_4_1*vol_4_2)*int(hsat_4)
-            dppa1 = int(float(rdppa))
-            bln  = bln01+bln02+bln03+bln04+bln05+bln06+bln07+bln08+bln09+bln10+bln11+bln12
+            rka      = (vol_1_1*vol_1_2)*int(hsat_1)
+            rka1     = int(float(rka))
+            dpa      = (vol_2_1*vol_2_2)*int(hsat_2)
+            dpa1     = int(float(dpa))
+            rdppa    = (vol_3_1*vol_3_2)*int(hsat_3)
+            rdppa1   = int(float(rdppa))
+            dppa     = (vol_4_1*vol_4_2)*int(hsat_4)
+            dppa1    = int(float(rdppa))
+            bln      = bln01+bln02+bln03+bln04+bln05+bln06+bln07+bln08+bln09+bln10+bln11+bln12
             
+            ### Sum dari APInvoiceItem sesuai APInvoiceItem.id 
+            q_ai = DBSession.query(func.sum(APInvoiceItem.amount).label('jumlah')
+                        ).filter(APInvoiceItem.kegiatan_item_id==ui
+                        ).first()
+            q_aia = '%s' % q_ai 
+        
+            if q_aia == 'None':
+                q_aia=0
+            print'++++++++++++++Sum APInvoiceItem++++++++++++++++++++++',q_aia
+
+            if q_aia:
+                q_aiaa = int(q_aia)
+                if rdppa1 < q_aiaa and dppa1 < q_aiaa:
+                    print'xxxxxxxxxxxxxxxxTILU3 xxxxxxxxxxxxxxxxxx',rdppa1
+                    print'xxxxxxxxxxxxxxxxOPAT4 xxxxxxxxxxxxxxxxxx',dppa1
+                    print'xxxxxxxxxxxxxxxxGAGALxxxxxxxxxxx'
+                    request.session.flash('Gagal Update Data', 'error')
+                    return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
+            print'saveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+            
+
             ag_step_id = request.session['ag_step_id']
             if ag_step_id==1:
                 if bln>rka1:

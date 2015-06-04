@@ -328,3 +328,38 @@ class KegiatanItem(NamaModel, Base):
           return DBSession.query(func.max(cls.no_urut).label('m')).filter(
                    cls.kegiatan_sub_id== kegiatan_sub_id,
                    cls.rekening_id    == rekening_id).scalar() or 0
+
+############################################
+###         ASISTENSI KEGIATAN           ###
+###         KegiatanAsistensi            ###
+############################################   
+class KegiatanAsistensi(DefaultModel, Base):
+    __tablename__  ='kegiatan_asistensis'
+    __table_args__ = {'extend_existing':True,'schema' :'apbd'}
+ 
+    created     = Column(DateTime, nullable=False, default=datetime.now, server_default='now()')
+    updated     = Column(DateTime)
+    create_uid  = Column(Integer,  nullable=False, default=1, server_default='1')
+    update_uid  = Column(Integer)
+    #Relasi
+    kegiatan_subs     = relationship("KegiatanSub", backref="kegiatan_asistensis") 
+    units             = relationship("Unit",        backref="kegiatan_asistensis") 
+    kegiatan_sub_id   = Column(BigInteger, ForeignKey("apbd.kegiatan_subs.id"), nullable=False)
+    unit_asistensi_id = Column(Integer,    ForeignKey("admin.units.id"),        nullable=False) 
+    #Komentar
+    catatan_1   = Column(Text)
+    catatan_2   = Column(Text)
+    catatan_3   = Column(Text)
+    catatan_4   = Column(Text)
+    #Kabid
+    ttd_nip_1   = Column(String(32))
+    ttd_nama_1  = Column(String(64))
+    #Kasubid
+    ttd_nip_2   = Column(String(32))
+    ttd_nama_2  = Column(String(64))
+    #Pelaksana
+    ttd_nip_3   = Column(String(32))
+    ttd_nama_3  = Column(String(64))
+    #Status Disabled
+    disabled    = Column(SmallInteger, nullable=False, default=0)
+                   

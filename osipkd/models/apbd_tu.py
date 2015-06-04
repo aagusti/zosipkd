@@ -170,7 +170,7 @@ class Spm(NamaModel, Base):
                    
     ap_spp_id      = Column(BigInteger,   ForeignKey("apbd.ap_spps.id"), nullable=False)
     kode           = Column(String(50),   nullable=False)
-    nama           = Column(String(250),  nullable=False)
+    nama           = Column(String(255),  nullable=False)
     tanggal        = Column(Date,         nullable=False) 
     ttd_uid        = Column(BigInteger,   nullable=False)
     ttd_nip        = Column(String(50),   nullable=False)
@@ -523,7 +523,7 @@ class Giro(NamaModel, Base):
     tahun_id = Column(BigInteger, ForeignKey("apbd.tahuns.id"), nullable=False)
     unit_id  = Column(Integer,    ForeignKey("admin.units.id"), nullable=False)
     kode     = Column(String(50))
-    nama     = Column(String(150))
+    nama     = Column(String(255))
     pos      = Column(String(64))
     tanggal  = Column(Date,         nullable=False)
     nominal  = Column(BigInteger,   nullable=False, default=0)

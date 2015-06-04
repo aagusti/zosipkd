@@ -153,6 +153,13 @@ def view_add(request):
     DBSession.flush()
     nominal = "%d" % Giro.get_nilai(row.ap_giro_id) 
     
+    # untuk kondisi simpan langsung nominal ke Giro
+    if nominal:
+        rows = DBSession.query(Giro).filter(Giro.id==ap_giro_id).first()
+        rows.nominal= nominal  
+        DBSession.add(rows)
+        DBSession.flush()
+        
     #Untuk update status disabled pada SP2D
     row = DBSession.query(Sp2d).filter(Sp2d.id==controls['ap_sp2d_id']).first()   
     row.status_giro = 1
@@ -216,7 +223,16 @@ def view_delete(request):
 
     nominal = "%s" % Giro.get_nilai(row.ap_giro_id)
     
-    #Untuk update status disabled pada SP2D
+    # untuk kondisi hapus langsung nominal ke Giro
+    if nominal == 'None':
+        nominal = 0
+        
+    rows = DBSession.query(Giro).filter(Giro.id==row.ap_giro_id).first()
+    rows.nominal= nominal  
+    DBSession.add(rows)
+    DBSession.flush()
+    
+     #Untuk update status disabled pada SP2D
     row = DBSession.query(Sp2d).filter(Sp2d.id==row.ap_sp2d_id).first()   
     row.status_giro=0
     save_request2(row)

@@ -169,7 +169,7 @@ class Jurnal(NamaModel, Base):
     unit_id         = Column(Integer,       ForeignKey("admin.units.id"), nullable=False)  
     tahun_id        = Column(BigInteger,    ForeignKey("apbd.tahuns.id"), nullable=False)
     kode            = Column(String(32),    nullable=False)    
-    nama            = Column(String(128),   nullable=False)
+    nama            = Column(String(255),   nullable=False)
     jv_type         = Column(SmallInteger,  nullable=False, default=0)
     tanggal         = Column(Date) 
     tgl_transaksi   = Column(Date)

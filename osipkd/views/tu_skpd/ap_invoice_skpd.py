@@ -517,8 +517,8 @@ class AddSchema(colander.Schema):
                           )
     ap_tgl_kontrak  = colander.SchemaNode(
                           colander.Date(),
-                          missing=colander.drop,
-                          title="Tgl Kontrak"
+                          missing=None,
+                          title="Tgl Kontrak",
                           )
     """
     ap_kegiatankd   = colander.SchemaNode(

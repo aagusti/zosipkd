@@ -342,7 +342,7 @@ class ViewTUSKPDLap(BaseViews):
                   APInvoice.kode.label('invoice_kd'), KegiatanSub.nama.label('kegiatan_nm'), 
                   Rekening.kode.label('rek_kd'),Rekening.nama.label('rek_nm'), 
                   func.sum(APInvoiceItem.amount).label('jumlah')
-                  ).filter(APInvoice.unit_id==Unit.id, APInvoice.kegiatan_sub_id==KegiatanSub.kid,
+                  ).filter(APInvoice.unit_id==Unit.id, APInvoice.kegiatan_sub_id==KegiatanSub.id,
                   APInvoice.id==APInvoiceItem.ap_invoice_id, APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
                   KegiatanItem.rekening_id==Rekening.id, APInvoice.unit_id==self.session['unit_id'],
                   APInvoice.tahun_id==self.session['tahun'],  
@@ -1006,7 +1006,7 @@ class ViewTUSKPDLap(BaseViews):
             return response
 
         ### LAPORAN SPM 2
-        elif url_dict['act']=='32' :
+        elif url_dict['act']=='321' :
             if tipe ==0 :
                 query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.kode.label('unit_kd'),
                   Unit.nama.label('unit_nm'), Spm.tanggal.label('tgl_spp'), 
@@ -1140,6 +1140,14 @@ class ViewTUSKPDLap(BaseViews):
         elif url_dict['act']=='spm12' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), Unit.alamat,
+                     Spm.id.label('spm_id'),Spm.kode.label('spm_kd'), Spm.nama.label('spm_nm'), Spm.tanggal.label('spm_tgl'), Spm.ttd_nip, Spm.ttd_nama, 
+                     Spp.id.label('spp_id'),Spp.jenis.label('jenis'), 
+                     Spp.nominal.label('amount'), Jabatan.nama.label('jabatan')
+                     ).filter(cast(Spm.ttd_uid, sqlalchemy.String)==Jabatan.kode, 
+                     Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id, 
+                     Spp.unit_id==self.session['unit_id'], Spp.tahun_id==self.session['tahun'], Spm.id==pk_id
+                     )                         
+            """query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), Unit.alamat,
                      Spm.id.label('spm_id'),Spm.kode.label('spm_kd'), Spm.nama.label('spm_nm'), Spm.tanggal.label('spm_tgl'), 
                      Spm.ttd_nip, Spm.ttd_nama, Spp.jenis.label('jenis'), Spp.nominal, Spp.nama.label('spp_nm'), Kegiatan.kode, 
                      Jabatan.nama.label('jabatan')
@@ -1150,7 +1158,7 @@ class ViewTUSKPDLap(BaseViews):
                      Kegiatan.id==KegiatanSub.kegiatan_id,
                      Spp.unit_id==self.session['unit_id'], Spp.tahun_id==self.session['tahun'], Spm.id==pk_id
                      )                         
-
+            """
             generator = b103r003_12Generator()
             pdf = generator.generate(query)
             response=req.response
@@ -3336,13 +3344,39 @@ class b103r003_12Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_greeting, "spm_tgl").text = unicode(row.spm_tgl)
             ET.SubElement(xml_greeting, "ttd_nip").text = row.ttd_nip
             ET.SubElement(xml_greeting, "ttd_nama").text = row.ttd_nama
+            ET.SubElement(xml_greeting, "spp_id").text = unicode(row.spp_id)
+            ET.SubElement(xml_greeting, "jenis").text = unicode(row.jenis)
+            ET.SubElement(xml_greeting, "amount").text = unicode(row.amount)
+            ET.SubElement(xml_greeting, "terbilang").text = Terbilang(row.amount)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "jabatan").text = row.jabatan
+            ET.SubElement(xml_greeting, "logo").text = logo
+            """ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
+            ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "alamat").text = row.alamat
+            ET.SubElement(xml_greeting, "spm_id").text = unicode(row.spm_id)
+            ET.SubElement(xml_greeting, "spm_kd").text = row.spm_kd
+            ET.SubElement(xml_greeting, "spm_nm").text = row.spm_nm
+            ET.SubElement(xml_greeting, "spm_tgl").text = unicode(row.spm_tgl)
+            ET.SubElement(xml_greeting, "ttd_nip").text = row.ttd_nip
+            ET.SubElement(xml_greeting, "ttd_nama").text = row.ttd_nama
             ET.SubElement(xml_greeting, "jenis").text = unicode(row.jenis)
             ET.SubElement(xml_greeting, "nilai").text = unicode(row.nominal)
+            ET.SubElement(xml_greeting, "terbilang").text = Terbilang(row.nominal)
             ET.SubElement(xml_greeting, "spp_nm").text = row.spp_nm
             ET.SubElement(xml_greeting, "kode").text = row.kode
             ET.SubElement(xml_greeting, "jabatan").text = row.jabatan
             ET.SubElement(xml_greeting, "customer").text = customer
             ET.SubElement(xml_greeting, "logo").text = logo
+            """
+            rows = DBSession.query(case([(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)=='5.1.1'),"-GJ")], else_=" ").label('kode')
+               ).filter(Spp.id==SppItem.ap_spp_id, SppItem.ap_invoice_id==APInvoiceItem.ap_invoice_id, APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+               KegiatanItem.rekening_id==Rekening.id, Spp.id==row.spp_id
+               ).group_by(case([(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)=='5.1.1'),"-GJ")], else_=" "))
+
+            for row1 in rows:
+                ET.SubElement(xml_greeting, "kode").text  = row1.kode
         return self.root
 
 ### SPM // SPTJM LS Pihak Ketiga 1
@@ -3870,15 +3904,16 @@ class b104r300Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "customer").text = customer
             ET.SubElement(xml_greeting, "logo").text = logo
             
-            rows = DBSession.query(Pegawai.nama.label('pa_nama')
+            rows = DBSession.query(Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_greeting, "pa_nama").text = row2.pa_nama
+               ET.SubElement(xml_greeting, "pa_nip").text = row2.pa_nama
             
             rows2 = DBSession.query(Pegawai.nama.label('bend_nama'), Pegawai.kode.label('bend_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==13)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='236')
             for row3 in rows2 :
                ET.SubElement(xml_greeting, "bend_nama").text = row3.bend_nama
                ET.SubElement(xml_greeting, "bend_nip").text = row3.bend_nip
@@ -3916,15 +3951,16 @@ class b104r400Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "customer").text = customer
             ET.SubElement(xml_greeting, "logo").text = logo
             
-            rows = DBSession.query(Pegawai.nama.label('pa_nama')
+            rows = DBSession.query(Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==7)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_greeting, "pa_nama").text = row2.pa_nama
+               ET.SubElement(xml_greeting, "pa_nip").text = row2.pa_nip
             
             rows2 = DBSession.query(Pegawai.nama.label('bend_nama'), Pegawai.kode.label('bend_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
-               Pejabat.unit_id==row.unit_id, Jabatan.id==13)
+               Pejabat.unit_id==row.unit_id, Jabatan.kode=='236')
             for row3 in rows2 :
                ET.SubElement(xml_greeting, "bend_nama").text = row3.bend_nama
                ET.SubElement(xml_greeting, "bend_nip").text = row3.bend_nip
