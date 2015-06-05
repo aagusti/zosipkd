@@ -15,7 +15,6 @@ from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
     
-
 SESS_ADD_FAILED = 'Tambah ar-invoice-item gagal'
 SESS_EDIT_FAILED = 'Edit ar-invoice-item gagal'
 
@@ -459,20 +458,19 @@ class view_ar_invoice_item(BaseViews):
                                        RekeningSap.kr_lo_sap_id.label('sap2'),
                                        Rekening.id.label('rek'),
                                 ).join(Rekening
-                                #).outerjoin(KegiatanSub, KegiatanItem, RekeningSap 
                                 ).filter(ARItem.id==id_inv,
                                          ARItem.rekening_id==KegiatanItem.rekening_id,
                                          KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                                          KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                          RekeningSap.rekening_id==Rekening.id,
                                          RekeningSap.kr_lo_sap_id==Sap.id
-                                ).group_by(ARItem.rekening_id.label('rekening_id1'),
-                                           Sap.nama.label('nama1'),
-                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                           ARItem.amount.label('nilai1'),
-                                           RekeningSap.db_lo_sap_id.label('sap1'),
-                                           RekeningSap.kr_lo_sap_id.label('sap2'),
-                                           Rekening.id.label('rek'),
+                                ).group_by(ARItem.rekening_id,
+                                           Sap.nama,
+                                           KegiatanItem.kegiatan_sub_id,
+                                           ARItem.amount,
+                                           RekeningSap.db_lo_sap_id,
+                                           RekeningSap.kr_lo_sap_id,
+                                           Rekening.id,
                                 ).all()
                 
                 for row in rows:
@@ -563,24 +561,25 @@ class view_ar_invoice_item(BaseViews):
                  permission='posting')
     def view_edit_posting1(self):
         request = self.request
+        params  = request.params
+    
+        t = 'tanggal' in params and params['tanggal'] or 0
         a = datetime.strftime(datetime.now(),'%Y-%m-%d')
         b = " 00:00:00+07"
-        tanggal = a+b
-        #tanggal = datetime.datetime.fromtimestamp(1386181800).strftime('%Y-%m-%d %H:%M:%S')
+        tanggal = t
             
         rekaps = DBSession.query(ARItem.id.label('ar_id1'),
                                 ).filter(ARItem.tanggal==tanggal,
                                          ARItem.posted1==0,
                                          ARItem.amount!=0,
                                          ARItem.disabled==0,
-                                ).group_by(ARItem.id.label('ar_id1'),
+                                ).group_by(ARItem.id,
                                 ).all()
         if not rekaps:
             self.request.session.flash('Data posting rekap tidak ada.', 'error')
             return self.route_list()
             
         form = Form(colander.Schema(), buttons=('jurnal','cancel'))
-        
         if request.POST:
             if 'jurnal' in request.POST: 
                 rekaps = DBSession.query(ARItem.id.label('ar_id1'),
@@ -588,7 +587,7 @@ class view_ar_invoice_item(BaseViews):
                                          ARItem.posted1==0,
                                          ARItem.amount!=0,
                                          ARItem.disabled==0,
-                                ).group_by(ARItem.id.label('ar_id1'),
+                                ).group_by(ARItem.id,
                                 ).all()
                 for row in rekaps:
                     a = row.ar_id1
@@ -600,7 +599,7 @@ class view_ar_invoice_item(BaseViews):
                 self.request.session.flash('Penetapan/Tagihan sudah diposting rekap dan dibuat Jurnalnya.')
                 
                 #Tambah ke Jurnal
-                tanggal = datetime.strftime(datetime.now(),'%Y-%m-%d')
+                tanggal = t
                 kode    = "Penetapan-%s" % tanggal
                 
                 row = Jurnal()
@@ -639,37 +638,32 @@ class view_ar_invoice_item(BaseViews):
                 
                 #Tambah ke Item Jurnal SKPD
                 jui   = row.id
-                rekaps = DBSession.query(ARItem.id.label('ar_id1'),
+                rekaps = DBSession.query(ARItem.rekening_id.label('rek1')
                                 ).filter(ARItem.tanggal==tanggal,
                                          ARItem.posted1==1,
                                          ARItem.amount!=0,
                                          ARItem.disabled==0,
-                                ).group_by(ARItem.id.label('ar_id1'),
+                                ).group_by(ARItem.rekening_id
                                 ).all()
+                print '---------------------Rekap---------------------',rekaps
                 for row in rekaps:
-                    a = row.ar_id1
-                    rows = DBSession.query(ARItem.rekening_id.label('rekening_id1'),
-                                           Sap.nama.label('nama1'),
-                                           KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                           ARItem.amount.label('nilai1'),
+                    a = row.rek1
+                    rows = DBSession.query(KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
+                                           func.sum(ARItem.amount).label('nilai1'),
                                            RekeningSap.db_lo_sap_id.label('sap1'),
                                            RekeningSap.kr_lo_sap_id.label('sap2'),
                                            Rekening.id.label('rek'),
                                     ).join(Rekening
-                                    #).outerjoin(KegiatanSub, KegiatanItem, RekeningSap 
-                                    ).filter(ARItem.id==a,
+                                    ).filter(ARItem.rekening_id==a,
                                              ARItem.rekening_id==KegiatanItem.rekening_id,
                                              KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                                              KegiatanItem.rekening_id==RekeningSap.rekening_id,
                                              RekeningSap.rekening_id==Rekening.id,
                                              RekeningSap.kr_lo_sap_id==Sap.id
-                                    ).group_by(ARItem.rekening_id.label('rekening_id1'),
-                                               Sap.nama.label('nama1'),
-                                               KegiatanItem.kegiatan_sub_id.label('kegiatan_sub_id1'),
-                                               ARItem.amount.label('nilai1'),
-                                               RekeningSap.db_lo_sap_id.label('sap1'),
-                                               RekeningSap.kr_lo_sap_id.label('sap2'),
-                                               Rekening.id.label('rek'),
+                                    ).group_by(KegiatanItem.kegiatan_sub_id,
+                                               RekeningSap.db_lo_sap_id,
+                                               RekeningSap.kr_lo_sap_id,
+                                               Rekening.id,
                                     ).all()
                     
                     for row in rows:
@@ -716,16 +710,18 @@ class view_ar_invoice_item(BaseViews):
                  permission='unposting') 
     def view_edit_unposting1(self):
         request = self.request
-        tanggal = datetime.strftime(datetime.now(),'%Y-%m-%d')
+        params  = request.params
+    
+        t       = 'tanggal' in params and params['tanggal'] or 0
+        tanggal = t
         kode    = "Penetapan-%s" % tanggal
-        #row     = self.query_id().first()
         
         rekaps = DBSession.query(ARItem.id.label('ar_id1'),
                                 ).filter(ARItem.tanggal==tanggal,
                                          ARItem.posted1==1,
                                          ARItem.amount!=0,
                                          ARItem.disabled==0,
-                                ).group_by(ARItem.id.label('ar_id1'),
+                                ).group_by(ARItem.id,
                                 ).all()
         if not rekaps:
             self.request.session.flash('Data rekap tidak dapat di Un-Jurnal, karena belum dibuat jurnal.', 'error')
@@ -741,7 +737,7 @@ class view_ar_invoice_item(BaseViews):
                                          ARItem.posted1==1,
                                          ARItem.amount!=0,
                                          ARItem.disabled==0,
-                                ).group_by(ARItem.id.label('ar_id1'),
+                                ).group_by(ARItem.id,
                                 ).all()
                 for row in rekaps:
                     a = row.ar_id1

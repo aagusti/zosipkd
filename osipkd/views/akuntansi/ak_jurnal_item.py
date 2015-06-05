@@ -83,17 +83,17 @@ class view_ak_jurnal_item(BaseViews):
                                 ).filter(JurnalItem.jurnal_id==jurnal_id,
                                          JurnalItem.jurnal_id==Jurnal.id,
                                 ).group_by(JurnalItem.id,
-                                           sap.kode.label('sapkd'),
-                                           sap.nama.label('sapnm'),
+                                           sap.kode,
+                                           sap.nama,
                                            JurnalItem.amount,
                                            JurnalItem.notes,
-                                           rek.kode.label('rekkd'),
-                                           rek.nama.label('reknm'),
+                                           rek.kode,
+                                           rek.nama,
                                            JurnalItem.kegiatan_sub_id,
                                            JurnalItem.rekening_id,
                                            JurnalItem.jurnal_id,
-                                           sub.kode.label('subkd'),
-                                           sub.nama.label('subnm'),
+                                           sub.kode,
+                                           sub.nama,
                                 )
             rowTable = DataTables(req, JurnalItem, query, columns)
             return rowTable.output_result()

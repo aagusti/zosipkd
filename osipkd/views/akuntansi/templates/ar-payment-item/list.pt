@@ -290,15 +290,14 @@
           
         var tb_array = [
           '<div class="btn-group pull-left">',
-          '	<button id="btn_add"    class="btn btn btn-primary" type="button">Tambah</button>',
-          '	<button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button>',
-          '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
-          '	<button id="btn_posting"   class="btn btn btn-success" type="button">Posting Transaksi</button>',
-          '	<button id="btn_unposting" class="btn btn btn-info"    type="button">Un-Jurnal Transaksi</button>',
+          '	<button id="btn_add"        class="btn btn btn-primary" type="button">Tambah</button>',
+          '	<button id="btn_edit"       class="btn btn btn-primary" type="button">Edit</button>',
+          '	<button id="btn_delete"     class="btn btn btn-danger"  type="button">Hapus</button>',
+          '	<button id="btn_posting"    class="btn btn btn-success" type="button">Posting Transaksi</button>',
+          '	<button id="btn_unposting"  class="btn btn btn-info"    type="button">Un-Jurnal Transaksi</button>',
           '	<button id="btn_posting1"   class="btn btn btn-success" type="button">Posting Rekap</button>',
           '	<button id="btn_unposting1" class="btn btn btn-info"    type="button">Un-Jurnal Rekap</button>',
-          //'	<button id="btn_post_rkp" class="btn btn btn-success" type="button">Posting Rekap</button>',
-          ' <button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
+          ' <button id="btn_close"      class="btn btn-warning"     type="button">Tutup</button>',
           '	&nbsp;',
           '</div>',
         ];
@@ -357,53 +356,95 @@
             }
         });
         
+        $('#tanggal2').click(
+            function(){
+              if (!Modernizr.inputtypes['date'] ||
+                  "date" != "date"){
+                $('#tanggal2').pickadate({"selectMonths": true,
+                  "submitFormat": "yyyy-mm-dd", 
+                  "selectYears": true, "format": "yyyy-mm-dd"});
+              }
+            }
+        );
         $('#btn_posting1').click(function () {
-            window.location = '/ar-payment-item/posting1';
+            $('#dlgRpt').modal('show');
         });
-        
+        $('#btn_pil_rpt').click(function () {
+            var tgl = $('#tanggal2').val();
+            window.location = '/ar-payment-item/posting1?tanggal='+tgl;
+        });
+
         $('#btn_unposting1').click(function () {
-            window.location = '/ar-payment-item/unposting1';
+            $('#dlgRpt1').modal('show');
         });
+        $('#btn_pil_rpt1').click(function () {
+            var tgl = $('#tanggal1').val();
+            window.location = '/ar-payment-item/unposting1?tanggal='+tgl;
+        });
+        $('#tanggal1').click(
+            function(){
+              if (!Modernizr.inputtypes['date'] ||
+                  "date" != "date"){
+                $('#tanggal1').pickadate({"selectMonths": true,
+                  "submitFormat": "yyyy-mm-dd", 
+                  "selectYears": true, "format": "yyyy-mm-dd"});
+              }
+            }
+        );
         
-        $('#btn_post').click(function () {
-           $.ajax({
-              type: "POST",
-              url: "/ag-payment-item/detail/post",
-              //data: "unit_kd="+$('#kegiatan_kd').val(),
-              success: function (html) {
-                if (html.success == true) {
-                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
-                  oTable.fnReloadAjax(oTableUrl);
-                } else {
-                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
-                }
-              },
-              beforeSend: function () {
-                $("#errors").css('display', 'inline', 'important');
-                $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
-              }
-            });
-         });        
-        $('#btn_post_rkp').click(function () {
-           $.ajax({
-              type: "POST",
-              url: "/ag-payment-item/rekap/post",
-              //data: "unit_kd="+$('#kegiatan_kd').val(),
-              success: function (html) {
-                if (html.success == true) {
-                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
-                  oTable.fnReloadAjax(oTableUrl);
-                } else {
-                  $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
-                }
-              },
-              beforeSend: function () {
-                $("#errors").css('display', 'inline', 'important');
-                $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
-              }
-            });
-         });
+        $("#btn_close").click(function () {
+            window.location = '/skpd';
+            return false;
+        });
         })
     </script>
+    
+    <!-- Modal posting -->
+    <div class="modal fade" id="dlgRpt">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title">Pilih Tanggal Rekap</h4>
+          </div>
+
+        <div class="modal-body"> 
+        <label class="control-label col-md-2">Tanggal</label>
+          <div class="col-md-7">
+            <input id="tanggal2" class="form-control typeahead" type="date"  name="tanggal2" readonly="true">
+          </div>
+        </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+            <button type="button" class="btn btn-primary" id="btn_pil_rpt" name="btn_pil_rpt">Lanjutan</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    
+    <!-- Modal unposting -->
+    <div class="modal fade" id="dlgRpt1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title">Pilih Tanggal UnJurnal Rekap</h4>
+          </div>
+
+        <div class="modal-body"> 
+        <label class="control-label col-md-2">Tanggal</label>
+          <div class="col-md-7">
+            <input id="tanggal1" class="form-control typeahead" type="date"  name="tanggal1" readonly="true">
+          </div>
+        </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+            <button type="button" class="btn btn-primary" id="btn_pil_rpt1" name="btn_pil_rpt">Lanjutkan</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
   </div>
 </html>
