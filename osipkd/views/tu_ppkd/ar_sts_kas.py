@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, extract
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
@@ -72,6 +72,7 @@ class view_ar_sts(BaseViews):
 
         if url_dict['act']=='grid':
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+            bulan = 'bulan' in params and params['bulan'] and int(params['bulan']) or 0
             if url_dict['act']=='grid':
                 # defining columns
                 columns = []
@@ -85,12 +86,25 @@ class view_ar_sts(BaseViews):
                 columns.append(ColumnDT('posted'))
                 columns.append(ColumnDT('posted1'))
                 
-                query = DBSession.query(Sts).filter(
+                if bulan==0 :
+                  query = DBSession.query(Sts).filter(
                           Sts.tahun_id == ses['tahun'],
                           Sts.unit_id == ses['unit_id']
                           )
+                else :
+                  query = DBSession.query(Sts).filter(
+                          Sts.tahun_id == ses['tahun'],
+                          Sts.unit_id == ses['unit_id'],
+                          extract('month',Sts.tgl_sts)==bulan
+                          )
+                  
                 rowTable = DataTables(req, Sts, query, columns)
                 return rowTable.output_result()
+
+        elif url_dict['act']=='reload':
+            bulan = params['bulan']
+            
+            return {'success':True, 'msg':'Sukses ubah bulan'}
                 
   
 #######    

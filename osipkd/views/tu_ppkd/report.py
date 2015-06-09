@@ -1104,16 +1104,26 @@ class ViewTUPPKDLap(BaseViews):
             return response
             
         elif url_dict['act']=='advist' :
-            query = DBSession.query(Advist.kode, Advist.nama, Advist.tanggal,
-               Advist.nominal, 
-               Sp2d.kode.label('sp2d_kd'), Sp2d.tanggal.label('tanggal'),
-               Sp2d.nama.label('sp2d_nm'), Spp.nominal.label('nominal'),
-               Sp2d.no_validasi.label('no_validasi'),
-               Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm')
+            pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+            query = DBSession.query(Advist.tahun_id, Advist.kode, Advist.nama, Advist.tanggal,
+               Sp2d.kode.label('sp2d_kd'), Sp2d.tanggal.label('sp2d_tgl'),
+               Sp2d.nama.label('sp2d_nm'), Sp2d.no_validasi.label('no_validasi'),
+               Spp.nominal.label('nominal'),Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+               Spm.id.label('spm_id'),
+               func.coalesce(func.sum(SpmPotongan.nilai),0).label('tot_potongan'),
+               func.coalesce(func.sum(case([(Rekening.kode=='7.1.1.01.01',SpmPotongan.nilai)], else_=0)),0).label('iwp'),               
+               func.coalesce(func.sum(case([(Rekening.kode=='7.1.1.01.02',SpmPotongan.nilai)], else_=0)),0).label('askes'),               
+               func.coalesce(func.sum(case([(Rekening.kode=='7.1.1.01.03',SpmPotongan.nilai)], else_=0)),0).label('pph_pusat'),               
+               func.coalesce(func.sum(case([(Rekening.kode=='7.1.1.01.04',SpmPotongan.nilai)], else_=0)),0).label('ppn_pusat'),               
+               func.coalesce(func.sum(case([(Rekening.kode=='7.1.1.01.05',SpmPotongan.nilai)], else_=0)),0).label('taperum'),               
                ).filter(Advist.id==AdvistItem.ap_advist_id, AdvistItem.ap_sp2d_id==Sp2d.id, Sp2d.ap_spm_id==Spm.id,
-               Spm.ap_spp_id==Spp.id, Advist.tahun_id==self.session['tahun'], Advist.unit_id==Unit.id,
-               Advist.unit_id==self.session['unit_id']
-               ).order_by(Advist.tanggal).all()
+               Spm.id==SpmPotongan.ap_spm_id, Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id, SpmPotongan.rekening_id==Rekening.id,
+               Advist.tahun_id==self.session['tahun'], Advist.id==pk_id
+               ).group_by(Advist.tahun_id, Advist.kode, Advist.nama, Advist.tanggal,
+               Sp2d.kode, Sp2d.tanggal,
+               Sp2d.nama, Sp2d.no_validasi,
+               Spp.nominal,Unit.kode, Unit.nama, Spm.id
+               ).order_by(Sp2d.tanggal,Sp2d.kode).all()
                
             generator = b203r004Generator()
             pdf = generator.generate(query)
@@ -1749,27 +1759,38 @@ class b203r0021Generator(JasperGenerator):
         return self.root
 
 #Advist
-class b203r004Generator(JasperGenerator):
+class b203r004Generator(JasperGeneratorWithSubreport):
     def __init__(self):
-        super(b203r004Generator, self).__init__()
-        self.reportname = get_rpath('apbd/tuppkd/R203004.jrxml')
+        self.mainreport = get_rpath('apbd/tuppkd/R203004.jrxml')
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/tuppkd/R203004_subreport1.jrxml'))
         self.xpath = '/apbd/spd'
-        self.root = ET.Element('apbd') 
+        self.root = ET.Element('apbd')
 
     def generate_xml(self, tobegreeted):
         for row in tobegreeted:
             xml_greeting  =  ET.SubElement(self.root, 'spd')
+            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun_id)
             ET.SubElement(xml_greeting, "kode").text = row.kode
             ET.SubElement(xml_greeting, "nama").text = row.nama
-            ET.SubElement(xml_greeting, "sp2d_kd").text = row.sp2d_kd
             ET.SubElement(xml_greeting, "tanggal").text = unicode(row.tanggal)
+            ET.SubElement(xml_greeting, "sp2d_kd").text = row.sp2d_kd
             ET.SubElement(xml_greeting, "sp2d_nm").text = row.sp2d_nm
-            ET.SubElement(xml_greeting, "nominal").text = unicode(row.nominal)
+            ET.SubElement(xml_greeting, "sp2d_tgl").text = unicode(row.sp2d_tgl)
             ET.SubElement(xml_greeting, "no_validasi").text = row.no_validasi
+            ET.SubElement(xml_greeting, "nominal").text = unicode(row.nominal)
+            ET.SubElement(xml_greeting, "tot_potongan").text = unicode(row.tot_potongan)
+            ET.SubElement(xml_greeting, "iwp").text = unicode(row.iwp)
+            ET.SubElement(xml_greeting, "askes").text = unicode(row.askes)
+            ET.SubElement(xml_greeting, "pph_pusat").text = unicode(row.pph_pusat)
+            ET.SubElement(xml_greeting, "ppn_pusat").text = unicode(row.ppn_pusat)
+            ET.SubElement(xml_greeting, "taperum").text = unicode(row.taperum)
             ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
             ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
             ET.SubElement(xml_greeting, "customer").text = customer
             ET.SubElement(xml_greeting, "logo").text = logo
+            ET.SubElement(xml_greeting, "spm_id").text = unicode(row.spm_id)
+            
         return self.root
         
 """

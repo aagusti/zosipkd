@@ -848,7 +848,7 @@
             },{
                 "bSearchable": true,
                 "bSortable"  : false,
-                "aTargets"   : [2]
+                "aTargets"   : [1]
             },{
                 "bSearchable": false,
                 "bSortable"  : false,

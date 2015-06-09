@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R103003" language="groovy" pageWidth="612" pageHeight="972" columnWidth="504" leftMargin="54" rightMargin="54" topMargin="36" bottomMargin="36">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="104"/>
+	<property name="ireport.y" value="8"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["Z:\\py_os\\osipkd\\osipkd\\reports\\apbd\\tuskpd\\"]]></defaultValueExpression>
 	</parameter>
@@ -71,8 +71,8 @@
 		<variableExpression><![CDATA[Double.parseDouble($F{amount})]]></variableExpression>
 	</variable>
 	<variable name="jenis_nm" class="java.lang.String">
-		<variableExpression><![CDATA[$F{jenis}=='1' ? "Uang Persediaan" : $F{jenis}=='2' ? "Tambahan Uang Persediaan" : $F{jenis}=='3' ? "Ganti Uang Persediaan" : ($F{jenis}=='4' && $F{kode}=="0.00.00.21") ? "Pembayaran Langsung Gaji dan Tunjangan" : ($F{jenis}=='4' && $F{kode}!="0.00.00.21") ? "Pembayaran Belanja Tidak Langsung" : "Pembayaran Langsung Barang dan Jasa"]]></variableExpression>
-		<initialValueExpression><![CDATA[$F{jenis}=='1' ? "Uang Persediaan" : $F{jenis}=='2' ? "Tambahan Uang Persediaan" : $F{jenis}=='3' ? "Ganti Uang Persediaan" : ($F{jenis}=='4' && $F{kode}=="0.00.00.21") ? "Pembayaran Langsung Gaji dan Tunjangan" : ($F{jenis}=='4' && $F{kode}!="0.00.00.21") ? "Pembayaran Belanja Tidak Langsung" : "Pembayaran Langsung Barang dan Jasa"]]></initialValueExpression>
+		<variableExpression><![CDATA[$F{jenis}=='1' ? "Uang Persediaan" : $F{jenis}=='2' ? "Tambahan Uang Persediaan" : $F{jenis}=='3' ? "Ganti Uang Persediaan" : ($F{jenis}=='4' && $F{kode}=="-GJ") ? "Langsung Gaji dan Tunjangan" : ($F{jenis}=='4' && $F{kode}!="-GJ") ? "Belanja Tidak Langsung" : "Langsung Barang dan Jasa"]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{jenis}=='1' ? "Uang Persediaan" : $F{jenis}=='2' ? "Tambahan Uang Persediaan" : $F{jenis}=='3' ? "Ganti Uang Persediaan" : ($F{jenis}=='4' && $F{kode}=="-GJ") ? "Langsung Gaji dan Tunjangan" : ($F{jenis}=='4' && $F{kode}!="-GJ") ? "Belanja Tidak Langsung" : "Langsung Barang dan Jasa"]]></initialValueExpression>
 	</variable>
 	<variable name="non_jenis_nm" class="java.lang.String">
 		<variableExpression><![CDATA[$F{jenis}=='1' ? "Ganti Uang Persediaan (GU), Langsung (LS) dan Tambahan Uang Persediaan (TU)" : $F{jenis}=='2' ? "Uang Persediaan (UP), Ganti Uang Persediaan (GU)  dan Langsung (LS)" : $F{jenis}=='3' ? "Uang Persediaan (UP), Langsung (LS) dan Tambahan Uang Persediaan (TU)" : $F{jenis}=='4' ? "Uang Persediaan (UP), Ganti Uang Persediaan (GU) dan Tambahan Uang Persediaan (TU)" : ""]]></variableExpression>
@@ -124,7 +124,7 @@
 				<textElement textAlignment="Justified" verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["      Sehubungan dengan Surat Perintah Membayar "+$V{jenis_nm}+" (SPM-"+$V{jenis}+") Nomor "+$F{spm_kd}.substring(13)+"/"+$V{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun}+", tanggal "+$F{spm_tgl}.substring(8,10)+" "+$V{nm_bulan}+" "+$F{spm_tgl}.substring(0,4)+" yang kami ajukan sebesar Rp. "+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{nilai})+",- ("+$F{terbilang}+" rupiah) untuk keperluan "+$F{spm_nm}+" SKPD "+$F{unit_nm}+" Tahun Anggaran "+$F{tahun}+", dengan ini menyatakan dengan sebenarnya:"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["      Sehubungan dengan Surat Perintah Membayar "+$V{jenis_nm}+" (SPM-"+$V{jenis}+") Nomor : "+$F{spm_kd}.substring(13)+"/"+$V{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun}+", tanggal "+$F{spm_tgl}.substring(8,10)+" "+$V{nm_bulan}+" "+$F{spm_tgl}.substring(0,4)+" yang kami ajukan sebesar Rp. "+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{nilai})+",- ("+$F{terbilang}+" rupiah) untuk keperluan "+$F{spm_nm}+" pada SKPD "+$F{unit_nm}+" Tahun Anggaran "+$F{tahun}+", dengan ini menyatakan dengan sebenarnya bahwa :"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="0" width="487" height="16"/>
@@ -138,52 +138,52 @@
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font isBold="true" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["No : "+$F{spm_kd}.substring(13)+"/"+$V{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Nomor : "+$F{spm_kd}.substring(13)+"/"+$V{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="20" y="154" width="467" height="28"/>
+				<reportElement stretchType="RelativeToBandHeight" x="20" y="143" width="467" height="28"/>
 				<textElement textAlignment="Justified" verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Jumlah Pembayaran "+$V{jenis}+" tersebut di atas dipergunakan untuk keperluan guna membiayai kegiatan yang akan kami laksanakan sesuai dengan DPA-SKPD"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Jumlah Pembayaran "+$V{jenis_nm}+" ("+$V{jenis}+") tersebut di atas dipergunakan sesuai dengan DPA-SKPD"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="154" width="20" height="14"/>
+				<reportElement x="0" y="143" width="20" height="14"/>
 				<textElement verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["1."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="20" y="193" width="467" height="44"/>
+				<reportElement stretchType="RelativeToBandHeight" x="20" y="182" width="467" height="44"/>
 				<textElement textAlignment="Justified" verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Jumlah Pembayaran "+$V{jenis}+" tersebut akan digunakan untuk membiayai pengeluaran-pengeluaran menurut ketentuan yang berlaku, tidak untuk digunakan selain "+$V{non_jenis_nm}+"."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Jumlah Pembayaran "+$V{jenis_nm}+" ("+$V{jenis}+") tersebut akan digunakan untuk membiayai pengeluaran-pengeluaran menurut ketentuan yang berlaku, tidak untuk digunakan selain "+$V{jenis_nm}+" ("+$V{jenis}+")."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="193" width="20" height="14"/>
+				<reportElement x="0" y="182" width="20" height="14"/>
 				<textElement verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["2."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="274" width="487" height="31"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="263" width="487" height="31"/>
 				<textElement textAlignment="Justified" verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["      Demikian Surat Pernyataan ini dibuat untuk melengkapi Persyaratan Pengajuan SP2D-"+$V{jenis}+" pada SKPD "+$F{unit_nm}+" Kabupaten Tangerang."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["      Demikian Surat Pernyataan ini dibuat untuk melengkapi Persyaratan Pengajuan SPM-"+$V{jenis}+" pada SKPD "+$F{unit_nm}+" Kabupaten Tangerang."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="20" y="237" width="467" height="44"/>
+				<reportElement stretchType="RelativeToBandHeight" x="20" y="226" width="467" height="37"/>
 				<textElement textAlignment="Justified" verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Apabila  "+$V{jenis}+" tersebut tidak habis dalam satu bulan akan disetorkan ke rekening kas daerah."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Apabila "+$V{jenis_nm}+" ("+$V{jenis}+") tersebut tidak habis dalam satu bulan akan disetorkan ke rekening kas daerah."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="237" width="20" height="14"/>
+				<reportElement x="0" y="226" width="20" height="14"/>
 				<textElement verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>

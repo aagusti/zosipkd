@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func, cast, BigInteger
+from sqlalchemy import not_, func, cast, BigInteger, String
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
@@ -50,15 +50,16 @@ class view_ar_invoice_skpd_item(BaseViews):
                 query = DBSession.query(ARInvoiceItem.id,
                                         ARInvoiceItem.no_urut,
                                         ARInvoiceItem.nama,
-                                        Rekening.kode.label('kode_rek'),
+                                        (Rekening.kode+'-'+cast(KegiatanItem.no_urut,String)).label('kode_rek'),
                                         ARInvoiceItem.nilai,
                                         ARInvoiceItem.vol_1,
                                         ARInvoiceItem.vol_2,
                                         ARInvoiceItem.harga,
                                         KegiatanItem.nama.label('nama_kegiatan'),
                                         ARInvoiceItem.kegiatan_item_id,
-                                        cast(KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2,BigInteger).label('nilai1')).\
-                                  join(KegiatanItem).\
+                                        cast(KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2,BigInteger).label('nilai1'),
+                                        KegiatanItem.no_urut.label('no_urut_kegitem')
+                                        ).join(KegiatanItem).\
                                   outerjoin(Rekening).\
                                   filter(ARInvoiceItem.ar_invoice_id==ar_invoice_id)
                 rowTable = DataTables(req, ARInvoiceItem, query, columns)

@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, extract
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
@@ -62,6 +62,7 @@ class view_ar_invoice_skpd(BaseViews):
 
         if url_dict['act']=='grid':
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+            bulan = 'bulan' in params and params['bulan'] and int(params['bulan']) or 0
             if url_dict['act']=='grid':
                 # defining columns
                 columns = []
@@ -77,7 +78,8 @@ class view_ar_invoice_skpd(BaseViews):
                 columns.append(ColumnDT('posted'))
                 columns.append(ColumnDT('posted1'))
 
-                query = DBSession.query(ARInvoice.id,
+                if bulan==0 :
+                  query = DBSession.query(ARInvoice.id,
                           ARInvoice.kode,
                           ARInvoice.tgl_terima,
                           ARInvoice.tgl_validasi,
@@ -92,8 +94,30 @@ class view_ar_invoice_skpd(BaseViews):
                                  ARInvoice.unit_id==ses['unit_id']
                         ).order_by(ARInvoice.id.asc()
                         )
+                else :
+                  query = DBSession.query(ARInvoice.id,
+                          ARInvoice.kode,
+                          ARInvoice.tgl_terima,
+                          ARInvoice.tgl_validasi,
+                          #ARInvoice.jenis,
+                          #ARInvoice.bendahara_nm,
+                          #ARInvoice.penyetor,
+                          ARInvoice.nama,
+                          ARInvoice.nilai,
+                          ARInvoice.posted,
+                          ARInvoice.posted1,
+                        ).filter(ARInvoice.tahun_id==ses['tahun'],
+                              ARInvoice.unit_id==ses['unit_id'],
+                              extract('month',ARInvoice.tgl_terima)==bulan
+                        ).order_by(ARInvoice.id.asc()
+                        )
                 rowTable = DataTables(req, ARInvoice, query, columns)
                 return rowTable.output_result()
+                
+        elif url_dict['act']=='reload':
+            bulan = params['bulan']
+            
+            return {'success':True, 'msg':'Sukses ubah bulan'}
                 
   
 #######    

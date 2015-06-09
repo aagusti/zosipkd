@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime,date
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, extract
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
@@ -60,6 +60,8 @@ class view_ap_giro_ppkd(BaseViews):
         url_dict = req.matchdict
         if url_dict['act']=='grid':
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+            bulan = 'bulan' in params and params['bulan'] and int(params['bulan']) or 0
+            
             if url_dict['act']=='grid':
                 columns = []
                 columns.append(ColumnDT('id'))
@@ -67,14 +69,27 @@ class view_ap_giro_ppkd(BaseViews):
                 columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
                 columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('nominal'))
-                query = DBSession.query(Giro
+                
+                if bulan==0 :
+                  query = DBSession.query(Giro
                         ).filter(Giro.tahun_id==ses['tahun'],
                                  Giro.unit_id==ses['unit_id'] ,
+                        ).order_by(Giro.kode.asc())
+                else :
+                  query = DBSession.query(Giro
+                        ).filter(Giro.tahun_id==ses['tahun'],
+                                 Giro.unit_id==ses['unit_id'],
+                                 extract('month',Giro.tanggal)==bulan
                         ).order_by(Giro.kode.asc())
                            
                 rowTable = DataTables(req, Giro, query, columns)
                 return rowTable.output_result()
                      
+        elif url_dict['act']=='reload':
+            bulan = params['bulan']
+            
+            return {'success':True, 'msg':'Sukses ubah bulan'}
+            
     #######    
     # Add #
     #######

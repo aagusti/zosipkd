@@ -43,6 +43,7 @@ class view_ap_advist_item(BaseViews):
                 columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('nominal',filter=self._number_format))
                 columns.append(ColumnDT('no_validasi'))
+                columns.append(ColumnDT('unit'))
                 query = DBSession.query(AdvistItem.id,
                                         AdvistItem.ap_sp2d_id,
                                         Sp2d.kode.label('kode'),
@@ -50,18 +51,20 @@ class view_ap_advist_item(BaseViews):
                                         Sp2d.nama.label('nama'),
                                         Spp.nominal.label('nominal'),
                                         Sp2d.no_validasi.label('no_validasi'),
-                          ).join(Sp2d, Spm, Spp,
+                                        Unit.nama.label('unit')
                           ).filter(AdvistItem.ap_advist_id==ap_advist_id,
                                    AdvistItem.ap_sp2d_id==Sp2d.id,
                                    Sp2d.ap_spm_id==Spm.id,
                                    Spm.ap_spp_id==Spp.id,
+                                   Spp.unit_id==Unit.id
                           ).group_by(AdvistItem.id, 
                                      AdvistItem.ap_sp2d_id,
                                      Sp2d.kode,
                                      Sp2d.tanggal,
                                      Sp2d.nama,
                                      Spp.nominal,
-                                     Sp2d.no_validasi)
+                                     Sp2d.no_validasi,
+                                     Unit.nama)
                 rowTable = DataTables(req, AdvistItem, query, columns)
                 return rowTable.output_result()
                 
@@ -77,6 +80,7 @@ class view_ap_advist_item(BaseViews):
             columns.append(ColumnDT('nama'))
             columns.append(ColumnDT('nominal',filter=self._number_format))
             columns.append(ColumnDT('no_validasi'))
+            columns.append(ColumnDT('unit'))
             query = DBSession.query(AdvistItem.id,
                                     AdvistItem.ap_sp2d_id,
                                     Sp2d.kode.label('kode'),
@@ -84,20 +88,23 @@ class view_ap_advist_item(BaseViews):
                                     Sp2d.nama.label('nama'),
                                     Spp.nominal.label('nominal'),
                                     Sp2d.no_validasi.label('no_validasi'),
-                      ).join(Sp2d, Spm, Spp,
+                                    Unit.nama.label('unit'),
                       ).filter(AdvistItem.ap_advist_id==ap_advist_id,
                                AdvistItem.ap_sp2d_id==Sp2d.id,
                                Sp2d.ap_spm_id==Spm.id,
                                Spm.ap_spp_id==Spp.id,
+                               Spp.unit_id==Unit.id,
                                or_(Sp2d.kode.ilike('%%%s%%' % cari),
-                                   Sp2d.nama.ilike('%%%s%%' % cari))
+                                   Sp2d.nama.ilike('%%%s%%' % cari),
+                                   Unit.nama.ilike('%%%s%%' % cari))
                       ).group_by(AdvistItem.id, 
                                  AdvistItem.ap_sp2d_id,
                                  Sp2d.kode,
                                  Sp2d.tanggal,
                                  Sp2d.nama,
                                  Spp.nominal,
-                                 Sp2d.no_validasi)
+                                 Sp2d.no_validasi,
+                                 Unit.nama)
             rowTable = DataTables(req, AdvistItem, query, columns)
             return rowTable.output_result()
                 
@@ -120,23 +127,23 @@ def view_add(request):
     
     ap_advist_item_id = 'ap_advist_item_id' in controls and controls['ap_advist_item_id'] or 0
     #Cek dulu ada penyusup gak dengan mengecek sessionnya
-    ap_advist = DBSession.query(Advist)\
-                  .filter(Advist.unit_id==ses['unit_id'],
-                          Advist.id==ap_advist_id).first()
-    if not ap_advist:
-        return {"success": False, 'msg':'Advist tidak ditemukan'}
+    #ap_advist = DBSession.query(Advist)\
+    #              .filter(Advist.unit_id==ses['unit_id'],
+    #                      Advist.id==ap_advist_id).first()
+    #if not ap_advist:
+    #    return {"success": False, 'msg':'Advist tidak ditemukan'}
     
     #Cek lagi ditakutkan skpd ada yang iseng inject script
-    if ap_advist_item_id:
-        row = DBSession.query(AdvistItem)\
-                  .join(Advist)\
-                  .filter(AdvistItem.id==ap_advist_item_id,
-                          Advist.unit_id==ses['unit_id'],
-                          AdvistItem.ap_advist_id==ap_advist_id).first()
-        if not row:
-            return {"success": False, 'msg':'Advist tidak ditemukan'}
-    else:
-        row = AdvistItem()
+    #if ap_advist_item_id:
+    #    row = DBSession.query(AdvistItem)\
+    #              .join(Advist)\
+    #              .filter(AdvistItem.id==ap_advist_item_id,
+    #                      Advist.unit_id==ses['unit_id'],
+    #                      AdvistItem.ap_advist_id==ap_advist_id).first()
+    #    if not row:
+    #        return {"success": False, 'msg':'Advist tidak ditemukan'}
+    #else:
+    row = AdvistItem()
             
     row.ap_advist_id = ap_advist_id
     row.ap_sp2d_id   = controls['ap_sp2d_id']

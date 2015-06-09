@@ -572,10 +572,10 @@ class Advist(NamaModel, Base):
     __tablename__  ='ap_advist'
     __table_args__ = {'extend_existing':True,'schema' :'apbd'}
 
-    units    = relationship("Unit", backref="advist")
+    #units    = relationship("Unit", backref="advist")
 
     tahun_id = Column(BigInteger, ForeignKey("apbd.tahuns.id"), nullable=False)
-    unit_id  = Column(Integer,    ForeignKey("admin.units.id"), nullable=False)
+    #unit_id  = Column(Integer,    ForeignKey("admin.units.id"), nullable=False)
     kode     = Column(String(50))
     nama     = Column(String(255))
     tanggal  = Column(Date,         nullable=False)
@@ -585,15 +585,21 @@ class Advist(NamaModel, Base):
     posted   = Column(SmallInteger, nullable=False, default=0)
     disabled = Column(SmallInteger, nullable=False, default=0)
 
-    UniqueConstraint('tahun_id', 'unit_id', 'kode',
+    #UniqueConstraint('tahun_id', 'unit_id', 'kode',
+    #            name = 'advist_ukey')
+    UniqueConstraint('tahun_id', 'kode',
                 name = 'advist_ukey')
                 
     @classmethod
-    def max_no_urut(cls, tahun, unit_id):
+    def max_no_urut(cls, tahun):
         return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
-                .filter(cls.tahun_id==tahun,
-                        cls.unit_id==unit_id
+                .filter(cls.tahun_id==tahun
                 ).scalar() or 0
+    #def max_no_urut(cls, tahun, unit_id):
+    #    return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
+    #            .filter(cls.tahun_id==tahun,
+    #                    cls.unit_id==unit_id
+    #            ).scalar() or 0
 
     @classmethod
     def get_nilai(cls, ap_advist_id):
@@ -605,11 +611,15 @@ class Advist(NamaModel, Base):
                                       ).first()
      
     @classmethod
-    def get_norut(cls, tahun, unit_id):
+    def get_norut(cls, tahun):
         return DBSession.query(func.count(cls.id).label('no_urut'))\
-               .filter(cls.tahun_id==tahun,
-                       cls.unit_id ==unit_id
+               .filter(cls.tahun_id==tahun
                ).scalar() or 0     
+    #def get_norut(cls, tahun, unit_id):
+    #    return DBSession.query(func.count(cls.id).label('no_urut'))\
+    #           .filter(cls.tahun_id==tahun,
+    #                   cls.unit_id ==unit_id
+    #           ).scalar() or 0     
 
 class AdvistItem(DefaultModel, Base):
     __tablename__  ='ap_advist_items'

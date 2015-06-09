@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime,date
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, extract
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
@@ -61,15 +61,19 @@ class view_ap_spd_ppkd(BaseViews):
         url_dict = req.matchdict
         if url_dict['act']=='grid':
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+            bulan = 'bulan' in params and params['bulan'] and int(params['bulan']) or 0
+            
             if url_dict['act']=='grid':
                 columns = []
                 columns.append(ColumnDT('id'))
                 columns.append(ColumnDT('kode'))
+                columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
                 columns.append(ColumnDT('unit_nm'))
                 columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('triwulan_id'))
                 columns.append(ColumnDT('nominal'))
-                query = DBSession.query(Spd.id, Spd.kode,
+                if bulan==0 :
+                  query = DBSession.query(Spd.id, Spd.tanggal, Spd.kode,
                           Spd.nama, Spd.triwulan_id, Spd.units,
                           Unit.nama.label('unit_nm'),
                           func.sum(SpdItem.nominal).label('nominal')
@@ -79,10 +83,30 @@ class view_ap_spd_ppkd(BaseViews):
                                  #Spd.unit_id==ses['unit_id'],
                         ).group_by(Spd.id, Spd.kode,
                           Spd.nama, Spd.triwulan_id,
-                          Unit.id, Unit.nama)
+                          Unit.id, Unit.nama
+                        ).order_by(Spd.kode)
+                else :
+                  query = DBSession.query(Spd.id, Spd.tanggal, Spd.kode,
+                          Spd.nama, Spd.triwulan_id, Spd.units,
+                          Unit.nama.label('unit_nm'),
+                          func.sum(SpdItem.nominal).label('nominal')
+                        ).join(Unit
+                        ).outerjoin(SpdItem
+                        ).filter(Spd.tahun_id==ses['tahun'],
+                              extract('month',Spd.tanggal)==bulan
+                        ).group_by(Spd.id, Spd.kode,
+                          Spd.nama, Spd.triwulan_id,
+                          Unit.id, Unit.nama
+                        ).order_by(Spd.kode)
+                  
                 rowTable = DataTables(req, Spd, query, columns)
                 return rowTable.output_result()
                 
+        elif url_dict['act']=='reload':
+            bulan = params['bulan']
+            
+            return {'success':True, 'msg':'Sukses ubah bulan'}
+            
         elif url_dict['act']=='headofkode1':
             term = 'term' in params and params['term'] or ''
             q = DBSession.query(Spd.id, Spd.kode.label('spd_kd'), Spd.nama.label('spd_nm'), Spd.tanggal.label('spd_tgl')

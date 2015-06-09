@@ -99,9 +99,57 @@
         });
       </script>    
       </div>
+      
+      <div class="form-group"><!--BULAN-->
+        <div class="col-md-3">
+          <div id="bulan1">
+            <label for="bulan1" class="control-label col-md-3" id="req-bulan">
+                    Bulan</label>
+            <div class="col-md-9">
+                  <select class="form-control" id="bulan" name="bulan" onchange="reload_bulan()">
+                      <option value="0" selected="selected">Semua</option>
+                      <option value="1" >Januari</option>
+                      <option value="2" >Februari</option>
+                      <option value="3" >Maret</option>
+                      <option value="4" >April</option>
+                      <option value="5" >Mei</option>
+                      <option value="6" >Juni</option>
+                      <option value="7" >Juli</option>
+                      <option value="8" >Agustus</option>
+                      <option value="9" >September</option>
+                      <option value="10" >Oktober</option>
+                      <option value="11" >Nopember</option>
+                      <option value="12" >Desember</option>
+                  </select>
+            </div>
+          </div>
+        </div>
     </fieldset>
+    <script>
+      function reload_bulan(){
+          $.ajax({
+            type: "POST",
+            url : "/ar-invoice-skpd/act/reload",
+            data: "bulan="+$('#bulan').val(),
+            success: function (html) {
+              if (html.success == true) {
+                  var bln = $('#bulan').val();
+                  oTableUrl = "/ar-invoice-skpd/act/grid?bulan="+bln;  
+                  oTable.fnReloadAjax(oTableUrl);
+                  $("#errors").html("<span class=''></span> " + '');
+              } else {
+                $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
+                $('#bulan').val('');
+              }
+            },
+            beforeSend: function () {
+              $("#errors").css('display', 'inline', 'important');
+              $("#errors").html("<img src=\'${request.static_url('osipkd:static/images/ajax-loader.gif')}\' /> Loading...")
+            }
+          });
+      };
+    </script>    
     </form>
-    
 
     <table class="table table-bordered table-hover table-condensed" id="table1">
       <thead>
@@ -124,7 +172,7 @@
       var mID, mID2;
       var oTable;
       var iPos;
-      var oTableUrl = "/ar-invoice-skpd/act/grid";
+      var oTableUrl = "/ar-invoice-skpd/act/grid?bulan=0";
       var tb_array = [
           '<div class="btn-group pull-left">',
           '	<button id="btn_tambah" class="btn btn btn-primary" type="button">Tambah</button>',

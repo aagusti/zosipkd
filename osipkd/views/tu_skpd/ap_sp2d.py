@@ -233,10 +233,9 @@ class view_ap_sp2d(BaseViews):
         elif url_dict['act']=='headofkode2':
             term = 'term' in params and params['term'] or ''
             q = DBSession.query(Sp2d.id, Sp2d.kode.label('kode1'),Sp2d.nama.label('nama1'),Spp.nominal.label('amount1'),Sp2d.no_validasi.label('validasi'),
-                                )\
-                                .join(Spm,)\
-                                .outerjoin(Spp,)\
-                                .filter(Spp.unit_id == ses['unit_id'],
+                                Unit.nama.label('unit1')
+                                ).filter(Spm.id==Sp2d.ap_spm_id, Spp.id==Spm.ap_spp_id, 
+                                        Spp.unit_id==Unit.id,
                                         Spp.tahun_id == ses['tahun'],
                                         Sp2d.status_advist == 0,
                                         Sp2d.kode.ilike('%s%%' % term))
@@ -250,6 +249,7 @@ class view_ap_sp2d(BaseViews):
                 d['nama']     = k[2]
                 d['amount']   = k[3]
                 d['validasi'] = k[4]
+                d['unit']     = k[5]
                 r.append(d)
             print '---****----',r              
             return r

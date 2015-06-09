@@ -224,7 +224,7 @@
               <div id="item-nilai">
                 <label for="nilai" class="control-label col-md-3" id="req-nilai">
                          Nilai</label>
-                <div class="col-md-8">
+                <div class="col-md-9">
                    <input id="nilai" class=" form-control " type="text" value="" name="nilai">
                 </div>
               </div>

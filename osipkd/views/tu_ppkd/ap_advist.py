@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime,date
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, extract
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
@@ -42,6 +42,7 @@ class view_ap_advist_ppkd(BaseViews):
         url_dict = req.matchdict
         if url_dict['act']=='grid':
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+            bulan = 'bulan' in params and params['bulan'] and int(params['bulan']) or 0
             if url_dict['act']=='grid':
                 columns = []
                 columns.append(ColumnDT('id'))
@@ -49,14 +50,25 @@ class view_ap_advist_ppkd(BaseViews):
                 columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
                 #columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('nominal'))
-                query = DBSession.query(Advist
+                
+                if bulan==0 :
+                  query = DBSession.query(Advist
+                        ).filter(Advist.tahun_id==ses['tahun']
+                        ).order_by(Advist.kode.asc())
+                else :
+                  query = DBSession.query(Advist
                         ).filter(Advist.tahun_id==ses['tahun'],
-                                 Advist.unit_id==ses['unit_id'] ,
+                        extract('month',Advist.tanggal)==bulan
                         ).order_by(Advist.kode.asc())
                            
                 rowTable = DataTables(req, Advist, query, columns)
                 return rowTable.output_result()
                      
+        elif url_dict['act']=='reload':
+            bulan = params['bulan']
+            
+            return {'success':True, 'msg':'Sukses ubah bulan'}
+                
     #######    
     # Add #
     #######
@@ -82,17 +94,18 @@ class view_ap_advist_ppkd(BaseViews):
         row.disabled = 'disabled' in values and 1 or 0     
 
         if not row.no_urut:
-            row.no_urut = Advist.max_no_urut(row.tahun_id,row.unit_id)+1;
+            row.no_urut = Advist.max_no_urut(row.tahun_id)+1;
             
         if not row.kode:
             tahun    = self.session['tahun']
-            unit_kd  = self.session['unit_kd']
-            unit_id  = self.session['unit_id']
+            #unit_kd  = self.session['unit_kd']
+            #unit_id  = self.session['unit_id']
             #no_urut  = Advist.get_norut(tahun, unit_id)+1
             no_urut  = row.no_urut
-            no       = "0000%d" % no_urut
-            nomor    = no[-5:]
-            row.kode = "%d" % tahun + "-%s" % unit_kd + "-BUD-%s" % nomor
+            no       = "00000%d" % no_urut
+            nomor    = no[-6:]
+            row.kode = "%d" % tahun + "-BUD-%s" % nomor
+            #row.kode = "%d" % tahun + "-%s" % unit_kd + "-BUD-%s" % nomor
             
         DBSession.add(row)
         DBSession.flush()
@@ -225,9 +238,9 @@ class view_ap_advist_ppkd(BaseViews):
         return dict(row=row, form=form.render())
 
 class AddSchema(colander.Schema):
-    unit_id          = colander.SchemaNode(
-                          colander.String(),
-                          oid = "unit_id")
+    #unit_id          = colander.SchemaNode(
+    #                      colander.String(),
+    #                      oid = "unit_id")
     tahun_id         = colander.SchemaNode(
                           colander.Integer(),
                           title="Tahun",

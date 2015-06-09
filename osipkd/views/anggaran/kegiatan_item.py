@@ -104,7 +104,7 @@ class view_ak_jurnal(BaseViews):
             columns.append(ColumnDT('rekening_id'))
             columns.append(ColumnDT('disabled'))
             query = self.get_row_item().filter(KegiatanItem.kegiatan_sub_id==kegiatan_sub_id
-                      ).order_by(Rekening.kode.asc())
+                      ).order_by(Rekening.kode.asc(),KegiatanItem.no_urut)
             rowTable = DataTables(req, KegiatanItem,  query, columns)
             return rowTable.output_result()
             
@@ -112,7 +112,7 @@ class view_ak_jurnal(BaseViews):
             term = 'term' in params and params['term'] or ''
             kegiatan_sub_id =  'kegiatan_sub_id' in params and params['kegiatan_sub_id'] or 0
             q = DBSession.query(KegiatanItem.id, Rekening.kode, 
-                                KegiatanItem.nama, 
+                                KegiatanItem.no_urut, KegiatanItem.nama, 
                                 cast(KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2,BigInteger).label('amount')
                                 )\
                          .join(Rekening)\
@@ -120,17 +120,17 @@ class view_ak_jurnal(BaseViews):
                          .filter(KegiatanSub.unit_id  == ses['unit_id'],
                                  KegiatanSub.tahun_id == ses['tahun'],
                                  KegiatanItem.kegiatan_sub_id==kegiatan_sub_id,
-                                 or_(KegiatanItem.nama.ilike('%%%s%%' % term),
-                                  Rekening.kode.ilike('%%%s%%' % term)))
+                                 KegiatanItem.nama.ilike('%%%s%%' % term),
+                                 KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2>0)
             rows = q.all()
             r = []
             for k in rows:
                 d={}
                 d['id']          = k[0]
-                d['value']       = ''.join([k[1],'-',str(k[2])])
+                d['value']       = ''.join([k[1],'-',str(k[2]),'-',k[3],' Rp.',str(k[4])])
                 d['kode']        = ''.join([k[1]])
-                d['nama']        = k[2]
-                d['amount']      = k[3]
+                d['nama']        = k[3]
+                d['amount']      = k[4]
                 
                 r.append(d)    
             return r            
