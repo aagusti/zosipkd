@@ -69,9 +69,12 @@
 	<field name="logo" class="java.lang.String">
 		<fieldDescription><![CDATA[logo]]></fieldDescription>
 	</field>
+	<field name="jenis1" class="java.lang.String">
+		<fieldDescription><![CDATA[jenis1]]></fieldDescription>
+	</field>
 	<variable name="jenis_nm" class="java.lang.String">
 		<variableExpression><![CDATA[]]></variableExpression>
-		<initialValueExpression><![CDATA[$F{jenis}=="LS" ? "LANGSUNG" : $F{jenis}=="UP" ? "UANG PERSEDIAAN" : $F{jenis}=="TU" ? "TAMBAHAN UANG PERSEDIAAN" : $F{jenis}=="GU" ? "GANTI UANG PERSEDIAAN" : ""]]></initialValueExpression>
+		<initialValueExpression><![CDATA[$V{jenis_1}=="LS-GJ" ? "LANGSUNG GAJI DAN TUNJANGAN" : $V{jenis_1}=="LS" ? "LANGSUNG" : $V{jenis_1}=="UP" ? "UANG PERSEDIAAN" : $V{jenis_1}=="TU" ? "TAMBAHAN UANG PERSEDIAAN" : $V{jenis_1}=="GU" ? "GANTI UANG PERSEDIAAN" : ""]]></initialValueExpression>
 	</variable>
 	<variable name="judul" class="java.lang.String">
 		<variableExpression><![CDATA[]]></variableExpression>
@@ -85,6 +88,10 @@
 	</variable>
 	<variable name="nm_bulan" class="java.lang.String">
 		<variableExpression><![CDATA[$F{tanggal}.substring(5,7)=="01" ? "Januari" : $F{tanggal}.substring(5,7)=="02" ? "Februari" : $F{tanggal}.substring(5,7)=="03" ? "Maret" : $F{tanggal}.substring(5,7)=="04" ? "April" : $F{tanggal}.substring(5,7)=="05" ? "Mei" : $F{tanggal}.substring(5,7)=="06" ? "Juni" : $F{tanggal}.substring(5,7)=="07" ? "Juli" : $F{tanggal}.substring(5,7)=="08" ? "Agustus" : $F{tanggal}.substring(5,7)=="09" ? "September" : $F{tanggal}.substring(5,7)=="10" ? "Oktober" : $F{tanggal}.substring(5,7)=="11" ? "November" : $F{tanggal}.substring(5,7)=="12" ? "Desember" : ""]]></variableExpression>
+	</variable>
+	<variable name="jenis_1" class="java.lang.String">
+		<variableExpression><![CDATA[$F{jenis1}==null ? $F{jenis} : $F{jenis}+$F{jenis1}]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{jenis1}==null ? $F{jenis} : $F{jenis}+$F{jenis1}]]></initialValueExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -110,7 +117,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Nomor : "+$F{spp_kd}.substring(13)+"/"+$F{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Nomor : "+$F{spp_kd}.substring(13)+"/"+$V{jenis_1}+"/"+$F{unit_kd}+"/"+$F{tahun}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="146" width="487" height="16"/>
@@ -124,7 +131,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["SPP-"+$F{jenis}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["SPP-"+$V{jenis_1}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="20" y="32" width="467" height="16"/>

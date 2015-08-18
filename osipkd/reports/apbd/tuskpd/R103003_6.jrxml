@@ -49,8 +49,15 @@
 	<field name="jabatan" class="java.lang.String">
 		<fieldDescription><![CDATA[jabatan]]></fieldDescription>
 	</field>
+	<field name="spp_id" class="java.lang.String">
+		<fieldDescription><![CDATA[spp_id]]></fieldDescription>
+	</field>
+	<field name="kode1" class="java.lang.String">
+		<fieldDescription><![CDATA[kode1]]></fieldDescription>
+	</field>
 	<variable name="jenis_nm" class="java.lang.String">
-		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "LS" : $F{jenis}=="4" ? "GU" : ""]]></initialValueExpression>
+		<variableExpression><![CDATA[$F{jenis}=='1' ? "UP" : $F{jenis}=='2' ? "TU" : $F{jenis}=='3' ? "GU" : ($F{jenis}=='4' && $F{kode1}=='-GJ') ? "LS-GJ" : ($F{jenis}=='4' && $F{kode1}!='-GJ') ? "LS" : ""]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{jenis}=='1' ? "UP" : $F{jenis}=='2' ? "TU" : $F{jenis}=='3' ? "GU" : ($F{jenis}=='4' && $F{kode1}=='-GJ') ? "LS-GJ" : ($F{jenis}=='4' && $F{kode1}!='-GJ') ? "LS" : ""]]></initialValueExpression>
 	</variable>
 	<variable name="kode" class="java.lang.String">
 		<initialValueExpression><![CDATA[$F{kode}.substring( 13 )]]></initialValueExpression>
@@ -114,7 +121,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font isBold="true" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["No : "+$F{kode}.substring( 13 )+"/LS-GJ/"+$F{unit_kd}+"/"+$F{tahun}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["No : "+$F{kode}.substring( 13 )+"/"+$V{jenis_nm}+"/"+$F{unit_kd}+"/"+$F{tahun}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="20" y="176" width="467" height="42"/>
@@ -135,7 +142,7 @@
 				<textElement textAlignment="Justified" verticalAlignment="Top" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Apabila dikemudian hari terdapat kelebihan atas pembayaran dan kekurangan pungutan setoran pajak berdasarkan SPM tanggal"+$F{tanggal}.substring(8,10)+" "+$V{nm_bulan}+" "+$F{tanggal}.substring(0,4)+" Nomor: "+$F{kode}.substring( 13 )+"/GU/"+$F{unit_kd}+"/"+$F{tahun}+" tersebut, kami bersedia untuk menyetor kelebihan tersebut ke Kas Daerah dan Kekurangan pungutan pajaknya ke Kas Negara."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Apabila dikemudian hari terdapat kelebihan atas pembayaran dan kekurangan pungutan setoran pajak berdasarkan SPM tanggal "+$F{tanggal}.substring(8,10)+" "+$V{nm_bulan}+" "+$F{tanggal}.substring(0,4)+" Nomor: "+$F{kode}.substring( 13 )+"/"+$V{jenis_nm}+"/"+$F{unit_kd}+"/"+$F{tahun}+" tersebut, kami bersedia untuk menyetor kelebihan tersebut ke Kas Daerah dan Kekurangan pungutan pajaknya ke Kas Negara."]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="226" width="20" height="14"/>

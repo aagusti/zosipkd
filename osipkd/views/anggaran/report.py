@@ -112,7 +112,10 @@ def Terbilang(x):
     elif 9 < n <= 12 :
         t = y[-9:]
         u = y[:-9]
-        return Terbilang(u) + f + Terbilang(t)
+        if t == '000000000' :
+            return  Terbilang(u) + f
+        else:
+            return Terbilang(u) + f + Terbilang(t)
     else:
         v = y[-12:]
         w = y[:-12]
@@ -768,10 +771,9 @@ class ViewAnggaranLap(BaseViews):
                    Urusan.nama.label('urusan_nm'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
                    Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
                    KegiatanSub.lokasi, KegiatanSub.id.label('kegiatan_sub_id'),
+                   KegiatanAsistensi.tanggal,
                    KegiatanAsistensi.catatan_1,KegiatanAsistensi.catatan_2,KegiatanAsistensi.catatan_3,KegiatanAsistensi.catatan_4,
-                   KegiatanAsistensi.ttd_nip_1, KegiatanAsistensi.ttd_nama_1,
-                   KegiatanAsistensi.ttd_nip_2, KegiatanAsistensi.ttd_nama_2,
-                   KegiatanAsistensi.ttd_nip_3, KegiatanAsistensi.ttd_nama_3,
+                   KegiatanAsistensi.ttd_nip, KegiatanAsistensi.ttd_nama,  KegiatanAsistensi.ttd_jab,
                    unit_asis.kode.label('unit_asis_kd'), unit_asis.nama.label('unit_asis_nm'),
                    func.sum(KegiatanItem.vol_1_1*KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('anggaran1'),
                    func.sum(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('anggaran2'),
@@ -789,11 +791,10 @@ class ViewAnggaranLap(BaseViews):
                    Kegiatan.kode, Kegiatan.nama,
                    KegiatanSub.lokasi, KegiatanSub.id,
                    KegiatanAsistensi.catatan_1,KegiatanAsistensi.catatan_2,KegiatanAsistensi.catatan_3,KegiatanAsistensi.catatan_4,
-                   KegiatanAsistensi.ttd_nip_1, KegiatanAsistensi.ttd_nama_1,
-                   KegiatanAsistensi.ttd_nip_2, KegiatanAsistensi.ttd_nama_2,
-                   KegiatanAsistensi.ttd_nip_3, KegiatanAsistensi.ttd_nama_3,
+                   KegiatanAsistensi.tanggal,
+                   KegiatanAsistensi.ttd_nip, KegiatanAsistensi.ttd_nama,  KegiatanAsistensi.ttd_jab,
                    unit_asis.kode, unit_asis.nama
-                   ).order_by(unit_asis.kode)
+                   ).order_by(unit_asis.kode,KegiatanAsistensi.tanggal)
                    
             generator = r1043Generator()
             pdf = generator.generate(query)
@@ -1300,10 +1301,9 @@ class ViewAnggaranLap(BaseViews):
                    Urusan.nama.label('urusan_nm'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
                    Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
                    KegiatanSub.lokasi, KegiatanSub.id.label('kegiatan_sub_id'),
+                   KegiatanAsistensi.tanggal,
                    KegiatanAsistensi.catatan_1,KegiatanAsistensi.catatan_2,KegiatanAsistensi.catatan_3,KegiatanAsistensi.catatan_4,
-                   KegiatanAsistensi.ttd_nip_1, KegiatanAsistensi.ttd_nama_1,
-                   KegiatanAsistensi.ttd_nip_2, KegiatanAsistensi.ttd_nama_2,
-                   KegiatanAsistensi.ttd_nip_3, KegiatanAsistensi.ttd_nama_3,
+                   KegiatanAsistensi.ttd_nip, KegiatanAsistensi.ttd_nama,  KegiatanAsistensi.ttd_jab,
                    unit_asis.kode.label('unit_asis_kd'), unit_asis.nama.label('unit_asis_nm'),
                    func.sum(KegiatanItem.vol_1_1*KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('anggaran1'),
                    func.sum(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('anggaran2'),
@@ -1321,11 +1321,10 @@ class ViewAnggaranLap(BaseViews):
                    Kegiatan.kode, Kegiatan.nama,
                    KegiatanSub.lokasi, KegiatanSub.id,
                    KegiatanAsistensi.catatan_1,KegiatanAsistensi.catatan_2,KegiatanAsistensi.catatan_3,KegiatanAsistensi.catatan_4,
-                   KegiatanAsistensi.ttd_nip_1, KegiatanAsistensi.ttd_nama_1,
-                   KegiatanAsistensi.ttd_nip_2, KegiatanAsistensi.ttd_nama_2,
-                   KegiatanAsistensi.ttd_nip_3, KegiatanAsistensi.ttd_nama_3,
+                   KegiatanAsistensi.tanggal,
+                   KegiatanAsistensi.ttd_nip, KegiatanAsistensi.ttd_nama,  KegiatanAsistensi.ttd_jab,
                    unit_asis.kode, unit_asis.nama
-                   ).order_by(unit_asis.kode)
+                   ).order_by(unit_asis.kode,KegiatanAsistensi.tanggal)
                    
             generator = r2043Generator()
             pdf = generator.generate(query)
@@ -1846,10 +1845,9 @@ class ViewAnggaranLap(BaseViews):
                    Urusan.nama.label('urusan_nm'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
                    Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
                    KegiatanSub.lokasi, KegiatanSub.id.label('kegiatan_sub_id'),
+                   KegiatanAsistensi.tanggal,
                    KegiatanAsistensi.catatan_1,KegiatanAsistensi.catatan_2,KegiatanAsistensi.catatan_3,KegiatanAsistensi.catatan_4,
-                   KegiatanAsistensi.ttd_nip_1, KegiatanAsistensi.ttd_nama_1,
-                   KegiatanAsistensi.ttd_nip_2, KegiatanAsistensi.ttd_nama_2,
-                   KegiatanAsistensi.ttd_nip_3, KegiatanAsistensi.ttd_nama_3,
+                   KegiatanAsistensi.ttd_nip, KegiatanAsistensi.ttd_nama,  KegiatanAsistensi.ttd_jab,
                    unit_asis.kode.label('unit_asis_kd'), unit_asis.nama.label('unit_asis_nm'),
                    func.sum(KegiatanItem.vol_1_1*KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('anggaran1'),
                    func.sum(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('anggaran2'),
@@ -1867,11 +1865,10 @@ class ViewAnggaranLap(BaseViews):
                    Kegiatan.kode, Kegiatan.nama,
                    KegiatanSub.lokasi, KegiatanSub.id,
                    KegiatanAsistensi.catatan_1,KegiatanAsistensi.catatan_2,KegiatanAsistensi.catatan_3,KegiatanAsistensi.catatan_4,
-                   KegiatanAsistensi.ttd_nip_1, KegiatanAsistensi.ttd_nama_1,
-                   KegiatanAsistensi.ttd_nip_2, KegiatanAsistensi.ttd_nama_2,
-                   KegiatanAsistensi.ttd_nip_3, KegiatanAsistensi.ttd_nama_3,
+                   KegiatanAsistensi.tanggal,
+                   KegiatanAsistensi.ttd_nip, KegiatanAsistensi.ttd_nama,  KegiatanAsistensi.ttd_jab,
                    unit_asis.kode, unit_asis.nama
-                   ).order_by(unit_asis.kode)
+                   ).order_by(unit_asis.kode,KegiatanAsistensi.tanggal)
                    
             generator = r3043Generator()
             pdf = generator.generate(query)
@@ -2405,10 +2402,9 @@ class ViewAnggaranLap(BaseViews):
                    Urusan.nama.label('urusan_nm'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
                    Kegiatan.kode.label('kegiatan_kd'), Kegiatan.nama.label('kegiatan_nm'),
                    KegiatanSub.lokasi, KegiatanSub.id.label('kegiatan_sub_id'),
+                   KegiatanAsistensi.tanggal,
                    KegiatanAsistensi.catatan_1,KegiatanAsistensi.catatan_2,KegiatanAsistensi.catatan_3,KegiatanAsistensi.catatan_4,
-                   KegiatanAsistensi.ttd_nip_1, KegiatanAsistensi.ttd_nama_1,
-                   KegiatanAsistensi.ttd_nip_2, KegiatanAsistensi.ttd_nama_2,
-                   KegiatanAsistensi.ttd_nip_3, KegiatanAsistensi.ttd_nama_3,
+                   KegiatanAsistensi.ttd_nip, KegiatanAsistensi.ttd_nama,  KegiatanAsistensi.ttd_jab,
                    unit_asis.kode.label('unit_asis_kd'), unit_asis.nama.label('unit_asis_nm'),
                    func.sum(KegiatanItem.vol_1_1*KegiatanItem.vol_1_2*KegiatanItem.hsat_1).label('anggaran1'),
                    func.sum(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('anggaran2'),
@@ -2426,11 +2422,10 @@ class ViewAnggaranLap(BaseViews):
                    Kegiatan.kode, Kegiatan.nama,
                    KegiatanSub.lokasi, KegiatanSub.id,
                    KegiatanAsistensi.catatan_1,KegiatanAsistensi.catatan_2,KegiatanAsistensi.catatan_3,KegiatanAsistensi.catatan_4,
-                   KegiatanAsistensi.ttd_nip_1, KegiatanAsistensi.ttd_nama_1,
-                   KegiatanAsistensi.ttd_nip_2, KegiatanAsistensi.ttd_nama_2,
-                   KegiatanAsistensi.ttd_nip_3, KegiatanAsistensi.ttd_nama_3,
+                   KegiatanAsistensi.tanggal,
+                   KegiatanAsistensi.ttd_nip, KegiatanAsistensi.ttd_nama,  KegiatanAsistensi.ttd_jab,
                    unit_asis.kode, unit_asis.nama
-                   ).order_by(unit_asis.kode)
+                   ).order_by(unit_asis.kode,KegiatanAsistensi.tanggal)
                    
             generator = r4043Generator()
             pdf = generator.generate(query)
@@ -4137,16 +4132,14 @@ class r1043Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
             ET.SubElement(xml_a, "lokasi").text = row.lokasi
             ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.kegiatan_sub_id)
+            ET.SubElement(xml_a, "tanggal").text = unicode(row.tanggal)
             ET.SubElement(xml_a, "catatan_1").text = row.catatan_1
             ET.SubElement(xml_a, "catatan_2").text = row.catatan_2
             ET.SubElement(xml_a, "catatan_3").text = row.catatan_3
             ET.SubElement(xml_a, "catatan_4").text = row.catatan_4
-            ET.SubElement(xml_a, "ttd_nip_1").text = row.ttd_nip_1
-            ET.SubElement(xml_a, "ttd_nama_1").text = row.ttd_nama_1
-            ET.SubElement(xml_a, "ttd_nip_2").text = row.ttd_nip_2
-            ET.SubElement(xml_a, "ttd_nama_2").text = row.ttd_nama_2
-            ET.SubElement(xml_a, "ttd_nip_3").text = row.ttd_nip_3
-            ET.SubElement(xml_a, "ttd_nama_3").text = row.ttd_nama_3
+            ET.SubElement(xml_a, "ttd_nip").text = row.ttd_nip
+            ET.SubElement(xml_a, "ttd_nama").text = row.ttd_nama
+            ET.SubElement(xml_a, "ttd_jab").text = row.ttd_jab
             ET.SubElement(xml_a, "unit_asis_kd").text = row.unit_asis_kd
             ET.SubElement(xml_a, "unit_asis_nm").text = row.unit_asis_nm
             ET.SubElement(xml_a, "anggaran1").text = unicode(row.anggaran1)
@@ -4664,16 +4657,14 @@ class r2043Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
             ET.SubElement(xml_a, "lokasi").text = row.lokasi
             ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.kegiatan_sub_id)
+            ET.SubElement(xml_a, "tanggal").text = unicode(row.tanggal)
             ET.SubElement(xml_a, "catatan_1").text = row.catatan_1
             ET.SubElement(xml_a, "catatan_2").text = row.catatan_2
             ET.SubElement(xml_a, "catatan_3").text = row.catatan_3
             ET.SubElement(xml_a, "catatan_4").text = row.catatan_4
-            ET.SubElement(xml_a, "ttd_nip_1").text = row.ttd_nip_1
-            ET.SubElement(xml_a, "ttd_nama_1").text = row.ttd_nama_1
-            ET.SubElement(xml_a, "ttd_nip_2").text = row.ttd_nip_2
-            ET.SubElement(xml_a, "ttd_nama_2").text = row.ttd_nama_2
-            ET.SubElement(xml_a, "ttd_nip_3").text = row.ttd_nip_3
-            ET.SubElement(xml_a, "ttd_nama_3").text = row.ttd_nama_3
+            ET.SubElement(xml_a, "ttd_nip").text = row.ttd_nip
+            ET.SubElement(xml_a, "ttd_nama").text = row.ttd_nama
+            ET.SubElement(xml_a, "ttd_jab").text = row.ttd_jab
             ET.SubElement(xml_a, "unit_asis_kd").text = row.unit_asis_kd
             ET.SubElement(xml_a, "unit_asis_nm").text = row.unit_asis_nm
             ET.SubElement(xml_a, "anggaran1").text = unicode(row.anggaran1)
@@ -5209,16 +5200,14 @@ class r3043Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
             ET.SubElement(xml_a, "lokasi").text = row.lokasi
             ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.kegiatan_sub_id)
+            ET.SubElement(xml_a, "tanggal").text = unicode(row.tanggal)
             ET.SubElement(xml_a, "catatan_1").text = row.catatan_1
             ET.SubElement(xml_a, "catatan_2").text = row.catatan_2
             ET.SubElement(xml_a, "catatan_3").text = row.catatan_3
             ET.SubElement(xml_a, "catatan_4").text = row.catatan_4
-            ET.SubElement(xml_a, "ttd_nip_1").text = row.ttd_nip_1
-            ET.SubElement(xml_a, "ttd_nama_1").text = row.ttd_nama_1
-            ET.SubElement(xml_a, "ttd_nip_2").text = row.ttd_nip_2
-            ET.SubElement(xml_a, "ttd_nama_2").text = row.ttd_nama_2
-            ET.SubElement(xml_a, "ttd_nip_3").text = row.ttd_nip_3
-            ET.SubElement(xml_a, "ttd_nama_3").text = row.ttd_nama_3
+            ET.SubElement(xml_a, "ttd_nip").text = row.ttd_nip
+            ET.SubElement(xml_a, "ttd_nama").text = row.ttd_nama
+            ET.SubElement(xml_a, "ttd_jab").text = row.ttd_jab
             ET.SubElement(xml_a, "unit_asis_kd").text = row.unit_asis_kd
             ET.SubElement(xml_a, "unit_asis_nm").text = row.unit_asis_nm
             ET.SubElement(xml_a, "anggaran1").text = unicode(row.anggaran1)
@@ -5786,16 +5775,14 @@ class r4043Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_a, "kegiatan_nm").text = row.kegiatan_nm
             ET.SubElement(xml_a, "lokasi").text = row.lokasi
             ET.SubElement(xml_a, "kegiatan_sub_id").text = unicode(row.kegiatan_sub_id)
+            ET.SubElement(xml_a, "tanggal").text = unicode(row.tanggal)
             ET.SubElement(xml_a, "catatan_1").text = row.catatan_1
             ET.SubElement(xml_a, "catatan_2").text = row.catatan_2
             ET.SubElement(xml_a, "catatan_3").text = row.catatan_3
             ET.SubElement(xml_a, "catatan_4").text = row.catatan_4
-            ET.SubElement(xml_a, "ttd_nip_1").text = row.ttd_nip_1
-            ET.SubElement(xml_a, "ttd_nama_1").text = row.ttd_nama_1
-            ET.SubElement(xml_a, "ttd_nip_2").text = row.ttd_nip_2
-            ET.SubElement(xml_a, "ttd_nama_2").text = row.ttd_nama_2
-            ET.SubElement(xml_a, "ttd_nip_3").text = row.ttd_nip_3
-            ET.SubElement(xml_a, "ttd_nama_3").text = row.ttd_nama_3
+            ET.SubElement(xml_a, "ttd_nip").text = row.ttd_nip
+            ET.SubElement(xml_a, "ttd_nama").text = row.ttd_nama
+            ET.SubElement(xml_a, "ttd_jab").text = row.ttd_jab
             ET.SubElement(xml_a, "unit_asis_kd").text = row.unit_asis_kd
             ET.SubElement(xml_a, "unit_asis_nm").text = row.unit_asis_nm
             ET.SubElement(xml_a, "anggaran1").text = unicode(row.anggaran1)

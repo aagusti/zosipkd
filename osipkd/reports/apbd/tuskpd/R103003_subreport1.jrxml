@@ -31,19 +31,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="1">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="275" height="1"/>
-				<box>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement>
-					<font size="8"/>
-				</textElement>
-			</textField>
-		</band>
+		<band height="1"/>
 	</pageHeader>
 	<detail>
 		<band height="14" splitType="Stretch">
@@ -61,7 +49,7 @@
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="96" height="14"/>
 				<box leftPadding="1">
-					<leftPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement>
@@ -83,18 +71,6 @@
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="1">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="275" height="1"/>
-				<box>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement>
-					<font size="8"/>
-				</textElement>
-			</textField>
-		</band>
+		<band height="1"/>
 	</pageFooter>
 </jasperReport>

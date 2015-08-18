@@ -67,6 +67,110 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">ASISTENSI</div>
                     <div class="panel-body">
+
+                        <div class="form-group"> 
+                          <!--Unit Asistensi-------------------------------------------------------------------->
+                          <div tal:define="field form['unit_asistensi_id']" style="display: none;">
+                            ${structure:field.serialize()}
+                          </div>
+                          <div tal:define="field form['unit_asistensi_kd']" id="item-${field.oid}">
+                            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
+                                    ${field.title}</label>
+                            <div class="col-md-2">
+                               ${structure:field.serialize()}
+                              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                                 tal:repeat="error field.error.messages()">
+                                 ${error}</p>
+                            </div>
+                          </div> 
+                          <div class="col-md-6" tal:define="field form['unit_asistensi_nm']" id="item-${field.oid}">
+                               ${structure:field.serialize()}
+                                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                                   tal:repeat="error field.error.messages()">
+                                   ${error}</p>
+                          </div>          
+                        </div>
+                        <!--Tanggal------------------------------------------------------------------------>
+                        <div class="form-group"> 
+                          <div tal:define="field form['tanggal']" id="item-${field.oid}">
+                            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
+                                    ${field.title}</label>
+                            <div class="col-md-2">
+                               ${structure:field.serialize()}
+                              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                                 tal:repeat="error field.error.messages()">
+                                 ${error}</p>
+                            </div>
+                          </div>  
+                        </div>
+                        
+                        <!--TTD------------------------------------------------------------------------>
+                        <div class="form-group"> 
+                          <div tal:define="field form['ttd_nip']" id="item-${field.oid}">
+                            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
+                                    ${field.title}</label>
+                            <div class="col-md-2">
+                               ${structure:field.serialize()}
+                              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                                 tal:repeat="error field.error.messages()">
+                                 ${error}</p>
+                            </div>
+                          </div>  
+                          <div tal:define="field form['ttd_nama']" id="item-${field.oid}">
+                            <div class="col-md-4">
+                               ${structure:field.serialize()}
+                              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                                 tal:repeat="error field.error.messages()">
+                                 ${error}</p>
+                            </div>
+                          </div>
+                          <div tal:define="field form['ttd_jab']" id="item-${field.oid}">
+                            <div class="col-md-4">
+                               ${structure:field.serialize()}
+                              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                                 tal:repeat="error field.error.messages()">
+                                 ${error}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <script>
+                            $('#unit_asistensi_nm').typeahead({
+                                "hint"     : true,
+                                "highlight": true,
+                                "minLength": 1,
+                                "remote"   : "/unit/act/headofnama_asistensi?term=%QUERY",
+                            },{
+                                "name"      : 'unit_asistensi_nm',
+                                "displayKey": 'value',
+                            });
+                            
+                            $('#unit_asistensi_nm').bind('typeahead:selected', function(obj, datum, name) {      
+                                  $('#unit_asistensi_id').val(datum.id);
+                                  $('#unit_asistensi_kd').val(datum.kode);
+                                  
+                                  $('#ttd_nama').typeahead({
+                                     "hint"     : true,
+                                     "highlight": true,
+                                     "minLength": 1,
+                                     "remote"   : "/pejabat/act/headofnama_asistensi?unit_id="+$("#unit_asistensi_id").val()+"&term=%QUERY",
+                                  },{
+                                     "name"      : 'ttd_nama',
+                                     "displayKey": 'value',
+                                  });
+                                  
+                            });
+                            
+                            $('#ttd_nama').bind('typeahead:selected', function(obj, datum, name) {  
+                                  $('#ttd_nip').val(datum.nip);
+                                  $('#pejabat_id').val(datum.id);
+                                  $('#ttd_jab').val(datum.jab);
+                            });
+                            
+                            $("#unit_asistensi_kd").attr('readonly',true);
+                            $("#ttd_jab").attr('readonly',true);
+                            $("#ttd_nip").attr('readonly',true);
+                        </script>
+                    
                         <div class="form-group" tal:attributes="style request.session['ag_step_id']!=1 and  'display:none'">
                             <div class="col-sm-10">
                               <div class="form-group">
@@ -135,157 +239,6 @@
                             </div>
                         </div>
                         <hr>
-                        <div class="form-group"> 
-                          <!--Unit Asistensi-------------------------------------------------------------------->
-                          <div tal:define="field form['unit_asistensi_id']" style="display: none;">
-                            ${structure:field.serialize()}
-                          </div>
-                          <div tal:define="field form['unit_asistensi_kd']" id="item-${field.oid}">
-                            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
-                                    ${field.title}</label>
-                            <div class="col-md-2">
-                               ${structure:field.serialize()}
-                              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                                 tal:repeat="error field.error.messages()">
-                                 ${error}</p>
-                            </div>
-                          </div> 
-                          <div class="col-md-6" tal:define="field form['unit_asistensi_nm']" id="item-${field.oid}">
-                               ${structure:field.serialize()}
-                                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                                   tal:repeat="error field.error.messages()">
-                                   ${error}</p>
-                          </div>          
-                        </div>
-                        <!--Kabid------------------------------------------------------------------------>
-                        <div class="form-group"> 
-                          <div tal:define="field form['ttd_nip_1']" id="item-${field.oid}">
-                            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
-                                    ${field.title}</label>
-                            <div class="col-md-2">
-                               ${structure:field.serialize()}
-                              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                                 tal:repeat="error field.error.messages()">
-                                 ${error}</p>
-                            </div>
-                          </div>  
-                          <div tal:define="field form['ttd_nama_1']" id="item-${field.oid}">
-                            <div class="col-md-6">
-                               ${structure:field.serialize()}
-                              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                                 tal:repeat="error field.error.messages()">
-                                 ${error}</p>
-                            </div>
-                          </div>
-                        </div>
-                        <!--Kasubid------------------------------------------------------------------------>
-                        <div class="form-group"> 
-                          <div tal:define="field form['ttd_nip_2']" id="item-${field.oid}">
-                            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
-                                    ${field.title}</label>
-                            <div class="col-md-2">
-                               ${structure:field.serialize()}
-                              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                                 tal:repeat="error field.error.messages()">
-                                 ${error}</p>
-                            </div>
-                          </div>  
-                          <div tal:define="field form['ttd_nama_2']" id="item-${field.oid}">
-                            <div class="col-md-6">
-                               ${structure:field.serialize()}
-                              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                                 tal:repeat="error field.error.messages()">
-                                 ${error}</p>
-                            </div>
-                          </div>
-                        </div>
-                        <!--Pelaksana------------------------------------------------------------------------>
-                        <div class="form-group"> 
-                          <div tal:define="field form['ttd_nip_3']" id="item-${field.oid}">
-                            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
-                                    ${field.title}</label>
-                            <div class="col-md-2">
-                               ${structure:field.serialize()}
-                              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                                 tal:repeat="error field.error.messages()">
-                                 ${error}</p>
-                            </div>
-                          </div>  
-                          <div tal:define="field form['ttd_nama_3']" id="item-${field.oid}">
-                            <div class="col-md-6">
-                               ${structure:field.serialize()}
-                              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                                 tal:repeat="error field.error.messages()">
-                                 ${error}</p>
-                            </div>
-                          </div>
-                        </div>
-                        <script>
-                            $('#unit_asistensi_nm').typeahead({
-                                "hint"     : true,
-                                "highlight": true,
-                                "minLength": 1,
-                                "remote"   : "/unit/act/headofnama_asistensi?term=%QUERY",
-                            },{
-                                "name"      : 'unit_asistensi_nm',
-                                "displayKey": 'value',
-                            });
-                            
-                            $('#unit_asistensi_nm').bind('typeahead:selected', function(obj, datum, name) {      
-                                  $('#unit_asistensi_id').val(datum.id);
-                                  $('#unit_asistensi_kd').val(datum.kode);
-                                  
-                                  $('#ttd_nama_1').typeahead({
-                                     "hint"     : true,
-                                     "highlight": true,
-                                     "minLength": 1,
-                                     "remote"   : "/pejabat/act/headofnama_asistensi?unit_id="+$("#unit_asistensi_id").val()+"&term=%QUERY",
-                                  },{
-                                     "name"      : 'ttd_nama_1',
-                                     "displayKey": 'value',
-                                  });
-                                  
-                                  $('#ttd_nama_2').typeahead({
-                                     "hint"     : true,
-                                     "highlight": true,
-                                     "minLength": 1,
-                                     "remote"   : "/pejabat/act/headofnama_asistensi?unit_id="+$("#unit_asistensi_id").val()+"&term=%QUERY",
-                                  },{
-                                     "name"      : 'ttd_nama_2',
-                                     "displayKey": 'value',
-                                  });
-                                  
-                                  $('#ttd_nama_3').typeahead({
-                                     "hint"     : true,
-                                     "highlight": true,
-                                     "minLength": 1,
-                                     "remote"   : "/pejabat/act/headofnama_asistensi?unit_id="+$("#unit_asistensi_id").val()+"&term=%QUERY",
-                                  },{
-                                     "name"      : 'ttd_nama_3',
-                                     "displayKey": 'value',
-                                  });
-                            });
-                            
-                            $('#ttd_nama_1').bind('typeahead:selected', function(obj, datum, name) {  
-                                $('#ttd_nip_1').val(datum.nip);
-                                $('#pejabat_id').val(datum.id);
-                            });
-                            
-                            $('#ttd_nama_2').bind('typeahead:selected', function(obj, datum, name) {  
-                                $('#ttd_nip_2').val(datum.nip);
-                                $('#pejabat_id').val(datum.id);
-                            });
-                         
-                            $('#ttd_nama_3').bind('typeahead:selected', function(obj, datum, name) {  
-                                $('#ttd_nip_3').val(datum.nip);
-                                $('#pejabat_id').val(datum.id);
-                            });
-                            
-                            $("#unit_asistensi_kd").attr('readonly',true);
-                            $("#ttd_nip_1").attr('readonly',true);
-                            $("#ttd_nip_2").attr('readonly',true);
-                            $("#ttd_nip_3").attr('readonly',true);
-                        </script>
                     </div>
                 </div>
             </div>

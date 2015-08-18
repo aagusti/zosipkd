@@ -139,6 +139,7 @@
                 <th>DPA</th>
                 <th>RDPPA</th>
                 <th>DPPA</th>
+                <th>Approval</th>
                 <th>Posted</th>
             </tr>
         </thead>
@@ -168,6 +169,8 @@
 
       var tb = tb_array.join(' ');
 
+      var stat  =${request.session['ag_step_id']};
+      
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
             "sAjaxSource"    : oTableUrl,
@@ -184,21 +187,21 @@
             "sPaginationType": "full_numbers",
 
             "lengthMenu": [
-                [10, 25, 50, 100,],
-                [10, 25, 50, 100, "All"]
+                [10, 25, 50, 100],
+                [10, 25, 50, 100]
             ],
             "aoColumnDefs": [{
                 "bSearchable": false,
                 "bVisible"   : false,
                 "aTargets"   : [0]
             },{
-                "bSearchable": false,
-                "bSortable"  : false,
-                "aTargets"   : [2,4,5,6,7,8]
-            },{
                 "bSearchable": true,
                 "bSortable"  : false,
                 "aTargets"   : [3]
+            },{
+                "bSearchable": false,
+                "bSortable"  : false,
+                "aTargets"   : [2,4,5,6,7,8]
             },{
                 "sClass"   : "right",
                 "aTargets" : [5,6,7,8],
@@ -206,7 +209,7 @@
                 return formatNumber(data);}
             },{
                 "sClass"   : "center",
-                "aTargets" : [9], // Untuk Posted
+                "aTargets" : [10], // Untuk Posted
                 "mRender"  : function (data, type, full) {
                     if (data == "0") {
                         return 'N';
@@ -214,7 +217,23 @@
                         return 'Y';
                     }
                 }
-            }],
+            },{
+                "sClass"   : "center",
+                "aTargets" : [9], // Untuk Posted
+                "mRender"  : function (data, type, full) {
+                    if (data == "0" ) {
+                        return '';
+                    } else if (data == "1") {
+                        return 'SKPD';
+                    } else if (data == "2") {
+                        return 'Bappeda';
+                    } else if (data == "4") {
+                        return 'BPKAD';
+                    }
+                }
+                
+            }]
+            ,
             "aoColumns": [
                 null, 
                 {"sWidth": "60px"}, 
@@ -225,8 +244,10 @@
                 {"sWidth": "100px"}, 
                 {"sWidth": "100px"}, 
                 {"sWidth": "100px"},
+                {"sWidth": "50px","sClass" : "center"},
                 {"sWidth": "50px"}, 
             ],
+            
             "fnRowCallback": function (nRow, aData, iDisplayIndex) {
                 $(nRow).on("click", function (event) {
                     if ($(this).hasClass('row_selected')) {
@@ -241,39 +262,65 @@
                         $(this).addClass('row_selected');
                     }
                 });
-                switch(aData[9]){
+                switch(aData[10]){
                     case '1' :
                         $('td',nRow).css("background-color","#A9F5D0")
+                        break;
+                }
+                switch(aData[9]){
+                    case '1' :
+                        $('td',nRow).css("background-color","#F7D358")
+                        break;
+                    case '2' :
+                        $('td',nRow).css("background-color","#F78181")
+                        break;
+                    case '4' :
+                        $('td',nRow).css("background-color","#00BFFF")
                         break;
                 }
                 
             },
             
         });
-        
-        var stat = ${request.session['ag_step_id']};
-        if (stat=='1') {
-           oTable.fnSetColumnVis(5,true);
-           oTable.fnSetColumnVis(6,false);
-           oTable.fnSetColumnVis(7,false);
-           oTable.fnSetColumnVis(8,false);
-        } else if (stat=='2') {
-           oTable.fnSetColumnVis(5,false);
-           oTable.fnSetColumnVis(6,true);
-           oTable.fnSetColumnVis(7,false);
-           oTable.fnSetColumnVis(8,false);
-        } else if (stat=='3') {
-           oTable.fnSetColumnVis(5,false);
-           oTable.fnSetColumnVis(6,false);
-           oTable.fnSetColumnVis(7,true);
-           oTable.fnSetColumnVis(8,false);
-        } else if (stat=='4') {
-           oTable.fnSetColumnVis(5,false);
-           oTable.fnSetColumnVis(6,false);
-           oTable.fnSetColumnVis(7,false);
-           oTable.fnSetColumnVis(8,true);
-        }
 
+        //kondisi hide show column
+        if (stat=='1'){
+        oTable.fnSetColumnVis(4,false);
+        oTable.fnSetColumnVis(5,true);
+        oTable.fnSetColumnVis(6,false);
+        oTable.fnSetColumnVis(7,false);
+        oTable.fnSetColumnVis(8,false);
+        oTable.fnSetColumnVis(9,true);
+        oTable.fnSetColumnVis(10,true); 
+        } 
+        else if (stat=='2'){
+        oTable.fnSetColumnVis(4,false);
+        oTable.fnSetColumnVis(5,true);
+        oTable.fnSetColumnVis(6,true);
+        oTable.fnSetColumnVis(7,false);
+        oTable.fnSetColumnVis(8,false);
+        oTable.fnSetColumnVis(9,true);
+        oTable.fnSetColumnVis(10,true);
+        }
+        else if (stat=='3'){
+        oTable.fnSetColumnVis(4,false);
+        oTable.fnSetColumnVis(5,true);
+        oTable.fnSetColumnVis(6,true);
+        oTable.fnSetColumnVis(7,true);
+        oTable.fnSetColumnVis(8,false);
+        oTable.fnSetColumnVis(9,true);
+        oTable.fnSetColumnVis(10,true);
+        }
+        else{
+        oTable.fnSetColumnVis(4,false);
+        oTable.fnSetColumnVis(5,true);
+        oTable.fnSetColumnVis(6,true);
+        oTable.fnSetColumnVis(7,true);
+        oTable.fnSetColumnVis(8,true);
+        oTable.fnSetColumnVis(9,true);
+        oTable.fnSetColumnVis(10,true);
+        }
+        
         function formatNumber(n) {
                  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                  }

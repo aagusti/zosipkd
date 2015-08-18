@@ -85,8 +85,9 @@ def view_add(request):
     ap_spd_item_id = 'ap_spd_item_id' in controls and controls['ap_spd_item_id'] or 0        
     #Cek dulu ada penyusup gak dengan mengecek sessionnya
     ap_spd = DBSession.query(Spd)\
-                  .filter(Spd.unit_id==ses['unit_id'],
+                  .filter(#Spd.unit_id==ses['unit_id'],
                           Spd.id==ap_spd_id).first()
+    print "-------------------------------->>", ses['unit_id']
     if not ap_spd:
         return {"success": False, 'msg':'SPD tidak ditemukan'}
     
@@ -96,7 +97,7 @@ def view_add(request):
         row = DBSession.query(SpdItem)\
                   .join(Spd)\
                   .filter(SpdItem.id==ap_spd_item_id,
-                          Spd.unit_id==ses['unit_id'],
+                          #Spd.unit_id==ses['unit_id'],
                           SpdItem.ap_spd_id==ap_spd_id).first()
         if not row:
             return {"success": False, 'msg':'Invoice tidak ditemukan'}

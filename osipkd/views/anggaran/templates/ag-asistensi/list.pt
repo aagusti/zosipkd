@@ -69,7 +69,9 @@
             <tr>
                 <th>Index</th>
                 <th>SKPD Asistensi</th>
+                <th>Tanggal</th>
                 <th>Uraian</th>
+                <th>TTD</th>
            </tr>
         </thead>
         <tbody>
@@ -116,16 +118,18 @@
           }],
           "aoColumns": [
               null,
+              {"sWidth": "15%"}, 
+              {"sWidth": "5%"}, 
               {"sWidth": "25%"}, 
-              null,
+              {"sWidth": "15%"}, 
           ]
         });
           
         var tb_array = [
           '<div class="btn pull-left">',
           '	<button id="btn_add"    class="btn btn btn-primary" type="button">Tambah</button>',
-          '	<button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button>',
-          '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
+          '	<!--button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button-->',
+          '	<!--button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button-->',
           ' <button id="btn_close"  class="btn btn-warning"     type="button">Tutup</button>',
           '	&nbsp;',
           '</div>',
@@ -165,7 +169,17 @@
         });        
         
         $("#btn_close").click(function () {
-            window.location = '/ag-bl';
+            if ($('#kegiatan_kd').val()=='0.00.00.10-1' ) {
+                window.location = '/ag-pendapatan';
+            } else if ($('#kegiatan_kd').val()=='0.00.00.21-1' ) {
+                window.location = '/ag-btl';
+            } else if ($('#kegiatan_kd').val()=='0.00.00.31-1' ) {
+                window.location = '/ag-penerimaan';
+            } else if ($('#kegiatan_kd').val()=='0.00.00.32-1' ) {
+                window.location = '/ag-pengeluaran';
+            } else {
+                window.location = '/ag-bl';
+            }    
             return false;
         });
 

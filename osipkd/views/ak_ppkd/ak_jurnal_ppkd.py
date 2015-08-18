@@ -103,7 +103,7 @@ class AddSchema(colander.Schema):
     
     notes       = colander.SchemaNode(
                     colander.String(),
-                    missing = colander.drop
+                    #missing = colander.drop
                     )
     is_skpd     = colander.SchemaNode(
                     colander.Integer(),

@@ -229,12 +229,16 @@ def get_form(request, class_form):
     schema.request = request
     return Form(schema, buttons=('simpan','batal'))
     
-def save(request, values, row=None):
+def save(request, values, user, row=None):
     if not row:
         row = Sts()
-    row.created = datetime.now()
+        row.created = datetime.now()
+        row.create_uid = user.id
+        
     row.from_dict(values)
+    # isikan user update dan tanggal update
     row.updated = datetime.now()
+    row.update_uid = user.id
     
     if not row.no_urut:
         row.no_urut = Sts.max_no_urut(row.tahun_id,row.unit_id)+1;
@@ -255,7 +259,7 @@ def save_request(values, request, row=None):
     if 'id' in request.matchdict:
         values['id'] = request.matchdict['id']
     values["nominal"]=values["nominal"].replace('.','')  
-    row = save(request, values, row)
+    row = save(request, values, request.user, row)
     request.session.flash('STS sudah disimpan.')
     return row
         

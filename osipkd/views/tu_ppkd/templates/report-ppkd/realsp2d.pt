@@ -24,7 +24,7 @@
 
         $('input[name="jenis"]').prop('checked', false);
         $("#btn_close").click(function () {
-            window.location = '/tu-skpd';
+            window.location = '/tu-ppkd';
             return false;
         });
     });
@@ -139,7 +139,6 @@
               </select>
           </div>
     </div>
-
     <div class="panel-body">
         <div class="form-group" id="div_tipe">
         <label class="control-label col-xs-2" for="tipe">Tipe Belanja</label>

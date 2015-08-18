@@ -327,7 +327,7 @@
             }
         });
         
-        $('#tanggal2').click(
+        /*$('#tanggal2').click(
             function(){
               if (!Modernizr.inputtypes['date'] ||
                   "date" != "date"){
@@ -336,7 +336,7 @@
                   "selectYears": true, "format": "yyyy-mm-dd"});
               }
             }
-        );
+        );*/
         $('#btn_posting1').click(function () {
             $('#dlgRpt').modal('show');
         });
@@ -352,7 +352,7 @@
             var tgl = $('#tanggal1').val();
             window.location = '/ak-tbp/unposting1?tanggal='+tgl;
         });
-        $('#tanggal1').click(
+        /*$('#tanggal1').click(
             function(){
               if (!Modernizr.inputtypes['date'] ||
                   "date" != "date"){
@@ -361,7 +361,7 @@
                   "selectYears": true, "format": "yyyy-mm-dd"});
               }
             }
-        );
+        );*/
         
         $("#btn_close").click(function () {
             window.location = '/ak-ppkd';
@@ -385,6 +385,13 @@
             <input id="tanggal2" class="form-control typeahead" type="date"  name="tanggal2" readonly="true">
           </div>
         </div>
+        <script>
+            $('#tanggal2').pickadate({"selectMonths": true,
+              "submitFormat": "yyyy-mm-dd", 
+              "selectYears": true, 
+              "format": "yyyy-mm-dd",
+              });
+        </script>
 
           <div class="modal-footer">
             <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
@@ -409,6 +416,13 @@
             <input id="tanggal1" class="form-control typeahead" type="date"  name="tanggal1" readonly="true">
           </div>
         </div>
+        <script>
+            $('#tanggal1').pickadate({"selectMonths": true,
+              "submitFormat": "yyyy-mm-dd", 
+              "selectYears": true, 
+              "format": "yyyy-mm-dd",
+              });
+        </script>
 
           <div class="modal-footer">
             <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>

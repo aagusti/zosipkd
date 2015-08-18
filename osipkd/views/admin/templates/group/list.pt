@@ -60,7 +60,7 @@
                     }],
           "aoColumns": [
               null,
-              {"width": "120px"},
+              {"width": "400px"},
               null,
               {"width": "100px", "sClass":"center"},
           ]

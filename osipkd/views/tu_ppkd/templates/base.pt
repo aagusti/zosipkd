@@ -28,8 +28,12 @@
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Laporan<b class="caret"></b></a>
         <ul class="dropdown-menu">
           <li><a href="/ap-report-spd">Register SPD</a></li>
+          <li><a href="/ap-report-reg-sp2d">Register SP2D</a></li>
+          <li><a href="/ap-report-reg-sts">Register STS</a></li>
           <li><a href="/ap-report-bb">Buku Besar</a></li>
           <li><a href="/ap-report-real-sp2d">Realisasi SP2D</a></li>
+          <li><a href="/ap-report-real-sp2d-validasi">Realisasi SP2D Belum/Sudah Validasi</a></li>
+          <li><a href="/ap-report-lra-kasda">LRA Kasda</a></li>
           
           <!--li><a href="/ap-report-sp2d">Register SP2D</a></li>
           <li><a href="/ar-report-sts">Register STS</a></li>

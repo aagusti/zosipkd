@@ -164,10 +164,17 @@
                   <th>Rekening</th>
                   <th>No. Item</th>
                   <th>Uraian</th>
-                  <th>Harga</th>
-                  <th>Nilai</th>
+                  <th>Harga RKA</th>
+                  <th>RKA</th>
+                  <th>Harga DPA</th>
+                  <th>DPA</th>
+                  <th>Harga RDPPA</th>
+                  <th>RDPPA</th>
+                  <th>Harga DPPA</th>
+                  <th>DPPA</th>
                   <th>Rekening Nama</th>
                   <th>Rekening Id</th>
+                  <th>Approval</th>
                   <th>Posted</th>
              </tr>
           </thead>
@@ -381,7 +388,7 @@
           "aoColumnDefs": [{
               "bSearchable": false,
               "bVisible"   : false,
-              "aTargets"   : [0,6,7]
+              "aTargets"   : [0,12,13]
           },{
               "bSearchable": true,
               "bSortable"  : false,
@@ -392,7 +399,7 @@
               "aTargets"   : [1,2,4,5]
           },{
                 "sClass"   : "center",
-                "aTargets" : [8], // Untuk Posted
+                "aTargets" : [15], // Untuk Posted
                 "mRender"  : function (data, type, full) {
                     if (data == "0") {
                         return 'N';
@@ -400,16 +407,39 @@
                         return 'Y';
                     }
                 }
-          }],
+            },{
+                "sClass"   : "center",
+                "aTargets" : [14], // Untuk Posted
+                "mRender"  : function (data, type, full) {
+                    if (data == "0") {
+                        return '';
+                    } else if (data == "1") {
+                        return 'SKPD';
+                    } else if (data == "2") {
+                        return 'Bappeda';
+                    } else if (data == "3") {
+                        return 'Dispenda';
+                    } else if (data == "4") {
+                        return 'BPKAD';
+                    }
+                }
+            }],
           "aoColumns": [
               null,
-              {"width": "150px"},
+              {"width": "70px"},
               {"width": "50px"},
               null,
-              {"width": "150px", "sClass":"right"},
-              {"width": "150px", "sClass":"right"},
+              {"width": "100px", "sClass":"right"},
+              {"width": "100px", "sClass":"right"},
+              {"width": "100px", "sClass":"right"},
+              {"width": "100px", "sClass":"right"},
+              {"width": "100px", "sClass":"right"},
+              {"width": "100px", "sClass":"right"},
+              {"width": "100px", "sClass":"right"},
+              {"width": "100px", "sClass":"right"},
               null,
               null,
+              {"width": "50px", "sClass":"center"},
               {"width": "50px", "sClass":"center"},
           ],
             "fnRowCallback": function (nRow, aData, iDisplayIndex) {
@@ -426,7 +456,7 @@
                         $(this).addClass('row_selected');
                     }
                 });
-                switch(aData[8]){
+                switch(aData[14]){
                     case '1' :
                         $('td',nRow).css("background-color","#A9F5D0")
                         break;
@@ -435,6 +465,37 @@
             },
           
         });
+        
+        var stat = ${request.session['ag_step_id']};
+        oTable.fnSetColumnVis(4,false);
+        oTable.fnSetColumnVis(6,false);
+        oTable.fnSetColumnVis(8,false);
+        oTable.fnSetColumnVis(10,false);
+        if (stat=='1') {
+           oTable.fnSetColumnVis(5,true);
+           oTable.fnSetColumnVis(7,false);
+           oTable.fnSetColumnVis(9,false);
+           oTable.fnSetColumnVis(11,false);
+           oTable.fnSetColumnVis(14,true);
+        } else if (stat=='2') {
+           oTable.fnSetColumnVis(5,true);
+           oTable.fnSetColumnVis(7,true);
+           oTable.fnSetColumnVis(9,false);
+           oTable.fnSetColumnVis(11,false);
+           oTable.fnSetColumnVis(14,true);
+        } else if (stat=='3') {
+           oTable.fnSetColumnVis(5,true);
+           oTable.fnSetColumnVis(7,true);
+           oTable.fnSetColumnVis(9,true);
+           oTable.fnSetColumnVis(11,false);
+           oTable.fnSetColumnVis(14,true);
+        } else if (stat=='4') {
+           oTable.fnSetColumnVis(5,true);
+           oTable.fnSetColumnVis(7,true);
+           oTable.fnSetColumnVis(9,true);
+           oTable.fnSetColumnVis(11,true);
+           oTable.fnSetColumnVis(14,true);
+        }
           
         var tb_array = [
           '<div class="btn pull-left">',
@@ -442,6 +503,7 @@
           '	<button id="btn_edit"   class="btn btn btn-primary" type="button">Edit</button>',
           '	<button id="btn_delete" class="btn btn btn-danger"  type="button">Hapus</button>',
           '	<button id="btn_pdf"    class="btn btn btn-primary" type="button">Cetak</button>',
+          '	<button id="btn_asistensi" class="btn btn btn-info" type="button">Asistensi</button>',
           '	<button id="btn_posting" class="btn btn btn-success" type="button">Posting</button>',
           '	<button id="btn_unposting" class="btn btn btn-info" type="button">UnPosting</button>',
          '	<button id="btn_close"  class="btn btn btn-warning" type="button">Tutup</button>',
@@ -463,12 +525,23 @@
                 $(this).addClass('selected');
                 $('#kegiatan_item_id').val(aData[0]);
                 $('#nama').val(aData[3]);
-                $('#amount').val(aData[4]);
-                $('#nilai').val(aData[5]);
+                if (stat=='1') {
+                  $('#amount').val(aData[4]);
+                  $('#nilai').val(aData[5]);
+                } else if (stat=='2') {
+                  $('#amount').val(aData[6]);
+                  $('#nilai').val(aData[7]);
+                } else if (stat=='3') {
+                  $('#amount').val(aData[8]);
+                  $('#nilai').val(aData[9]);
+                } else if (stat=='4') {
+                  $('#amount').val(aData[10]);
+                  $('#nilai').val(aData[11]);
+                }
                 $('#rekening_kd').val(aData[1]);
                 $('#no_urut').val(aData[2]);
-                $('#rekening_nm').val(aData[6]);
-                $('#rekening_id').val(aData[7]);
+                $('#rekening_nm').val(aData[12]);
+                $('#rekening_id').val(aData[13]);
                 mID = aData[0];
                 oTable.$('tr.row_selected').removeClass('row_selected');
                 $(this).addClass('row_selected');
@@ -550,10 +623,18 @@
               }
               window.open(url);
             }
+            if(rpt==5){
+                  url = "/ag-report/r${request.session['ag_step_id']}00/act/2213?id="+$('#kegiatan_sub_id').val();
+              window.open(url);
+            } 
         });        
 
         $(function(){
             reload_kegiatan();
+        });
+
+         $('#btn_asistensi').click(function () {
+            window.location = '/ag-asistensi/' +$('#kegiatan_sub_id').val();
         });
         
         $('#btn_posting').click(function () {
@@ -585,7 +666,7 @@
                     <div class="form-group">
                     <label class="control-label col-xs-3" for="rpt">Jenis Laporan</label>
 						<!--RKA-->
-                        <div class="col-sm-2" tal:attributes="style request.session['ag_step_id']!=1 and  'display:none'">
+                        <div class="col-sm-6" tal:attributes="style request.session['ag_step_id']!=1 and  'display:none'">
                             <div class="radio" style="${row and row.rekening_kd !='0.00.00.10' and 'display:none'}">
                                 <label><input type="radio" name="rpt" value="1">RKA-1</label>
                             </div>
@@ -601,9 +682,12 @@
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="2">Lampiran</label>
                             </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="5">Lembar Asistensi</label>
+                            </div>
                         </div>
 						<!--DPA-->
-                        <div class="col-sm-2" tal:attributes="style request.session['ag_step_id']!=2 and  'display:none'">
+                        <div class="col-sm-6" tal:attributes="style request.session['ag_step_id']!=2 and  'display:none'">
                             <div class="radio" style="${row and row.rekening_kd !='0.00.00.10' and 'display:none'}">
                                 <label><input type="radio" name="rpt" value="1">DPA-1</label>
                             </div>
@@ -619,9 +703,12 @@
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="2">Lampiran</label>
                             </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="5">Lembar Asistensi</label>
+                            </div>
                         </div>
 						<!--RDPPA-->
-                        <div class="col-sm-2" tal:attributes="style request.session['ag_step_id']!=3 and  'display:none'">
+                        <div class="col-sm-6" tal:attributes="style request.session['ag_step_id']!=3 and  'display:none'">
                             <div class="radio" style="${row and row.rekening_kd !='0.00.00.10' and 'display:none'}">
                                 <label><input type="radio" name="rpt" value="1">RDPPA-1</label>
                             </div>
@@ -637,9 +724,12 @@
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="2">Lampiran</label>
                             </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="5">Lembar Asistensi</label>
+                            </div>
                         </div>
 						<!--DPPA-->
-                        <div class="col-sm-2" tal:attributes="style request.session['ag_step_id']!=4 and  'display:none'">
+                        <div class="col-sm-6" tal:attributes="style request.session['ag_step_id']!=4 and  'display:none'">
                             <div class="radio" style="${row and row.rekening_kd !='0.00.00.10' and 'display:none'}">
                                 <label><input type="radio" name="rpt" value="1">DPPA-1</label>
                             </div>
@@ -654,6 +744,9 @@
                             </div>
                             <div class="radio">
                                 <label><input type="radio" name="rpt" value="2">Lampiran</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" name="rpt" value="5">Lembar Asistensi</label>
                             </div>
                         </div>
 

@@ -114,6 +114,7 @@
 	<variable name="sisa" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{jml_spd})-Double.parseDouble($F{jml_apinvoice_lalu})]]></variableExpression>
 	</variable>
+	<variable name="nomor" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -183,7 +184,7 @@ Pengguna Anggaran / Kuasa Pengguna Anggaran
 				<textElement textAlignment="Justified" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Dengan memperhatikan Peraturan Bupati Nomor "+$F{no_perkdh}+" tanggal "+$F{tgl_perkdh}+ " tentang Penjabaran Anggaran Pendapatan dan Belanja Daerah Tahun Anggaran "+$F{tahun}+ ", bersama ini kami mengajukan Surat Permintaan Pembayaran "+$V{jenis_nm}+" sebagai berikut: "]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Dengan memperhatikan Peraturan Bupati Nomor "+$F{no_perkdh}+" tanggal "+$F{tgl_perkdh}.substring(8,10)+"-"+$F{tgl_perkdh}.substring(5,7)+"-"+$F{tgl_perkdh}.substring(0,4)+ " tentang Penjabaran Anggaran Pendapatan dan Belanja Daerah Tahun Anggaran "+$F{tahun}+ ", bersama ini kami mengajukan Surat Permintaan Pembayaran "+$V{jenis_nm}+" sebagai berikut: "]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="226" width="193" height="14"/>
@@ -329,7 +330,7 @@ Pengguna Anggaran / Kuasa Pengguna Anggaran
 				<textElement markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[":  Rp. "+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{sisa})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[":  Rp. "+NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{sisa})+",-"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, case
 from sqlalchemy.orm import aliased
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
@@ -51,6 +51,8 @@ class view_ak_jurnal_skpd_item(BaseViews):
             columns.append(ColumnDT('sapkd'))
             columns.append(ColumnDT('sapnm'))
             columns.append(ColumnDT('amount',  filter=self._number_format))
+            columns.append(ColumnDT('debet',  filter=self._number_format))
+            columns.append(ColumnDT('kredit',  filter=self._number_format))
             columns.append(ColumnDT('notes'))
             columns.append(ColumnDT('rekkd'))
             columns.append(ColumnDT('reknm'))
@@ -68,6 +70,8 @@ class view_ak_jurnal_skpd_item(BaseViews):
                                     sap.kode.label('sapkd'),
                                     sap.nama.label('sapnm'),
                                     AkJurnalItem.amount,
+                                    case([(AkJurnalItem.amount>0,AkJurnalItem.amount)], else_=0).label('debet'),
+                                    case([(AkJurnalItem.amount<0,AkJurnalItem.amount*-1)], else_=0).label('kredit'),
                                     AkJurnalItem.notes,
                                     rek.kode.label('rekkd'),
                                     rek.nama.label('reknm'),
@@ -83,17 +87,19 @@ class view_ak_jurnal_skpd_item(BaseViews):
                                 ).filter(AkJurnalItem.ak_jurnal_id==ak_jurnal_id,
                                          AkJurnalItem.ak_jurnal_id==AkJurnal.id,
                                 ).group_by(AkJurnalItem.id,
-                                           sap.kode.label('sapkd'),
-                                           sap.nama.label('sapnm'),
+                                           sap.kode,
+                                           sap.nama,
                                            AkJurnalItem.amount,
+                                           case([(AkJurnalItem.amount>0,AkJurnalItem.amount)], else_=0),
+                                           case([(AkJurnalItem.amount<0,AkJurnalItem.amount*-1)], else_=0),
                                            AkJurnalItem.notes,
-                                           rek.kode.label('rekkd'),
-                                           rek.nama.label('reknm'),
+                                           rek.kode,
+                                           rek.nama,
                                            AkJurnalItem.kegiatan_sub_id,
                                            AkJurnalItem.rekening_id,
                                            AkJurnalItem.ak_jurnal_id,
-                                           sub.kode.label('subkd'),
-                                           sub.nama.label('subnm'),
+                                           sub.kode,
+                                           sub.nama,
                                 )
             rowTable = DataTables(req, AkJurnalItem, query, columns)
             return rowTable.output_result()

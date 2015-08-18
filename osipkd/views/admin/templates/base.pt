@@ -20,6 +20,9 @@
           <li><a href="/kegiatan">Kegiatan</a></li>
           <li><a href="/fungsi">Fungsi</a></li>
           <li><a href="/fungsiurusan">Fungsi Urusan</a></li>
+          <li><a href="/urusan">Urusan</a></li>
+          <li><a href="/unit">Unit</a></li>
+          <li><a href="/dasarhukum">Dasar Hukum</a></li>
         </ul>
       </li>
       <li class="dropdown" tal:attributes="class request.matched_route.name in ['user', 'user-add', 'user-edit', 'user-delete'] and 'active'">
@@ -28,13 +31,10 @@
           <li><a href="/rekening">Rekening APBD</a></li>
           <li><a href="/sap">Rekening Sap</a></li>
           <li><a href="/rekening-sap">Mapping Rekening APBD - Sap</a></li>
-          <li><a href="/urusan">Urusan</a></li>
-          <li><a href="/unit">Unit</a></li>
           <li><a href="/user/unit">User Unit</a></li>
           <li><a href="/pegawai">Pegawai</a></li>
           <li><a href="/jabatan">Jabatan</a></li>
           <li><a href="/pejabat">Pejabat</a></li>
-          <li><a href="/dasarhukum">Dasar Hukum</a></li>
         </ul>
       </li>
       

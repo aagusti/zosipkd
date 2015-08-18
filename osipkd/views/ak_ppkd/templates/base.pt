@@ -14,6 +14,7 @@
           <li><a href="/ak-apinvoice">Posting Tagihan / SPJ</a></li>
           <li><a href="/ak-payment">Posting Pembayaran Tagihan</a></li>
           <li><a href="/ak-sp2d">Posting SP2D</a></li>
+          <li><a href="/ak-report-apbd">Realisasi APBD</a></li>
           <li><a href="/ak-report-skpd">Laporan</a></li>
         </ul>
       </li>
@@ -24,6 +25,8 @@
           <li><a href="/ak-jurnal-ppkd">Jurnal PPKD</a></li>
           <li><a href="/ak-sts-ppkd">Posting STS</a></li>
           <li><a href="/ak-sp2d-ppkd">Posting SP2D</a></li>
+          <li><a href="/ak-report-apbd2">Realisasi APBD</a></li>
+          <li><a href="/ak-report-apbd-perda">Realisasi APBD Perda</a></li>
           <li><a href="/ak-report-ppkd">Laporan</a></li>
         </ul>
       </li>

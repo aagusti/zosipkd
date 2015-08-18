@@ -245,9 +245,16 @@ def get_form(request, class_form):
     schema.request = request
     return Form(schema, buttons=('simpan','batal'))
     
-def save(values, request, row=None):
+def save(values, request, user, row=None):
     if not row:
         row = KegiatanIndikator()
+        row.created = datetime.now()
+        row.create_uid = user.id
+        
+    # isikan user update dan tanggal update
+    row.updated = datetime.now()
+    row.update_uid = user.id
+        
     ag_step_id = request.session['ag_step_id']
     
     if not values['tolok_ukur_1']: 
@@ -287,7 +294,7 @@ def save(values, request, row=None):
 def save_request(values, request, row=None):
     if 'id' in request.matchdict:
         values['id'] = request.matchdict['id']
-    row = save(values, request, row)
+    row = save(values, request, request.user, row)
     request.session.flash('Kegiatan sudah disimpan.')
         
 def route_list(request,kegiatan_sub_id):
@@ -305,12 +312,17 @@ def view_add(request):
     kegiatan_sub_id = request.matchdict['kegiatan_sub_id']
     
     ## Cek sudah Posting atau belum    
-    q = DBSession.query(KegiatanSub.disabled).filter(KegiatanSub.id==request.matchdict['kegiatan_sub_id'])
+    q = DBSession.query(KegiatanSub.disabled, KegiatanSub.approval).filter(KegiatanSub.id==request.matchdict['kegiatan_sub_id'])
     rowsub = q.first()
     if rowsub.disabled:
         request.session.flash('Data tidak dapat ditambah karena sudah Posting', 'error')
         return route_list(request, kegiatan_sub_id)
     
+    ## Cek sudah Approval Bappeda atau BPKAD    
+    if rowsub.approval>1 :
+        request.session.flash('Data tidak dapat ditambah karena sudah di Approval Bappeda/BPKAD', 'error')
+        return route_list(request, kegiatan_sub_id)
+        
     ses = request.session
     rows = KegiatanSub.query_id(kegiatan_sub_id).filter(KegiatanSub.unit_id == ses['unit_id']).first()
     if request.POST:
@@ -352,11 +364,21 @@ def view_edit(request):
     if not row:
         return id_not_found(request,kegiatan_sub_id)
         
+    #Kondisi sudah di Approval Bappeda
+    if row.disabled:
+        request.session.flash('Data tidak dapat diupdate karena sudah di Approval Bappeda.', 'error')
+        return route_list(request, kegiatan_sub_id)
+            
     ## Cek sudah Posting atau belum    
-    q = DBSession.query(KegiatanSub.disabled).filter(KegiatanSub.id==request.matchdict['kegiatan_sub_id'])
+    q = DBSession.query(KegiatanSub.disabled, KegiatanSub.approval).filter(KegiatanSub.id==request.matchdict['kegiatan_sub_id'])
     rowsub = q.first()
     if rowsub.disabled:
         request.session.flash('Data tidak dapat diupdate karena sudah Posting', 'error')
+        return route_list(request, kegiatan_sub_id)
+        
+    ## Cek sudah Approval Bappeda atau BPKAD    
+    if rowsub.approval>1  :
+        request.session.flash('Data tidak dapat diupdate karena sudah di Approval Bappeda/BPKAD', 'error')
         return route_list(request, kegiatan_sub_id)
         
     rows = KegiatanSub.query_id(kegiatan_sub_id).filter(KegiatanSub.unit_id==ses['unit_id']).first()
@@ -389,13 +411,23 @@ def view_delete(request):
     if not row:
         return id_not_found(request,kegiatan_sub_id)
         
+    #Kondisi sudah di Approval Bappeda
+    if row.disabled:
+        request.session.flash('Data tidak dapat dihapus karena sudah di Approval Bappeda.', 'error')
+        return route_list(request, kegiatan_sub_id)
+        
     ## Cek sudah Posting atau belum    
-    q = DBSession.query(KegiatanSub.disabled).filter(KegiatanSub.id==request.matchdict['kegiatan_sub_id'])
+    q = DBSession.query(KegiatanSub.disabled, KegiatanSub.approval).filter(KegiatanSub.id==request.matchdict['kegiatan_sub_id'])
     rowsub = q.first()
     if rowsub.disabled:
         request.session.flash('Data tidak dapat dihapus karena sudah Posting', 'error')
         return route_list(request, kegiatan_sub_id)
     
+    ## Cek sudah Approval Bappeda atau BPKAD    
+    if rowsub.approval>1 :
+        request.session.flash('Data tidak dapat dihapus karena sudah di Approval Bappeda/BPKAD', 'error')
+        return route_list(request, kegiatan_sub_id)
+        
     form = Form(colander.Schema(), buttons=('hapus','cancel'))
     values= {}
     

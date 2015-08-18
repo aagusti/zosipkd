@@ -212,6 +212,9 @@ class KegiatanSub(NamaModel, Base):
     r2yl = Column(BigInteger, nullable=False, default=0)
 	
     disabled = Column(SmallInteger, nullable=False, default=0)
+    
+    approval = Column(SmallInteger, nullable=False, default=0)
+    
     UniqueConstraint('unit_id', 'tahun_id', 'kegiatan_id' , 'no_urut',  
                 name = 'kegiatan_sub_ukey')
     @classmethod
@@ -346,20 +349,17 @@ class KegiatanAsistensi(DefaultModel, Base):
     units             = relationship("Unit",        backref="kegiatan_asistensis") 
     kegiatan_sub_id   = Column(BigInteger, ForeignKey("apbd.kegiatan_subs.id"), nullable=False)
     unit_asistensi_id = Column(Integer,    ForeignKey("admin.units.id"),        nullable=False) 
+
+    tanggal     = Column(Date)
     #Komentar
     catatan_1   = Column(Text)
     catatan_2   = Column(Text)
     catatan_3   = Column(Text)
     catatan_4   = Column(Text)
-    #Kabid
-    ttd_nip_1   = Column(String(32))
-    ttd_nama_1  = Column(String(64))
-    #Kasubid
-    ttd_nip_2   = Column(String(32))
-    ttd_nama_2  = Column(String(64))
-    #Pelaksana
-    ttd_nip_3   = Column(String(32))
-    ttd_nama_3  = Column(String(64))
+    #Tanda tangan
+    ttd_nip   = Column(String(32))
+    ttd_nama  = Column(String(64))
+    ttd_jab   = Column(String(128))
     #Status Disabled
     disabled    = Column(SmallInteger, nullable=False, default=0)
                    

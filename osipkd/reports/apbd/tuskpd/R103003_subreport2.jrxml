@@ -33,6 +33,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="165" y="0" width="69" height="14"/>
+				<box rightPadding="1"/>
 				<textElement textAlignment="Right">
 					<font size="9"/>
 				</textElement>

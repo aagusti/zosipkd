@@ -9,7 +9,7 @@ import colander
 from deform import (Form, widget, ValidationFailure, )
 from osipkd.models import DBSession
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
-from osipkd.models.pemda_model import Unit
+#from osipkd.models.pemda_model import Unit
 from osipkd.models.apbd_tu import Sp2d, Giro
     
 from datatables import ColumnDT, DataTables
@@ -33,7 +33,7 @@ POS = (
     ('20-GIRORKUD', 'DEPOSITO RKUD'),
     ('DEPOSITO BNI', 'DEPOSITO BNI'),
     ('DEPOSITO BTN', 'DEPOSITO BTN'),
-    ('GIRO AUTOSAVE BSM', 'GIRO AUTOSAVE BSM'),
+    ('DEPOSITO MANDIRI', 'DEPOSITO MANDIRI'),
     )
     
 class view_ap_giro_ppkd(BaseViews):
@@ -73,12 +73,10 @@ class view_ap_giro_ppkd(BaseViews):
                 if bulan==0 :
                   query = DBSession.query(Giro
                         ).filter(Giro.tahun_id==ses['tahun'],
-                                 Giro.unit_id==ses['unit_id'] ,
                         ).order_by(Giro.kode.asc())
                 else :
                   query = DBSession.query(Giro
                         ).filter(Giro.tahun_id==ses['tahun'],
-                                 Giro.unit_id==ses['unit_id'],
                                  extract('month',Giro.tanggal)==bulan
                         ).order_by(Giro.kode.asc())
                            
@@ -116,17 +114,22 @@ class view_ap_giro_ppkd(BaseViews):
         row.disabled = 'disabled' in values and 1 or 0     
 
         if not row.no_urut:
-            row.no_urut = Giro.max_no_urut(row.tahun_id,row.unit_id)+1;
+            row.no_urut = Giro.max_no_urut(row.tahun_id)+1;
             
         if not row.kode:
             tahun    = self.session['tahun']
-            unit_kd  = self.session['unit_kd']
-            unit_id  = self.session['unit_id']
+            #unit_kd  = self.session['unit_kd']
+            #unit_id  = self.session['unit_id']
             #no_urut  = Giro.get_norut(tahun, unit_id)+1
             no_urut  = row.no_urut
-            no       = "0000%d" % no_urut
-            nomor    = no[-5:]
-            row.kode = "%d" % tahun + "-%s" % unit_kd + "-BUD-%s" % nomor
+            no       = "00000%d" % no_urut
+            nomor    = no[-6:]
+            row.kode = "%s" % nomor + "-BUD-%d" % tahun
+            
+            #no_urut  = row.no_urut
+            #no       = "00000%d" % no_urut
+            #nomor    = no[-5:]
+            #row.kode = "%d" % tahun + "-%s" % unit_kd + "-BUD-%s" % nomor
             
         DBSession.add(row)
         DBSession.flush()
@@ -259,9 +262,9 @@ class view_ap_giro_ppkd(BaseViews):
                      form=form.render())
 
 class AddSchema(colander.Schema):
-    unit_id    = colander.SchemaNode(
-                          colander.String(),
-                          oid = "unit_id")
+    #unit_id    = colander.SchemaNode(
+    #                      colander.String(),
+    #                      oid = "unit_id")
     tahun_id   = colander.SchemaNode(
                           colander.Integer(),
                           title="Tahun",

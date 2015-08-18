@@ -169,7 +169,9 @@
                 <th>ID</th>
                 <th>SAP</th>
                 <th>Uraian SAP</th>
-                <th>Nilai</th>
+                <th>Debet</th>
+                <th>Debet</th>
+                <th>Kredit</th>
                 <th>Catatan</th>
                 <th>Rekening</th>
             </tr>
@@ -304,26 +306,28 @@
         {
             "bSearchable": false,
             "bVisible"   : false,
-            "aTargets"   : [0,6,7,8,9,10,11]
+            "aTargets"   : [0,3,8,9,10,11,12,13]
         },{ 
-            "type"       : "numeric-comma", "aTargets": [3]
+            "type"       : "numeric-comma", "aTargets": [4,5]
         },{
             "sClass"     : "right",
-            "aTargets"   : [3]
+            "aTargets"   : [4,5]
         },{
             "bSearchable": false,
             "bSortable"  : false,
-            "aTargets"   : [1,2,5]
+            "aTargets"   : [1,2,6]
         },{
             "bSearchable": true,
             "bSortable"  : false,
-            "aTargets"   : [3,4]
+            "aTargets"   : [3,7]
         }
         ],
         "aoColumns": [
             null,
             {"width": "50px"},
             {"width": "160px"},
+            {"width": "60px"},
+            {"width": "60px"},
             {"width": "60px"},
             {"width": "100px"},
             {"width": "50px"},
@@ -354,17 +358,17 @@
               $(this).addClass('selected');
               mID = aData[0];
               $("#jurnal_item_id").val(mID);
-              $("#kegiatan_sub_kd").val(aData[10]);
-              $("#kegiatan_sub_nm").val(aData[11]);
-              $("#rekening_kd").val(aData[5]);
-              $("#rekening_nm").val(aData[6]);
+              $("#kegiatan_sub_kd").val(aData[12]);
+              $("#kegiatan_sub_nm").val(aData[13]);
+              $("#rekening_kd").val(aData[7]);
+              $("#rekening_nm").val(aData[8]);
               $("#sap_kd").val(aData[1]);
               $("#sap_nm").val(aData[2]);
               $("#amount").val(aData[3]);
-              $("#notes").val(aData[4]);
-              $("#ak_jurnal_id").val(aData[9]);
-              $("#kegiatan_sub_id").val(aData[7]);
-              $("#rekening_id").val(aData[8]);
+              $("#notes").val(aData[6]);
+              $("#ak_jurnal_id").val(aData[11]);
+              $("#kegiatan_sub_id").val(aData[9]);
+              $("#rekening_id").val(aData[10]);
               
               oTable.$('tr.row_selected').removeClass('row_selected');
               $(this).addClass('row_selected');

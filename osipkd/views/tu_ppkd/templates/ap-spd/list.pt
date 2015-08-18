@@ -182,9 +182,8 @@
                 var aData = oTable.fnGetData(iPos);
                 mID = aData[0];
                 mID2 = aData[6];
-                No_Spd1 = aData[2];
-                No_Spd2 = aData[2];
-
+                No_Spd1 = aData[1];
+                No_Spd2 = aData[1];
                 oTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
             }
@@ -216,11 +215,14 @@
             } else {
                 alert('Silahkan pilih Kegiatan ID');
             }*/
+            //alert($('#No_Spd1').val());
+            
             if (mID) {
             $('#No_Spd1').val(No_Spd1);
             $('#No_Spd2').val(No_Spd2);
 
             $('#dlgRpt').modal('show');
+            
             } else {
                 alert('Silahkan pilih Kegiatan ID');
             }

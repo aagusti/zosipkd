@@ -1,0 +1,99 @@
+<html metal:use-macro="load: ../base.pt">
+  <div metal:fill-slot="content" class="container">
+        <h4>Realisasi APBD (Perda/Perbup)</h4>
+        <hr>
+    <script>
+    $(document).ready(function(){
+    
+        $('#btn_cetak').click(function () {
+            
+            var jenis = $('input[name="jenis"]:checked').val();
+            if(jenis==undefined) {
+                alert('Silahkan pilih jenis laporan yang akan ditampilkan!');
+                return;
+            } 
+            window.open('/ak-report-apbd/act/'+jenis);
+        });
+
+        $('input[name="jenis"]').prop('checked', false);
+        $("#btn_close").click(function () {
+            window.location = '/ak-ppkd';
+            return false;
+        });
+    });
+  
+    </script>
+    
+  <form id="header" method="POST" enctype="multipart/form-data" accept-charset="utf-8" 
+      class="form-horizontal">
+  <fieldset class="deformFormFieldset">
+    <div class="panel-heading">
+      <!--TAHUN---------------------------------------------------------------->
+      <div class="form-group">
+        <div class="col-md-3">
+          <div id="item-tahun">
+            <label for="tahun" class="control-label col-md-3" id="req-tahun">
+                    Tahun</label>
+            <div class="col-md-9">
+               <input id="tahun" class=" form-control " type="text" 
+                      value="${request.session['tahun']}" 
+                      readonly name="tahun">
+            </div>
+          </div>
+        </div>
+
+    </div>
+    
+    <div class="panel-body">
+        <div class="form-group" id="div_status">
+        <label class="control-label col-xs-2" for="jenis">Jenis Laporan</label>
+    
+        <div class="col-sm-3">
+            <div class="radio">
+                <label><input type="radio" name="jenis" value="1">Ringkasan APBD (Perda 1)</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="jenis" value="2">Ringkasan APBD SAP (Perda 1)</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="jenis" value="3">Ringkasan Urusan (Ringkas)</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="jenis" value="4">Ringkasan Urusan</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="jenis" value="5">Rincian Belanja (Perda 1.2)</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="jenis" value="6">Program Kegiatan (Perda 1.3)</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="jenis" value="7">Ringkasan Fungsi (Perda 1.4)</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="jenis" value="8">Ringkasan APBD (Perbup 1)</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="jenis" value="9">Ringkasan APBD SAP (Perbup 1)</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="jenis" value="10">Rincian Belanja (Lamp 2)</label>
+            </div>
+        </div>
+        </div>
+        <br>
+
+   
+    <div class="form-group">
+        <div class="col-md-9">
+            <button id="btn_cetak" name="btn_cetak" type="button" class="btn btn-primary "
+          value="btn_cetak">Cetak</button>
+            <button id="btn_close" name="btn_close" type="button" class="btn btn-warning"
+          value="btn_close">Tutup</button>
+        </div>  
+    </div>    
+
+  </fieldset>
+</form>
+  </div> 
+</html>

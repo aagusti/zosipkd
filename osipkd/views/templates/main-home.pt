@@ -2,7 +2,7 @@
 <div metal:fill-slot="content">
 
 <!-- Main component for a primary marketing message or call to action -->
-<h1>Module</h1>
+<h1>T A ${request.session['tahun']}</h1>
 <div class="col-md-2">
   <p><img src="/files/logo.png" class="img-float img-thumbnail"/>
 </div>

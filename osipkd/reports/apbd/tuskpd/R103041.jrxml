@@ -63,6 +63,9 @@
 	<field name="logo" class="java.lang.String">
 		<fieldDescription><![CDATA[logo]]></fieldDescription>
 	</field>
+	<field name="jenis1" class="java.lang.String">
+		<fieldDescription><![CDATA[jenis1]]></fieldDescription>
+	</field>
 	<variable name="jenis_nm" class="java.lang.String">
 		<variableExpression><![CDATA[]]></variableExpression>
 		<initialValueExpression><![CDATA[$F{jenis}=="LS" ? "LANGSUNG" : $F{jenis}=="UP" ? "UANG PERSEDIAAN" : $F{jenis}=="TU" ? "TAMBAHAN UANG PERSEDIAAN" : $F{jenis}=="GU" ? "GANTI UANG PERSEDIAAN" : ""]]></initialValueExpression>
@@ -104,14 +107,14 @@
 				<textElement textAlignment="Center" markup="none">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["SPP-"+$F{jenis}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["SPP-"+$F{jenis}+$F{jenis1}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="20" y="73" width="467" height="16"/>
 				<textElement textAlignment="Center" markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Nomor : "+$F{spp_kd}.substring(13)+"/"+$F{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Nomor : "+$F{spp_kd}.substring(13)+"/"+$F{jenis}+$F{jenis1}+"/"+$F{unit_kd}+"/"+$F{tahun}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="20" y="107" width="467" height="16"/>

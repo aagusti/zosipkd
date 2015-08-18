@@ -2,12 +2,12 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func, or_, cast, BigInteger
+from sqlalchemy import not_, func, or_, cast, BigInteger, case
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
 from deform import (Form, widget, ValidationFailure, )
-from osipkd.models import DBSession
+from osipkd.models import DBSession, Group, UserGroup
 from osipkd.models.apbd_anggaran import Kegiatan, KegiatanSub, KegiatanItem
 from osipkd.models.pemda_model import Rekening
 from datatables import ColumnDT, DataTables
@@ -79,6 +79,7 @@ class view_ak_jurnal(BaseViews):
                   (KegiatanItem.hsat_2).label('harga_2'),
                   (KegiatanItem.hsat_3).label('harga_3'),
                   (KegiatanItem.hsat_4).label('harga_4'),
+                  KegiatanSub.approval,
                   KegiatanSub.disabled
                   ).join(Rekening).join(KegiatanSub)
                   
@@ -98,10 +99,17 @@ class view_ak_jurnal(BaseViews):
             columns.append(ColumnDT('rekening_kd'))
             columns.append(ColumnDT('no_urut'))
             columns.append(ColumnDT('nama'))
-            columns.append(ColumnDT('harga_%s' %ag_step_id, filter=self._number_format))
-            columns.append(ColumnDT('amount_%s' %ag_step_id, filter=self._number_format))
+            columns.append(ColumnDT('harga_1', filter=self._number_format))
+            columns.append(ColumnDT('amount_1', filter=self._number_format))
+            columns.append(ColumnDT('harga_2', filter=self._number_format))
+            columns.append(ColumnDT('amount_2', filter=self._number_format))
+            columns.append(ColumnDT('harga_3', filter=self._number_format))
+            columns.append(ColumnDT('amount_3', filter=self._number_format))
+            columns.append(ColumnDT('harga_4', filter=self._number_format))
+            columns.append(ColumnDT('amount_4', filter=self._number_format))
             columns.append(ColumnDT('rekening_nm'))
             columns.append(ColumnDT('rekening_id'))
+            columns.append(ColumnDT('approval'))
             columns.append(ColumnDT('disabled'))
             query = self.get_row_item().filter(KegiatanItem.kegiatan_sub_id==kegiatan_sub_id
                       ).order_by(Rekening.kode.asc(),KegiatanItem.no_urut)
@@ -121,7 +129,8 @@ class view_ak_jurnal(BaseViews):
                                  KegiatanSub.tahun_id == ses['tahun'],
                                  KegiatanItem.kegiatan_sub_id==kegiatan_sub_id,
                                  KegiatanItem.nama.ilike('%%%s%%' % term),
-                                 KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2>0)
+                                 #KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2>0
+                                 )
             rows = q.all()
             r = []
             for k in rows:
@@ -164,7 +173,7 @@ class view_ak_jurnal(BaseViews):
                 d['id']      = k[0]
                 d['value']   = '{kegiatan_kd}-{kegiatan_no}-{rekening_kd}-{item_no}'.\
                                 format(kegiatan_kd=k[1], kegiatan_no=k[3], 
-                                       rekening_kd=k[4], item_no=k[6])
+                                       rekening_kd=k[4], item_no=k[6] )
                 d['kode']    = '{kegiatan_kd}-{kegiatan_no}-{rekening_kd}-{item_no}'.\
                                 format(kegiatan_kd=k[1], kegiatan_no=k[3], 
                                        rekening_kd=k[4], item_no=k[6])
@@ -173,6 +182,45 @@ class view_ak_jurnal(BaseViews):
                 r.append(d)
             return r            
         
+        elif url_dict['act']=='headofnama1':
+            term = 'term' in params and params['term'] or ''
+            kegiatan_sub = 'kegiatan_sub_id' in params and params['kegiatan_sub_id'] or 0
+            q = DBSession.query(KegiatanItem.id, Kegiatan.kode.label('kegiatan_kd'),
+                                Kegiatan.nama.label('kegiatan_nm'),
+                                KegiatanSub.no_urut.label('kegiatan_no'),
+                                Rekening.kode.label('rekening_kd'),
+                                Rekening.nama.label('rekening_nm'),
+                                KegiatanItem.no_urut.label('item_no'),
+                                cast(KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2,BigInteger).label('amount')
+                                ).\
+                          join(KegiatanSub, Rekening).\
+                          outerjoin(Kegiatan).\
+                          filter(KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
+                                        #KegiatanSub.id==kegiatan_sub,
+                                        KegiatanSub.unit_id == ses['unit_id'],
+                                        KegiatanSub.tahun_id == ses['tahun'],
+                                        KegiatanSub.kegiatan_id==Kegiatan.id,
+                                        KegiatanItem.rekening_id==Rekening.id,
+                                        #Kegiatan.kode=='0.00.00.10', 
+                                        #Rekening.kode.ilike('%%%s%%' % term))\
+                                        KegiatanItem.nama.ilike('%%%s%%' % term))\
+                      
+            rows = q.all()                               
+            r = []
+            for k in rows:
+                d={}
+                d['id']      = k[0]
+                d['value']   = ''.join([k[1],'-',str(k[3]),'-',k[4],'-',str(k[6]),' ',k[5],' Rp.',str(k[7])])
+                                #format(kegiatan_kd=k[1], kegiatan_no=k[3], 
+                                #       rekening_kd=k[4], item_no=k[6])
+                d['kode']    = '{kegiatan_kd}-{kegiatan_no}-{rekening_kd}-{item_no}'.\
+                                format(kegiatan_kd=k[1], kegiatan_no=k[3], 
+                                       rekening_kd=k[4], item_no=k[6])
+                d['nama']    = k[5]
+                d['amount']  = k[7]
+                r.append(d)
+            return r            
+            
         elif url_dict['act']=='headofnama3':
             term = 'term' in params and params['term'] or ''
             q = DBSession.query(KegiatanItem.id, KegiatanItem.nama.label('ap_kegiatankd'),KegiatanSub.id,KegiatanSub.nama).\
@@ -224,6 +272,7 @@ class view_ak_jurnal(BaseViews):
             if not row:
                 return {'success':False, 'msg':'Data Tidak Ditemukan'}
             row_dict = row.to_dict()
+        
             
         row_dict['no_urut']         = 'no_urut' in params and params['no_urut'] or \
                                       KegiatanItem.max_no_urut(kegiatan_sub_id,rekening_id)+1
@@ -252,11 +301,11 @@ class view_ak_jurnal(BaseViews):
             hsat_3  = row_dict['hsat_3'] = amount
             vol_4_1 = row_dict['vol_4_1']
             vol_4_2 = row_dict['vol_4_2']
-            hsat_4  = row_dict['hsat_3'] = amount 
+            hsat_4  = row_dict['hsat_4'] = amount 
             rdppa   = (vol_3_1*vol_3_2)*int(hsat_3)
             rdppa1  = int(float(rdppa))
             dppa    = (vol_4_1*vol_4_2)*int(hsat_4)
-            dppa1   = int(float(rdppa)) 
+            dppa1   = int(float(dppa)) 
             print'xxxxxxxxxxxxxxxxhsat3 xxxxxxxxxxxxxxxxxx',rdppa1
             print'xxxxxxxxxxxxxxxxhsat4 xxxxxxxxxxxxxxxxxx',dppa1
             if rdppa1 < q_aiaa and dppa1 < q_aiaa:
@@ -272,13 +321,17 @@ class view_ak_jurnal(BaseViews):
         if ag_step_id<5:
             row_dict['hsat_4'] = amount
 
+        print "---------------------->>", row_dict
         row.from_dict(row_dict)
-        
+
+        print "------------------------<<", row.disabled
         ## Cek sudah Posting atau belum    
-        q = DBSession.query(KegiatanSub.disabled).filter(KegiatanSub.id==row_dict['kegiatan_sub_id'])
-        rowsub = q.first()
-        if rowsub.disabled:
-            return {'success':False, 'msg':'Data tidak dapat diupdate karena sudah Posting'}
+
+        #q = DBSession.query(KegiatanSub.disabled).filter(KegiatanSub.id==row_dict['kegiatan_sub_id'])
+        #rowsub = q.first()
+        #if rowsub.disabled:
+        #    return {'success':False, 'msg':'Data tidak dapat diupdate karena sudah Posting'}
+
             #ses.flash('Data tidak dapat diupdate karena sudah diposting', 'error')
             #return route_list(req, kegiatan_sub_id)
         
@@ -564,9 +617,17 @@ def get_form(request, class_form):
     schema.request = request
     return Form(schema, buttons=('simpan','batal'))
     
-def save(values, request, row=None):
+def save(values, request, user, row=None):
     if not row:
         row = KegiatanItem()
+        row.created = datetime.now()
+        row.create_uid = user.id
+        
+    row.from_dict(values)
+    # isikan user update dan tanggal update
+    row.updated = datetime.now()
+    row.update_uid = user.id
+        
     ag_step_id = request.session['ag_step_id']
     if ag_step_id<2:
         values['vol_2_1'] = values['vol_%s_1' % ag_step_id] 
@@ -587,7 +648,6 @@ def save(values, request, row=None):
         values['sat_4_2'] = values['sat_%s_2' % ag_step_id] 
         values['hsat_4'] = values['hsat_%s' % ag_step_id] 
         
-    row.from_dict(values)
     if not row.no_urut:
           row.no_urut = KegiatanItem.max_no_urut(values['kegiatan_sub_id'],values['rekening_id'])+1;
 
@@ -615,7 +675,7 @@ def save_request(values, request, row=None):
     #values["vol_4_2"]=values["vol_4_2"].replace('.','') 
     values["hsat_4"]=values["hsat_4"].replace('.','') 
 
-    row = save(values, request, row)
+    row = save(values, request, request.user, row)
     request.session.flash('Kegiatan sudah disimpan.')
         
 def route_list(request, kegiatan_sub_id):
@@ -678,7 +738,7 @@ def view_add(request):
             hsat_3  = b['hsat_3'].replace('.','') 
             vol_4_1 = b['vol_4_1']
             vol_4_2 = b['vol_4_2']
-            hsat_4  = b['hsat_3'].replace('.','') 
+            hsat_4  = b['hsat_4'].replace('.','') 
             bln01    = b['bln01']
             bln02    = b['bln02']
             bln03    = b['bln03']
@@ -748,26 +808,42 @@ def id_not_found(request,kegiatan_sub_id):
              permission='edit')
 def view_edit(request):
     ses = request.session
+    req = request
     kegiatan_sub_id = request.matchdict['kegiatan_sub_id']
     row = query_id(request).first()
     ui=row.id
-    print'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxiiiiiiiiiiii',ui
+
     if not row:
         return id_not_found(request,kegiatan_sub_id)
-    ##
 
- 
-    ## Cek sudah Posting atau belum    
-    #q = DBSession.query(KegiatanSub.disabled).filter(KegiatanSub.id==request.matchdict['kegiatan_sub_id'])
-    #rowsub = q.first()
-    #if rowsub.disabled:
-    #    request.session.flash('Data sudah diposting', 'error')
-    #    return route_list(request, kegiatan_sub_id)
+    ## variabel ag_step_id
+    #ag_step_id = ses['ag_step_id']
     
+    ## kondisi group ppkd (semua unit)
+    #grp = DBSession.query(func.lower(Group.group_name)).filter(UserGroup.user_id==request.user.id, Group.id==UserGroup.group_id).first()
+    #grps = '%s' % grp
+    ##
+ 
     form = get_form(request, EditSchema)
     rows = KegiatanSub.query_id(kegiatan_sub_id).filter(KegiatanSub.unit_id==ses['unit_id']).first()
     if request.POST:
         if 'simpan' in request.POST:
+            ## variabel group name
+            grp1 = 'kasubag perencanaan skpd'
+            grp2 = 'kepala bidang bapeda (tapd)'
+            grp3 = 'kepala bidang p3 dispenda (tapd)'
+            grp4 = 'kepala bidang anggaran (tapd)'
+            grp5 = 'admin bpkad'
+            
+            ## variabel ag_step_id
+            ag_step_id = ses['ag_step_id']        
+            
+            ## kondisi group ppkd (semua unit)
+            grp = DBSession.query(case([(func.lower(Group.group_name)==grp1,1),(func.lower(Group.group_name)==grp2,2),
+                  (func.lower(Group.group_name)==grp3,3), (func.lower(Group.group_name)==grp4,4), (func.lower(Group.group_name)==grp5,5)], 
+                  else_=0)
+                  ).filter(UserGroup.user_id==req.user.id, Group.id==UserGroup.group_id).first()
+            grps_kd = '%s' % grp
           
             ## Cek sudah Posting atau belum    
             q = DBSession.query(KegiatanSub.disabled).filter(KegiatanSub.id==request.matchdict['kegiatan_sub_id'])
@@ -776,6 +852,21 @@ def view_edit(request):
                 request.session.flash('Data tidak dapat diupdate karena sudah Posting', 'error')
                 return route_list(request, kegiatan_sub_id)
         
+            ## Cek Grup
+            if grps_kd == '2' or grps_kd == '3' or grps_kd == '4' :
+                request.session.flash('Anda tidak mempunyai hak akses untuk mengupdate data', 'error')
+                return route_list(request, kegiatan_sub_id)
+                
+            if rows.disabled==1 and rows.approval==4:
+                request.session.flash('Data tidak dapat diupdate karena sudah diposting BPKAD', 'error')
+                return route_list(request, kegiatan_sub_id)
+            if rows.approval==3:
+                request.session.flash('Data tidak dapat diupdate karena sudah diposting Dispenda', 'error')
+                return route_list(request, kegiatan_sub_id)
+            if rows.approval==2:
+                request.session.flash('Data tidak dapat diupdate karena sudah diposting Bappeda', 'error')
+                return route_list(request, kegiatan_sub_id)
+                    
             controls = request.POST.items()
             a    = form.validate(controls)
             vol_1_1 = a['vol_1_1']
@@ -789,7 +880,7 @@ def view_edit(request):
             hsat_3  = a['hsat_3'].replace('.','') 
             vol_4_1 = a['vol_4_1']
             vol_4_2 = a['vol_4_2']
-            hsat_4  = a['hsat_3'].replace('.','') 
+            hsat_4  = a['hsat_4'].replace('.','') 
             bln01    = a['bln01']
             bln02    = a['bln02']
             bln03    = a['bln03']
@@ -809,7 +900,7 @@ def view_edit(request):
             rdppa    = (vol_3_1*vol_3_2)*int(hsat_3)
             rdppa1   = int(float(rdppa))
             dppa     = (vol_4_1*vol_4_2)*int(hsat_4)
-            dppa1    = int(float(rdppa))
+            dppa1    = int(float(dppa))
             bln      = bln01+bln02+bln03+bln04+bln05+bln06+bln07+bln08+bln09+bln10+bln11+bln12
             
             ### Sum dari APInvoiceItem sesuai APInvoiceItem.id 
@@ -847,6 +938,8 @@ def view_edit(request):
                     request.session.flash('Jumlah RDPPA dengan Rencana Biaya tidak sama', 'error')
                     return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
             elif ag_step_id==4:
+                print "---------------------------------->>>>",bln
+                print "---------------------------------->>>>",dppa1
                 if bln!=dppa1:
                     request.session.flash('Jumlah pagu anggaran dengan Rencana Biaya tidak sama', 'error')
                     return HTTPFound(location=request.route_url('ag-kegiatan-item-edit',kegiatan_sub_id=row.kegiatan_sub_id,id=row.id))
@@ -880,12 +973,26 @@ def view_delete(request):
         return {'success':False, "msg":self.id_not_found()}
 
     ## Cek sudah Posting atau belum    
-    q = DBSession.query(KegiatanSub.disabled).filter(KegiatanSub.id==request.matchdict['kegiatan_sub_id'])
+    q = DBSession.query(KegiatanSub).filter(KegiatanSub.id==request.matchdict['kegiatan_sub_id'])
     rowsub = q.first()
-    if rowsub.disabled:
+    #if rowsub.disabled:
+    #    request.session.flash('Data tidak dapat dihapus karena sudah Posting', 'error')
+    #    return route_list(request, kegiatan_sub_id)
+
+    ## variabel ag_step_id
+    ses = request.session
+    ag_step_id = ses['ag_step_id']        
+            
+    if rowsub.disabled == 1 and rowsub.approval==4:
         request.session.flash('Data tidak dapat dihapus karena sudah Posting', 'error')
         return route_list(request, kegiatan_sub_id)
-        
+    if rowsub.approval==3:
+        request.session.flash('Data tidak dapat dihapus karena sudah di Approval oleh Dispenda', 'error')
+        return route_list(request, kegiatan_sub_id)
+    if rowsub.approval==2:
+        request.session.flash('Data tidak dapat dihapus karena sudah di Approval oleh Bappeda', 'error')
+        return route_list(request, kegiatan_sub_id)
+            
     form = Form(colander.Schema(), buttons=('hapus','cancel'))
     values= {}
     if request.POST:

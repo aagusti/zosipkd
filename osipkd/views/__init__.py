@@ -42,6 +42,8 @@ class Login(colander.Schema):
     username = colander.SchemaNode(colander.String())
     password = colander.SchemaNode(colander.String(),
                     widget=widget.PasswordWidget())
+    tahun    = colander.SchemaNode(colander.Integer(),
+                    )
 
 
 # http://deformdemo.repoze.org/interfield/
@@ -75,8 +77,14 @@ def view_login(request):
         controls = request.POST.items()
         identity = request.POST.get('username')
         user = schema.user = User.get_by_identity(identity)
+        print "----------------------------------->>>", dict(controls)
         try:
             c = form.validate(controls)
+            ctrls = dict(controls)
+            print "----------------------------------->>>", ctrls, ctrls['tahun'] 
+            if ctrls['tahun'] :
+               request.session['tahun'] = int(ctrls['tahun'])
+            print "----------------------------------->>>", request.session['tahun'] 
         except ValidationFailure, e:
             request.session['login failed'] = e.render()
             return HTTPFound(location=request.route_url('login'))
@@ -97,6 +105,7 @@ def view_logout(request):
     request.session['unit_id'] = None
     request.session['unit_kd'] = None
     request.session['unit_nm'] = None
+    request.session['tahun'] = None
     return HTTPFound(location = request.route_url('home'),
                       headers = headers)    
 
@@ -123,7 +132,6 @@ def password_validator(form, value):
 @view_config(route_name='password', renderer='templates/password.pt',
              permission='view')
 def view_password(request):
-    print "LEWAT----------------------------"
     schema = Password(validator=password_validator)
     form = Form(schema, buttons=('Simpan','Batal'))
     if request.POST:

@@ -73,6 +73,12 @@
                 <th>Uraian</th>
                 <th>Harga</th>
                 <th>Nilai</th>
+                <th>Harga</th>
+                <th>Nilai</th>
+                <th>Harga</th>
+                <th>Nilai</th>
+                <th>Harga</th>
+                <th>Nilai</th>
                 <th>Rekening Nama</th>
                 <th>Rekening Id</th>
            </tr>
@@ -248,6 +254,7 @@
                     $('#no_urut').val('');
                     $('#rekening_nm').val('');
                     $('#rekening_id').val('');
+                    alert('lewat');
 
                     oTable.fnReloadAjax(oTableUrl);
                   } else {
@@ -301,7 +308,7 @@
          "aoColumnDefs": [{
               "bSearchable": false,
               "bVisible"   : false,
-              "aTargets"   : [0,6,7]
+              "aTargets"   : [0,12,13]
           },{
               "bSearchable": true,
               "bSortable"  : false,
@@ -316,6 +323,12 @@
               {"width": "80px"},
               {"width": "50px"},
               null,
+              {"width": "150px", "sClass":"right"},
+              {"width": "150px", "sClass":"right"},
+              {"width": "150px", "sClass":"right"},
+              {"width": "150px", "sClass":"right"},
+              {"width": "150px", "sClass":"right"},
+              {"width": "150px", "sClass":"right"},
               {"width": "150px", "sClass":"right"},
               {"width": "150px", "sClass":"right"},
               null,
@@ -334,6 +347,44 @@
           '</div>',
         ];
 
+        var stat = ${request.session['ag_step_id']};
+        if (stat=='1') {
+          oTable.fnSetColumnVis(4,true);
+          oTable.fnSetColumnVis(5,true);
+          oTable.fnSetColumnVis(6,false);
+          oTable.fnSetColumnVis(7,false);
+          oTable.fnSetColumnVis(8,false);
+          oTable.fnSetColumnVis(9,false);
+          oTable.fnSetColumnVis(10,false);
+          oTable.fnSetColumnVis(11,false);
+        } else if (stat=='2') {
+          oTable.fnSetColumnVis(4,false);
+          oTable.fnSetColumnVis(5,false);
+          oTable.fnSetColumnVis(6,true);
+          oTable.fnSetColumnVis(7,true);
+          oTable.fnSetColumnVis(8,false);
+          oTable.fnSetColumnVis(9,false);
+          oTable.fnSetColumnVis(10,false);
+          oTable.fnSetColumnVis(11,false);
+        } else if (stat=='3') {
+          oTable.fnSetColumnVis(4,false);
+          oTable.fnSetColumnVis(5,false);
+          oTable.fnSetColumnVis(6,false);
+          oTable.fnSetColumnVis(7,false);
+          oTable.fnSetColumnVis(8,true);
+          oTable.fnSetColumnVis(9,true);
+          oTable.fnSetColumnVis(10,false);
+          oTable.fnSetColumnVis(11,false);
+        } else if (stat=='4') {
+          oTable.fnSetColumnVis(4,false);
+          oTable.fnSetColumnVis(5,false);
+          oTable.fnSetColumnVis(6,false);
+          oTable.fnSetColumnVis(7,false);
+          oTable.fnSetColumnVis(8,false);
+          oTable.fnSetColumnVis(9,false);
+          oTable.fnSetColumnVis(10,true);
+          oTable.fnSetColumnVis(11,true);
+        }
         var tb = tb_array.join(' ');
         $("div.toolbar").html(tb);
         $("div.toolbar").attr('style', 'display:block; float: left; margin-bottom:6px; line-height:16px;');
@@ -347,16 +398,29 @@
                 $(this).addClass('selected');
                 $('#kegiatan_item_id').val(aData[0]);
                 $('#nama').val(aData[3]);
-                $('#amount').val(aData[4]);
-                $('#nilai').val(aData[5]);
+                if (stat=='1') {
+                  $('#amount').val(aData[4]);
+                  $('#nilai').val(aData[5]);
+                } else if (stat=='2') {
+                  $('#amount').val(aData[6]);
+                  $('#nilai').val(aData[7]);
+                } else if (stat=='3') {
+                  $('#amount').val(aData[8]);
+                  $('#nilai').val(aData[9]);
+                } else if (stat=='4') {
+                  $('#amount').val(aData[10]);
+                  $('#nilai').val(aData[11]);
+                }
                 $('#rekening_kd').val(aData[1]);
                 $('#no_urut').val(aData[2]);
-                $('#rekening_nm').val(aData[6]);
-                $('#rekening_id').val(aData[7]);
+                $('#rekening_nm').val(aData[12]);
+                $('#rekening_id').val(aData[13]);
                 mID = aData[0];
                 oTable.$('tr.row_selected').removeClass('row_selected');
                 $(this).addClass('row_selected');
         }
+        
+        
         });
         $('#btn_add').click(function () {
             window.location = '/ag-kegiatan-item/'+$('#kegiatan_sub_id').val()+'/add';

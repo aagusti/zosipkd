@@ -91,12 +91,12 @@
                     <div class="panel-heading">INDIKATOR</div>
                     <div class="panel-body">
                     <div class="form-group" tal:attributes="style request.session['ag_step_id']!=1 and  'display:readonly'">
-                        <div class="col-sm-5">
+                        <div class="col-sm-12">
                           <div class="form-group">
                             <div tal:define="field form['tolok_ukur_1']">
-                              <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
+                              <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                                       ${field.title}</label>
-                              <div class="col-md-7">
+                              <div class="col-md-10">
                                   ${structure:field.serialize()}
                                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                                    tal:repeat="error field.error.messages()">
@@ -106,7 +106,7 @@
                           </div>
                         </div>
 
-                        <div class="col-sm-3">
+                        <div class="col-sm-6">
                           <div class="form-group">
                             <div tal:define="field form['volume_1']">
                               <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
@@ -121,12 +121,12 @@
                           </div>
                         </div>
                         
-                        <div class="col-sm-3">
+                        <div class="col-sm-6">
                           <div class="form-group">
                             <div tal:define="field form['satuan_1']">
-                              <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
+                              <label for="${field.oid}" class="control-label col-md-3" id="req-${field.oid}">
                                       ${field.title}</label>
-                              <div class="col-md-8">
+                              <div class="col-md-9">
                                   ${structure:field.serialize()}
                                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                                    tal:repeat="error field.error.messages()">
@@ -138,12 +138,12 @@
                     </div>
 
                     <div class="form-group"  tal:attributes="style request.session['ag_step_id']!=2 and  'display:readonly' ">
-                        <div class="col-sm-5">
+                        <div class="col-sm-12">
                           <div class="form-group">
                             <div tal:define="field form['tolok_ukur_2']" >
-                              <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
+                              <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                                       ${field.title}</label>
-                              <div class="col-md-7">
+                              <div class="col-md-10">
                                   ${structure:field.serialize()}
                                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                                    tal:repeat="error field.error.messages()">
@@ -153,7 +153,7 @@
                           </div>
                         </div>
 
-                        <div class="col-sm-3">
+                        <div class="col-sm-6">
                           <div class="form-group">
                             <div tal:define="field form['volume_2']">
                               <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
@@ -168,12 +168,12 @@
                           </div>
                         </div>
                         
-                        <div class="col-sm-3">
+                        <div class="col-sm-6">
                           <div class="form-group">
                             <div tal:define="field form['satuan_2']">
-                              <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
+                              <label for="${field.oid}" class="control-label col-md-3" id="req-${field.oid}">
                                       ${field.title}</label>
-                              <div class="col-md-8">
+                              <div class="col-md-9">
                                   ${structure:field.serialize()}
                                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                                    tal:repeat="error field.error.messages()">
@@ -185,12 +185,12 @@
                     </div>
 
                     <div class="form-group" tal:attributes="style request.session['ag_step_id']!=3 and  'display:readonly'">
-                        <div class="col-sm-5">
+                        <div class="col-sm-12">
                           <div class="form-group">
                             <div tal:define="field form['tolok_ukur_3']">
-                              <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
+                              <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                                       ${field.title}</label>
-                              <div class="col-md-7">
+                              <div class="col-md-10">
                                   ${structure:field.serialize()}
                                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                                    tal:repeat="error field.error.messages()">
@@ -200,7 +200,7 @@
                           </div>
                         </div>
 
-                        <div class="col-sm-3">
+                        <div class="col-sm-6">
                           <div class="form-group">
                             <div tal:define="field form['volume_3']">
                               <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
@@ -215,12 +215,12 @@
                           </div>
                         </div>
                         
-                        <div class="col-sm-3">
+                        <div class="col-sm-6">
                           <div class="form-group">
                             <div tal:define="field form['satuan_3']">
-                              <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
+                              <label for="${field.oid}" class="control-label col-md-3" id="req-${field.oid}">
                                       ${field.title}</label>
-                              <div class="col-md-8">
+                              <div class="col-md-9">
                                   ${structure:field.serialize()}
                                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                                    tal:repeat="error field.error.messages()">
@@ -231,13 +231,13 @@
                         </div>
                     </div>
 
-                    <div class="form-group" tal:attributes="style request.session['ag_step_id']!=3 and  'display:readonly'">
-                        <div class="col-sm-5">
+                    <div class="form-group" tal:attributes="style request.session['ag_step_id']!=4 and  'display:readonly'">
+                        <div class="col-sm-12">
                           <div class="form-group">
                             <div tal:define="field form['tolok_ukur_4']">
-                              <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
+                              <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                                       ${field.title}</label>
-                              <div class="col-md-7">
+                              <div class="col-md-10">
                                   ${structure:field.serialize()}
                                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                                    tal:repeat="error field.error.messages()">
@@ -247,7 +247,7 @@
                           </div>
                         </div>
 
-                        <div class="col-sm-3">
+                        <div class="col-sm-6">
                           <div class="form-group">
                             <div tal:define="field form['volume_4']">
                               <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
@@ -262,12 +262,12 @@
                           </div>
                         </div>
                         
-                        <div class="col-sm-3">
+                        <div class="col-sm-6">
                           <div class="form-group">
                             <div tal:define="field form['satuan_4']">
-                              <label for="${field.oid}" class="control-label col-md-4" id="req-${field.oid}">
+                              <label for="${field.oid}" class="control-label col-md-3" id="req-${field.oid}">
                                       ${field.title}</label>
-                              <div class="col-md-8">
+                              <div class="col-md-9">
                                   ${structure:field.serialize()}
                                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                                    tal:repeat="error field.error.messages()">
@@ -328,7 +328,7 @@
         else if  (a == 'RDPPA'){
         $('#tolok_ukur_1').attr('readonly', true)
         $('#tolok_ukur_2').attr('readonly', true)
-        $('#tolok_ukur_3').attr('readonly', true)
+        $('#tolok_ukur_4').attr('readonly', true)
 
         $('#volume_1').attr('readonly', true)
         $('#volume_2').attr('readonly', true)

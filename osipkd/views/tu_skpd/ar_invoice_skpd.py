@@ -172,7 +172,7 @@ class AddSchema(colander.Schema):
                           default=0,
                           oid="jml_total",
                           title="Nilai")
-    '''                          
+    """                          
     bendahara_uid    = colander.SchemaNode(
                           colander.Integer(),
                           oid="bendahara_uid",
@@ -187,23 +187,22 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           missing=colander.drop,
                           oid="bendahara_nm") 
-
-    
     jenis            =  colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
                           validator=colander.Length(max=32),
                           widget=widget.SelectWidget(values=JENIS_ID)) 
+    """
     penyetor         = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
                           title="Penyetor")
-    
+    """
     alamat           = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
                           title="Alamat")
-    '''
+    """
 
 class EditSchema(AddSchema):
     id             = colander.SchemaNode(
@@ -216,10 +215,16 @@ def get_form(request, class_form):
     schema.request = request
     return Form(schema, buttons=('simpan','batal'))
     
-def save(request, values, row=None):
+def save(request, values, user, row=None):
     if not row:
         row = ARInvoice()
+        row.created = datetime.now()
+        row.create_uid = user.id
+        
     row.from_dict(values)
+    # isikan user update dan tanggal update
+    row.updated = datetime.now()
+    row.update_uid = user.id
     
     if not row.no_urut:
         row.no_urut = ARInvoice.max_no_urut(row.tahun_id,row.unit_id)+1;
@@ -242,7 +247,7 @@ def save_request(values, request, row=None):
     if 'id' in request.matchdict:
         values['id'] = request.matchdict['id']
     values["nilai"]=values["nilai"].replace('.','')  
-    row = save(request, values, row)
+    row = save(request, values, request.user, row)
     request.session.flash('Tagihan sudah disimpan.')
     return row
         

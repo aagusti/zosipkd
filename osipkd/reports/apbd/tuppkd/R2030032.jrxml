@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R00001" language="groovy" pageWidth="612" pageHeight="972" columnWidth="542" leftMargin="50" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.3310000000000013"/>
-	<property name="ireport.x" value="57"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[/apbd/giro]]>
@@ -272,7 +272,7 @@ Periode Ini]]></text>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="50">
+			<band height="187">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement x="0" y="0" width="30" height="16"/>
 					<box>
@@ -351,6 +351,89 @@ Periode Ini]]></text>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jml_anggaran}-$V{lalu}-$V{jml_nominal})]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement x="300" y="27" width="70" height="13"/>
+					<textElement textAlignment="Justified" verticalAlignment="Top">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Ditetapkan di]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="300" y="40" width="70" height="13"/>
+					<textElement textAlignment="Justified" verticalAlignment="Top">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Pada Tanggal]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="370" y="40" width="16" height="13"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="370" y="27" width="16" height="13"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="386" y="27" width="91" height="13"/>
+					<textElement verticalAlignment="Top" markup="none">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Tigaraksa"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="281" y="90" width="222" height="15"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[BENDAHARA UMUM DAERAH]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="281" y="61" width="222" height="15"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[PEJABAT PENGELOLA KEUANGAN DAERAH]]></text>
+				</staticText>
+				<line>
+					<reportElement x="302" y="54" width="175" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.25"/>
+					</graphicElement>
+				</line>
+				<textField>
+					<reportElement x="386" y="40" width="91" height="13"/>
+					<textElement verticalAlignment="Top" markup="none">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tanggal}.substring(8,10)+"-"+$F{tanggal}.substring(5,7)+"-"+$F{tanggal}.substring(0,4)]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="281" y="75" width="222" height="15"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[selaku]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="281" y="151" width="222" height="15"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="10" isBold="true" isUnderline="true"/>
+					</textElement>
+					<text><![CDATA[Ir. H. Edi Junaedi]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="281" y="166" width="222" height="15"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="10" isBold="false" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[NIP. 195803141983031010]]></text>
+				</staticText>
 			</band>
 		</groupFooter>
 	</group>

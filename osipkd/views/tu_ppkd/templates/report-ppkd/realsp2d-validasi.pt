@@ -1,0 +1,105 @@
+<html metal:use-macro="load: ../base.pt">
+<div metal:fill-slot="content" class="container">
+    <h4>Laporan Realisasi SP2D Belum/Sudah Validasi</h4>
+    <hr>
+    <script>
+        $(document).ready(function(){
+            /*$('#div_skpd').hide();
+            $('input[name="jenis"]').click(function(){
+                if($(this).val()=="1"){
+                    $('#div_skpd').hide();
+                } else
+                    $('#div_skpd').show();
+            });
+            */
+        
+            $('#tanggal').click(
+                function(){
+                  if (!Modernizr.inputtypes['date'] ||
+                      "date" != "date"){
+                    $('#tanggal').pickadate({"selectMonths": true,
+                      "submitFormat": "yyyy-mm-dd", 
+                      "selectYears": true, "format": "yyyy-mm-dd"});
+                  }
+                }
+            );
+            
+            $('#btn_cetak').click(function () {
+              var validasi = $('input[name="validasi"]:checked').val();
+              var mulai = $('#tanggal').val();
+              
+              if(validasi==undefined) {
+                  alert('Silahkan pilih data validasi yang akan ditampilkan!');
+                  return;
+              } 
+                
+                window.open('/ap-report-real-sp2d-validasi/act/'+validasi+'?mulai='+mulai);
+            });
+        
+            $('input[name="validasi"]').prop('checked', false);
+            $("#btn_close").click(function () {
+                window.location = '/tu-ppkd';
+                return false;
+            });
+        });
+    </script>
+    
+<form id="header" method="POST" enctype="multipart/form-data" accept-charset="utf-8" class="form-horizontal">
+  <fieldset class="deformFormFieldset">
+    <div class="panel-body">
+        <!--TAHUN---------------------------------------------------------------->
+        <div class="form-group">
+          <div class="col-md-3">
+            <div id="item-tahun">
+              <label for="tahun" class="control-label col-md-3" id="req-tahun">
+                      Tahun</label>
+              <div class="col-md-9">
+                 <input id="tahun" class=" form-control " type="text" 
+                        value="${request.session['tahun']}" 
+                        readonly name="tahun">
+              </div>
+            </div>
+          </div>
+        </div>
+		    <hr>
+        <!--Status Validasi---------------------------------------------------------------->
+        <div class="form-group" id="div_validasi">
+            <div class="row">
+                <label class="control-label col-xs-2" for="validasi">Validasi</label>
+                <div class="col-xs-2">
+                    <div class="form-group"> 
+                        <div class="radio">
+                            <label><input type="radio" name="validasi" value="1">Belum Validasi</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="validasi" value="2">Sudah Validasi</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+          <label for="req-tanggal" class="control-label col-xs-2" id="req-tanggal">
+                  s.d Tanggal</label>
+          <div class="col-xs-2">
+             <input id="tanggal" class="form-control" type="text" readonly 
+                    value="${request.session['tanggal']}" name="tanggal"/>
+          </div>
+        </div>
+        <br>
+        <!--Tombol---------------------------------------------------------------->
+        <div class="form-group">
+            <div class="col-md-9">
+                <button id="btn_cetak" name="btn_cetak" type="button" class="btn btn-primary "
+                    value="btn_cetak">Cetak</button>
+                <button id="btn_close" name="btn_close" type="button" class="btn btn-warning"
+                    value="btn_close">Tutup</button>
+            </div>  
+        </div>    
+    </div>
+	
+  </fieldset>
+</form>
+</div> 
+</html>

@@ -104,7 +104,7 @@ class view_ap_advist_ppkd(BaseViews):
             no_urut  = row.no_urut
             no       = "00000%d" % no_urut
             nomor    = no[-6:]
-            row.kode = "%d" % tahun + "-BUD-%s" % nomor
+            row.kode = "%s" % nomor + "-BUD-%d" % tahun
             #row.kode = "%d" % tahun + "-%s" % unit_kd + "-BUD-%s" % nomor
             
         DBSession.add(row)

@@ -44,6 +44,7 @@ class view_ap_giro_item(BaseViews):
                 columns.append(ColumnDT('nominal',filter=self._number_format))
                 #columns.append(ColumnDT('nominal1',filter=self._number_format))
                 columns.append(ColumnDT('no_validasi'))
+                columns.append(ColumnDT('unit'))
                 query = DBSession.query(GiroItem.id,
                                         GiroItem.ap_sp2d_id,
                                         Sp2d.kode.label('kode'),
@@ -52,12 +53,14 @@ class view_ap_giro_item(BaseViews):
                                         Spp.nominal.label('nominal'),
                                         #func.sum(SpmPotongan.nilai).label('nominal1'),
                                         Sp2d.no_validasi.label('no_validasi'),
+                                        Unit.nama.label('unit')
                           #).join(Sp2d, Spm, Spp,
                           #).outerjoin(Spm, SpmPotongan.ap_spm_id==Spm.id
                           ).filter(GiroItem.ap_giro_id==ap_giro_id,
                                    GiroItem.ap_sp2d_id==Sp2d.id,
                                    Sp2d.ap_spm_id==Spm.id,
                                    Spm.ap_spp_id==Spp.id,
+                                   Spp.unit_id==Unit.id
                           ).group_by(GiroItem.id, 
                                      GiroItem.ap_sp2d_id,
                                      Sp2d.kode,
@@ -65,7 +68,7 @@ class view_ap_giro_item(BaseViews):
                                      Sp2d.nama,
                                      Spp.nominal,
                                      Sp2d.no_validasi,
-                          )
+                                     Unit.nama)
                 rowTable = DataTables(req, GiroItem, query, columns)
                 return rowTable.output_result()
 
@@ -82,6 +85,7 @@ class view_ap_giro_item(BaseViews):
             columns.append(ColumnDT('nominal',filter=self._number_format))
             #columns.append(ColumnDT('nominal1',filter=self._number_format))
             columns.append(ColumnDT('no_validasi'))
+            columns.append(ColumnDT('unit'))
             query = DBSession.query(GiroItem.id,
                                     GiroItem.ap_sp2d_id,
                                     Sp2d.kode.label('kode'),
@@ -90,12 +94,14 @@ class view_ap_giro_item(BaseViews):
                                     Spp.nominal.label('nominal'),
                                     #func.sum(SpmPotongan.nilai).label('nominal1'),
                                     Sp2d.no_validasi.label('no_validasi'),
+                                    Unit.nama.label('unit')
                       #).join(Sp2d, Spm, Spp,
                       #).outerjoin(Spm, SpmPotongan.ap_spm_id==Spm.id
                       ).filter(GiroItem.ap_giro_id==ap_giro_id,
                                GiroItem.ap_sp2d_id==Sp2d.id,
                                Sp2d.ap_spm_id==Spm.id,
                                Spm.ap_spp_id==Spp.id,
+                               Spp.unit_id==Unit.id,
                                or_(Sp2d.kode.ilike('%%%s%%' % cari),
                                    Sp2d.nama.ilike('%%%s%%' % cari))
                       ).group_by(GiroItem.id, 
@@ -105,7 +111,7 @@ class view_ap_giro_item(BaseViews):
                                  Sp2d.nama,
                                  Spp.nominal,
                                  Sp2d.no_validasi,
-                      )
+                                 Unit.nama)
             rowTable = DataTables(req, GiroItem, query, columns)
             return rowTable.output_result()
 
@@ -129,7 +135,8 @@ def view_add(request):
     ap_giro_item_id = 'ap_giro_item_id' in controls and controls['ap_giro_item_id'] or 0
     #Cek dulu ada penyusup gak dengan mengecek sessionnya
     ap_giro = DBSession.query(Giro)\
-                  .filter(Giro.unit_id==ses['unit_id'],
+                  .filter(
+                          #Giro.unit_id==ses['unit_id'],
                           Giro.id==ap_giro_id).first()
     if not ap_giro:
         return {"success": False, 'msg':'Giro tidak ditemukan'}
@@ -139,7 +146,7 @@ def view_add(request):
         row = DBSession.query(GiroItem)\
                   .join(Giro)\
                   .filter(GiroItem.id==ap_giro_item_id,
-                          Giro.unit_id==ses['unit_id'],
+                          #Giro.unit_id==ses['unit_id'],
                           GiroItem.ap_giro_id==ap_giro_id).first()
         if not row:
             return {"success": False, 'msg':'Giro tidak ditemukan'}

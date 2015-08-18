@@ -105,7 +105,7 @@ class Spp(NamaModel, Base):
     ttd_nama       = Column(String(64))
     ttd_jab        = Column(String(64))
     #Kontrak
-    ap_nama        = Column(String(64), nullable=False)
+    ap_nama        = Column(String(255), nullable=False)
     ap_bank        = Column(String(64), nullable=False)
     ap_rekening    = Column(String(32), nullable=False)
     ap_npwp        = Column(String(32), nullable=False)
@@ -272,10 +272,9 @@ class Sp2d(NamaModel, Base):
     @classmethod
     def get_tipe(cls, id):
         return DBSession.query(case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),
-                          (Spp.jenis==3,"GU"),(Spp.jenis==4,"LS"),(Spp.jenis==5,"SP2B")], else_="").label('jenis'))\
-                .join(Spm)\
-                .outerjoin(Spp)\
-                .filter(cls.id==id,
+                          (Spp.jenis==3,"GU"),(Spp.jenis==4,"LS"),(Spp.jenis==5,"SP2B")], else_="").label('jenis')
+                ).join(Spm
+                ).filter(cls.id==id,
                         Spm.id==cls.ap_spm_id,
                         Spp.id==Spm.ap_spp_id,
                 ).scalar() or 0
@@ -300,7 +299,7 @@ class APInvoice(NamaModel, Base):
     is_beban        = Column(SmallInteger, default=0) #0 Beban, 1 Non Beban
     #ap_nomor        = Column(String(32))
     #ap_tanggal      = Column(Date)
-    ap_nama         = Column(String(64))
+    ap_nama         = Column(String(255))
     ap_rekening     = Column(String(32))
     ap_npwp         = Column(String(25))
     amount          = Column(BigInteger, nullable=False)
@@ -418,7 +417,7 @@ class APPayment(NamaModel, Base):
     is_uang         = Column(SmallInteger, default=0) #0 Uang Muka, 1 Panjar
     #ap_nomor        = Column(String(32))
     #ap_tanggal      = Column(Date)
-    ap_nama         = Column(String(64))
+    ap_nama         = Column(String(255))
     ap_rekening     = Column(String(32))
     ap_npwp         = Column(String(25))
     amount          = Column(BigInteger, nullable=False)
@@ -518,10 +517,10 @@ class Giro(NamaModel, Base):
     __tablename__  ='ap_giros'
     __table_args__ = {'extend_existing':True,'schema' :'apbd'}
 
-    units    = relationship("Unit", backref="giros")
+    #units    = relationship("Unit", backref="giros")
 
     tahun_id = Column(BigInteger, ForeignKey("apbd.tahuns.id"), nullable=False)
-    unit_id  = Column(Integer,    ForeignKey("admin.units.id"), nullable=False)
+    #unit_id  = Column(Integer,    ForeignKey("admin.units.id"), nullable=False)
     kode     = Column(String(50))
     nama     = Column(String(255))
     pos      = Column(String(64))
@@ -532,14 +531,13 @@ class Giro(NamaModel, Base):
     posted   = Column(SmallInteger, nullable=False, default=0)
     disabled = Column(SmallInteger, nullable=False, default=0)
 
-    UniqueConstraint('tahun_id', 'unit_id', 'kode',
+    UniqueConstraint('tahun_id', 'kode',
                 name = 'giro_ukey')
                 
     @classmethod
-    def max_no_urut(cls, tahun, unit_id):
+    def max_no_urut(cls, tahun):
         return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
-                .filter(cls.tahun_id==tahun,
-                        cls.unit_id==unit_id
+                .filter(cls.tahun_id==tahun
                 ).scalar() or 0
 
     @classmethod
@@ -552,10 +550,9 @@ class Giro(NamaModel, Base):
                                       ).first()
      
     @classmethod
-    def get_norut(cls, tahun, unit_id):
+    def get_norut(cls, tahun):
         return DBSession.query(func.count(cls.id).label('no_urut'))\
-               .filter(cls.tahun_id==tahun,
-                       cls.unit_id ==unit_id
+               .filter(cls.tahun_id==tahun
                ).scalar() or 0               
 
 class GiroItem(DefaultModel, Base):

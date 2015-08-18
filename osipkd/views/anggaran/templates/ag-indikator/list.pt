@@ -124,11 +124,11 @@
           }],
           "aoColumns": [
               null,
-              {"sWidth": "10%"}, 
-              {"sWidth": "10%"}, 
-              {"sWidth": "10%"}, 
-              {"sWidth": "10%"}, 
-              {"sWidth": "10%"}
+              {"sWidth": "20pt"}, 
+              {"sWidth": "8pt"}, 
+              {"sWidth": "250pt"}, 
+              {"sWidth": "20pt"}, 
+              {"sWidth": "20pt"}
           ]
         });
           

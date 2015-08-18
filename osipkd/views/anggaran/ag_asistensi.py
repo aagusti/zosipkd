@@ -44,12 +44,16 @@ class view_ag_asistensi(BaseViews):
             columns = []
             columns.append(ColumnDT('id'))
             columns.append(ColumnDT('units.nama'))
+            columns.append(ColumnDT('tanggal', filter=self._DTstrftime))
             columns.append(ColumnDT('catatan_%s' %ag_step_id))
+            columns.append(ColumnDT('ttd_nama'))
+            columns.append(ColumnDT('ttd_jab'))
 
             query = DBSession.query(KegiatanAsistensi)\
                 .join(KegiatanSub,Unit)\
                 .filter(KegiatanSub.id==kegiatan_sub_id,
-                        KegiatanSub.unit_id==ses['unit_id'])
+                        KegiatanSub.unit_id==ses['unit_id']
+                ).order_by(Unit.nama,KegiatanAsistensi.tanggal)
             rowTable = DataTables(req, KegiatanAsistensi, query, columns)
             return rowTable.output_result()
 
@@ -103,32 +107,23 @@ class AddSchema(colander.Schema):
                           title="Asistensi DPPA",
                           oid = "catatan_4")
                           
-    ttd_nip_1        = colander.SchemaNode(
+    tanggal         = colander.SchemaNode(
+                          colander.Date(),
+                          title = "Tanggal"
+                          )
+    ttd_nip           = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="Kabid",
-                          oid = "ttd_nip_1")
-    ttd_nip_2        = colander.SchemaNode(
+                          title="TTD",
+                          oid = "ttd_nip")
+    ttd_nama          = colander.SchemaNode(
                           colander.String(),
-                          missing=colander.drop,
-                          title="Kasubid",
-                          oid = "ttd_nip_2")
-    ttd_nip_3        = colander.SchemaNode(
+                          title="Nama",
+                          oid = "ttd_nama")
+    ttd_jab           = colander.SchemaNode(
                           colander.String(),
-                          missing=colander.drop,
-                          title="Pelaksana",
-                          oid = "ttd_nip_3")
-    ttd_nama_1        = colander.SchemaNode(
-                          colander.String(),
-                          oid = "ttd_nama_1")
-    ttd_nama_2        = colander.SchemaNode(
-                          colander.String(),
-                          missing=colander.drop,
-                          oid = "ttd_nama_2")
-    ttd_nama_3        = colander.SchemaNode(
-                          colander.String(),
-                          missing=colander.drop,
-                          oid = "ttd_nama_3")
+                          title="Jabatan",
+                          oid = "ttd_jab")
                           
                           
 class EditSchema(AddSchema):
@@ -141,9 +136,16 @@ def get_form(request, class_form):
     schema.request = request
     return Form(schema, buttons=('simpan','batal'))
     
-def save(values, request, row=None):
+def save(values, request, user, row=None):
     if not row:
         row = KegiatanAsistensi()
+        row.created = datetime.now()
+        row.create_uid = user.id
+        
+    # isikan user update dan tanggal update
+    row.updated = datetime.now()
+    row.update_uid = user.id
+        
     ag_step_id = request.session['ag_step_id']
     
     if not values['catatan_1']: 
@@ -155,8 +157,6 @@ def save(values, request, row=None):
     if not values['catatan_4']: 
         values['catatan_4']='-'
         
-    
-        
     row.from_dict(values)
     
     DBSession.add(row)
@@ -166,7 +166,7 @@ def save(values, request, row=None):
 def save_request(values, request, row=None):
     if 'id' in request.matchdict:
         values['id'] = request.matchdict['id']
-    row = save(values, request, row)
+    row = save(values, request, request.user, row)
     request.session.flash('Kegiatan Asistensi sudah disimpan.')
         
 def route_list(request,kegiatan_sub_id):

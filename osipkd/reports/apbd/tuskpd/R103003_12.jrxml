@@ -79,8 +79,8 @@
 		<initialValueExpression><![CDATA[$F{jenis}=='1' ? "Ganti Uang Persediaan (GU), Langsung (LS) dan Tambahan Uang Persediaan (TU)" : $F{jenis}=='2' ? "Uang Persediaan (UP), Ganti Uang Persediaan (GU)  dan Langsung (LS)" : $F{jenis}=='3' ? "Uang Persediaan (UP), Langsung (LS) dan Tambahan Uang Persediaan (TU)" : $F{jenis}=='4' ? "Uang Persediaan (UP), Ganti Uang Persediaan (GU) dan Tambahan Uang Persediaan (TU)" : ""]]></initialValueExpression>
 	</variable>
 	<variable name="jenis" class="java.lang.String">
-		<variableExpression><![CDATA[$F{jenis}=='1' ? "UP" : $F{jenis}=='2' ? "TU" : $F{jenis}=='3' ? "GU" : ($F{jenis}=='4' && $F{kode}=='0.00.00.21') ? "LS-GJ" : ($F{jenis}=='4' && $F{kode}!='0.00.00.21') ? "LS" : ""]]></variableExpression>
-		<initialValueExpression><![CDATA[$F{jenis}=='1' ? "UP" : $F{jenis}=='2' ? "TU" : $F{jenis}=='3' ? "GU" : ($F{jenis}=='4' && $F{kode}=='0.00.00.21') ? "LS-GJ" : ($F{jenis}=='4' && $F{kode}!='0.00.00.21') ? "LS" : ""]]></initialValueExpression>
+		<variableExpression><![CDATA[$F{jenis}=='1' ? "UP" : $F{jenis}=='2' ? "TU" : $F{jenis}=='3' ? "GU" : ($F{jenis}=='4' && $F{kode}=='-GJ') ? "LS-GJ" : ($F{jenis}=='4' && $F{kode}!='-GJ') ? "LS" : ""]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{jenis}=='1' ? "UP" : $F{jenis}=='2' ? "TU" : $F{jenis}=='3' ? "GU" : ($F{jenis}=='4' && $F{kode}=='-GJ') ? "LS-GJ" : ($F{jenis}=='4' && $F{kode}!='-GJ') ? "LS" : ""]]></initialValueExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>

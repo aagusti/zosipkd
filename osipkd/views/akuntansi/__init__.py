@@ -15,8 +15,8 @@ class vie_skpd(BaseViews):
     @view_config(route_name='skpd', renderer='templates/home.pt', permission='read')
     def view_app(self):
         session = self.request.session
-        tahun = App.get_by_kode('skpd').tahun
-        session['tahun'] = tahun
+        #tahun = App.get_by_kode('skpd').tahun
+        #session['tahun'] = tahun
         tahun  = Tahun.get_by_tahun(session['tahun'])
         if not tahun:
             session.flash('Tahun Anggaran Belum di Set')

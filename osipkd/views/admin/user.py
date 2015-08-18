@@ -214,6 +214,10 @@ def view_edit(request):
     form = get_form(request, EditSchema)
     if request.POST:
         if 'simpan' in request.POST:
+            if row.id==1 and request.user.id>1 :
+                request.session.flash('User tidak mempunyai hak akses mengupdate data user admin', 'error')
+                return route_list(request)
+                
             controls = request.POST.items()
             try:
                 c = form.validate(controls)
@@ -239,6 +243,10 @@ def view_delete(request):
     row = q.first()
     if not row:
         return id_not_found(request)
+    if row.id==1 and request.user.id>1 :
+        request.session.flash('User tidak mempunyai hak akses menghapus data user admin', 'error')
+        return route_list(request)
+        
     form = Form(colander.Schema(), buttons=('delete','cancel'))
     if request.POST:
         if 'delete' in request.POST:

@@ -468,7 +468,7 @@ class AddSchema(colander.Schema):
     no_bast         = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="No. BAST")
+                          title="No.BAST/BAKF")
     tgl_bast        = colander.SchemaNode(
                           colander.Date(),
                           missing=colander.drop,
@@ -578,11 +578,18 @@ def get_form(request, class_form):
     schema.request = request
     return Form(schema, buttons=('simpan','batal'))
     
-def save(request, values, row=None):
+def save(request, values, user, row=None):
     if not row:
         row = APInvoice()
+        row.created = datetime.now()
+        row.create_uid = user.id
+        
     row.from_dict(values)
     
+    # isikan user update dan tanggal update
+    row.updated = datetime.now()
+    row.update_uid = user.id
+        
     if not row.no_urut:
         row.no_urut = APInvoice.max_no_urut(row.tahun_id,row.unit_id)+1;
     
@@ -598,6 +605,7 @@ def save(request, values, row=None):
         no       = "0000%d" % no_urut
         nomor    = no[-5:]     
         row.kode = "%d" % tahun + "-%s" % jns + "-%s" % unit_kd + "-%s" % nomor
+        #row.kode = "%d" % tahun + "-%s" % jns + "-%s" % unit_kd + "-%s" % nomor
     
     #kode1 = row.kode
     #if row.jenis == "5" :
@@ -620,7 +628,7 @@ def save_request(values, request, row=None):
     if 'id' in request.matchdict:
         values['id'] = request.matchdict['id']
     values["amount"]=values["amount"].replace('.','') 
-    row = save(request, values, row)
+    row = save(request, values, request.user, row)
     request.session.flash('Tagihan sudah disimpan.')
     return row
         

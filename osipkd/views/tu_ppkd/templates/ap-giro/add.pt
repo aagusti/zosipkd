@@ -34,25 +34,6 @@
             </div>
           </div>
 
-          <!-- UNIT -------------------------------------------------------------------->
-          <div tal:define="field form['unit_id']" style="display: none;">
-               <input type="text" class="form-control" id="${field.oid}" 
-                      value="${request.session.unit_id}" readonly name="${field.oid}">
-          </div>
-          <div id="item-unit_kd">
-            <label for="unit_kd" class="control-label col-md-1" id="req-unit_kd">
-                    SKPD</label>
-            <div class="col-md-2">
-             <input type="text" class="form-control" id="unit_kd" 
-                    name="unit_kd" value="${request.session.unit_kd}" readonly>
-            </div>
-          </div>
-          <div class="col-md-7" id="item-unit_nm">
-            <input type="text" class="form-control" id="unit_nm" 
-                   name="unit_nm" value="${request.session.unit_nm}" readonly>
-          </div>
-        </div>
-
         <!--Kode-------------------------------------------------------------------->
         <div class="form-group"> 
           <div tal:define="field form['kode']" id="item-${field.oid}">
@@ -130,8 +111,8 @@
                     $('#koderek').val('DEPOSITO BNI');
                 }else if(rekening=='DEPOSITO BTN'){
                     $('#koderek').val('DEPOSITO BTN');
-                }else if(rekening=='GIRO AUTOSAVE BSM'){
-                    $('#koderek').val('GIRO AUTOSAVE BSM');
+                }else if(rekening=='DEPOSITO MANDIRI'){
+                    $('#koderek').val('DEPOSITO MANDIRI');
                 }
           
                 //Hide Show Jenis saat pilih/ entry
@@ -155,8 +136,8 @@
                     $('#koderek').val('DEPOSITO BNI');
                 }else if(rekening=='DEPOSITO BTN'){
                     $('#koderek').val('DEPOSITO BTN');
-                }else if(rekening=='GIRO AUTOSAVE BSM'){
-                    $('#koderek').val('GIRO AUTOSAVE BSM');
+                }else if(rekening=='DEPOSITO MANDIRI'){
+                    $('#koderek').val('DEPOSITO MANDIRI');
                 }
                 });
                 $("#koderek").attr('readonly',true);
@@ -199,6 +180,7 @@
               <th>Uraian</th>
               <th>Nilai</th>
               <th>No. Validasi</th>
+              <th>Unit</th>
           </tr>
       </thead>
       <tbody>
@@ -234,6 +216,9 @@
                 <div class="col-md-2">
                    <input id="no_validasi" class=" form-control " type="text" value="" name="no_validasi">
                 </div>
+                <div class="col-md-5">
+                   <input id="unit1" class=" form-control " readonly type="text" value="" name="unit1">
+                </div>
                 <!--Button----------------------------------------------------------->
                 <div class="col-md-2">
                     <button id="rekening_add" name="baru" type="button" class="btn btn-primary "
@@ -251,7 +236,7 @@
                 "hint"     : true,
                 "highlight": true,
                 "minLength": 1,
-                "remote"   : "/ap-sp2d/act/headofkode1?term=%QUERY", 
+                "remote"   : "/ap-sp2d/act/headofkode2?term=%QUERY", 
             },{
                "name"      : 'kode1',
                "displayKey": 'value',
@@ -262,6 +247,7 @@
                   $('#nama1').val(datum.nama);
                   $('#amount1').val(datum.amount);  
                   $('#no_validasi').val(datum.validasi);                    
+                  $('#unit1').val(datum.unit);                
             });
               
             $( "#detail" ).submit(function( event ) {
@@ -358,18 +344,18 @@
             },{
                 "bSearchable": false,
                 "bSortable"  : false,
-                "aTargets"   : [3,5,6] //,7]
+                "aTargets"   : [3,5,6,7] //,7]
             }            
             ],
             "aoColumns": [
                 null, 
-                {"sWidth": "50px"}, 
-                {"sWidth": "50px"}, 
+                null, 
+                {"sWidth": "20px"}, 
                 {"sWidth": "30px"}, 
                 {"sWidth": "120px"},
                 {"sWidth": "50px", "sClass": "right"},
                 {"sWidth": "50px", "sClass": "right"},
-                //{"sWidth": "50px", "sClass": "right"},
+                {"sWidth": "100px"},
             ],
             "fnRowCallback": function (nRow, aData, iDisplayIndex) {
                 $(nRow).on("click", function (event) {
@@ -386,6 +372,7 @@
                         $("#nama1").val(data[4]);
                         $("#amount1").val(data[5]);  
                         $('#no_validasi').val(data[6]);  
+                        $('#unit1').val(data[7]);  
                         oTable.$('tr.row_selected').removeClass('row_selected');
                         $(this).addClass('row_selected');
                     }

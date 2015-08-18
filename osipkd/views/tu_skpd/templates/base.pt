@@ -19,7 +19,7 @@
         <ul class="dropdown-menu">
         
           <li><a href="/ap-invoice-skpd">Tagihan / SPJ</a></li>
-          <li><a href="/ap-payment">Pembayaran Tagihan</a></li>
+          <li><a href="/ap-payment">Pembayaran Tagihan GU/TU</a></li>
           <li><a href="/ap-spp">SPP</a></li>
           <li><a href="/ap-spm">SPM</a></li>
           <li><a href="/ap-sp2d">SP2D</a></li>

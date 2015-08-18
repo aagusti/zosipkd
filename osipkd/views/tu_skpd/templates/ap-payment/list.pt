@@ -160,7 +160,7 @@
             <th>Tanggal</th>
             <th>Kegiatan</th>
             <th>Uraian</th>
-            <th>Tagihan / NPD</th>
+            <th>Tagihan / SPJ</th>
             <th>Nilai</th>
             <th>Posting</th>
         </tr>
@@ -308,6 +308,9 @@
                 mID = aData[0];
                 nilai = aData[7];
                 mID2 = aData[7];
+                kode = aData[1];
+                uraian = aData[5];
+                jenis  = aData[2];
 
                 oTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
@@ -350,13 +353,30 @@
             }
         });
         
-        $('#btn_print').click(function () {
+        /*$('#btn_print').click(function () {
             url = "/ap-report-skpd/act/appayment?id="+mID;
             if (mID) {
                    window.open(url);
             } else {
                 alert('Silahkan pilih Kegiatan ID');
             }
+        });
+        */
+        $('#btn_print').click(function () {
+            if (mID) {
+                $('#kode').val(kode);
+                $('#uraian').val(uraian);
+                $('#dlgRpt').modal('show');
+            } else {
+                alert('Silahkan pilih Kegiatan ID');
+            }
+        });
+        
+        $('#btn_pil_rpt').click(function () {
+          var bend_nm = $('#bend_nm').val();
+          var bend_nip = $('#bend_nip').val();
+          url = "/ap-report-skpd/act/appayment?id="+mID+"&bend_nm="+bend_nm+"&bend_nip="+bend_nip;
+          window.open(url);
         });
         
         $("#btn_close").click(function () {
@@ -366,6 +386,45 @@
         
      });
     </script>
+      <!-- Modal Report -->
+      <div class="modal fade" id="dlgRpt">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              <h4 class="modal-title">Pilih Report</h4>
+            </div>
+
+            <div class="modal-body">
+              <div class="col-md-4">
+                <input id="kode" class="form-control typeahead" type="text" value="" name="kode" readonly="true">
+              </div>
+              <div class="col-md-8">
+                <input id="uraian" class=" form-control" type="text" value="" name="uraian" readonly="true">
+              </div>
+            </div>
+            <div class="modal-body">
+              <label class="col-md-3">Nama Bendahara</label>
+              <div class="col-md-9">
+                <input id="bend_nm" class=" form-control" type="text" value="" name="bend_nm">
+              </div>
+            </div>
+            <div class="modal-body">
+              <label class="col-md-3">NIP Bendahara</label>
+              <div class="col-md-9">
+                <input id="bend_nip" class=" form-control" type="text" value="" name="bend_nip">
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+              <button type="button" class="btn btn-primary" id="btn_pil_rpt" name="btn_pil_rpt">Cetak</button>
+            </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- End Modal -->
     
   </div> <!--End Metal-->
 </html>

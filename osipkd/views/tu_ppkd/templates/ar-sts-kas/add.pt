@@ -292,7 +292,7 @@
                    <input id="kode1" class=" form-control " type="text" value="" name="kode1">
                 </div>
                 <div class="col-md-5">
-                   <input id="nama1" class=" form-control " readonly type="text" value="" name="nama1">
+                   <input id="nama1" class=" form-control " type="text" value="" name="nama1">
                 </div>
                 <div class="col-md-2">
                    <input id="amount" class=" form-control " type="text" value="0" name="amount">
@@ -366,12 +366,28 @@
                "displayKey": 'value',
             });           
           
+            $('#nama1').typeahead({
+                "hint"     : true,
+                "highlight": true,
+                "minLength": 1,
+                "remote"   : "/ag-kegiatan-item/act/headofnama1?term=%QUERY", 
+            },{
+               "name"      : 'nama1',
+               "displayKey": 'value',
+            });           
+            
             $('#kode1').bind('typeahead:selected', function(obj, datum, name) {  
                   $('#kegiatan_item_id').val(datum.id);
                   $('#nama1').val(datum.nama);
                   $('#nilai').val(datum.amount);                  
             });
-              
+
+            $('#nama1').bind('typeahead:selected', function(obj, datum, name) {      
+                  $('#kegiatan_item_id').val(datum.id);
+                  $('#kode1').val(datum.kode);
+                  $('#nilai').val(datum.amount);
+            });
+            
             $( "#detail" ).submit(function( event ) {
                var ar_sts_id;
                var is_success;

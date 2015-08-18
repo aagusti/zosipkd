@@ -56,11 +56,8 @@ class CommonModel(object):
             #if column.name in values and values[column.name] and values[column.name]!='None':
             #    setattr(self, column.name, values[column.name])
             if column.name in values  :#and values[column.name] and values[column.name]!='None':
-              val = values[column.name]
-              if val== '' or val=='None':
-                 setattr(self, column.name, None)
-              else :
-                 setattr(self, column.name, val)
+              val = values[column.name]!='' and  values[column.name]!='None' and values[column.name] or None
+              setattr(self, column.name, val)
 
     def as_timezone(self, fieldname):
         date_ = getattr(self, fieldname)

@@ -93,9 +93,9 @@
           <div class="col-md-6">
             <div class="input-group">
               <span class="input-group-addon">
-                <input type="radio" name="ar-item-lap" id="ar-item-lap2" value="lo">
+                <input type="radio" name="ar-item-lap" id="ar-item-lap5" value="psal">
               </span>
-              <input type="text" class="form-control" aria-label="..." readonly value="Laporan Operasional">
+              <input type="text" class="form-control" aria-label="..." readonly value="Perubahan SAL">
             </div><!-- /input-group -->
           </div><!-- /.col-lg-6 -->
         </div>
@@ -113,9 +113,9 @@
           <div class="col-md-6">
             <div class="input-group">
               <span class="input-group-addon">
-                <input type="radio" name="ar-item-lap" id="ar-item-lap4" value="le">
+                <input type="radio" name="ar-item-lap" id="ar-item-lap8" value="lak">
               </span>
-              <input type="text" class="form-control" aria-label="..." readonly value="Laporan Perubahan Ekuitas">
+              <input type="text" class="form-control" aria-label="..." readonly value="Laporan Arus Kas">
             </div>
           </div>
 
@@ -125,9 +125,30 @@
           <div class="col-md-6">
             <div class="input-group">
               <span class="input-group-addon">
-                <input type="radio" name="ar-item-lap" id="ar-item-lap5" value="psal">
+                <input type="radio" name="ar-item-lap" id="ar-item-lap2" value="lo">
               </span>
-              <input type="text" class="form-control" aria-label="..." readonly value="Perubahan SAL">
+              <input type="text" class="form-control" aria-label="..." readonly value="Laporan Operasional">
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="input-group">
+              <span class="input-group-addon">
+                <input type="radio" name="ar-item-lap" id="ar-item-lap7" value="neraca">
+              </span>
+              <input type="text" class="form-control" aria-label="..." readonly value="Neraca">
+            </div>
+          </div>
+
+        </div>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <div class="input-group">
+              <span class="input-group-addon">
+                <input type="radio" name="ar-item-lap" id="ar-item-lap4" value="le">
+              </span>
+              <input type="text" class="form-control" aria-label="..." readonly value="Laporan Perubahan Ekuitas">
             </div>
           </div>
 
@@ -139,19 +160,6 @@
               <input type="text" class="form-control" aria-label="..." readonly value="Rincian Objek">
             </div>
           </div>
-
-        </div>
-        
-        <div class="row">
-          <div class="col-md-6">
-            <div class="input-group">
-              <span class="input-group-addon">
-                <input type="radio" name="ar-item-lap" id="ar-item-lap7" value="neraca">
-              </span>
-              <input type="text" class="form-control" aria-label="..." readonly value="Neraca">
-            </div>
-          </div>
-
 
         </div>
       </div>
@@ -170,7 +178,7 @@
       </div>
       <div class="col-md-3">
         <input id="tanggal2" class="form-control" type="text" readonly 
-                value="${request.session['tanggal2']}" name="tanggal"/>
+                value="${request.session['tanggal2']}" name="tanggal2"/>
       </div>
     <div class="row">
       <button id="btn_pdf" class="btn btn-success" type="button"
@@ -284,7 +292,7 @@
       });*/
 
       // Kondisi Awal
-      $('#div_rekeningsap').show();
+      $('#div_rekeningsap').hide();
       $('#div_rekeningapbd').hide();
 
       // Kondisi Jenis Laporan 
@@ -313,10 +321,9 @@
           else if($(this).val()=="lo"){
               $('#div_rekeningsap').hide();
               $('#div_rekeningapbd').hide();
-              $('#tanggal').hide();
-              $('#tanggal2').hide();
-              $('#req-tanggal').hide();
-              $('#div_rekeningsap').hide();
+              $('#tanggal').show();
+              $('#tanggal2').show();
+              $('#req-tanggal').show();
           }
           else if($(this).val()=="psal"){
               $('#div_rekeningsap').hide();
@@ -324,15 +331,13 @@
               $('#tanggal').show();
               $('#tanggal2').show();
               $('#req-tanggal').show();
-              $('#div_rekeningsap').hide();
           }
           else if($(this).val()=="neraca"){
               $('#div_rekeningsap').hide();
               $('#div_rekeningapbd').hide();
               $('#tanggal').show();
-              $('#tanggal2').show();
+              $('#tanggal2').hide();
               $('#req-tanggal').show();
-              $('#div_rekeningsap').hide();
           }
           else if($(this).val()=="le"){
               $('#div_rekeningsap').hide();
@@ -340,15 +345,20 @@
               $('#tanggal').show();
               $('#tanggal2').show();
               $('#req-tanggal').show();
-              $('#div_rekeningsap').hide();
           }
           else if($(this).val()=="ro"){
               $('#div_rekeningsap').hide();
               $('#div_rekeningapbd').hide();
               $('#tanggal').show();
-              $('#tanggal2').show();
+              $('#tanggal2').hide();
               $('#req-tanggal').show();
+          }
+          else if($(this).val()=="lak"){
               $('#div_rekeningsap').hide();
+              $('#div_rekeningapbd').hide();
+              $('#tanggal').show();
+              $('#tanggal2').hide();
+              $('#req-tanggal').show();
           }
           else{
               $('#div_rekeningsap').show();

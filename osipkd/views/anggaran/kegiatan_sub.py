@@ -2,12 +2,12 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func, cast, BigInteger, or_, join
+from sqlalchemy import not_, func, cast, BigInteger, or_, join, case
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
 import colander
 from deform import (Form, widget, ValidationFailure, )
-from osipkd.models import DBSession
+from osipkd.models import DBSession, Group, UserGroup
 from osipkd.models.apbd_anggaran import Program, Kegiatan, KegiatanSub, KegiatanItem
 from osipkd.models.pemda_model import Urusan
 from osipkd.models.apbd_tu import Spd, SpdItem
@@ -42,7 +42,6 @@ SDANA = (
     )
 
 class view_kegiatan_sub(BaseViews):
-
     @view_config(route_name="ag-bl", renderer="templates/ag-bl/list.pt",
                  permission='read')
     def view_list(self):
@@ -77,10 +76,11 @@ class view_kegiatan_sub(BaseViews):
                 columns.append(ColumnDT('no_urut'))
                 columns.append(ColumnDT('nama'))
                 columns.append(ColumnDT('prg_nm'))
-                columns.append(ColumnDT('rka'))
-                columns.append(ColumnDT('dpa'))
-                columns.append(ColumnDT('rdppa'))
-                columns.append(ColumnDT('dppa'))
+                columns.append(ColumnDT('rka', filter=self._number_format))
+                columns.append(ColumnDT('dpa', filter=self._number_format))
+                columns.append(ColumnDT('rdppa', filter=self._number_format))
+                columns.append(ColumnDT('dppa', filter=self._number_format))
+                columns.append(ColumnDT('approval'))
                 columns.append(ColumnDT('disabled'))
                 #columns.append(ColumnDT('pegawai_nama'))
 
@@ -90,14 +90,11 @@ class view_kegiatan_sub(BaseViews):
                         KegiatanSub.nama,
                         #PegawaiModel.nama.label('pegawai_nama'),
                         Program.nama.label('prg_nm'),
-                    func.sum(KegiatanItem.vol_1_1*KegiatanItem.vol_1_2*
-                             KegiatanItem.hsat_1).label('rka'),       
-                    func.sum(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*
-                             KegiatanItem.hsat_2).label('dpa'),                      
-                    func.sum(KegiatanItem.vol_3_1*KegiatanItem.vol_3_2*
-                             KegiatanItem.hsat_3).label('rdppa'),                      
-                    func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*
-                             KegiatanItem.hsat_4).label('dppa'),
+                    func.coalesce(func.sum(KegiatanItem.vol_1_1*KegiatanItem.vol_1_2*KegiatanItem.hsat_1),0).label('rka'),       
+                    func.coalesce(func.sum(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2),0).label('dpa'),                      
+                    func.coalesce(func.sum(KegiatanItem.vol_3_1*KegiatanItem.vol_3_2*KegiatanItem.hsat_3),0).label('rdppa'),                      
+                    func.coalesce(func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4),0).label('dppa'),
+                        KegiatanSub.approval,
                         KegiatanSub.disabled)\
                     .join(Kegiatan)\
                     .join(Program)\
@@ -648,6 +645,11 @@ class AddSchema(colander.Schema):
                           colander.Boolean(),
                           default = 0,
                           missing=colander.drop,)
+    approval         = colander.SchemaNode(
+                          colander.Integer(),
+                          default = 0,
+                          missing=colander.drop,
+                          )
                     
 class EditSchema(AddSchema):
     id             = colander.SchemaNode(
@@ -659,10 +661,18 @@ def get_form(request, class_form):
     schema.request = request
     return Form(schema, buttons=('simpan','batal'))
     
-def save(values, row=None):
+def save(values, user, row=None):
     if not row:
         row = KegiatanSub()
+        row.created = datetime.now()
+        row.create_uid = user.id
+        
     row.from_dict(values)
+    
+    # isikan user update dan tanggal update
+    row.updated = datetime.now()
+    row.update_uid = user.id
+
     if not row.no_urut:
           row.no_urut = KegiatanSub.max_no_urut(row.tahun_id,row.unit_id,row.kegiatan_id)+1;
     DBSession.add(row)
@@ -672,7 +682,7 @@ def save(values, row=None):
 def save_request(values, request, row=None):
     if 'id' in request.matchdict:
         values['id'] = request.matchdict['id']
-    row = save(values, row)
+    row = save(values, request.user, row)
     request.session.flash('Kegiatan sudah disimpan.')
         
 def route_list(request):
@@ -722,17 +732,46 @@ def view_edit(request):
     row = query_id(request).first()
     if not row:
         return id_not_found(request)
-    #if row.disabled:
-    #    request.session.flash('Data sudah diposting', 'error')
-    #    return route_list(request)
         
+    ####### dibuat kondisi agar posted sesuai kebutuhan yang telah ditentukan group
+    ses = request.session
+    req = request
+    params   = req.params
+    url_dict = req.matchdict
+    
     form = get_form(request, EditSchema)
     if request.POST:
         if 'simpan' in request.POST:
-          
-            # Cek Posting
-            if row.disabled:
-                request.session.flash('Data tidak dapat diupdate karena sudah Posting', 'error')
+            ## variabel group name
+            grp1 = 'kasubag perencanaan skpd'
+            grp2 = 'kepala bidang bapeda (tapd)'
+            grp3 = 'kepala bidang p3 dispenda (tapd)'
+            grp4 = 'kepala bidang anggaran (tapd)'
+            grp5 = 'admin bpkad'
+            
+            ## variabel ag_step_id
+            ag_step_id = ses['ag_step_id']        
+            
+            ## kondisi group ppkd (semua unit)
+            grp = DBSession.query(case([(func.lower(Group.group_name)==grp1,1),(func.lower(Group.group_name)==grp2,2),
+                  (func.lower(Group.group_name)==grp3,3), (func.lower(Group.group_name)==grp4,4), (func.lower(Group.group_name)==grp5,5)], 
+                  else_=0)
+                  ).filter(UserGroup.user_id==req.user.id, Group.id==UserGroup.group_id).first()
+            grps_kd = '%s' % grp
+            
+            ## Cek Grup
+            if grps_kd == '2' or grps_kd == '3' or grps_kd == '4' :
+                request.session.flash('Anda tidak mempunyai hak akses untuk mengupdate data', 'error')
+                return route_list(request)
+                
+            if row.disabled==1 and row.approval==4 and grps_kd<'4':
+                request.session.flash('Data tidak dapat diupdate karena sudah diposting BPKAD', 'error')
+                return route_list(request)
+            if row.approval==3 and grps_kd<'3':
+                request.session.flash('Data tidak dapat diupdate karena sudah diposting Dispenda', 'error')
+                return route_list(request)
+            if row.approval==2  and grps_kd<'2':
+                request.session.flash('Data tidak dapat diupdate karena sudah diposting Bappeda', 'error')
                 return route_list(request)
                 
             controls = request.POST.items()
@@ -765,10 +804,24 @@ def view_delete(request):
     if not row:
         return id_not_found(request)
     # Cek posting
-    if row.disabled:
+    #if row.disabled:
+    #    request.session.flash('Data tidak dapat dihapus karena sudah Posting', 'error')
+    #    return route_list(request)
+
+    ses = request.session
+    ## variabel ag_step_id
+    ag_step_id = ses['ag_step_id']        
+            
+    if row.disabled == 1 and row.approval==4:
         request.session.flash('Data tidak dapat dihapus karena sudah Posting', 'error')
-        return route_list(request)
-        
+        return route_list1(request,row.id)
+    if row.approval==3:
+        request.session.flash('Data tidak dapat dihapus karena sudah di Approval oleh Dispenda', 'error')
+        return route_list1(request,row.id)
+    if row.approval==2:
+        request.session.flash('Data tidak dapat dihapus karena sudah di Approval oleh Bappeda', 'error')
+        return route_list1(request,row.id)
+    
     form = Form(colander.Schema(), buttons=('hapus','cancel'))
     values= {}
     if request.POST:
@@ -816,17 +869,127 @@ def view_edit_posting(request):
     
     if not row:
         return id_not_found(request)
-    if row.disabled:
-        request.session.flash('Data sudah diposting', 'error')
-        return route_list1(request,row.id)
-        
+    #if row.disabled:
+    #    request.session.flash('Data sudah diposting', 'error')
+    #    return route_list1(request,row.id)
+
+    ####### dibuat kondisi agar posted sesuai kebutuhan yang telah ditentukan group
+    ses = request.session
+    req = request
+    params   = req.params
+    url_dict = req.matchdict
+    
+    ## variabel group name
+    grp1 = 'kasubag perencanaan skpd'
+    grp2 = 'kepala bidang bapeda (tapd)'
+    grp3 = 'kepala bidang p3 dispenda (tapd)'
+    grp4 = 'kepala bidang anggaran (tapd)'
+    grp5 = 'admin bpkad'
+    
+    ## variabel ag_step_id
+    ag_step_id = ses['ag_step_id']        
+    
+    ## kondisi group ppkd (semua unit)
+    grp = DBSession.query(case([(func.lower(Group.group_name)==grp1,1),(func.lower(Group.group_name)==grp2,2),
+          (func.lower(Group.group_name)==grp3,3), (func.lower(Group.group_name)==grp4,4), (func.lower(Group.group_name)==grp5,5)], 
+          else_=0)
+          ).filter(UserGroup.user_id==req.user.id, Group.id==UserGroup.group_id).first()
+    grps_kd = '%s' % grp
+    
+    print "----------------------------------->>>>",grp
+            
+    ## variabel ag_step_id
+    #ag_step_id = ses['ag_step_id']
+    #print'********************ag_step_id********************',ag_step_id
+    
+    ## kondisi group ppkd (semua unit)
+    #grp = DBSession.query(func.lower(Group.group_name)).filter(UserGroup.user_id==req.user.id, Group.id==UserGroup.group_id).first()
+    #grps = '%s' % grp
+    #print'********************group********************',grps
+    
+    ## kondisi saat group skpd
+    if grps_kd == '0' :
+       request.session.flash('User tidak punya hak akses posting kegiatan', 'error')
+       return route_list1(request,row.id)
+    
+    ## kondisi saat group skpd pempinan
+    elif grps_kd == '1':
+        if row.approval > 0 :
+            request.session.flash('Data sudah di approval/posting', 'error')
+            return route_list1(request,row.id)
+
+    ## kondisi saat group bappeda
+    elif grps_kd == '2':
+        if not row.approval or row.approval<1:
+            request.session.flash('Data tidak bisa diposting, karena harus diposting terlebih dahulu di Kasubag Perencanaan SKPD', 'error')
+            return route_list1(request,row.id)
+        if row.approval > 2:
+            request.session.flash('Data sudah di approval/posting', 'error')
+            return route_list1(request,row.id)
+
+    ## kondisi saat group dispenda
+    elif grps_kd == '3':
+        if not row.approval or row.approval<2:
+            request.session.flash('Data tidak bisa diposting, karena harus diposting terlebih dahulu di Kasubag Perencanaan SKPD/di Kabid BAPPEDA', 'error')
+            return route_list1(request,row.id)
+        if row.approval > 3:
+            request.session.flash('Data sudah di approval/posting', 'error')
+            return route_list1(request,row.id)
+                
+    ## kondisi saat group bpkad
+    elif grps_kd == '4':
+        if row.kode == '0.00.00.10' :
+            if not row.approval or row.approval<3:
+                request.session.flash('Data tidak bisa diposting, karena harus diposting terlebih dahulu di Kasubag Perencanaan SKPD/di Kabid BAPPEDA/di Kabid DISPENDA', 'error')
+                return route_list1(request,row.id)
+        else :
+            if not row.approval or row.approval<2:
+                request.session.flash('Data tidak bisa diposting, karena harus diposting terlebih dahulu di Kasubag Perencanaan SKPD/di Kabid BAPPEDA', 'error')
+                return route_list1(request,row.id)
+        if row.approval > 4:
+            request.session.flash('Data sudah di approval/posting', 'error')
+            return route_list1(request,row.id)
+    
     form = Form(colander.Schema(), buttons=('posting','cancel'))
     
     if request.POST:
-        if 'posting' in request.POST: 
-            row.disabled=1
-            save_request2(row)
-        return route_list1(request,row.id)
+        ## kondisi simpan group kasubag perencanaan skpd
+        if grps_kd == '1':
+            if 'posting' in request.POST: 
+                row.approval=1
+                save_request2(row)
+            return route_list1(request,row.id)
+                
+        ## kondisi simpan group bappeda
+        if grps_kd == '2':
+            if 'posting' in request.POST: 
+                row.approval=2
+                save_request2(row)
+            return route_list1(request,row.id)
+                
+        ## kondisi simpan group dispenda
+        if grps_kd == '3':
+            if 'posting' in request.POST: 
+                row.approval=3
+                save_request2(row)
+            return route_list1(request,row.id)
+
+        ## kondisi simpan group bpkad
+        if grps_kd == '4':
+            if 'posting' in request.POST: 
+                row.disabled=1
+                row.approval=4
+                save_request2(row)
+            return route_list1(request,row.id)
+
+        ## kondisi simpan group Admin
+        if grps_kd == '5' or grps_kd == "None" :
+            if 'posting' in request.POST: 
+                row.disabled=1
+                row.approval=4
+                save_request2(row)
+            return route_list1(request,row.id)
+        
     return dict(row=row, form=form.render())                       
         
 
@@ -843,20 +1006,116 @@ def save_request3(request, row=None):
 def view_edit_unposting(request):
     q = query_id(request)
     row = q.first()
-    print "-----------------------------------------------------------------------"
     if not row:
         return id_not_found(request)
-    if not row.disabled:
-        request.session.flash('Data tidak dapat di Unposting, karena belum diposting.', 'error')
-        return route_list1(request, row.id)
-        
+
+    ####### dibuat kondisi agar posted sesuai kebutuhan yang telah ditentukan group
+    ses = request.session
+    req = request
+    params   = req.params
+    url_dict = req.matchdict
+    
+    ## variabel group name
+    grp1 = 'kasubag perencanaan skpd'
+    grp2 = 'kepala bidang bapeda (tapd)'
+    grp3 = 'kepala bidang p3 dispenda (tapd)'
+    grp4 = 'kepala bidang anggaran (tapd)'
+    grp5 = 'admin bpkad'
+    
+    ## variabel ag_step_id
+    ag_step_id = ses['ag_step_id']        
+    
+    ## kondisi group ppkd (semua unit)
+    grp = DBSession.query(case([(func.lower(Group.group_name)==grp1,1),(func.lower(Group.group_name)==grp2,2),
+          (func.lower(Group.group_name)==grp3,3), (func.lower(Group.group_name)==grp4,4), (func.lower(Group.group_name)==grp5,5)], 
+          else_=0)
+          ).filter(UserGroup.user_id==req.user.id, Group.id==UserGroup.group_id).first()
+    grps_kd = '%s' % grp
+    
+    ## kondisi unposting group skpd
+    if grps_kd == '0' :
+       request.session.flash('User tidak punya hak akses unposting kegiatan', 'error')
+       return route_list1(request,row.id)
+            
+    ## kondisi unposting group kasubag perencanaan skpd
+    elif grps_kd == '1':
+        if not row.approval or row.approval<1:
+            request.session.flash('Data tidak dapat di Unposting, karena belum diposting.', 'error')
+            return route_list1(request, row.id)
+        elif row.approval>1 :
+            request.session.flash('Data sudah di approval/posting', 'error')
+            return route_list1(request, row.id)
+
+    ## kondisi unposting group ppkd bappeda
+    elif grps_kd == '2':
+        if not row.approval or row.approval<2 :
+            request.session.flash('Data tidak dapat di Unposting, karena belum diposting.', 'error')
+            return route_list1(request, row.id)
+        elif row.approval>2 :
+            request.session.flash('Data tidak dapat di Unposting, karena sudah di approval/posting', 'error')
+            return route_list1(request, row.id)
+            
+    ## kondisi unposting group ppkd dispenda
+    elif grps_kd == '3':
+        if not row.approval or row.approval<3 :
+            request.session.flash('Data tidak dapat di Unposting, karena belum diposting.', 'error')
+            return route_list1(request, row.id)
+        elif row.approval>3 :
+            request.session.flash('Data tidak dapat di Unposting, karena sudah di approval/posting', 'error')
+            return route_list1(request, row.id)
+    
+    ## kondisi unposting group ppkd bpkad
+    elif grps_kd == '4':
+        if not row.approval or row.approval<4 :
+            request.session.flash('Data tidak dapat di Unposting, karena belum diposting.', 'error')
+            return route_list1(request, row.id)
+
+    ## kondisi unposting group admin
+    elif grps_kd == '5':
+        if not row.disabled or row.disabled==0:
+            request.session.flash('Data tidak dapat di Unposting, karena belum diposting.', 'error')
+            return route_list1(request, row.id)
+
     form = Form(colander.Schema(), buttons=('unposting','cancel'))
     
     if request.POST:
-        if 'unposting' in request.POST: 
-            row.disabled=0
-            save_request3(row)
-        return route_list1(request, row.id)
+        ## kondisi simpan group kasubag perencanaan skpd
+        if grps_kd == '1':
+            if 'unposting' in request.POST: 
+                row.approval=0
+                save_request3(row)
+            return route_list1(request,row.id)
+                
+        ## kondisi simpan group ppkd bappeda
+        elif grps_kd == '2':
+            if 'unposting' in request.POST: 
+                row.approval=1
+                save_request3(row)
+            return route_list1(request,row.id)
+
+        ## kondisi simpan group ppkd dispenda
+        elif grps_kd == '3':
+            if 'unposting' in request.POST: 
+                row.approval=2
+                save_request3(row)
+            return route_list1(request,row.id)
+                
+        ## kondisi simpan group ppkd bpkad
+        elif grps_kd == '4':
+            if 'unposting' in request.POST: 
+                row.approval=0
+                row.disabled=0
+                save_request3(row)
+            return route_list1(request,row.id)
+                
+        ## kondisi simpan group Admin
+        elif grps_kd == '5' or grps_kd == "None" :
+            if 'unposting' in request.POST: 
+                row.approval=0
+                row.disabled=0
+                save_request3(row)
+            return route_list1(request,row.id)
+        
     return dict(row=row, form=form.render())                       
             
             

@@ -130,13 +130,18 @@ class view_unit(BaseViews):
         elif url_dict['act']=='changeid':
             ids  = UserUnit.unit_granted(req.user.id, params['unit_id'])
             
-            ## kondisi group ppkd (semua unit)
-            grp = DBSession.query(func.substr(func.lower(Group.group_name),1,4)).filter(UserGroup.user_id==req.user.id, Group.id==UserGroup.group_id).first()
-            grps = '%s' % grp
-            print'fffffffffffffffffffffffffff',grps
+            ## kondisi group TAPD (semua unit)
+            if req.user.id>1 and 'g:admin' not in groupfinder(req.user, req) and not ids :
+               grp = DBSession.query(alltrim(func.lower(Group.group_name)).label('group_nama'), 
+                 func.substr(func.lower(Group.group_name),func.length(Group.group_name)-5,6).label('group_singkat')
+                 ).filter(UserGroup.user_id==req.user.id, Group.id==UserGroup.group_id).first()
+               grps_nm = '%s' % grp.group_nama 
+               grps    = '%s' % grp.group_singkat
             
+            ## Pembatasan unit all
             if req.user.id>1 and 'g:admin' not in groupfinder(req.user, req)\
-                    and not ids and grps !='ppkd':
+                    and not ids and grps !='(tapd)' and grps_nm !='admin bpkad'  and grps_nm !='akuntansi'\
+                    and  grps_nm !='perbendaharaan blbtl' and  grps_nm !='kasda' :
                 return {'success':False, 'msg':'Anda tidak boleh mengubah ke unit yang bukan hak akses anda'}
 
             row = Unit.get_by_id('unit_id' in params and params['unit_id'] or 0)
