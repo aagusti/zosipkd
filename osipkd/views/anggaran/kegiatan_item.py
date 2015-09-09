@@ -173,7 +173,7 @@ class view_ak_jurnal(BaseViews):
                 d['id']      = k[0]
                 d['value']   = '{kegiatan_kd}-{kegiatan_no}-{rekening_kd}-{item_no}'.\
                                 format(kegiatan_kd=k[1], kegiatan_no=k[3], 
-                                       rekening_kd=k[4], item_no=k[6] )
+                                       rekening_kd=k[4], item_no=k[6])
                 d['kode']    = '{kegiatan_kd}-{kegiatan_no}-{rekening_kd}-{item_no}'.\
                                 format(kegiatan_kd=k[1], kegiatan_no=k[3], 
                                        rekening_kd=k[4], item_no=k[6])

@@ -92,7 +92,7 @@ class view_ar_invoice_skpd(BaseViews):
                           ARInvoice.posted1,
                         ).filter(ARInvoice.tahun_id==ses['tahun'],
                                  ARInvoice.unit_id==ses['unit_id']
-                        ).order_by(ARInvoice.id.asc()
+                        #).order_by(ARInvoice.id.asc()
                         )
                 else :
                   query = DBSession.query(ARInvoice.id,
@@ -109,7 +109,7 @@ class view_ar_invoice_skpd(BaseViews):
                         ).filter(ARInvoice.tahun_id==ses['tahun'],
                               ARInvoice.unit_id==ses['unit_id'],
                               extract('month',ARInvoice.tgl_terima)==bulan
-                        ).order_by(ARInvoice.id.asc()
+                        #).order_by(ARInvoice.id.asc()
                         )
                 rowTable = DataTables(req, ARInvoice, query, columns)
                 return rowTable.output_result()

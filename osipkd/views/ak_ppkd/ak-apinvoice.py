@@ -93,7 +93,7 @@ class view_ap_invoice_skpd(BaseViews):
                         ).filter(APInvoice.tahun_id==ses['tahun'],
                               APInvoice.unit_id==ses['unit_id'],
                               APInvoice.kegiatan_sub_id==KegiatanSub.id,
-                        ).order_by(APInvoice.no_urut.desc()
+                        #).order_by(APInvoice.no_urut.desc()
                         ).group_by(APInvoice.id,
                           APInvoice.kode,
                           APInvoice.jenis,

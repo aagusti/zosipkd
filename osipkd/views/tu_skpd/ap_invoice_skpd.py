@@ -125,7 +125,7 @@ class view_ap_invoice_skpd(BaseViews):
                           APInvoice.posted,
                           APInvoice.status_spp,
                           APInvoice.status_pay,
-                        ).order_by(APInvoice.no_urut.desc()
+                        #).order_by(APInvoice.no_urut.desc()
                         )
                 else :
                   query = DBSession.query(APInvoice.id,
@@ -153,7 +153,7 @@ class view_ap_invoice_skpd(BaseViews):
                           APInvoice.posted,
                           APInvoice.status_spp,
                           APInvoice.status_pay,
-                        ).order_by(APInvoice.no_urut.desc()
+                        #).order_by(APInvoice.no_urut.desc()
                         )
                   
                 rowTable = DataTables(req, APInvoice, query, columns)
@@ -517,8 +517,8 @@ class AddSchema(colander.Schema):
                           )
     ap_tgl_kontrak  = colander.SchemaNode(
                           colander.Date(),
-                          missing=None,
-                          title="Tgl Kontrak",
+                          missing=colander.drop,
+                          title="Tgl Kontrak"
                           )
     """
     ap_kegiatankd   = colander.SchemaNode(
@@ -605,8 +605,11 @@ def save(request, values, user, row=None):
         no       = "0000%d" % no_urut
         nomor    = no[-5:]     
         row.kode = "%d" % tahun + "-%s" % jns + "-%s" % unit_kd + "-%s" % nomor
-        #row.kode = "%d" % tahun + "-%s" % jns + "-%s" % unit_kd + "-%s" % nomor
     
+    if row.ap_kwitansi_nilai == None:
+        row.ap_kwitansi_nilai = 0
+    if row.ap_nilai == None:
+        row.ap_nilai = 0
     #kode1 = row.kode
     #if row.jenis == "5" :
     #   jns_kd = row.kode[5:9]

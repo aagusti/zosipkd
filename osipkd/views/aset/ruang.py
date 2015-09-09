@@ -42,7 +42,7 @@ class AddSchema(colander.Schema):
                     oid = "unit_id")
     unit_nm     = colander.SchemaNode(
                     colander.String(),
-                    #widget = unit_nm_widget,
+                    widget = unit_nm_widget,
                     oid = "unit_nm",
                     title = "SKPD")
     ruang_id    = colander.SchemaNode(
@@ -52,20 +52,17 @@ class AddSchema(colander.Schema):
                     oid = "ruang_id")
     ruang_nm    = colander.SchemaNode(
                     colander.String(),
-                    #widget = ruang_widget,
+                    widget = ruang_widget,
                     missing = colander.drop,
                     oid = "ruang_nm",
                     title = "Ruang")
     kode        = colander.SchemaNode(
                     colander.String(),
-                    validator=colander.Length(max=32),
-                    oid = "kode")        
+                    validator=colander.Length(max=18))        
     uraian      = colander.SchemaNode(
-                    colander.String(),
-                    oid = "uraian")
+                    colander.String())
     disabled    = colander.SchemaNode(
-                    colander.Boolean(),
-                    oid = "disabled")
+                    colander.Boolean())
                     
 class EditSchema(AddSchema):
     id = colander.SchemaNode(colander.String(),
@@ -190,15 +187,13 @@ class view_ruang(BaseViews):
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    #req.session[SESS_ADD_FAILED] = e.render()   
-                    return dict(form=form)					
+                    req.session[SESS_ADD_FAILED] = e.render()               
                     return HTTPFound(location=req.route_url('aset-ruang-add'))
                 self.save_request(dict(controls))
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
-        return dict(form=form)
-        #return dict(form=form.render())
+        return dict(form=form.render())
  
     ########
     # Edit #
@@ -236,14 +231,13 @@ class view_ruang(BaseViews):
                     kode1 = DBSession.query(AsetRuang).filter(AsetRuang.id==uid).first()
                     d     = kode1.kode
                     if d!=c:
-                        self.request.session.flash('Kode sudah ada.', 'error')
+                        self.request.session.flash('Data sudah ada', 'error')
                         return HTTPFound(location=request.route_url('aset-ruang-edit',id=row.id))
                 
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    #request.session[SESS_EDIT_FAILED] = e.render() 
-                    return dict(form=form)					
+                    request.session[SESS_EDIT_FAILED] = e.render()               
                     return HTTPFound(location=request.route_url('aset-ruang-edit',id=row.id))
                 self.save_request(dict(controls), row)
             return self.route_list()
@@ -252,8 +246,7 @@ class view_ruang(BaseViews):
         values = row.to_dict()
         values['unit_nm'] = row.units.nama
         values['ruang_nm']= row.ruang.uraian if values['ruang_id'] else ""
-        form.render(appstruct=values)
-        return dict(form=form)
+        return dict(form=form.render(appstruct=values))
 
     ##########
     # Delete #

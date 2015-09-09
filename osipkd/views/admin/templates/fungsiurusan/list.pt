@@ -64,6 +64,9 @@
           },{
               "bSearchable": false,
               "aTargets"   : [1,2]
+          },{
+              "bSortable": false,
+              "aTargets": [1,2]
           }],
           "aoColumns": [
               null,

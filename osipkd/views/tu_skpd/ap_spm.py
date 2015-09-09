@@ -91,7 +91,8 @@ class view_ap_spm(BaseViews):
                                         Spp.nominal,
                                         Spm.posted,
                                         #func.sum(SpmPotongan.nilai).label('nilai')
-                                ).order_by(Spm.kode.desc())
+                                #).order_by(Spm.kode.desc()
+                                )
                 else :
                   query = DBSession.query(Spm.id,
                                         Spm.kode,
@@ -115,7 +116,8 @@ class view_ap_spm(BaseViews):
                                         Spp.nominal,
                                         Spm.posted,
                                         #func.sum(SpmPotongan.nilai).label('nilai')
-                                ).order_by(Spm.kode.desc())
+                                #).order_by(Spm.kode.desc()
+                                )
                   
                 rowTable = DataTables(req, Spm, query, columns)
                 return rowTable.output_result()

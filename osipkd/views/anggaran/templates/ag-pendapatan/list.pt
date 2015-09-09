@@ -47,6 +47,7 @@
             "hint"     : true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote"   : "/unit/act/headofkode?term=%QUERY", 
         },{
            "name"      : 'unit_kd',
@@ -57,6 +58,7 @@
             "hint"     : true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote"   : "/unit/act/headofnama?term=%QUERY", 
         },{
            "name"      : 'unit_nm',
@@ -258,6 +260,7 @@
                 "hint"     : true,
                 "highlight": true,
                 "minLength": 1,
+                "limit"    : 10,
                 "remote"   : "/rekening/act/headofkode${row.rekeninghead}?term=%QUERY", 
             },{
                "name"      : 'rekening_kd',
@@ -268,6 +271,7 @@
                 "hint"     : true,
                 "highlight": true,
                 "minLength": 1,
+                "limit"    : 10,
                 "remote"   : "/rekening/act/headofnama${row.rekeninghead}?term=%QUERY", 
             },{
                "name"      : 'rekening_nm',
@@ -374,7 +378,7 @@
           "bServerSide"    : true,
           "bProcessing"    : true,
           "bScrollCollapse": true,
-          "bSort"          : true,
+          "bSort"          : false,
           "bInfo"          : false,
           "bFilter"        : true,
           "bAutoWidth"     : false,
@@ -396,7 +400,7 @@
           },{
               "bSearchable": false,
               "bSortable"  : false,
-              "aTargets"   : [1,2,4,5]
+              "aTargets"   : [1,2,4,5,6,7,8,9,10,11,12,13,14,15]
           },{
                 "sClass"   : "center",
                 "aTargets" : [15], // Untuk Posted

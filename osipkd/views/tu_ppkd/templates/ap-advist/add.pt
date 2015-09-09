@@ -154,6 +154,7 @@
                 "hint"     : true,
                 "highlight": true,
                 "minLength": 1,
+                "limit"    : 10,
                 "remote"   : "/ap-sp2d/act/headofkode2?term=%QUERY", 
             },{
                "name"      : 'kode1',

@@ -46,6 +46,7 @@
             "hint"     : true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote"   : "/unit/act/headofkode?term=%QUERY", 
         },{
            "name"      : 'unit_kd',
@@ -56,6 +57,7 @@
             "hint"     : true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote"   : "/unit/act/headofnama?term=%QUERY", 
         },{
            "name"      : 'unit_nm',
@@ -202,6 +204,7 @@
             "bAutoWidth"     : false,
             "bPaginate"      : true,
             "sPaginationType": "full_numbers",
+            "order"          : [[ 1, "desc" ]],
 
             "lengthMenu": [
                 [10, 25, 50, -1],
@@ -222,10 +225,10 @@
                "aTargets"   : [1,2,3,4]
             },{
                "bSortable"  : true,
-               "aTargets"   : [1,2,4]
+               "aTargets"   : [1,2,4,5,6]
             },{
                "bSortable"  : false,
-               "aTargets"   : [3,5,6]
+               "aTargets"   : [3]
             },{
                 "aTargets" : [5], // Untuk Posted
                 "mRender"  : function (data, type, full) {

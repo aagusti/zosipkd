@@ -68,7 +68,10 @@
                     },{
                         "bSearchable": false,
                         "aTargets": [6]
-                    }],
+                     },{
+                        "bSortable": false,
+                        "aTargets": [6]
+                   }],
           "aoColumns": [
               null,
               {"width": "120px"},

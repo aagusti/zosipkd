@@ -121,7 +121,8 @@
             "bAutoWidth"     : false,
             "bPaginate"      : true,
             "sPaginationType": "full_numbers",
-            
+            "order"          : [[ 1, "desc" ]],
+           
             "lengthMenu": [
                 [10, 25, 50, 100,],
                 [10, 25, 50, 100, "All"]
@@ -134,7 +135,7 @@
             },{
                 "bSearchable": true,
                 "bSortable"  : false,
-                "aTargets"   : [1,3]
+                "aTargets"   : [3]
             },{
                 "sClass"   : "right",
                 "aTargets" : [4],

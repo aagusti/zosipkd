@@ -84,7 +84,8 @@ class view_ap_spd_ppkd(BaseViews):
                         ).group_by(Spd.id, Spd.kode,
                           Spd.nama, Spd.triwulan_id,
                           Unit.id, Unit.nama
-                        ).order_by(Spd.kode)
+                        #).order_by(Spd.kode
+                        )
                 else :
                   query = DBSession.query(Spd.id, Spd.tanggal, Spd.kode,
                           Spd.nama, Spd.triwulan_id, Spd.units,
@@ -97,7 +98,8 @@ class view_ap_spd_ppkd(BaseViews):
                         ).group_by(Spd.id, Spd.kode,
                           Spd.nama, Spd.triwulan_id,
                           Unit.id, Unit.nama
-                        ).order_by(Spd.kode)
+                        #).order_by(Spd.kode
+                        )
                   
                 rowTable = DataTables(req, Spd, query, columns)
                 return rowTable.output_result()

@@ -80,6 +80,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/ag-kegiatan-sub/act/headofkode1?term=%QUERY",
             },{
              "name"      : 'kegiatan_kd',
@@ -89,6 +90,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/ag-kegiatan-sub/act/headofnama1?term=%QUERY",
             },{
              "name"      : 'kegiatan_nm',
@@ -737,6 +739,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/ag-kegiatan-item/act/headofnama?kegiatan_sub_id="+$("#kegiatan_sub_id").val()+"&term=%QUERY", 
           },{
              "name"      : 'item_nm',

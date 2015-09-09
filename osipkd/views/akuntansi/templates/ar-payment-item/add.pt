@@ -35,6 +35,28 @@
                ${error}</p>
       </div>
       <script>
+          $('#unit_kd').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "limit"    : 10,
+              "remote"   : "/unit/act/headofkode?term=%QUERY",
+          },{
+              "name"      : 'unit_kd',
+              "displayKey": 'value',
+          })
+          
+          $('#unit_nm').typeahead({
+              "hint"     : true,
+              "highlight": true,
+              "minLength": 1,
+              "limit"    : 10,
+              "remote"   : "/unit/act/headofnama?term=%QUERY",
+          },{
+              "name"      : 'unit_nm',
+              "displayKey": 'value',
+          })
+          
           $('#unit_kd').bind('typeahead:selected', function(obj, datum, name) {      
                 $('#unit_id').val(datum.id);
                 $('#unit_nm').val(datum.nama);
@@ -152,6 +174,28 @@
       </div>
     </div>
       <script>
+        $('#kode').typeahead({
+            "hint"     : true,
+            "highlight": true,
+            "minLength": 1,
+            "limit"    : 10,
+            "remote"   : "/rekening/act/headofkode11?term=%QUERY",
+        },{
+            "name"      : 'kode',
+            "displayKey": 'value',
+        })
+        
+        $('#nama').typeahead({
+            "hint"     : true,
+            "highlight": true,
+            "minLength": 1,
+            "limit"    : 10,
+            "remote"   : "/rekening/act/headofnama11?term=%QUERY",
+        },{
+            "name"      : 'nama',
+            "displayKey": 'value',
+        })
+        
         $('#kode').bind('typeahead:selected', function(obj, datum, name) {  
               $('#nama').val(datum.nama);
               $('#rekening_id').val(datum.id);
@@ -209,6 +253,7 @@
           "hint"     : true,
           "highlight": true,
           "minLength": 1,
+          "limit"    : 10,
           "remote"   : "/pejabat/act/headofkode2?term=%QUERY",
         },
         {
@@ -220,6 +265,7 @@
           "hint"     : true,
           "highlight": true,
           "minLength": 1,
+          "limit"    : 10,
           "remote"   : "/pejabat/act/headofnama2?term=%QUERY",
         },
         {

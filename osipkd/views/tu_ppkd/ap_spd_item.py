@@ -45,8 +45,8 @@ class view_ap_spd_item(BaseViews):
             columns.append(ColumnDT('sisa',filter=self._number_format))
             
             query = DBSession.query(SpdItem.id,
-                                    Kegiatan.kode,
-                                    KegiatanSub.nama,
+                                    Kegiatan.kode.label('kode'),
+                                    KegiatanSub.nama.label('nama'),
                                     SpdItem.anggaran,
                                     SpdItem.lalu,
                                     SpdItem.nominal,
@@ -58,8 +58,8 @@ class view_ap_spd_item(BaseViews):
                              SpdItem.kegiatan_sub_id==KegiatanSub.id,
                              KegiatanSub.kegiatan_id==Kegiatan.id,
                     ).group_by(SpdItem.id,
-                               Kegiatan.kode.label('kode'),
-                               KegiatanSub.nama.label('nama'),
+                               Kegiatan.kode,
+                               KegiatanSub.nama,
                                SpdItem.anggaran,
                                SpdItem.lalu,
                                SpdItem.nominal,
@@ -87,7 +87,6 @@ def view_add(request):
     ap_spd = DBSession.query(Spd)\
                   .filter(#Spd.unit_id==ses['unit_id'],
                           Spd.id==ap_spd_id).first()
-    print "-------------------------------->>", ses['unit_id']
     if not ap_spd:
         return {"success": False, 'msg':'SPD tidak ditemukan'}
     

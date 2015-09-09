@@ -77,14 +77,12 @@ def view_login(request):
         controls = request.POST.items()
         identity = request.POST.get('username')
         user = schema.user = User.get_by_identity(identity)
-        print "----------------------------------->>>", dict(controls)
         try:
             c = form.validate(controls)
             ctrls = dict(controls)
             print "----------------------------------->>>", ctrls, ctrls['tahun'] 
             if ctrls['tahun'] :
                request.session['tahun'] = int(ctrls['tahun'])
-            print "----------------------------------->>>", request.session['tahun'] 
         except ValidationFailure, e:
             request.session['login failed'] = e.render()
             return HTTPFound(location=request.route_url('login'))

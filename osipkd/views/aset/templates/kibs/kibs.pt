@@ -3,7 +3,7 @@
 
     <div class="panel-heading">
         <h3 class="panel-title">${request.title}</h3>
-    </div><hr>
+    </div>
     <div class="panel-body">
       <form method="post" accept-charset="utf-8" id="myform" class="form-horizontal" enctype="multipart/form-data">
       <div tal:condition="'id' in form">

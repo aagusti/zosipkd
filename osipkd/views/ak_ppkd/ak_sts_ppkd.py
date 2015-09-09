@@ -130,7 +130,6 @@ def view_edit_posting(request):
             row.posted1=1
             save_request2(request, row)
             
-            # Jenis Pendapatan Bendahara Penerimaan
             if g == '1':
                 #Tambah ke Jurnal PPKD (Kas di Kasda ke RK-SKPD)
                 nama    = nam
@@ -224,7 +223,6 @@ def view_edit_posting(request):
                 DBSession.add(ji2)
                 DBSession.flush()
             
-            # Jenis Pendapatan Piutang
             elif g == '2':
                 #Tambah ke Jurnal PPKD (Kas di Kasda ke RK-SKPD)
                 nama    = nam
@@ -318,7 +316,6 @@ def view_edit_posting(request):
                 DBSession.add(ji2)
                 DBSession.flush()
                 
-            # Jenis Pendapatan Non Piutang
             elif g == '3':
                 #Tambah ke Jurnal PPKD (Kas di Kasda ke RK-SKPD)
                 nama    = nam
@@ -412,7 +409,6 @@ def view_edit_posting(request):
                 DBSession.add(ji2)
                 DBSession.flush()
                 
-            # Jenis Kontra Pos
             elif g == '4':
                 re = DBSession.query(func.substr(Rekening.kode,1,1)
                              ).filter(Sts.id==id_sts,

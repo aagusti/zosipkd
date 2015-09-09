@@ -33,6 +33,7 @@
                  "hint"     : true,
                  "highlight": true,
                  "minLength": 1,
+                 "limit"    : 10,
                  "remote"   : "/group/act/headofnama?term=%QUERY",
             },{
                 "name"      : 'group_nm',
@@ -63,6 +64,7 @@
                  "hint"     : true,
                  "highlight": true,
                  "minLength": 1,
+                 "limit"    : 10,
                  "remote"   : "/routes/act/headof?term=%QUERY",
             },{
                 "name"      : 'route_nm',

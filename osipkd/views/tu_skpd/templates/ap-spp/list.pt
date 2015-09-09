@@ -46,6 +46,7 @@
             "hint": true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote": "/unit/act/headofkode?term=%QUERY", 
         },{
           "name": 'unit_kd',
@@ -56,6 +57,7 @@
             "hint": true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote": "/unit/act/headofnama?term=%QUERY", 
         },{
           "name": 'unit_nm',
@@ -201,6 +203,7 @@
             "bAutoWidth"     : false,
             "bPaginate"      : true,
             "sPaginationType": "full_numbers",
+            "order"          : [[ 1, "desc" ]],
 
             "lengthMenu": [
                 [10, 25, 50, 100, ],
@@ -217,11 +220,8 @@
                 "bSearchable": true,
                 "aTargets"   : [3,4]
             },{
-                "bSortable"  : true,
-                "aTargets"   : [1,2]
-            },{
                 "bSortable"  : false,
-                "aTargets"   : [3,4,5,6]
+                "aTargets"   : [4,5]
             },{
                 "sClass"   : "right",
                 "aTargets" : [5],
@@ -257,7 +257,7 @@
                 {"sWidth": "30px"}, 
                 {"sWidth": "30px"}, 
                 {"sWidth": "30px"}, 
-                {"sWidth": "30px"},
+                {"sWidth": "200px"},
                 {"sWidth": "30px"},
                 {"sWidth": "30px","class":"right"},
             ],

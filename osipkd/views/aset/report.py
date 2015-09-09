@@ -155,7 +155,7 @@ class ViewAsetLap(BaseViews):
             response.write(pdf)
             return response
 
-        ### KIB A
+        ### KIB A (SKPD)
         elif url_dict['act']=='kiba' :
             #pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             query = DBSession.query(AsetKategori.uraian.label("katnm"), AsetKategori.kode.label("katkd"), AsetKib.no_register, AsetKib.a_luas_m2, 
@@ -174,7 +174,7 @@ class ViewAsetLap(BaseViews):
             response.write(pdf)
             return response
 
-        ### KIB B
+        ### KIB B (SKPD)
         elif url_dict['act']=='kibb' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             query = DBSession.query(AsetKategori.uraian.label("katnm"), AsetKategori.kode.label("katkd"), AsetKib.no_register, AsetKib.b_merk, 
@@ -193,7 +193,7 @@ class ViewAsetLap(BaseViews):
             response.write(pdf)
             return response
 
-        ### KIB C
+        ### KIB C (SKPD)
         elif url_dict['act']=='kibc' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             query = DBSession.query(AsetKategori.uraian.label("katnm"), AsetKategori.kode.label("katkd"), AsetKib.no_register, AsetKib.kondisi, 
@@ -212,7 +212,7 @@ class ViewAsetLap(BaseViews):
             response.write(pdf)
             return response
 
-        ### KIB D
+        ### KIB D (SKPD)
         elif url_dict['act']=='kibd' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             query = DBSession.query(AsetKategori.uraian.label("katnm"), AsetKategori.kode.label("katkd"), AsetKib.no_register, AsetKib.d_konstruksi, 
@@ -231,7 +231,7 @@ class ViewAsetLap(BaseViews):
             response.write(pdf)
             return response
 
-        ### KIB E
+        ### KIB E (SKPD)
         elif url_dict['act']=='kibe' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             query = DBSession.query(AsetKategori.uraian.label("katnm"), AsetKategori.kode.label("katkd"), AsetKib.no_register,  
@@ -250,7 +250,7 @@ class ViewAsetLap(BaseViews):
             response.write(pdf)
             return response
 
-        ### KIB F
+        ### KIB F (SKPD)
         elif url_dict['act']=='kibf' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             query = DBSession.query(AsetKategori.uraian.label("katnm"), AsetKategori.kode.label("katkd"),  
@@ -269,23 +269,177 @@ class ViewAsetLap(BaseViews):
             response.write(pdf)
             return response
 
-        ### Rusak Berat
-        elif url_dict['act']=='10' :
+        ### LAP KIB A // SKPD
+        if url_dict['act']=='lapkiba' :
+            subq = DBSession.query(AsetKategori.kode, Unit.kode.label('unitkd'), Unit.nama.label('unitnm'), 
+                   func.coalesce(func.sum(AsetKib.jumlah),0).label('jumlah'),
+                   func.coalesce(func.sum(AsetKib.jumlah*AsetKib.harga),0).label('jmlharga'), 
+                   func.coalesce(func.sum(AsetKib.a_luas_m2),0).label('luas'), 
+                   ).filter(AsetKib.unit_id==Unit.id, AsetKib.kategori_id==AsetKategori.id, AsetKib.kib=='A', 
+                   AsetKib.tahun<=self.session['tahun'], AsetKib.unit_id==self.session['unit_id']
+                   ).group_by(AsetKategori.kode, Unit.kode, Unit.nama).subquery()
+                   
+            query = DBSession.query(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, 
+                   subq.c.unitkd.label('unitkd'), subq.c.unitnm.label('unitnm'),
+                   func.sum(func.coalesce(subq.c.jumlah,0)).label('jml'), func.sum(func.coalesce(subq.c.jmlharga,0)).label('jmlharga'),
+                   func.sum(func.coalesce(subq.c.luas,0)).label('luas')
+                   ).filter(func.substr(AsetKategori.kode,1,1)=='1', 
+                   AsetKategori.kode==func.left(subq.c.kode,func.length(AsetKategori.kode))
+                   ).group_by(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, subq.c.unitkd, subq.c.unitnm
+                   ).order_by(AsetKategori.kode)
+                    
+            generator = asetr020Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+            
+        ### LAP KIB B (SKPD)
+        elif url_dict['act']=='lapkibb' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
-            query = DBSession.query(ARInvoice.tahun_id.label('tahun'), Unit.nama.label('unit_nm'),
-                  ARInvoice.id.label('arinvoice_id'), ARInvoice.kode, ARInvoice.nama.label('arinvoice_nm'), 
-                  ARInvoice.tgl_terima, ARInvoice.tgl_validasi, ARInvoice.bendahara_nm, 
-                  ARInvoice.penyetor, ARInvoice.alamat, KegiatanSub.nama.label('kegiatan_nm'),
-                  func.sum(ARInvoiceItem.nilai).label('nilai')
-                  ).filter(ARInvoice.unit_id==Unit.id, ARInvoice.kegiatan_sub_id==KegiatanSub.id,
-                  ARInvoiceItem.ar_invoice_id==ARInvoice.id, ARInvoice.unit_id==self.session['unit_id'],
-                  ARInvoice.tahun_id==self.session['tahun'], ARInvoice.id==pk_id
-                  ).group_by(ARInvoice.tahun_id, Unit.nama,
-                  ARInvoice.id, ARInvoice.kode, ARInvoice.nama, 
-                  ARInvoice.tgl_terima, ARInvoice.tgl_validasi, ARInvoice.bendahara_nm, 
-                  ARInvoice.penyetor, ARInvoice.alamat, KegiatanSub.nama
-                  )
-            generator = b102r002Generator()
+            subq = DBSession.query(AsetKategori.kode, Unit.kode.label('unitkd'), Unit.nama.label('unitnm'), 
+                   func.coalesce(func.sum(AsetKib.jumlah),0).label('jumlah'),
+                   func.coalesce(func.sum(AsetKib.jumlah*AsetKib.harga),0).label('jmlharga'), 
+                   ).filter(AsetKib.unit_id==Unit.id, AsetKib.kategori_id==AsetKategori.id, AsetKib.kib=='B', 
+                   AsetKib.tahun<=self.session['tahun'], AsetKib.unit_id==self.session['unit_id']
+                   ).group_by(AsetKategori.kode, Unit.kode, Unit.nama).subquery()
+                   
+            query = DBSession.query(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, 
+                   subq.c.unitkd.label('unitkd'), subq.c.unitnm.label('unitnm'),
+                   func.sum(func.coalesce(subq.c.jumlah,0)).label('jml'), func.sum(func.coalesce(subq.c.jmlharga,0)).label('jmlharga'),
+                   ).filter(func.substr(AsetKategori.kode,1,1)=='2', 
+                   AsetKategori.kode==func.left(subq.c.kode,func.length(AsetKategori.kode))
+                   ).group_by(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, subq.c.unitkd, subq.c.unitnm
+                   ).order_by(AsetKategori.kode)
+                   
+            generator = asetr021Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ### LAP KIB C (SKPD)
+        elif url_dict['act']=='lapkibc' :
+            pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+            subq = DBSession.query(AsetKategori.kode, Unit.kode.label('unitkd'), Unit.nama.label('unitnm'), 
+                   func.coalesce(func.sum(AsetKib.jumlah),0).label('jumlah'),
+                   func.coalesce(func.sum(AsetKib.jumlah*AsetKib.harga),0).label('jmlharga'), 
+                   ).filter(AsetKib.unit_id==Unit.id, AsetKib.kategori_id==AsetKategori.id, AsetKib.kib=='C', 
+                   AsetKib.tahun<=self.session['tahun'], AsetKib.unit_id==self.session['unit_id']
+                   ).group_by(AsetKategori.kode, Unit.kode, Unit.nama).subquery()
+                   
+            query = DBSession.query(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, 
+                   subq.c.unitkd.label('unitkd'), subq.c.unitnm.label('unitnm'),
+                   func.sum(func.coalesce(subq.c.jumlah,0)).label('jml'), func.sum(func.coalesce(subq.c.jmlharga,0)).label('jmlharga'),
+                   ).filter(func.substr(AsetKategori.kode,1,1)=='3', 
+                   AsetKategori.kode==func.left(subq.c.kode,func.length(AsetKategori.kode))
+                   ).group_by(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, subq.c.unitkd, subq.c.unitnm
+                   ).order_by(AsetKategori.kode)
+                   
+            generator = asetr022Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ### LAP KIB D (SKPD)
+        elif url_dict['act']=='lapkibd' :
+            pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+            subq = DBSession.query(AsetKategori.kode, Unit.kode.label('unitkd'), Unit.nama.label('unitnm'), 
+                   func.coalesce(func.sum(AsetKib.jumlah),0).label('jumlah'),
+                   func.coalesce(func.sum(AsetKib.jumlah*AsetKib.harga),0).label('jmlharga'), 
+                   ).filter(AsetKib.unit_id==Unit.id, AsetKib.kategori_id==AsetKategori.id, AsetKib.kib=='D', 
+                   AsetKib.tahun<=self.session['tahun'], AsetKib.unit_id==self.session['unit_id']
+                   ).group_by(AsetKategori.kode, Unit.kode, Unit.nama).subquery()
+                   
+            query = DBSession.query(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, 
+                   subq.c.unitkd.label('unitkd'), subq.c.unitnm.label('unitnm'),
+                   func.sum(func.coalesce(subq.c.jumlah,0)).label('jml'), func.sum(func.coalesce(subq.c.jmlharga,0)).label('jmlharga'),
+                   ).filter(func.substr(AsetKategori.kode,1,1)=='4', 
+                   AsetKategori.kode==func.left(subq.c.kode,func.length(AsetKategori.kode))
+                   ).group_by(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, subq.c.unitkd, subq.c.unitnm
+                   ).order_by(AsetKategori.kode)
+                   
+            generator = asetr023Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ### LAP KIB E (SKPD)
+        elif url_dict['act']=='lapkibe' :
+            pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+            subq = DBSession.query(AsetKategori.kode, Unit.kode.label('unitkd'), Unit.nama.label('unitnm'), 
+                   func.coalesce(func.sum(AsetKib.jumlah),0).label('jumlah'),
+                   func.coalesce(func.sum(AsetKib.jumlah*AsetKib.harga),0).label('jmlharga'), 
+                   ).filter(AsetKib.unit_id==Unit.id, AsetKib.kategori_id==AsetKategori.id, AsetKib.kib=='E', 
+                   AsetKib.tahun<=self.session['tahun'], AsetKib.unit_id==self.session['unit_id']
+                   ).group_by(AsetKategori.kode, Unit.kode, Unit.nama).subquery()
+                   
+            query = DBSession.query(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, 
+                   subq.c.unitkd.label('unitkd'), subq.c.unitnm.label('unitnm'),
+                   func.sum(func.coalesce(subq.c.jumlah,0)).label('jml'), func.sum(func.coalesce(subq.c.jmlharga,0)).label('jmlharga'),
+                   ).filter(func.substr(AsetKategori.kode,1,1)=='5', 
+                   AsetKategori.kode==func.left(subq.c.kode,func.length(AsetKategori.kode))
+                   ).group_by(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, subq.c.unitkd, subq.c.unitnm
+                   ).order_by(AsetKategori.kode)
+                   
+            generator = asetr024Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ### LAP KIB F (SKPD)
+        elif url_dict['act']=='lapkibf' :
+            pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+            subq = DBSession.query(AsetKategori.kode, Unit.kode.label('unitkd'), Unit.nama.label('unitnm'), 
+                   func.coalesce(func.sum(AsetKib.jumlah),0).label('jumlah'),
+                   func.coalesce(func.sum(AsetKib.jumlah*AsetKib.harga),0).label('jmlharga'), 
+                   ).filter(AsetKib.unit_id==Unit.id, AsetKib.kategori_id==AsetKategori.id, AsetKib.kib=='F', 
+                   AsetKib.tahun<=self.session['tahun'], AsetKib.unit_id==self.session['unit_id']
+                   ).group_by(AsetKategori.kode, Unit.kode, Unit.nama).subquery()
+                   
+            query = DBSession.query(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, 
+                   subq.c.unitkd.label('unitkd'), subq.c.unitnm.label('unitnm'),
+                   func.sum(func.coalesce(subq.c.jumlah,0)).label('jml'), func.sum(func.coalesce(subq.c.jmlharga,0)).label('jmlharga'),
+                   ).filter(func.substr(AsetKategori.kode,1,1)=='6', 
+                   AsetKategori.kode==func.left(subq.c.kode,func.length(AsetKategori.kode))
+                   ).group_by(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, subq.c.unitkd, subq.c.unitnm
+                   ).order_by(AsetKategori.kode)
+                   
+            generator = asetr025Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ### Rusak Berat
+        elif url_dict['act']=='lap10' :
+            pk_id = 'id' in params and params['id'] and int(params['id']) or 0
+            query = DBSession.query(Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), AsetKategori.kode.label('kat_kd'),
+                  AsetKategori.uraian.label('kat_nm'), AsetKib.no_register, AsetKib.b_merk, AsetKib.b_type, AsetKib.a_sertifikat_nomor,
+                  AsetKib.b_nomor_pabrik, AsetKib.b_nomor_rangka, AsetKib.b_nomor_mesin, AsetKib.b_bahan, AsetKib.asal_usul, AsetKib.th_beli,
+                  AsetKib.e_ukuran, AsetKib.d_konstruksi, AsetKib.satuan, AsetKib.kondisi, AsetKib.jumlah, AsetKib.harga, AsetKib.keterangan
+                  ).filter(AsetKib.unit_id==Unit.id, AsetKib.kategori_id==AsetKategori.id, 
+                  AsetKib.unit_id==self.session['unit_id'], AsetKib.tahun<=self.session['tahun'], 
+                  or_(AsetKib.tgl_perolehan==None,extract('year',AsetKib.tgl_perolehan)<=self.session['tahun']),
+                  or_(AsetKib.kondisi=='RB', AsetKib.kondisi=='3')
+                  ).order_by(Unit.kode, AsetKategori.kode, AsetKib.no_register)
+                  
+            generator = asetr010Generator()
             pdf = generator.generate(query)
             response=req.response
             response.content_type="application/pdf"
@@ -294,7 +448,7 @@ class ViewAsetLap(BaseViews):
             return response
             
         ### Buku Inventaris
-        elif url_dict['act']=='11' :
+        elif url_dict['act']=='lap11' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             query = DBSession.query(Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), AsetKategori.kode.label('kat_kd'),
                   AsetKategori.uraian.label('kat_nm'), AsetKib.no_register, AsetKib.b_merk, AsetKib.b_type, AsetKib.a_sertifikat_nomor,
@@ -302,10 +456,9 @@ class ViewAsetLap(BaseViews):
                   AsetKib.e_ukuran, AsetKib.d_konstruksi, AsetKib.satuan, AsetKib.kondisi, AsetKib.jumlah, AsetKib.harga, AsetKib.keterangan
                   ).filter(AsetKib.unit_id==Unit.id, AsetKib.kategori_id==AsetKategori.id, 
                   AsetKib.unit_id==self.session['unit_id'], AsetKib.tahun<=self.session['tahun'], 
-                  or_(AsetKib.tgl_perolehan==None,extract('year',AsetKib.tgl_perolehan)==self.session['tahun'])
+                  or_(AsetKib.tgl_perolehan==None,extract('year',AsetKib.tgl_perolehan)<=self.session['tahun'])
                   ).order_by(Unit.kode, AsetKategori.kode, AsetKib.no_register)
                   
-
             generator = asetr011Generator()
             pdf = generator.generate(query)
             response=req.response
@@ -336,11 +489,33 @@ class ViewAsetLap(BaseViews):
             return response
  
         ### Neraca
-        elif url_dict['act']=='13' :
+        elif url_dict['act']=='lap13' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             kategori_alias = aliased(AsetKategori)
             
-            query1 = DBSession.query(kategori_alias.kode.label('kode'), kategori_alias.uraian.label('uraian'), 
+            subq = DBSession.query(Unit.kode.label('unitkd'), Unit.nama.label('unitnm'), 
+                   func.substr(AsetKategori.kode,1,1).label('kode1'),
+                   func.sum(AsetKib.jumlah*AsetKib.harga).label('jml_lalu'), literal_column('0').label('jml_kini')
+                   ).filter(AsetKib.unit_id==Unit.id, AsetKategori.id==AsetKib.kategori_id, 
+                   AsetKib.unit_id==self.session['unit_id'], AsetKib.tahun<self.session['tahun']
+                   ).group_by(Unit.kode, Unit.nama, func.substr(AsetKategori.kode,1,1)
+                   ).union(DBSession.query(Unit.kode.label('unitkd'), Unit.nama.label('unitnm'), 
+                   func.substr(AsetKategori.kode,1,1).label('kode1'),
+                   literal_column('0').label('jml_lalu'), func.sum(AsetKib.jumlah*AsetKib.harga).label('jml_kini')
+                   ).filter(AsetKib.unit_id==Unit.id, AsetKategori.id==AsetKib.kategori_id, 
+                   AsetKib.unit_id==self.session['unit_id'], AsetKib.tahun==self.session['tahun']
+                   ).group_by(Unit.kode, Unit.nama, func.substr(AsetKategori.kode,1,1)
+                   )).subquery()
+            
+            query = DBSession.query(AsetKategori.kode, AsetKategori.uraian, subq.c.unitkd, subq.c.unitnm, 
+                   func.coalesce(func.sum(subq.c.jml_lalu),0).label('jml_lalu'),
+                   func.coalesce(func.sum(subq.c.jml_kini),0).label('jml_kini')
+                   ).outerjoin(subq, subq.c.kode1==AsetKategori.kode
+                   ).filter(AsetKategori.level_id==1
+                   ).group_by(AsetKategori.kode, AsetKategori.uraian, subq.c.unitkd, subq.c.unitnm
+                   ).order_by(AsetKategori.kode
+                   )                   
+            """query1 = DBSession.query(kategori_alias.kode.label('kode'), kategori_alias.uraian.label('uraian'), 
                   Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), 
                   func.sum(AsetKib.harga*AsetKib.jumlah).label('nilai'), 
                   literal_column('1').label('detil')
@@ -370,7 +545,7 @@ class ViewAsetLap(BaseViews):
                   or_(AsetDel is None, extract('year',AsetDel.tanggal)>self.session['tahun'])
                   ).group_by(kategori_alias.kode, kategori_alias.uraian, Unit.kode, Unit.nama)
                   
-            """query1 = DBSession.query(kategori_alias.kode.label('kode'), kategori_alias.uraian.label('uraian'), 
+            query1 = DBSession.query(kategori_alias.kode.label('kode'), kategori_alias.uraian.label('uraian'), 
                   Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), AsetKib.unit_id.label('unit_id'),
                   func.sum(AsetKib.harga*AsetKib.jumlah).label('nilai'), 
                   literal_column('1').label('detil')
@@ -398,11 +573,12 @@ class ViewAsetLap(BaseViews):
                   AsetKib.tahun<=self.session['tahun'],
                   or_(AsetDel==None,extract('year',AsetDel.tanggal)>self.session['tahun'])
                   ).group_by(kategori_alias.kode, kategori_alias.uraian, AsetKib.unit_id, Unit.kode, Unit.nama)
-            """
+            
             subq = query1.union(query2).subquery()
             
             query = DBSession.query(subq.c.kode, subq.c.uraian, subq.c.unit_kd, subq.c.unit_nm, subq.c.nilai, subq.c.detil
                   ).order_by(subq.c.kode, subq.c.uraian)
+            """
             
             generator = asetr013Generator()
             pdf = generator.generate(query)
@@ -431,15 +607,86 @@ class ViewAsetLap(BaseViews):
 
         ### KIB A // PPKD
         if url_dict['act']=='kiba' :
-            #pk_id = 'id' in params and params['id'] and int(params['id']) or 0
-            query = DBSession.query(AsetKategori.uraian.label("katnm"), AsetKategori.kode.label("katkd"), AsetKib.no_register, AsetKib.a_luas_m2, 
-                        AsetKib.th_beli, AsetKib.a_alamat, AsetKib.a_hak_tanah, AsetKib.a_sertifikat_tanggal, AsetKib.a_sertifikat_nomor, 
-                        AsetKib.a_penggunaan, AsetKib.asal_usul, AsetKib.harga, AsetKib.keterangan,
-                        AsetKib.tahun, Unit.kode.label("unitkd"), Unit.nama.label("unitnm"))\
-                        .filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.unit_id==Unit.id,\
-                                 AsetKib.kib=="A", AsetKib.tahun<=self.session['tahun'])\
-                        .order_by(AsetKategori.kode).all()
-                        
+            subq = DBSession.query(AsetKategori.kode, func.coalesce(func.sum(AsetKib.jumlah),0).label('jumlah'),
+                   func.coalesce(func.sum(AsetKib.jumlah*AsetKib.harga),0).label('jmlharga'), 
+                   func.coalesce(func.sum(AsetKib.a_luas_m2),0).label('luas'), 
+                   ).filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.kib=='A', AsetKib.tahun<=self.session['tahun']
+                   ).group_by(AsetKategori.kode).subquery()
+                   
+            query = DBSession.query(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, 
+                   func.sum(func.coalesce(subq.c.jumlah,0)).label('jml'), func.sum(func.coalesce(subq.c.jmlharga,0)).label('jmlharga'),
+                   func.sum(func.coalesce(subq.c.luas,0)).label('luas')
+                   ).filter(func.substr(AsetKategori.kode,1,1)=='1', 
+                   AsetKategori.kode==func.left(subq.c.kode,func.length(AsetKategori.kode))
+                   ).group_by(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id
+                   ).order_by(AsetKategori.kode)
+                    
+            generator = asetr101Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ### KIB B // PPKD
+        elif url_dict['act']=='kibb' :
+            subq = DBSession.query(AsetKategori.kode, func.coalesce(func.sum(AsetKib.jumlah),0).label('jumlah'),
+                   func.coalesce(func.sum(AsetKib.jumlah*AsetKib.harga),0).label('jmlharga'), 
+                   ).filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.kib=='B', AsetKib.tahun<=self.session['tahun']
+                   ).group_by(AsetKategori.kode).subquery()
+                   
+            query = DBSession.query(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, 
+                   func.sum(func.coalesce(subq.c.jumlah,0)).label('jml'), func.sum(func.coalesce(subq.c.jmlharga,0)).label('jmlharga'),
+                   ).filter(func.substr(AsetKategori.kode,1,1)=='2', 
+                   AsetKategori.kode==func.left(subq.c.kode,func.length(AsetKategori.kode))
+                   ).group_by(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id
+                   ).order_by(AsetKategori.kode)
+
+            generator = asetr102Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ### KIB C // PPKD
+        elif url_dict['act']=='kibc' :
+            subq = DBSession.query(AsetKategori.kode, func.coalesce(func.sum(AsetKib.jumlah),0).label('jumlah'),
+                   func.coalesce(func.sum(AsetKib.jumlah*AsetKib.harga),0).label('jmlharga'), 
+                   ).filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.kib=='C', AsetKib.tahun<=self.session['tahun']
+                   ).group_by(AsetKategori.kode).subquery()
+                   
+            query = DBSession.query(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, 
+                   func.sum(func.coalesce(subq.c.jumlah,0)).label('jml'), func.sum(func.coalesce(subq.c.jmlharga,0)).label('jmlharga'),
+                   ).filter(func.substr(AsetKategori.kode,1,1)=='3', 
+                   AsetKategori.kode==func.left(subq.c.kode,func.length(AsetKategori.kode))
+                   ).group_by(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id
+                   ).order_by(AsetKategori.kode)
+
+            generator = asetr103Generator()
+            pdf = generator.generate(query)
+            response=req.response
+            response.content_type="application/pdf"
+            response.content_disposition='filename=output.pdf' 
+            response.write(pdf)
+            return response
+
+        ### KIB D // PPKD
+        elif url_dict['act']=='kibd' :
+            subq = DBSession.query(AsetKategori.kode, func.coalesce(func.sum(AsetKib.jumlah),0).label('jumlah'),
+                   func.coalesce(func.sum(AsetKib.jumlah*AsetKib.harga),0).label('jmlharga'), 
+                   ).filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.kib=='D', AsetKib.tahun<=self.session['tahun']
+                   ).group_by(AsetKategori.kode).subquery()
+                   
+            query = DBSession.query(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, 
+                   func.sum(func.coalesce(subq.c.jumlah,0)).label('jml'), func.sum(func.coalesce(subq.c.jmlharga,0)).label('jmlharga'),
+                   ).filter(func.substr(AsetKategori.kode,1,1)=='4', 
+                   AsetKategori.kode==func.left(subq.c.kode,func.length(AsetKategori.kode))
+                   ).group_by(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id
+                   ).order_by(AsetKategori.kode)
+
             generator = asetr104Generator()
             pdf = generator.generate(query)
             response=req.response
@@ -448,17 +695,20 @@ class ViewAsetLap(BaseViews):
             response.write(pdf)
             return response
 
-        ### KIB B
-        elif url_dict['act']=='kibb' :
-            pk_id = 'id' in params and params['id'] and int(params['id']) or 0
-            query = DBSession.query(AsetKategori.uraian.label("katnm"), AsetKategori.kode.label("katkd"), AsetKib.no_register, AsetKib.b_merk, 
-                    AsetKib.b_type, AsetKib.b_cc, AsetKib.b_bahan, AsetKib.tahun, AsetKib.b_nomor_pabrik, 
-                    AsetKib.b_nomor_rangka, AsetKib.b_nomor_mesin, AsetKib.b_nomor_polisi, AsetKib.b_nomor_bpkb, AsetKib.asal_usul, AsetKib.harga, AsetKib.keterangan,
-                    AsetKib.tahun, Unit.kode.label("unitkd"), Unit.nama.label("unitnm"))\
-                    .filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.unit_id==Unit.id,
-                             AsetKib.kib=="B", AsetKib.tahun<=self.session['tahun'])\
-                    .order_by(AsetKategori.kode).all()
-
+        ### KIB E // PPKD
+        elif url_dict['act']=='kibe' :
+            subq = DBSession.query(AsetKategori.kode, func.coalesce(func.sum(AsetKib.jumlah),0).label('jumlah'),
+                   func.coalesce(func.sum(AsetKib.jumlah*AsetKib.harga),0).label('jmlharga'),
+                   ).filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.kib=='E', AsetKib.tahun<=self.session['tahun']
+                   ).group_by(AsetKategori.kode).subquery()
+                   
+            query = DBSession.query(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, 
+                   func.sum(func.coalesce(subq.c.jumlah,0)).label('jml'), func.sum(func.coalesce(subq.c.jmlharga,0)).label('jmlharga')
+                   ).filter(func.substr(AsetKategori.kode,1,1)=='5', 
+                   AsetKategori.kode==func.left(subq.c.kode,func.length(AsetKategori.kode))
+                   ).group_by(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id
+                   ).order_by(AsetKategori.kode)
+            
             generator = asetr105Generator()
             pdf = generator.generate(query)
             response=req.response
@@ -467,17 +717,20 @@ class ViewAsetLap(BaseViews):
             response.write(pdf)
             return response
 
-        ### KIB C
-        elif url_dict['act']=='kibc' :
-            pk_id = 'id' in params and params['id'] and int(params['id']) or 0
-            query = DBSession.query(AsetKategori.uraian.label("katnm"), AsetKategori.kode.label("katkd"), AsetKib.no_register, AsetKib.kondisi, 
-                        AsetKib.c_bertingkat_tidak, AsetKib.c_beton_tidak, AsetKib.c_luas_lantai, AsetKib.c_lokasi, AsetKib.c_dokumen_tanggal, 
-                        AsetKib.c_dokumen_nomor, AsetKib.c_luas_bangunan, AsetKib.c_status_tanah, AsetKib.c_kode_tanah, AsetKib.asal_usul, AsetKib.harga, AsetKib.keterangan,
-                        AsetKib.tahun, Unit.kode.label("unitkd"), Unit.nama.label("unitnm"))\
-                        .filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.unit_id==Unit.id,
-                                 AsetKib.kib=="C", AsetKib.tahun<=self.session['tahun'])\
-                        .order_by(AsetKategori.kode).all()
-
+        ### KIB F // PPKD
+        elif url_dict['act']=='kibf' :
+            subq = DBSession.query(AsetKategori.kode, func.coalesce(func.sum(AsetKib.jumlah),0).label('jumlah'),
+                   func.coalesce(func.sum(AsetKib.jumlah*AsetKib.harga),0).label('jmlharga'),
+                   ).filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.kib=='F', AsetKib.tahun<=self.session['tahun']
+                   ).group_by(AsetKategori.kode).subquery()
+                   
+            query = DBSession.query(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, 
+                   func.sum(func.coalesce(subq.c.jumlah,0)).label('jml'), func.sum(func.coalesce(subq.c.jmlharga,0)).label('jmlharga')
+                   ).filter(func.substr(AsetKategori.kode,1,1)=='6', 
+                   AsetKategori.kode==func.left(subq.c.kode,func.length(AsetKategori.kode))
+                   ).group_by(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id
+                   ).order_by(AsetKategori.kode)
+                    
             generator = asetr106Generator()
             pdf = generator.generate(query)
             response=req.response
@@ -486,67 +739,35 @@ class ViewAsetLap(BaseViews):
             response.write(pdf)
             return response
 
-        ### KIB D
-        elif url_dict['act']=='kibd' :
+        ### Rusak Berat // PPKD
+        elif url_dict['act']=='10' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
-            query = DBSession.query(AsetKategori.uraian.label("katnm"), AsetKategori.kode.label("katkd"), AsetKib.no_register, AsetKib.d_konstruksi, 
-                        AsetKib.d_panjang, AsetKib.d_lebar, AsetKib.d_luas, AsetKib.d_lokasi, AsetKib.d_dokumen_tanggal, 
-                        AsetKib.d_dokumen_nomor, AsetKib.d_status_tanah, AsetKib.d_kode_tanah, AsetKib.asal_usul, AsetKib.harga, AsetKib.kondisi, AsetKib.keterangan,
-                        AsetKib.tahun, Unit.kode.label("unitkd"), Unit.nama.label("unitnm"))\
-                        .filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.unit_id==Unit.id,
-                                 AsetKib.kib=="D", AsetKib.tahun<=self.session['tahun'])\
-                        .order_by(AsetKategori.kode).all()
-
-            generator = asetr107Generator()
-            pdf = generator.generate(query)
-            response=req.response
-            response.content_type="application/pdf"
-            response.content_disposition='filename=output.pdf' 
-            response.write(pdf)
-            return response
-
-        ### KIB E
-        elif url_dict['act']=='kibe' :
-            pk_id = 'id' in params and params['id'] and int(params['id']) or 0
-            query = DBSession.query(AsetKategori.uraian.label("katnm"), AsetKategori.kode.label("katkd"), AsetKib.no_register,  
-                    AsetKib.e_judul, AsetKib.e_spek, AsetKib.e_asal, AsetKib.e_pencipta, AsetKib.e_bahan, 
-                    AsetKib.e_jenis, AsetKib.e_ukuran, AsetKib.jumlah, AsetKib.asal_usul, AsetKib.b_thbuat, AsetKib.harga, AsetKib.keterangan,
-                    AsetKib.tahun, Unit.kode.label("unitkd"), Unit.nama.label("unitnm"))\
-                    .filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.unit_id==Unit.id,
-                             AsetKib.kib=="E", AsetKib.tahun<=self.session['tahun'])\
-                    .order_by(AsetKategori.kode).all()
+            subq = DBSession.query(AsetKategori.kode, func.coalesce(func.sum(AsetKib.jumlah),0).label('jumlah'),
+                   func.coalesce(func.sum(AsetKib.jumlah*AsetKib.harga),0).label('jmlharga'),
+                   ).filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.tahun<=self.session['tahun'],
+                   or_(AsetKib.kondisi=='RB', AsetKib.kondisi=='3')
+                   ).group_by(AsetKategori.kode).subquery()
+                   
+            query = DBSession.query(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, 
+                   func.sum(func.coalesce(subq.c.jumlah,0)).label('jml'), func.sum(func.coalesce(subq.c.jmlharga,0)).label('jmlharga')
+                   ).filter(
+                   AsetKategori.kode==func.left(subq.c.kode,func.length(AsetKategori.kode))
+                   ).group_by(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id
+                   ).order_by(AsetKategori.kode)
                     
-            generator = asetr108Generator()
+
+            generator = asetr110Generator()
             pdf = generator.generate(query)
             response=req.response
             response.content_type="application/pdf"
             response.content_disposition='filename=output.pdf' 
             response.write(pdf)
             return response
-
-        ### KIB F
-        elif url_dict['act']=='kibf' :
-            pk_id = 'id' in params and params['id'] and int(params['id']) or 0
-            query = DBSession.query(AsetKategori.uraian.label("katnm"), AsetKategori.kode.label("katkd"),  
-                    AsetKib.kondisi, AsetKib.f_bertingkat_tidak, AsetKib.f_beton_tidak, AsetKib.f_luas_lantai, AsetKib.f_lokasi, 
-                    AsetKib.f_dokumen_tanggal, AsetKib.f_dokumen_nomor, AsetKib.tgl_perolehan, AsetKib.f_status_tanah, AsetKib.f_kode_tanah, AsetKib.asal_usul, AsetKib.harga, AsetKib.keterangan,
-                    AsetKib.tahun, Unit.kode.label("unitkd"), Unit.nama.label("unitnm"))\
-                    .filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.unit_id==Unit.id,
-                             AsetKib.kib=="F", AsetKib.tahun<=self.session['tahun'])\
-                    .order_by(AsetKategori.kode).all()
-                    
-            generator = asetr109Generator()
-            pdf = generator.generate(query)
-            response=req.response
-            response.content_type="application/pdf"
-            response.content_disposition='filename=output.pdf' 
-            response.write(pdf)
-            return response
-
-        ### Buku Inventaris
+ 
+        ### Buku Inventaris // PPKD
         elif url_dict['act']=='11' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
-            query = DBSession.query(Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), AsetKategori.kode.label('kat_kd'),
+            """query = DBSession.query(Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), AsetKategori.kode.label('kat_kd'),
                   AsetKategori.uraian.label('kat_nm'), AsetKib.no_register, AsetKib.b_merk, AsetKib.b_type, AsetKib.a_sertifikat_nomor,
                   AsetKib.b_nomor_pabrik, AsetKib.b_nomor_rangka, AsetKib.b_nomor_mesin, AsetKib.b_bahan, AsetKib.asal_usul, AsetKib.th_beli,
                   AsetKib.e_ukuran, AsetKib.d_konstruksi, AsetKib.satuan, AsetKib.kondisi, AsetKib.jumlah, AsetKib.harga, AsetKib.keterangan
@@ -554,7 +775,19 @@ class ViewAsetLap(BaseViews):
                   AsetKib.tahun<=self.session['tahun'], 
                   or_(AsetKib.tgl_perolehan==None,extract('year',AsetKib.tgl_perolehan)==self.session['tahun'])
                   ).order_by(Unit.kode, AsetKategori.kode, AsetKib.no_register)
-                  
+            """      
+            subq = DBSession.query(AsetKategori.kode, func.coalesce(func.sum(AsetKib.jumlah),0).label('jumlah'),
+                   func.coalesce(func.sum(AsetKib.jumlah*AsetKib.harga),0).label('jmlharga'),
+                   ).filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.tahun<=self.session['tahun']
+                   ).group_by(AsetKategori.kode).subquery()
+                   
+            query = DBSession.query(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id, 
+                   func.sum(func.coalesce(subq.c.jumlah,0)).label('jml'), func.sum(func.coalesce(subq.c.jmlharga,0)).label('jmlharga')
+                   ).filter(
+                   AsetKategori.kode==func.left(subq.c.kode,func.length(AsetKategori.kode))
+                   ).group_by(AsetKategori.kode, AsetKategori.uraian, AsetKategori.level_id
+                   ).order_by(AsetKategori.kode)
+                    
 
             generator = asetr111Generator()
             pdf = generator.generate(query)
@@ -564,7 +797,7 @@ class ViewAsetLap(BaseViews):
             response.write(pdf)
             return response
  
-        ### Penghapusan
+        ### Penghapusan // PPKD
         elif url_dict['act']=='12' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             query = DBSession.query(Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), AsetKategori.kode.label('kat_kd'),
@@ -584,12 +817,33 @@ class ViewAsetLap(BaseViews):
             response.write(pdf)
             return response
  
-       ### Neraca
+       ### Neraca // PPKD
         elif url_dict['act']=='13' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             kategori_alias = aliased(AsetKategori)
             
-            query1 = DBSession.query(kategori_alias.kode.label('kode'), kategori_alias.uraian.label('uraian'), 
+            subq = DBSession.query(func.substr(AsetKategori.kode,1,1).label('kode1'),
+                   func.sum(AsetKib.jumlah*AsetKib.harga).label('jml_lalu'), literal_column('0').label('jml_kini')
+                   ).filter(AsetKategori.id==AsetKib.kategori_id, 
+                   AsetKib.tahun<self.session['tahun']
+                   ).group_by(func.substr(AsetKategori.kode,1,1)
+                   ).union(DBSession.query(func.substr(AsetKategori.kode,1,1).label('kode1'),
+                   literal_column('0').label('jml_lalu'), func.sum(AsetKib.jumlah*AsetKib.harga).label('jml_kini')
+                   ).filter(AsetKategori.id==AsetKib.kategori_id, 
+                   AsetKib.tahun==self.session['tahun']
+                   ).group_by(func.substr(AsetKategori.kode,1,1)
+                   )).subquery()
+            
+            query = DBSession.query(AsetKategori.kode, AsetKategori.uraian, 
+                   func.coalesce(func.sum(subq.c.jml_lalu),0).label('jml_lalu'),
+                   func.coalesce(func.sum(subq.c.jml_kini),0).label('jml_kini')
+                   ).outerjoin(subq, subq.c.kode1==AsetKategori.kode
+                   ).filter(AsetKategori.level_id==1
+                   ).group_by(AsetKategori.kode, AsetKategori.uraian
+                   ).order_by(AsetKategori.kode
+                   )                   
+
+            """query1 = DBSession.query(kategori_alias.kode.label('kode'), kategori_alias.uraian.label('uraian'), 
                   func.sum(AsetKib.harga*AsetKib.jumlah).label('nilai'), 
                   literal_column('1').label('detil')
                   ).outerjoin(AsetKebijakan
@@ -619,7 +873,7 @@ class ViewAsetLap(BaseViews):
             
             query = DBSession.query(subq.c.kode, subq.c.uraian, subq.c.nilai, subq.c.detil
                   ).order_by(subq.c.kode, subq.c.uraian)
-            
+            """
             generator = asetr113Generator()
             pdf = generator.generate(query)
             response=req.response
@@ -814,7 +1068,7 @@ class asetr003Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
 
-#KIB A
+#KIB A // SKPD
 class asetr004Generator(JasperGenerator):
     def __init__(self):
         super(asetr004Generator, self).__init__()
@@ -838,13 +1092,13 @@ class asetr004Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "asal_usul").text = row.asal_usul
             ET.SubElement(xml_greeting, "harga").text = unicode(row.harga)
             ET.SubElement(xml_greeting, "keterangan").text = row.keterangan
-            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
             ET.SubElement(xml_greeting, "unitkd").text = row.unitkd
             ET.SubElement(xml_greeting, "unitnm").text = row.unitnm
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
         
-#KIB B
+#KIB B // SKPD
 class asetr005Generator(JasperGenerator):
     def __init__(self):
         super(asetr005Generator, self).__init__()
@@ -869,15 +1123,15 @@ class asetr005Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "b_nomor_polisi").text = row.b_nomor_polisi
             ET.SubElement(xml_greeting, "b_nomor_bpkb").text = row.b_nomor_bpkb
             ET.SubElement(xml_greeting, "asal_usul").text = row.asal_usul
-            ET.SubElement(xml_greeting, "harga").text = row.harga
+            ET.SubElement(xml_greeting, "harga").text = unicode(row.harga)
             ET.SubElement(xml_greeting, "keterangan").text = row.keterangan
-            ET.SubElement(xml_greeting, "tahun").text = row.tahun
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
             ET.SubElement(xml_greeting, "unitkd").text = row.unitkd
             ET.SubElement(xml_greeting, "unitnm").text = row.unitnm
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
 
-#KIB C
+#KIB C // SKPD
 class asetr006Generator(JasperGenerator):
     def __init__(self):
         super(asetr006Generator, self).__init__()
@@ -894,7 +1148,7 @@ class asetr006Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "kondisi").text = row.kondisi
             ET.SubElement(xml_greeting, "c_bertingkat_tidak").text = row.c_bertingkat_tidak
             ET.SubElement(xml_greeting, "c_beton_tidak").text = row.c_beton_tidak
-            ET.SubElement(xml_greeting, "c_luas_lantai").text = row.c_luas_lantai
+            ET.SubElement(xml_greeting, "c_luas_lantai").text = unicode(row.c_luas_lantai)
             ET.SubElement(xml_greeting, "c_lokasi").text = row.c_lokasi
             ET.SubElement(xml_greeting, "c_dokumen_tanggal").text = unicode(row.c_dokumen_tanggal)
             ET.SubElement(xml_greeting, "c_dokumen_nomor").text = row.c_dokumen_nomor
@@ -904,13 +1158,13 @@ class asetr006Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "asal_usul").text = row.asal_usul
             ET.SubElement(xml_greeting, "harga").text = unicode(row.harga)
             ET.SubElement(xml_greeting, "keterangan").text = row.keterangan
-            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
             ET.SubElement(xml_greeting, "unitkd").text = row.unitkd
             ET.SubElement(xml_greeting, "unitnm").text = row.unitnm
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
 
-#KIB D
+#KIB D // SKPD
 class asetr007Generator(JasperGenerator):
     def __init__(self):
         super(asetr007Generator, self).__init__()
@@ -937,13 +1191,13 @@ class asetr007Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "harga").text = unicode(row.harga)
             ET.SubElement(xml_greeting, "kondisi").text = row.kondisi
             ET.SubElement(xml_greeting, "keterangan").text = row.keterangan
-            ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
             ET.SubElement(xml_greeting, "unitkd").text = row.unitkd
             ET.SubElement(xml_greeting, "unitnm").text = row.unitnm
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
 
-#KIB E
+#KIB E // SKPD
 class asetr008Generator(JasperGenerator):
     def __init__(self):
         super(asetr008Generator, self).__init__()
@@ -975,7 +1229,7 @@ class asetr008Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "customer").text = customer
         return self.root
 
-#KIB F
+#KIB F // SKPD
 class asetr009Generator(JasperGenerator):
     def __init__(self):
         super(asetr009Generator, self).__init__()
@@ -1006,7 +1260,43 @@ class asetr009Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "unitnm").text = row.unitnm
         return self.root
 
-#Inventaris
+#Rusak Berat // SKPD
+class asetr010Generator(JasperGenerator):
+    def __init__(self):
+        super(asetr010Generator, self).__init__()
+        self.reportname = get_rpath('aset/R0010.jrxml')
+        self.xpath = '/aset/kib'
+        self.root = ET.Element('aset') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'kib')
+            ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
+            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "kat_kd").text = row.kat_kd
+            ET.SubElement(xml_greeting, "kat_nm").text = row.kat_nm
+            ET.SubElement(xml_greeting, "no_register").text = unicode(row.no_register)
+            ET.SubElement(xml_greeting, "b_merk").text = row.b_merk
+            ET.SubElement(xml_greeting, "b_type").text = row.b_type
+            ET.SubElement(xml_greeting, "a_sertifikat_nomor").text = row.a_sertifikat_nomor
+            ET.SubElement(xml_greeting, "b_nomor_pabrik").text = row.b_nomor_pabrik
+            ET.SubElement(xml_greeting, "b_nomor_rangka").text = row.b_nomor_rangka
+            ET.SubElement(xml_greeting, "b_nomor_mesin").text = row.b_nomor_mesin
+            ET.SubElement(xml_greeting, "b_bahan").text = row.b_bahan
+            ET.SubElement(xml_greeting, "asal_usul").text = row.asal_usul
+            ET.SubElement(xml_greeting, "th_beli").text = unicode(row.th_beli)
+            ET.SubElement(xml_greeting, "e_ukuran").text = unicode(row.e_ukuran)
+            ET.SubElement(xml_greeting, "d_konstruksi").text = row.d_konstruksi
+            ET.SubElement(xml_greeting, "satuan").text = row.satuan
+            ET.SubElement(xml_greeting, "kondisi").text = row.kondisi
+            ET.SubElement(xml_greeting, "jumlah").text = unicode(row.jumlah)
+            ET.SubElement(xml_greeting, "harga").text = unicode(row.harga)
+            ET.SubElement(xml_greeting, "keterangan").text = row.keterangan
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "tahun").text = unicode(thn)
+        return self.root
+
+#Inventaris // SKPD
 class asetr011Generator(JasperGenerator):
     def __init__(self):
         super(asetr011Generator, self).__init__()
@@ -1042,7 +1332,7 @@ class asetr011Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "tahun").text = unicode(thn)
         return self.root
 
-#Penghapusan
+#Penghapusan // SKPD
 class asetr012Generator(JasperGenerator):
     def __init__(self):
         super(asetr012Generator, self).__init__()
@@ -1078,7 +1368,7 @@ class asetr012Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "tahun").text = unicode(thn)
         return self.root
 
-#Neraca
+#Neraca // SKPD
 class asetr013Generator(JasperGenerator):
     def __init__(self):
         super(asetr013Generator, self).__init__()
@@ -1089,18 +1379,152 @@ class asetr013Generator(JasperGenerator):
     def generate_xml(self, tobegreeted):
         for row in tobegreeted:
             xml_greeting  =  ET.SubElement(self.root, 'kib')
+            ET.SubElement(xml_greeting, "unitkd").text = row.unitkd
+            ET.SubElement(xml_greeting, "unitnm").text = row.unitnm
             ET.SubElement(xml_greeting, "kode").text = row.kode
             ET.SubElement(xml_greeting, "uraian").text = row.uraian
-            ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
-            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
-            ET.SubElement(xml_greeting, "nilai").text = unicode(row.nilai)
-            ET.SubElement(xml_greeting, "detil").text = unicode(row.detil)
+            ET.SubElement(xml_greeting, "jml_lalu").text = unicode(row.jml_lalu)
+            ET.SubElement(xml_greeting, "jml_kini").text = unicode(row.jml_kini)
             ET.SubElement(xml_greeting, "customer").text = customer
-            ET.SubElement(xml_greeting, "tahun").text = unicode(thn)
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
         return self.root
 
+#LAP KIB A // SKPD
+class asetr020Generator(JasperGenerator):
+    def __init__(self):
+        super(asetr020Generator, self).__init__()
+        self.reportname = get_rpath('aset/R0020.jrxml')
+        self.xpath = '/aset/kib'
+        self.root = ET.Element('aset') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'kib')
+            ET.SubElement(xml_greeting, "unitkd").text = row.unitkd
+            ET.SubElement(xml_greeting, "unitnm").text = row.unitnm
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "uraian").text = row.uraian
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "jml").text = unicode(row.jml)
+            ET.SubElement(xml_greeting, "jmlharga").text = unicode(row.jmlharga)
+            ET.SubElement(xml_greeting, "luas").text = unicode(row.luas)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
+        return self.root
+
+#LAP KIB B // SKPD
+class asetr021Generator(JasperGenerator):
+    def __init__(self):
+        super(asetr021Generator, self).__init__()
+        self.reportname = get_rpath('aset/R0021.jrxml')
+        self.xpath = '/aset/kib'
+        self.root = ET.Element('aset') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'kib')
+            ET.SubElement(xml_greeting, "unitkd").text = row.unitkd
+            ET.SubElement(xml_greeting, "unitnm").text = row.unitnm
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "uraian").text = row.uraian
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "jml").text = unicode(row.jml)
+            ET.SubElement(xml_greeting, "jmlharga").text = unicode(row.jmlharga)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
+        return self.root
+
+#LAP KIB C // SKPD
+class asetr022Generator(JasperGenerator):
+    def __init__(self):
+        super(asetr022Generator, self).__init__()
+        self.reportname = get_rpath('aset/R0022.jrxml')
+        self.xpath = '/aset/kib'
+        self.root = ET.Element('aset') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'kib')
+            ET.SubElement(xml_greeting, "unitkd").text = row.unitkd
+            ET.SubElement(xml_greeting, "unitnm").text = row.unitnm
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "uraian").text = row.uraian
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "jml").text = unicode(row.jml)
+            ET.SubElement(xml_greeting, "jmlharga").text = unicode(row.jmlharga)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
+        return self.root
+
+#LAP KIB D // SKPD
+class asetr023Generator(JasperGenerator):
+    def __init__(self):
+        super(asetr023Generator, self).__init__()
+        self.reportname = get_rpath('aset/R0023.jrxml')
+        self.xpath = '/aset/kib'
+        self.root = ET.Element('aset') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'kib')
+            ET.SubElement(xml_greeting, "unitkd").text = row.unitkd
+            ET.SubElement(xml_greeting, "unitnm").text = row.unitnm
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "uraian").text = row.uraian
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "jml").text = unicode(row.jml)
+            ET.SubElement(xml_greeting, "jmlharga").text = unicode(row.jmlharga)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
+        return self.root
+
+#LAP KIB E // SKPD
+class asetr024Generator(JasperGenerator):
+    def __init__(self):
+        super(asetr024Generator, self).__init__()
+        self.reportname = get_rpath('aset/R0024.jrxml')
+        self.xpath = '/aset/kib'
+        self.root = ET.Element('aset') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'kib')
+            ET.SubElement(xml_greeting, "unitkd").text = row.unitkd
+            ET.SubElement(xml_greeting, "unitnm").text = row.unitnm
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "uraian").text = row.uraian
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "jml").text = unicode(row.jml)
+            ET.SubElement(xml_greeting, "jmlharga").text = unicode(row.jmlharga)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
+        return self.root
+
+#LAP KIB F // SKPD
+class asetr025Generator(JasperGenerator):
+    def __init__(self):
+        super(asetr025Generator, self).__init__()
+        self.reportname = get_rpath('aset/R0025.jrxml')
+        self.xpath = '/aset/kib'
+        self.root = ET.Element('aset') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'kib')
+            ET.SubElement(xml_greeting, "unitkd").text = row.unitkd
+            ET.SubElement(xml_greeting, "unitnm").text = row.unitnm
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "uraian").text = row.uraian
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "jml").text = unicode(row.jml)
+            ET.SubElement(xml_greeting, "jmlharga").text = unicode(row.jmlharga)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
+        return self.root
+
+        
 #KIB A // PPKD
-class asetr104Generator(JasperGenerator):
+"""class asetr104Generator(JasperGenerator):
     def __init__(self):
         super(asetr104Generator, self).__init__()
         self.reportname = get_rpath('aset/R1004.jrxml')
@@ -1290,44 +1714,49 @@ class asetr109Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "unitkd").text = row.unitkd
             ET.SubElement(xml_greeting, "unitnm").text = row.unitnm
         return self.root
+"""
         
-#Inventaris
-class asetr111Generator(JasperGenerator):
+#Rusak Berat // PPKD
+class asetr110Generator(JasperGenerator):
     def __init__(self):
-        super(asetr111Generator, self).__init__()
-        self.reportname = get_rpath('aset/R1011.jrxml')
+        super(asetr110Generator, self).__init__()
+        self.reportname = get_rpath('aset/R0110.jrxml')
         self.xpath = '/aset/kib'
         self.root = ET.Element('aset') 
 
     def generate_xml(self, tobegreeted):
         for row in tobegreeted:
             xml_greeting  =  ET.SubElement(self.root, 'kib')
-            ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
-            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
-            ET.SubElement(xml_greeting, "kat_kd").text = row.kat_kd
-            ET.SubElement(xml_greeting, "kat_nm").text = row.kat_nm
-            ET.SubElement(xml_greeting, "no_register").text = unicode(row.no_register)
-            ET.SubElement(xml_greeting, "b_merk").text = row.b_merk
-            ET.SubElement(xml_greeting, "b_type").text = row.b_type
-            ET.SubElement(xml_greeting, "a_sertifikat_nomor").text = row.a_sertifikat_nomor
-            ET.SubElement(xml_greeting, "b_nomor_pabrik").text = row.b_nomor_pabrik
-            ET.SubElement(xml_greeting, "b_nomor_rangka").text = row.b_nomor_rangka
-            ET.SubElement(xml_greeting, "b_nomor_mesin").text = row.b_nomor_mesin
-            ET.SubElement(xml_greeting, "b_bahan").text = row.b_bahan
-            ET.SubElement(xml_greeting, "asal_usul").text = row.asal_usul
-            ET.SubElement(xml_greeting, "th_beli").text = unicode(row.th_beli)
-            ET.SubElement(xml_greeting, "e_ukuran").text = unicode(row.e_ukuran)
-            ET.SubElement(xml_greeting, "d_konstruksi").text = row.d_konstruksi
-            ET.SubElement(xml_greeting, "satuan").text = row.satuan
-            ET.SubElement(xml_greeting, "kondisi").text = row.kondisi
-            ET.SubElement(xml_greeting, "jumlah").text = unicode(row.jumlah)
-            ET.SubElement(xml_greeting, "harga").text = unicode(row.harga)
-            ET.SubElement(xml_greeting, "keterangan").text = row.keterangan
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "uraian").text = row.uraian
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "jml").text = unicode(row.jml)
+            ET.SubElement(xml_greeting, "jmlharga").text = unicode(row.jmlharga)
             ET.SubElement(xml_greeting, "customer").text = customer
-            ET.SubElement(xml_greeting, "tahun").text = unicode(thn)
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
         return self.root
         
-#Penghapusan
+#Inventaris // PPKD
+class asetr111Generator(JasperGenerator):
+    def __init__(self):
+        super(asetr111Generator, self).__init__()
+        self.reportname = get_rpath('aset/R0111.jrxml')
+        self.xpath = '/aset/kib'
+        self.root = ET.Element('aset') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'kib')
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "uraian").text = row.uraian
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "jml").text = unicode(row.jml)
+            ET.SubElement(xml_greeting, "jmlharga").text = unicode(row.jmlharga)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
+        return self.root
+        
+#Penghapusan // PPKD
 class asetr112Generator(JasperGenerator):
     def __init__(self):
         super(asetr112Generator, self).__init__()
@@ -1363,11 +1792,11 @@ class asetr112Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "tahun").text = unicode(thn)
         return self.root
 
-#Neraca
+#Neraca // PPKD
 class asetr113Generator(JasperGenerator):
     def __init__(self):
         super(asetr113Generator, self).__init__()
-        self.reportname = get_rpath('aset/R1013.jrxml')
+        self.reportname = get_rpath('aset/R0113.jrxml')
         self.xpath = '/aset/kib'
         self.root = ET.Element('aset') 
 
@@ -1376,9 +1805,130 @@ class asetr113Generator(JasperGenerator):
             xml_greeting  =  ET.SubElement(self.root, 'kib')
             ET.SubElement(xml_greeting, "kode").text = row.kode
             ET.SubElement(xml_greeting, "uraian").text = row.uraian
-            ET.SubElement(xml_greeting, "nilai").text = unicode(row.nilai)
-            ET.SubElement(xml_greeting, "detil").text = unicode(row.detil)
+            ET.SubElement(xml_greeting, "jml_lalu").text = unicode(row.jml_lalu)
+            ET.SubElement(xml_greeting, "jml_kini").text = unicode(row.jml_kini)
             ET.SubElement(xml_greeting, "customer").text = customer
-            ET.SubElement(xml_greeting, "tahun").text = unicode(thn)
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
+        return self.root
+
+#LAP KIB A // PPKD
+class asetr101Generator(JasperGenerator):
+    def __init__(self):
+        super(asetr101Generator, self).__init__()
+        self.reportname = get_rpath('aset/R0101.jrxml')
+        self.xpath = '/aset/kib'
+        self.root = ET.Element('aset') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'kib')
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "uraian").text = row.uraian
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "jml").text = unicode(row.jml)
+            ET.SubElement(xml_greeting, "jmlharga").text = unicode(row.jmlharga)
+            ET.SubElement(xml_greeting, "luas").text = unicode(row.luas)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
+        return self.root
+
+#LAP KIB B // PPKD
+class asetr102Generator(JasperGenerator):
+    def __init__(self):
+        super(asetr102Generator, self).__init__()
+        self.reportname = get_rpath('aset/R0102.jrxml')
+        self.xpath = '/aset/kib'
+        self.root = ET.Element('aset') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'kib')
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "uraian").text = row.uraian
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "jml").text = unicode(row.jml)
+            ET.SubElement(xml_greeting, "jmlharga").text = unicode(row.jmlharga)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
+        return self.root
+
+#LAP KIB C // PPKD
+class asetr103Generator(JasperGenerator):
+    def __init__(self):
+        super(asetr103Generator, self).__init__()
+        self.reportname = get_rpath('aset/R0103.jrxml')
+        self.xpath = '/aset/kib'
+        self.root = ET.Element('aset') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'kib')
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "uraian").text = row.uraian
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "jml").text = unicode(row.jml)
+            ET.SubElement(xml_greeting, "jmlharga").text = unicode(row.jmlharga)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
+        return self.root
+
+#LAP KIB D // PPKD
+class asetr104Generator(JasperGenerator):
+    def __init__(self):
+        super(asetr104Generator, self).__init__()
+        self.reportname = get_rpath('aset/R0104.jrxml')
+        self.xpath = '/aset/kib'
+        self.root = ET.Element('aset') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'kib')
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "uraian").text = row.uraian
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "jml").text = unicode(row.jml)
+            ET.SubElement(xml_greeting, "jmlharga").text = unicode(row.jmlharga)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
+        return self.root
+
+#LAP KIB E // PPKD
+class asetr105Generator(JasperGenerator):
+    def __init__(self):
+        super(asetr105Generator, self).__init__()
+        self.reportname = get_rpath('aset/R0105.jrxml')
+        self.xpath = '/aset/kib'
+        self.root = ET.Element('aset') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'kib')
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "uraian").text = row.uraian
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "jml").text = unicode(row.jml)
+            ET.SubElement(xml_greeting, "jmlharga").text = unicode(row.jmlharga)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
+        return self.root
+
+#LAP KIB F // PPKD
+class asetr106Generator(JasperGenerator):
+    def __init__(self):
+        super(asetr106Generator, self).__init__()
+        self.reportname = get_rpath('aset/R0106.jrxml')
+        self.xpath = '/aset/kib'
+        self.root = ET.Element('aset') 
+
+    def generate_xml(self, tobegreeted):
+        for row in tobegreeted:
+            xml_greeting  =  ET.SubElement(self.root, 'kib')
+            ET.SubElement(xml_greeting, "kode").text = row.kode
+            ET.SubElement(xml_greeting, "uraian").text = row.uraian
+            ET.SubElement(xml_greeting, "level_id").text = unicode(row.level_id)
+            ET.SubElement(xml_greeting, "jml").text = unicode(row.jml)
+            ET.SubElement(xml_greeting, "jmlharga").text = unicode(row.jmlharga)
+            ET.SubElement(xml_greeting, "customer").text = customer
+            ET.SubElement(xml_greeting, "thn").text = unicode(thn)
         return self.root
 

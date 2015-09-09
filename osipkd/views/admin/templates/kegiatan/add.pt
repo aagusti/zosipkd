@@ -33,6 +33,7 @@
                  "hint"     : true,
                  "highlight": true,
                  "minLength": 1,
+                 "limit"    : 10,
                  "remote"   : "/program/act/headofnama?term=%QUERY",
             },{
                 "name"      : 'program_nm',

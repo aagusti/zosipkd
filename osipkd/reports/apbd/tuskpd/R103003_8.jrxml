@@ -439,7 +439,7 @@
 	<detail>
 		<band height="14">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="365" y="0" width="67" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="365" y="0" width="67" height="14" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -450,7 +450,7 @@
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{amount})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="432" y="0" width="45" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="432" y="0" width="45" height="14" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -461,7 +461,7 @@
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{pph})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="477" y="0" width="45" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="477" y="0" width="45" height="14" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -472,7 +472,7 @@
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{ppn})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="276" y="0" width="22" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="276" y="0" width="22" height="14" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -483,7 +483,7 @@
 				<textFieldExpression><![CDATA[$F{ap_kwitansi_no}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="232" y="0" width="44" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="232" y="0" width="44" height="14" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -494,7 +494,7 @@
 				<textFieldExpression><![CDATA[$F{ap_kwitansi_tgl}=="None" ? "" : $F{ap_kwitansi_tgl}.substring(8,10)+"-"+$F{ap_kwitansi_tgl}.substring(5,7)+"-"+$F{ap_kwitansi_tgl}.substring(0,4)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="161" y="0" width="71" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="161" y="0" width="71" height="14" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -505,7 +505,7 @@
 				<textFieldExpression><![CDATA[$F{rek_nm}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="17" y="0" width="95" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="17" y="0" width="95" height="14" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -516,7 +516,7 @@
 				<textFieldExpression><![CDATA[$F{unit_kd}+" "+$F{prg_kd}.substring(5)+" "+$F{keg_kd}.substring(8)+" "+$F{rek_kd}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="17" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="17" height="14" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -527,7 +527,7 @@
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="112" y="0" width="49" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="112" y="0" width="49" height="14" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -538,7 +538,7 @@
 				<textFieldExpression><![CDATA[$F{ap_nama}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="342" y="0" width="23" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="342" y="0" width="23" height="14" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -549,7 +549,7 @@
 				<textFieldExpression><![CDATA[$F{no_bku}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="298" y="0" width="44" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="298" y="0" width="44" height="14" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>

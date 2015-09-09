@@ -84,6 +84,7 @@
             "hint": true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote": "/unit/act/headofkode?term=%QUERY", 
         },
         {
@@ -95,6 +96,7 @@
             "hint": true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote": "/unit/act/headofnama?term=%QUERY", 
         },
         {

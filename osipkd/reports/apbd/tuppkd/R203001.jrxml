@@ -108,14 +108,11 @@
 	<field name="potongan" class="java.lang.String">
 		<fieldDescription><![CDATA[potongan]]></fieldDescription>
 	</field>
-	<field name="kode" class="java.lang.String">
-		<fieldDescription><![CDATA[kode]]></fieldDescription>
-	</field>
 	<variable name="nominal" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{nilai})]]></variableExpression>
 	</variable>
 	<variable name="jenis" class="java.lang.String">
-		<variableExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : ($F{jenis}=="4" && $F{kode}=="-GJ") ? "LS-GJ" : ($F{jenis}=="4" && $F{kode}!="-GJ") ? "LS" : ""]]></variableExpression>
+		<variableExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : ($F{jenis}=="4" && $F{keg_kd}=="0.00.00.21") ? "LS-GJ" : ($F{jenis}=="4" && $F{keg_kd}!="0.00.00.21") ? "LS" : ""]]></variableExpression>
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
 	</variable>
 	<variable name="ppn" class="java.lang.Double">

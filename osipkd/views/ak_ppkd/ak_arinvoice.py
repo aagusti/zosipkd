@@ -74,7 +74,7 @@ class view_ak_arinvoice(BaseViews):
                           ARInvoice.posted1,
                         ).filter(ARInvoice.tahun_id==ses['tahun'],
                                  ARInvoice.unit_id==ses['unit_id'],
-                        ).order_by(ARInvoice.id.asc()
+                        #).order_by(ARInvoice.id.asc()
                         )
                 rowTable = DataTables(req, ARInvoice, query, columns)
                 return rowTable.output_result()

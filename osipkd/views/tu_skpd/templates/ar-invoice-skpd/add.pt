@@ -78,6 +78,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/ag-kegiatan-sub/act/headofkode2?unit_id="+$("#unit_id").val()+"&term=%QUERY",
             },
             {
@@ -88,6 +89,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/ag-kegiatan-sub/act/headofnama2?unit_id="+$("#unit_id").val()+"&term=%QUERY",
             },
             {
@@ -168,6 +170,7 @@
           </div>
         </div> 
       </div>
+      
       <!--Penyetor--------------------------------------------------------------------> 
       <div class="form-group"> 
         <div tal:define="field form['penyetor']" id="item-${field.oid}">
@@ -273,12 +276,8 @@
             </div>
           </div>            
           <script>
-          //save 
-           $('#rekening_add').click(function () {
-            $('#ar_invoice_item_id').val('');
-            $('#detail').submit();
-         
-          /**$('#rekening_add').click(function () {
+           
+          $('#rekening_add').click(function () {
             var kegiatan_item_id;
             var nilai1 = parseInt($('#nilai1').val());
             var harga  = parseInt($('#harga').val());
@@ -295,14 +294,10 @@
                 $('#ar_invoice_item_id').val('');
                 $('#detail').submit();
             }
-            }*/
-           });
+            }
+           })
 // save update
           $('#rekening_save').click(function () {
-            $('#ar_invoice_item_id').val();
-            $('#detail').submit();
-
-          /*$('#rekening_save').click(function () {
             var kegiatan_item_id;
             var nilai1 = parseInt($('#nilai1').val());
                     var harga  = parseInt($('#harga').val());
@@ -319,13 +314,14 @@
                 $('#ar_invoice_item_id').val();
                 $('#detail').submit();
             }
-            }*/
-           });
+            }
+           })
 //
           $('#item_nm').typeahead({
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/ag-kegiatan-item/act/headofnama?kegiatan_sub_id="+$("#kegiatan_sub_id").val()+"&term=%QUERY", 
           },{
              "name"      : 'item_nm',

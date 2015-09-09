@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R3221_subreport1" language="groovy" pageWidth="864" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="864" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R3221_subreport1" language="groovy" pageWidth="972" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="972" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="146"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[/apbd/kegiatan/indikator]]>
@@ -57,7 +57,7 @@
 				<textFieldExpression><![CDATA[$F{tolok_ukur_1}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="486" y="0" width="190" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="488" y="0" width="190" height="14"/>
 				<textElement>
 					<font size="9"/>
 				</textElement>
@@ -78,7 +78,7 @@
 				<textFieldExpression><![CDATA[$F{no_urut}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="676" y="0" width="183" height="14"/>
+				<reportElement stretchType="RelativeToBandHeight" x="678" y="0" width="190" height="14"/>
 				<textElement>
 					<font size="9"/>
 				</textElement>

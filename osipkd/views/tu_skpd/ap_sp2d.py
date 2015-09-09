@@ -71,7 +71,8 @@ class view_ap_sp2d(BaseViews):
                         ).filter(Spp.tahun_id==ses['tahun'],
                                  Spp.unit_id==ses['unit_id'],
                                  Sp2d.ap_spm_id==Spm.id,
-                        ).order_by(Spm.kode.desc())
+                        #).order_by(Spm.kode.desc()
+                        )
                 else :
                   query = DBSession.query(Sp2d.id, 
                                         Sp2d.kode, 
@@ -88,7 +89,8 @@ class view_ap_sp2d(BaseViews):
                                  Spp.unit_id==ses['unit_id'],
                                  Sp2d.ap_spm_id==Spm.id,
                                  extract('month',Sp2d.tanggal)==bulan
-                        ).order_by(Spm.kode.desc())
+                        #).order_by(Spm.kode.desc()
+                        )
                   
                 rowTable = DataTables(req, Sp2d, query, columns)
                 return rowTable.output_result()

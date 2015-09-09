@@ -54,12 +54,14 @@ class view_ap_advist_ppkd(BaseViews):
                 if bulan==0 :
                   query = DBSession.query(Advist
                         ).filter(Advist.tahun_id==ses['tahun']
-                        ).order_by(Advist.kode.asc())
+                        #).order_by(Advist.kode.asc()
+                        )
                 else :
                   query = DBSession.query(Advist
                         ).filter(Advist.tahun_id==ses['tahun'],
                         extract('month',Advist.tanggal)==bulan
-                        ).order_by(Advist.kode.asc())
+                        #).order_by(Advist.kode.asc()
+                        )
                            
                 rowTable = DataTables(req, Advist, query, columns)
                 return rowTable.output_result()
@@ -104,7 +106,7 @@ class view_ap_advist_ppkd(BaseViews):
             no_urut  = row.no_urut
             no       = "00000%d" % no_urut
             nomor    = no[-6:]
-            row.kode = "%s" % nomor + "-BUD-%d" % tahun
+            row.kode = "%d" % tahun + "-BUD-%s" % nomor
             #row.kode = "%d" % tahun + "-%s" % unit_kd + "-BUD-%s" % nomor
             
         DBSession.add(row)

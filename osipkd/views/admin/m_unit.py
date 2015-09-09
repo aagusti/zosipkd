@@ -56,10 +56,7 @@ class AddSchema(colander.Schema):
                     colander.String(),
                     oid = "alamat",
                     title = "Alamat",
-                    #default = "",
-                    #missing = colander.null
-                    missing = None
-                    )
+                    missing = colander.drop,)
     kategori = colander.SchemaNode(
                     colander.String(),
                     oid = "kategori",
@@ -132,7 +129,7 @@ class view_unit(BaseViews):
             
             ## kondisi group TAPD (semua unit)
             if req.user.id>1 and 'g:admin' not in groupfinder(req.user, req) and not ids :
-               grp = DBSession.query(alltrim(func.lower(Group.group_name)).label('group_nama'), 
+               grp = DBSession.query(func.lower(Group.group_name).label('group_nama'), 
                  func.substr(func.lower(Group.group_name),func.length(Group.group_name)-5,6).label('group_singkat')
                  ).filter(UserGroup.user_id==req.user.id, Group.id==UserGroup.group_id).first()
                grps_nm = '%s' % grp.group_nama 
@@ -241,7 +238,6 @@ class view_unit(BaseViews):
             row.created = datetime.now()
             row.create_uid = user.id
         row.from_dict(values)
-        print "---------------------------------------->>", values
         row.updated = datetime.now()
         row.update_uid = user.id
         row.disabled = 'disabled' in values and values['disabled'] and 1 or 0

@@ -46,6 +46,7 @@
             "hint"     : true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote"   : "/unit/act/headofkode?term=%QUERY", 
         },{
            "name"      : 'unit_kd',
@@ -56,6 +57,7 @@
             "hint"     : true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote"   : "/unit/act/headofnama?term=%QUERY", 
         },{
            "name"      : 'unit_nm',
@@ -152,6 +154,7 @@
             "bAutoWidth"     : false,
             "bPaginate"      : true,
             "sPaginationType": "full_numbers",
+            "order"          : [[ 1, "desc" ]],
 
             "lengthMenu": [
                 [10, 25, 50, 100],
@@ -170,7 +173,7 @@
             },{
                "bSearchable": true,
                "bSortable"  : false,
-               "aTargets"   : [2,3,4,5,6]
+               "aTargets"   : [3,5,6]
             },{
                 "aTargets" : [4], // Column number which needs to be modified
                 "mRender"  : function (data, type, full) {

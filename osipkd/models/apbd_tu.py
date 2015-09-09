@@ -537,7 +537,7 @@ class Giro(NamaModel, Base):
     @classmethod
     def max_no_urut(cls, tahun):
         return DBSession.query(func.max(cls.no_urut).label('no_urut'))\
-                .filter(cls.tahun_id==tahun
+                .filter(cls.tahun_id==tahun,
                 ).scalar() or 0
 
     @classmethod
@@ -552,7 +552,7 @@ class Giro(NamaModel, Base):
     @classmethod
     def get_norut(cls, tahun):
         return DBSession.query(func.count(cls.id).label('no_urut'))\
-               .filter(cls.tahun_id==tahun
+               .filter(cls.tahun_id==tahun,
                ).scalar() or 0               
 
 class GiroItem(DefaultModel, Base):

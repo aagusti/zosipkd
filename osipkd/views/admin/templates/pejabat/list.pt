@@ -26,6 +26,7 @@
             "hint"     : true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote"   : "/unit/act/headofkode?term=%QUERY", 
         },{
            "name"      : 'unit_kd',
@@ -36,6 +37,7 @@
             "hint"     : true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote"   : "/unit/act/headofnama?term=%QUERY", 
         },{
            "name"      : 'unit_nm',

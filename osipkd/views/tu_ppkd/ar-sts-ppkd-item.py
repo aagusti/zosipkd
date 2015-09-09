@@ -64,12 +64,12 @@ class view_ar_sts_ppkd_item(BaseViews):
                                    KegiatanSub.kegiatan_id==Kegiatan.id,
                           ).group_by(StsItem.id,
                                      StsItem.kegiatan_item_id,
-                                     Kegiatan.kode,
-                                     KegiatanSub.no_urut,
-                                     Rekening.kode,
-                                     Rekening.nama,
-                                     StsItem.amount,
-                                     KegiatanSub.nama,
-                                     cast(KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2,BigInteger))
+                                     Kegiatan.kode.label('kode1'),
+                                     KegiatanSub.no_urut.label('no_urut1'),
+                                     Rekening.kode.label('kode_rek'),
+                                     Rekening.nama.label('nama_rek'),
+                                     StsItem.amount.label('amount'),
+                                     KegiatanSub.nama.label('nama'),
+                                     cast(KegiatanItem.hsat_4*KegiatanItem.vol_4_1*KegiatanItem.vol_4_2,BigInteger).label('nilai1'))
                 rowTable = DataTables(req, StsItem, query, columns)
                 return rowTable.output_result()

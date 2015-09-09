@@ -122,7 +122,7 @@ def view_add(request):
         rows.nominal=amount
         DBSession.add(rows)
         DBSession.flush()
-        
+    
     #Untuk update status posted dan status_spp pada APInvoice
     row = DBSession.query(APInvoice).filter(APInvoice.id==controls['ap_invoice_id']).first()   
     #row.disabled=1

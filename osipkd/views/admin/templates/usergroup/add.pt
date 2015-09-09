@@ -3,6 +3,28 @@
 <h3>Tambah User Group</h3>
 <div tal:content="structure form"/>
 <script>
+  $('#user_nm').typeahead({
+       "hint"     : true,
+       "highlight": true,
+       "minLength": 1,
+       "limit"    : 10,
+       "remote"   : "/group/act/headofnama?term=%QUERY",
+  },{
+      "name"      : 'user_nm',
+      "displayKey": 'value',
+  })
+
+  $('#group_nm').typeahead({
+       "hint"     : true,
+       "highlight": true,
+       "minLength": 1,
+       "limit"    : 10,
+       "remote"   : "/user/act/headofnama?term=%QUERY",
+  },{
+      "name"      : 'group_nm',
+      "displayKey": 'value',
+  })
+  
   $('#user_nm').bind('typeahead:selected', function(obj, datum, name) {      
         $('#user_id').val(datum.id);
   });

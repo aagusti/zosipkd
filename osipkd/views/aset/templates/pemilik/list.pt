@@ -37,16 +37,17 @@
       $(document).ready(function () {
         oTable = $('#table1').dataTable({
           "sDom": '<"toolbar">lfrtip',
-          "sAjaxSource": oTableUrl,
-          "bServerSide": true,
-          "bProcessing": true,
+          "sAjaxSource"    : oTableUrl,
+          "bServerSide"    : true,
+          "bProcessing"    : true,
           "bScrollCollapse": true,
-          "bSort": true,
-          "bInfo": false,
-          "bFilter": true,
-          "bAutoWidth": false,
-          "bPaginate": true,
+          "bSort"          : true,
+          "bInfo"          : false,
+          "bFilter"        : true,
+          "bAutoWidth"     : false,
+          "bPaginate"      : true,
           "sPaginationType": "full_numbers",
+          "order"          : [[ 1, "asc" ]],
           
           "lengthMenu": [
               [10, 25, 50, 100],

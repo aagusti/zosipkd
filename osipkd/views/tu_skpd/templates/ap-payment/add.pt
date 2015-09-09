@@ -80,6 +80,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/ap-invoice-skpd/act/headofkode2?term=%QUERY",
             },{
              "name"      : 'inv_kd',
@@ -89,6 +90,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/ap-invoice-skpd/act/headofnama2?term=%QUERY",
             },{
              "name"      : 'inv_nm',
@@ -249,6 +251,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/ag-kegiatan-sub/act/headofkode1?term=%QUERY",
             },{
              "name"      : 'kegiatan_kd',
@@ -258,6 +261,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/ag-kegiatan-sub/act/headofnama1?term=%QUERY",
             },{
              "name"      : 'kegiatan_nm',
@@ -465,7 +469,6 @@
                ${error}</p>
           </div>
         </div>
-        <!--tanggal-------------------------------------------------------------------->
       </div>
 
       <div class="form-group"> 

@@ -90,6 +90,7 @@
                     "hint"     : true,
                     "highlight": true,
                     "minLength": 1,
+                    "limit"    : 10,
                     "remote"   : "/ap-spd/act/headofkode1?term=%QUERY",
                   },
                   {
@@ -100,6 +101,7 @@
                     "hint"     : true,
                     "highlight": true,
                     "minLength": 1,
+                    "limit"    : 10,
                     "remote"   : "/ap-spd/act/headofnama1?term=%QUERY",
                   },
                   {
@@ -320,6 +322,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofnip2?term=%QUERY",
             },
             {
@@ -330,6 +333,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofnama2?term=%QUERY",
             },
             {
@@ -403,6 +407,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofkode4?term=%QUERY",
             },
             {
@@ -413,6 +418,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofnip4?term=%QUERY",
             },
             {
@@ -423,6 +429,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofnama4?term=%QUERY",
             },
             {
@@ -433,6 +440,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofnip4?term=%QUERY",
             },
             {
@@ -517,6 +525,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofkode4?term=%QUERY",
             },
             {
@@ -527,6 +536,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofnip4?term=%QUERY",
             },
             {
@@ -537,6 +547,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofnama4?term=%QUERY",
             },
             {
@@ -547,6 +558,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofnip4?term=%QUERY",
             },
             {
@@ -617,6 +629,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofkode5?term=%QUERY",
             },
             {
@@ -627,6 +640,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofnip5?term=%QUERY",
             },
             {
@@ -637,6 +651,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofnama5?term=%QUERY",
             },
             {
@@ -749,6 +764,7 @@
                 "hint"     : true,
                 "highlight": true,
                 "minLength": 1,
+                "limit"    : 10,
                 "remote"   : "/ap-invoice-skpd/act/headofkode1?jenis="+$('#jenis').val()+"&term=%QUERY", 
             },{
                "name"      : 'kode1',

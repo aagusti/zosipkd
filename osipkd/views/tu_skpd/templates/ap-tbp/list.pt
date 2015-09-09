@@ -25,18 +25,28 @@
             <label for="tanggal" class="control-label col-md-4" id="req-tanggal">
                     Tanggal</label>
             <div class="col-md-3">
-               <input id="tanggal" class="form-control"  type="date"  
+               <input id="tanggal" class="form-control" type="date" readonly 
                       value="${request.session['tanggal']}" name="tanggal">
             </div>
           </div>
-      <script>      
+      <script>
+      /*$('#tanggal').click(
+          function(){
+            if (!Modernizr.inputtypes['date'] ||
+                "date" != "date"){
+              $('#tanggal').pickadate({"selectMonths": true,
+                "submitFormat": "yyyy-mm-dd", 
+                "selectYears": true, "format": "yyyy-mm-dd"});
+            }
+          }
+      );
+      */
       $('#tanggal').pickadate({"selectMonths": true,
         "submitFormat": "yyyy-mm-dd", 
         "selectYears": true, 
         "format": "yyyy-mm-dd",
         });
-      
-      
+        
       $('#tanggal').change(function(){
             $.ajax({
               type: "POST",
@@ -89,6 +99,7 @@
             "hint": true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote": "/unit/act/headofkode?term=%QUERY", 
         },
         {
@@ -100,6 +111,7 @@
             "hint": true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote": "/unit/act/headofnama?term=%QUERY", 
         },
         {
@@ -342,7 +354,6 @@
             }
         });
         
-
         $('#btn_print').click(function () {
             var tgl = $('#tanggal').val();
             url = "/ar-report-skpd/act/ap-tbp?mulai="+tgl;

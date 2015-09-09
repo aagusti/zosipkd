@@ -217,7 +217,7 @@ def view_edit(request):
             if row.id==1 and request.user.id>1 :
                 request.session.flash('User tidak mempunyai hak akses mengupdate data user admin', 'error')
                 return route_list(request)
-                
+          
             controls = request.POST.items()
             try:
                 c = form.validate(controls)

@@ -236,6 +236,7 @@
             "hint": true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote": "/unit/act/headofkode?term=%QUERY", 
         },
         {
@@ -247,6 +248,7 @@
             "hint": true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote": "/unit/act/headofnama?term=%QUERY", 
         },
         {
@@ -383,6 +385,7 @@
           "hint"     : true,
           "highlight": true,
           "minLength": 1,
+          "limit"    : 10,
           "remote"   : "/sap/act/headofkode12?term=%QUERY", 
       },{
          "name"      : 'rekening_sap_kd',
@@ -393,6 +396,7 @@
           "hint"     : true,
           "highlight": true,
           "minLength": 1,
+          "limit"    : 10,
           "remote"   : "/sap/act/headofnama12?term=%QUERY", 
       },{
          "name"      : 'rekening_sap_nm',
@@ -414,6 +418,7 @@
           "hint"     : true,
           "highlight": true,
           "minLength": 1,
+          "limit"    : 10,
           "remote"   : "/rekening/act/headofkode11?term=%QUERY", 
       },{
          "name"      : 'rekening_kd',
@@ -424,6 +429,7 @@
           "hint"     : true,
           "highlight": true,
           "minLength": 1,
+          "limit"    : 10,
           "remote"   : "/rekening/act/headofnama11?term=%QUERY", 
       },{
          "name"      : 'rekening_nm',

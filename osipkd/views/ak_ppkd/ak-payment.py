@@ -92,7 +92,7 @@ class view_ak_payment(BaseViews):
                                  APPayment.unit_id==ses['unit_id'],
                                  APPayment.kegiatan_sub_id==KegiatanSub.id,
                                  APPayment.invoice_id==APInvoice.id,
-                        ).order_by(APPayment.no_urut.desc()
+                        #).order_by(APPayment.no_urut.desc()
                         ).group_by(APPayment.id,
                                    APPayment.tanggal,
                                    KegiatanSub.nama,

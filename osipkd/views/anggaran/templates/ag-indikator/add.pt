@@ -231,7 +231,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group" tal:attributes="style request.session['ag_step_id']!=4 and  'display:readonly'">
+                    <div class="form-group" tal:attributes="style request.session['ag_step_id']!=3 and  'display:readonly'">
                         <div class="col-sm-12">
                           <div class="form-group">
                             <div tal:define="field form['tolok_ukur_4']">

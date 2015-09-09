@@ -85,7 +85,7 @@
 	<variable name="amount_kini_4" class="java.lang.Double" resetType="Group" resetGroup="kode4" calculation="Sum">
 		<variableExpression><![CDATA[Double.parseDouble($F{amount_kini})]]></variableExpression>
 	</variable>
-	<variable name="amount_lalu_1" class="java.lang.Double" resetType="Group" resetGroup="kode1" calculation="Sum">
+	<variable name="amount_lalu_1" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{amount_lalu})]]></variableExpression>
 	</variable>
 	<variable name="amount_kini_2" class="java.lang.Double" resetType="Group" resetGroup="kode2" calculation="Sum">

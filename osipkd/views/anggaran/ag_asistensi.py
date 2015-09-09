@@ -157,6 +157,8 @@ def save(values, request, user, row=None):
     if not values['catatan_4']: 
         values['catatan_4']='-'
         
+    
+        
     row.from_dict(values)
     
     DBSession.add(row)

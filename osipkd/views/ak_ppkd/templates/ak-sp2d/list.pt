@@ -47,6 +47,7 @@
             "hint": true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote": "/unit/act/headofkode?term=%QUERY", 
         },
         {
@@ -58,6 +59,7 @@
             "hint": true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote": "/unit/act/headofnama?term=%QUERY", 
         },
         {
@@ -156,6 +158,7 @@
             "bAutoWidth"     : false,
             "bPaginate"      : true,
             "sPaginationType": "full_numbers",
+            "order"          : [[ 1, "desc" ]],
 
             "lengthMenu": [
                 [10, 25, 50, 100],
@@ -167,10 +170,10 @@
                 "aTargets"   : [0]
             },{
                 "bSortable"  : true,
-                "aTargets"   : [1,2]
+                "aTargets"   : [1,2,7,8]
             },{
                 "bSortable"  : false,
-                "aTargets"   : [3,4,5,6,7,8]
+                "aTargets"   : [3,4,5,6]
             },{
                 "bSearchable": false,
                 "aTargets"   : [2,5,6,7,8]

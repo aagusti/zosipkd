@@ -147,6 +147,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofkode4?term=%QUERY",
             },
             {
@@ -157,6 +158,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofnip4?term=%QUERY",
             },
             {
@@ -167,6 +169,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofnama2?term=%QUERY",
             },
             {
@@ -177,6 +180,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofnip4?term=%QUERY",
             },
             {
@@ -360,6 +364,7 @@
                 "hint"     : true,
                 "highlight": true,
                 "minLength": 1,
+                "limit"    : 10,
                 "remote"   : "/ag-kegiatan-item/act/headofkode1?term=%QUERY", 
             },{
                "name"      : 'kode1',
@@ -370,6 +375,7 @@
                 "hint"     : true,
                 "highlight": true,
                 "minLength": 1,
+                "limit"    : 10,
                 "remote"   : "/ag-kegiatan-item/act/headofnama1?term=%QUERY", 
             },{
                "name"      : 'nama1',

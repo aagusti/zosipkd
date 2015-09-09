@@ -138,6 +138,7 @@
                                 "hint"     : true,
                                 "highlight": true,
                                 "minLength": 1,
+                                "limit"    : 10,
                                 "remote"   : "/unit/act/headofnama_asistensi?term=%QUERY",
                             },{
                                 "name"      : 'unit_asistensi_nm',
@@ -152,6 +153,7 @@
                                      "hint"     : true,
                                      "highlight": true,
                                      "minLength": 1,
+                                     "limit"    : 10,
                                      "remote"   : "/pejabat/act/headofnama_asistensi?unit_id="+$("#unit_asistensi_id").val()+"&term=%QUERY",
                                   },{
                                      "name"      : 'ttd_nama',

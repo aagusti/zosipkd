@@ -147,6 +147,7 @@
             "hint"     : true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote"   : "/rekening/act/headofkode"+url+"?term=%QUERY", 
         },{
            "name"      : 'rekening_kd',
@@ -157,6 +158,7 @@
             "hint"     : true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote"   : "/rekening/act/headofnama"+url+"?term=%QUERY", 
         },{
            "name"      : 'rekening_nm',

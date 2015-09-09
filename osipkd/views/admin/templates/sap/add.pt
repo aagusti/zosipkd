@@ -43,6 +43,7 @@
                  "hint"     : true,
                  "highlight": true,
                  "minLength": 1,
+                 "limit"    : 10,
                  "remote"   : "/sap/act/headofnama?term=%QUERY",
             },{
                 "name"      : 'parent_nm',

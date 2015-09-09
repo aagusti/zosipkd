@@ -166,7 +166,7 @@
                 <label><input type="radio" name="kib" id="kib07" value="10">RUSAK BERAT</label>
             </div>
             <div class="radio">
-                <label><input type="radio" name="kib" id="kib08" value="11">BUKU INVENTARIS</label>
+                <label><input type="radio" name="kib" id="kib08" value="11">REKAP INVENTARIS</label>
             </div>
             <div class="radio">
                 <label><input type="radio" name="kib" id="kib09" value="12">PENGHAPUSAN</label>

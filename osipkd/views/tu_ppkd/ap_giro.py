@@ -73,12 +73,14 @@ class view_ap_giro_ppkd(BaseViews):
                 if bulan==0 :
                   query = DBSession.query(Giro
                         ).filter(Giro.tahun_id==ses['tahun'],
-                        ).order_by(Giro.kode.asc())
+                        #).order_by(Giro.kode.asc()
+                        )
                 else :
                   query = DBSession.query(Giro
                         ).filter(Giro.tahun_id==ses['tahun'],
                                  extract('month',Giro.tanggal)==bulan
-                        ).order_by(Giro.kode.asc())
+                        #).order_by(Giro.kode.asc()
+                        )
                            
                 rowTable = DataTables(req, Giro, query, columns)
                 return rowTable.output_result()

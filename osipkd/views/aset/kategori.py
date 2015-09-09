@@ -41,20 +41,17 @@ class AddSchema(colander.Schema):
                     oid = "parent_id")
     parent_nm   = colander.SchemaNode(
                     colander.String(),
-                    #widget = kat_widget,
+                    widget = kat_widget,
                     missing = colander.drop,
                     oid = "parent_nm",
                     title = "Header")
     kode        = colander.SchemaNode(
                     colander.String(),
-                    validator=colander.Length(max=32),
-                    oid = "kode")
+                    validator=colander.Length(max=18))
     uraian      = colander.SchemaNode(
-                    colander.String(),
-                    oid = "uraian")
+                    colander.String())
     disabled    = colander.SchemaNode(
-                    colander.Boolean(),
-                    oid = "disabled")
+                    colander.Boolean())
                     
 class EditSchema(AddSchema):
     id = colander.SchemaNode(colander.String(),
@@ -167,8 +164,8 @@ class view_kategori(BaseViews):
         row.from_dict(values)
         row.updated    = datetime.now()
         row.update_uid = user.id
-        row.disabled   = 'disabled' in values and values['disabled'] and 1 or 0
-        row.level_id   =  AsetKategori.get_next_level(row.parent_id) or 1
+        row.disabled = 'disabled' in values and values['disabled'] and 1 or 0
+        row.level_id =  AsetKategori.get_next_level(row.parent_id) or 1
         
         DBSession.add(row)
         DBSession.flush()
@@ -197,27 +194,16 @@ class view_kategori(BaseViews):
         if req.POST:
             if 'simpan' in req.POST:
                 controls = req.POST.items()
-
-                #Cek Kode Sama ato tidak
-                a = form.validate(controls)
-                b = a['kode']
-                c = "%s" % b
-                cek  = DBSession.query(AsetKategori).filter(AsetKategori.kode==c).first()
-                if cek :
-                    self.request.session.flash('Kode sudah ada.', 'error')
-                    return HTTPFound(location=self.request.route_url('aset-kategori-add'))
-
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    return dict(form=form)               
-                    return HTTPFound(location=req.route_url('aset-kategori-add'))
+                    req.session[SESS_ADD_FAILED] = e.render()               
+                    return HTTPFound(location=req.route_url('kategori-add'))
                 self.save_request(dict(controls))
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
-        return dict(form=form)
-        #return dict(form=form.render())
+        return dict(form=form.render())
 
         
     ########
@@ -236,9 +222,7 @@ class view_kategori(BaseViews):
     def view_kategori_edit(self):
         request = self.request
         row     = self.query_id().first()
-        uid     = row.id
-        kode    = row.kode
-		
+        
         if not row:
             return id_not_found(request)
             
@@ -247,32 +231,18 @@ class view_kategori(BaseViews):
             if 'simpan' in request.POST:
                 controls = request.POST.items()
                 print controls
-                
-                #Cek Kode Sama ato tidak
-                a = form.validate(controls)
-                b = a['kode']
-                c = "%s" % b
-                cek = DBSession.query(AsetKategori).filter(AsetKategori.kode==c).first()
-                if cek:
-                    kode1 = DBSession.query(AsetKategori).filter(AsetKategori.id==uid).first()
-                    d     = kode1.kode
-                    if d!=c:
-                        self.request.session.flash('Kode sudah ada.', 'error')
-                        return HTTPFound(location=request.route_url('aset-kategori-edit',id=row.id))
-                
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    return dict(form=form)               
-                    return HTTPFound(location=request.route_url('aset-kategori-edit', id=row.id))
+                    request.session[SESS_EDIT_FAILED] = e.render()               
+                    return HTTPFound(location=request.route_url('kategori-edit', id=row.id))
                 self.save_request(dict(controls), row)
             return self.route_list()
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
         values = row.to_dict()
         values['parent_nm']= row.parent and row.parent.uraian or ""
-        form.render(appstruct=values)
-        return dict(form=form)
+        return dict(form=form.render(appstruct=values))
 
     ##########
     # Delete #

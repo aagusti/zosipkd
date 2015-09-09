@@ -1,40 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R0009" language="groovy" pageWidth="595" pageHeight="842" columnWidth="525" leftMargin="50" rightMargin="20" topMargin="20" bottomMargin="20">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R0009" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="772" leftMargin="50" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[/aset/lap01/neraca]]>
 	</queryString>
+	<field name="unitkd" class="java.lang.String">
+		<fieldDescription><![CDATA[unitkd]]></fieldDescription>
+	</field>
+	<field name="unitnm" class="java.lang.String">
+		<fieldDescription><![CDATA[unitnm]]></fieldDescription>
+	</field>
 	<field name="kode" class="java.lang.String">
 		<fieldDescription><![CDATA[kode]]></fieldDescription>
 	</field>
 	<field name="uraian" class="java.lang.String">
 		<fieldDescription><![CDATA[uraian]]></fieldDescription>
 	</field>
-	<field name="unit_kd" class="java.lang.String">
-		<fieldDescription><![CDATA[unit_kd]]></fieldDescription>
+	<field name="jml_lalu" class="java.lang.String">
+		<fieldDescription><![CDATA[jml_lalu]]></fieldDescription>
 	</field>
-	<field name="unit_nm" class="java.lang.String">
-		<fieldDescription><![CDATA[unit_nm]]></fieldDescription>
-	</field>
-	<field name="nilai" class="java.lang.String">
-		<fieldDescription><![CDATA[nilai]]></fieldDescription>
-	</field>
-	<field name="detil" class="java.lang.String">
-		<fieldDescription><![CDATA[detil]]></fieldDescription>
+	<field name="jml_kini" class="java.lang.String">
+		<fieldDescription><![CDATA[jml_kini]]></fieldDescription>
 	</field>
 	<field name="customer" class="java.lang.String">
 		<fieldDescription><![CDATA[customer]]></fieldDescription>
 	</field>
-	<field name="tahun" class="java.lang.String">
-		<fieldDescription><![CDATA[tahun]]></fieldDescription>
+	<field name="thn" class="java.lang.String">
+		<fieldDescription><![CDATA[thn]]></fieldDescription>
 	</field>
-	<variable name="nilai" class="java.lang.Double">
-		<variableExpression><![CDATA[Double.parseDouble($F{nilai})]]></variableExpression>
+	<variable name="jml_lalu" class="java.lang.Double">
+		<variableExpression><![CDATA[Double.parseDouble($F{jml_lalu})]]></variableExpression>
 	</variable>
-	<variable name="tot_nilai" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$V{nilai}]]></variableExpression>
+	<variable name="tot_jml_lalu" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[Double.parseDouble($F{jml_lalu})]]></variableExpression>
+	</variable>
+	<variable name="jml_kini" class="java.lang.Double">
+		<variableExpression><![CDATA[Double.parseDouble($F{jml_kini})]]></variableExpression>
+	</variable>
+	<variable name="tot_jml_kini" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[Double.parseDouble($F{jml_kini})]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -42,32 +48,32 @@
 	<title>
 		<band height="93" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="8" width="479" height="17"/>
+				<reportElement x="0" y="8" width="736" height="17"/>
 				<textElement textAlignment="Center">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[REKAPITULASI BARANG KE NERACA]]></text>
+				<text><![CDATA[NERACA ASET]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="0" y="25" width="479" height="17"/>
+				<reportElement x="0" y="25" width="736" height="17"/>
 				<textElement textAlignment="Center" markup="none">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["TAHUN ANGGARAN "+$F{tahun}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["TAHUN ANGGARAN "+$F{thn}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="62" width="479" height="17"/>
+				<reportElement x="0" y="62" width="736" height="17"/>
 				<textElement markup="none">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{unit_kd}+' '+$F{unit_nm}.toUpperCase()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{unitkd}+' '+$F{unitnm}.toUpperCase()]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="20" splitType="Stretch">
+		<band height="36" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="43" height="20"/>
+				<reportElement x="0" y="0" width="43" height="36"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -77,10 +83,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[NO]]></text>
+				<text><![CDATA[Kode]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="43" y="0" width="333" height="20"/>
+				<reportElement x="43" y="0" width="333" height="36"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -90,10 +96,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[NAMA BARANG]]></text>
+				<text><![CDATA[Nama Rekening]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="376" y="0" width="103" height="20"/>
+				<reportElement x="376" y="0" width="360" height="18"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -103,7 +109,46 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[NILAI]]></text>
+				<text><![CDATA[Saldo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="496" y="18" width="120" height="18"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tahun Ini]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="616" y="18" width="120" height="18"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[s.d Tahun Ini]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="376" y="18" width="120" height="18"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[s.d Tahun Lalu]]></text>
 			</staticText>
 		</band>
 	</pageHeader>
@@ -132,7 +177,7 @@
 				<textFieldExpression><![CDATA[$F{uraian}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="376" y="0" width="103" height="20"/>
+				<reportElement x="376" y="0" width="120" height="20"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -140,7 +185,29 @@
 				<textElement textAlignment="Right" verticalAlignment="Top" markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{nilai})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jml_lalu})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="496" y="0" width="120" height="20"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jml_kini})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="616" y="0" width="120" height="20"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jml_lalu}+$V{jml_kini})]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -150,7 +217,7 @@
 	<summary>
 		<band height="42" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement x="376" y="0" width="103" height="20"/>
+				<reportElement x="376" y="0" width="120" height="20"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -160,7 +227,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Top" markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{tot_nilai})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{tot_jml_lalu})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="43" y="0" width="333" height="20"/>
@@ -173,7 +240,6 @@
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[TOTAL]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="0" width="43" height="20"/>
@@ -186,6 +252,32 @@
 				<textElement verticalAlignment="Top" markup="none">
 					<font isBold="true"/>
 				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="496" y="0" width="120" height="20"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{tot_jml_kini})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="616" y="0" width="120" height="20"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{tot_jml_lalu}+$V{tot_jml_kini})]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

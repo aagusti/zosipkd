@@ -32,6 +32,7 @@
                  "hint"     : true,
                  "highlight": true,
                  "minLength": 1,
+                 "limit"    : 10,
                  "remote"   : "/fungsi/act/headofnama?term=%QUERY",
             },{
                 "name"      : 'fungsi_nm',
@@ -62,6 +63,7 @@
                  "hint"     : true,
                  "highlight": true,
                  "minLength": 1,
+                 "limit"    : 10,
                  "remote"   : "/urusan/act/headofnama?term=%QUERY",
             },{
                 "name"      : 'urusan_nm',

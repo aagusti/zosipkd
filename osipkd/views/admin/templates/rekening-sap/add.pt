@@ -186,6 +186,28 @@
     
 <script>
   //Untuk Rekening APBD
+  $('#rekening_kd').typeahead({
+       "hint"     : true,
+       "highlight": true,
+       "minLength": 1,
+       "limit"    : 10,
+       "remote"   : "/rekening/act/headofkode11?term=%QUERY",
+  },{
+      "name"      : 'rekening_kd',
+      "displayKey": 'value',
+  });
+
+  $('#rekening_nm').typeahead({
+       "hint"     : true,
+       "highlight": true,
+       "minLength": 1,
+       "limit"    : 10,
+       "remote"   : "/rekening/act/headofnama11?term=%QUERY",
+  },{
+      "name"      : 'rekening_nm',
+      "displayKey": 'value',
+  });
+  
   $('#rekening_kd').bind('typeahead:selected', function(obj, datum, name) {      
         $('#rekening_id').val(datum.id);
         $('#rekening_nm').val(datum.nama);
@@ -196,6 +218,28 @@
   });
   
   //Untuk Rekening LO Debet
+  $('#db_lo_sap_kd').typeahead({
+       "hint"     : true,
+       "highlight": true,
+       "minLength": 1,
+       "limit"    : 10,
+       "remote"   : "/sap/act/headofkode1?term=%QUERY",
+  },{
+      "name"      : 'db_lo_sap_kd',
+      "displayKey": 'value',
+  });
+
+  $('#db_lo_sap_nm').typeahead({
+       "hint"     : true,
+       "highlight": true,
+       "minLength": 1,
+       "limit"    : 10,
+       "remote"   : "/sap/act/headofnama1?term=%QUERY",
+  },{
+      "name"      : 'db_lo_sap_nm',
+      "displayKey": 'value',
+  });
+
   $('#db_lo_sap_kd').bind('typeahead:selected', function(obj, datum, name) {      
         $('#db_lo_sap_id').val(datum.id);
         $('#db_lo_sap_nm').val(datum.nama);
@@ -206,6 +250,28 @@
   });
   
   //Untuk Rekening LO Kredit
+  $('#kr_lo_sap_kd').typeahead({
+       "hint"     : true,
+       "highlight": true,
+       "minLength": 1,
+       "limit"    : 10,
+       "remote"   : "/sap/act/headofkode11?term=%QUERY",
+  },{
+      "name"      : 'kr_lo_sap_kd',
+      "displayKey": 'value',
+  });
+
+  $('#kr_lo_sap_nm').typeahead({
+       "hint"     : true,
+       "highlight": true,
+       "minLength": 1,
+       "limit"    : 10,
+       "remote"   : "/sap/act/headofnama11?term=%QUERY",
+  },{
+      "name"      : 'kr_lo_sap_nm',
+      "displayKey": 'value',
+  });
+  
   $('#kr_lo_sap_kd').bind('typeahead:selected', function(obj, datum, name) {      
         $('#kr_lo_sap_id').val(datum.id);
         $('#kr_lo_sap_nm').val(datum.nama);
@@ -216,6 +282,28 @@
   });
   
   //Untuk Rekening LRA Debet
+  $('#db_lra_sap_kd').typeahead({
+       "hint"     : true,
+       "highlight": true,
+       "minLength": 1,
+       "limit"    : 10,
+       "remote"   : "/sap/act/headofkode2?term=%QUERY",
+  },{
+      "name"      : 'db_lra_sap_kd',
+      "displayKey": 'value',
+  });
+
+  $('#db_lra_sap_nm').typeahead({
+       "hint"     : true,
+       "highlight": true,
+       "minLength": 1,
+       "limit"    : 10,
+       "remote"   : "/sap/act/headofnama2?term=%QUERY",
+  },{
+      "name"      : 'db_lra_sap_nm',
+      "displayKey": 'value',
+  });
+  
   $('#db_lra_sap_kd').bind('typeahead:selected', function(obj, datum, name) {      
         $('#db_lra_sap_id').val(datum.id);
         $('#db_lra_sap_nm').val(datum.nama);
@@ -226,6 +314,28 @@
   });
   
   //Untuk Rekening LRA Kredit
+  $('#kr_lra_sap_kd').typeahead({
+       "hint"     : true,
+       "highlight": true,
+       "minLength": 1,
+       "limit"    : 10,
+       "remote"   : "/sap/act/headofkode2?term=%QUERY",
+  },{
+      "name"      : 'kr_lra_sap_kd',
+      "displayKey": 'value',
+  });
+
+  $('#kr_lra_sap_nm').typeahead({
+       "hint"     : true,
+       "highlight": true,
+       "minLength": 1,
+       "limit"    : 10,
+       "remote"   : "/sap/act/headofnama2?term=%QUERY",
+  },{
+      "name"      : 'kr_lra_sap_nm',
+      "displayKey": 'value',
+  });
+  
   $('#kr_lra_sap_kd').bind('typeahead:selected', function(obj, datum, name) {      
         $('#kr_lra_sap_id').val(datum.id);
         $('#kr_lra_sap_nm').val(datum.nama);
@@ -235,6 +345,28 @@
         $('#kr_lra_sap_kd').val(datum.kode);
   });
   //Untuk Rekening Neraca
+  $('#neraca_sap_kd').typeahead({
+       "hint"     : true,
+       "highlight": true,
+       "minLength": 1,
+       "limit"    : 10,
+       "remote"   : "/sap/act/headofkode3?term=%QUERY",
+  },{
+      "name"      : 'neraca_sap_kd',
+      "displayKey": 'value',
+  });
+
+  $('#neraca_sap_nm').typeahead({
+       "hint"     : true,
+       "highlight": true,
+       "minLength": 1,
+       "limit"    : 10,
+       "remote"   : "/sap/act/headofnama3?term=%QUERY",
+  },{
+      "name"      : 'neraca_sap_nm',
+      "displayKey": 'value',
+  });
+  
   $('#neraca_sap_kd').bind('typeahead:selected', function(obj, datum, name) {      
         $('#neraca_sap_id').val(datum.id);
         $('#neraca_sap_nm').val(datum.nama);

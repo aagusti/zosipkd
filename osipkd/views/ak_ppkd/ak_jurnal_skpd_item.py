@@ -91,7 +91,7 @@ class view_ak_jurnal_skpd_item(BaseViews):
                                            sap.nama,
                                            AkJurnalItem.amount,
                                            case([(AkJurnalItem.amount>0,AkJurnalItem.amount)], else_=0),
-                                           case([(AkJurnalItem.amount<0,AkJurnalItem.amount*-1)], else_=0),
+                                           case([(AkJurnalItem.amount<0,AkJurnalItem.amount)], else_=0),
                                            AkJurnalItem.notes,
                                            rek.kode,
                                            rek.nama,

@@ -33,6 +33,7 @@
                  "hint"     : true,
                  "highlight": true,
                  "minLength": 1,
+                 "limit"    : 10,
                  "remote"   : "/pegawai/act/headofnama1?term=%QUERY",
             },{
                 "name"      : 'pegawai_nm',
@@ -63,6 +64,7 @@
                  "hint"     : true,
                  "highlight": true,
                  "minLength": 1,
+                 "limit"    : 10,
                  "remote"   : "/jabatan/act/headofnama1?term=%QUERY",
             },{
                 "name"      : 'jabatan_nm',
@@ -93,6 +95,7 @@
                  "hint"     : true,
                  "highlight": true,
                  "minLength": 1,
+                 "limit"    : 10,
                  "remote"   : "/unit/act/headofnama?term=%QUERY",
             },{
                 "name"      : 'unit_nm',

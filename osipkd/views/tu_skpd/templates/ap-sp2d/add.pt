@@ -98,6 +98,7 @@
                  "hint"     : true,
                  "highlight": true,
                  "minLength": 1,
+                 "limit"    : 10,
                  "remote"   : "/ap-spm/act/headofkode?term=%QUERY",
             },{
                 "name"      : 'spm_kd',
@@ -107,6 +108,7 @@
                  "hint"     : true,
                  "highlight": true,
                  "minLength": 1,
+                 "limit"    : 10,
                  "remote"   : "/ap-spm/act/headofnama?term=%QUERY",
             },{
                 "name"      : 'spm_nm',
@@ -169,6 +171,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofnama6?term=%QUERY",
             },
             {
@@ -218,6 +221,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofkode3?term=%QUERY",
             },
             {
@@ -228,6 +232,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofnip3?term=%QUERY",
             },
             {
@@ -238,6 +243,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/pejabat/act/headofnama6?term=%QUERY",
             },
             {

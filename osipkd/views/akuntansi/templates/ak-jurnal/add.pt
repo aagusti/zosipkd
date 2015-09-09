@@ -501,6 +501,7 @@
          "hint"     : true,
          "highlight": true,
          "minLength": 1,
+         "limit"    : 10,
          "remote"   : "/ag-kegiatan-sub/act/headofkode1?term=%QUERY", 
      },{
         "name"      : 'kegiatan_sub_kd',
@@ -510,6 +511,7 @@
          "hint"     : true,
          "highlight": true,
          "minLength": 1,
+         "limit"    : 10,
          "remote"   : "/ag-kegiatan-sub/act/headofnama1?term=%QUERY", 
      },{
         "name"      : 'kegiatan_sub_nm',
@@ -524,6 +526,7 @@
                "hint"     : true,
                "highlight": true,
                "minLength": 1,
+               "limit"    : 10,
                "remote"   : "/rekening/act/headofkode10?kegiatan_sub_id="+$("#kegiatan_sub_id").val()+"&term=%QUERY",
            },{
               "name"      : 'rekening_kd',
@@ -543,6 +546,7 @@
          "hint"     : true,
          "highlight": true,
          "minLength": 1,
+         "limit"    : 10,
          "remote"   : "/ag-kegiatan-sub/act/headofnama10?kegiatan_sub_id="+$("#kegiatan_sub_id").val()+"&term=%QUERY", 
      },{
         "name"      : 'rekening_nm',
@@ -557,6 +561,7 @@
                "hint"     : true,
                "highlight": true,
                "minLength": 1,
+               "limit"    : 10,
                "remote"   : "/sap/act/headofkode4?rekening_id="+$("#rekening_id").val()+"&term=%QUERY",
            },{
               "name"      : 'sap_kd',
@@ -574,6 +579,7 @@
          "hint"     : true,
          "highlight": true,
          "minLength": 1,
+         "limit"    : 10,
          "remote"   : "/sap/act/headofnama4?rekening_id="+$("#rekening_id").val()+"&term=%QUERY",
      },{
         "name"      : 'sap_nm',

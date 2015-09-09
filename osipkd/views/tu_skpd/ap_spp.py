@@ -76,7 +76,7 @@ class view_ap_spp(BaseViews):
                           Spp.posted
                         ).filter(Spp.tahun_id==ses['tahun'],
                               Spp.unit_id==ses['unit_id'],
-                        ).order_by(Spp.no_urut.desc()
+                        #).order_by(Spp.no_urut.desc()
                         )
                 else :
                   query = DBSession.query(Spp.id,
@@ -89,7 +89,7 @@ class view_ap_spp(BaseViews):
                         ).filter(Spp.tahun_id==ses['tahun'],
                               Spp.unit_id==ses['unit_id'],
                               extract('month',Spp.tanggal)==bulan
-                        ).order_by(Spp.no_urut.desc()
+                        #).order_by(Spp.no_urut.desc()
                         )
  
                 rowTable = DataTables(req, Spp, query, columns)

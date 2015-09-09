@@ -116,7 +116,7 @@ class view_ap_payment(BaseViews):
                                    APPayment.tanggal,
                                    KegiatanSub.nama,
                                    APInvoice.kode,
-                        ).order_by(APPayment.no_urut.desc()
+                        #).order_by(APPayment.no_urut.desc()
                         )
                 else :
                   query = DBSession.query(APPayment.id,
@@ -138,7 +138,7 @@ class view_ap_payment(BaseViews):
                                    APPayment.tanggal,
                                    KegiatanSub.nama,
                                    APInvoice.kode,
-                        ).order_by(APPayment.no_urut.desc()
+                        #).order_by(APPayment.no_urut.desc()
                         )
                   
                 rowTable = DataTables(req, APPayment, query, columns)
