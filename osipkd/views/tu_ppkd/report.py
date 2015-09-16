@@ -891,15 +891,19 @@ class ViewTUPPKDLap(BaseViews):
         url_dict = req.matchdict
 
         tipe = 'tipe' in params and params['tipe'] or 0
-        bulan   = 'bulan' in params and params['bulan'] or 0
-        advist  = 'advist' in params and params['advist'] or 0
+        bulan  = 'bulan' in params and params['bulan'] or 0
+        advist = 'advist' in params and params['advist'] or 0
+        chk    = 'chk' in params and params['chk'] or 0
         sbulan = ''
         stipe  = ''
         skeg   = ''
+        schk   = ''
         if url_dict['act']=='1' : skeg = Kegiatan.kode!='0.00.00.21'
         if url_dict['act']=='2' : skeg = Kegiatan.kode=='0.00.00.21'  
         if tipe != '0' : stipe = Spp.jenis==tipe
         if bulan != '0' : sbulan = func.extract('month',Sp2d.tanggal)==bulan
+        if chk == '0' : schk = Spp.unit_id==self.session['unit_id']
+          
         query = DBSession.query(Sp2d.tanggal, Sp2d.kode, Sp2d.nama, Sp2d.ap_spm_id, 
              Spp.tahun_id.label('tahun'), Spp.unit_id, Spp.ap_nama, Spp.ap_npwp, Spp.jenis, Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), 
              case([(Kegiatan.kode=='0.00.00.21','BTL')], else_='BL').label('tipe'),
@@ -909,7 +913,7 @@ class ViewTUPPKDLap(BaseViews):
              ).filter(Sp2d.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id, SppItem.ap_spp_id==Spp.id,
              SppItem.ap_invoice_id==APInvoiceItem.ap_invoice_id, KegiatanItem.id==APInvoiceItem.kegiatan_item_id,
              KegiatanSub.id==KegiatanItem.kegiatan_sub_id, Kegiatan.id==KegiatanSub.kegiatan_id,
-             Spp.tahun_id==self.session['tahun'], Spp.unit_id==self.session['unit_id'], skeg, sbulan, stipe
+             Spp.tahun_id==self.session['tahun'], skeg, sbulan, stipe, schk
              ).group_by(Sp2d.tanggal, Sp2d.kode, Sp2d.nama, Sp2d.ap_spm_id,  Spp.tahun_id, Spp.unit_id, 
              Spp.ap_nama, Spp.ap_npwp, Spp.jenis, Unit.kode, Unit.nama, 
              case([(Kegiatan.kode=='0.00.00.21','BTL')], else_='BL'),

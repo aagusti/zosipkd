@@ -13,13 +13,18 @@
         });
         */
     
-        $('#btn_cetak').click(function () {
-            
+        $('#btn_cetak').click(function () {            
             var jenis = $('#jenis').val();
             var tipe = $('#tipe').val();
             var bulan = $('#bulan').val();
+            var chk = $('input[name="chk"]:checked').val();
+            if (chk == 0){
+              window.open('/ap-report-real-sp2d/act/'+jenis+'?tipe='+tipe+'&bulan='+bulan+'&chk=1');            
+            }
+            else{
+              window.open('/ap-report-real-sp2d/act/'+jenis+'?tipe='+tipe+'&bulan='+bulan+'&chk=0');
+            }
             
-            window.open('/ap-report-real-sp2d/act/'+jenis+'?tipe='+tipe+'&bulan='+bulan);
         });
 
         $('input[name="jenis"]').prop('checked', false);
@@ -50,24 +55,50 @@
         </div>
 
       <!--UNIT---------------------------------------------------------------->
-      <div class="form-group" id="div_skpd">
-        <input id="unit_id" type="hidden" value="${request.session['unit_id']}" name="unit_id">
-        <div class="col-md-3">
-          <div id="item-unit_kd">
-            <label for="unit_kd" class="control-label col-md-3" id="req-unit_kd">
-                    SKPD</label>
-            <div class="col-md-9">
-               <input id="unit_kd" class="form-control typeahead" type="text" value="${request.session['unit_kd']}" name="unit_kd">
+        <div class="form-group" id="div_unit_kd">
+          <input id="unit_id" type="hidden" value="${request.session['unit_id']}" name="unit_id">
+          <div class="col-md-3">
+            <div id="item-unit_kd">
+              <label for="unit_kd" class="control-label col-md-3" id="req-unit_kd">
+                      SKPD</label>
+              <div class="col-md-9">
+                 <input id="unit_kd" class="form-control typeahead" type="text" value="${request.session['unit_kd']}" name="unit_kd">
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="col-md-5">
-           <input id="unit_nm" class=" form-control " type="text" value="${request.session['unit_nm']}" name="unit_nm">
-        </div>        
-      </div>
+          <div class="col-md-5" id="div_unit_nm">
+             <input id="unit_nm" class=" form-control " type="text" value="${request.session['unit_nm']}" name="unit_nm">
+          </div>        
+              <div class="col-md-9">
+              </div>
         </div>
-      <script>
+        
+      </div>
+
+      <div class="form-group">
+        <div class="form-group" id="div_chk">
+          <label class="control-label col-xs-2" for="jenis">Semua Unit</label>
+          <div class="col-xs-1">
+              <input type="checkbox" id="chk" class="form-control typeahead" value="0" name="chk">
+          </div>
+        </div>
+      </div>
+
+      <script> 
+      $('#chk').click(function () {
+        var a = $('input[name="chk"]:checked').val();
+        if (a == 0){
+        $('#div_unit_kd').hide();
+        $('#div_unit_nm').hide();
+        }
+        else{
+        $('#div_unit_kd').show();
+        $('#div_unit_nm').show();
+        }
+      
+      });
+        
         $('#unit_kd').typeahead({
             "hint": true,
             "highlight": true,
