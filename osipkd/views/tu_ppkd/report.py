@@ -509,14 +509,24 @@ class ViewTUPPKDLap(BaseViews):
         if url_dict['act']=='1' :
           query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), 
             Sp2d.kode.label('sp2d_kd'), Sp2d.nama.label('sp2d_nm'), Sp2d.tanggal.label('sp2d_tgl'), Sp2d.status_giro,
-            Spp.id.label('spp_id'), Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm'), Spp.jenis, Spp.nominal
-            ).filter(Unit.id==Spp.unit_id, Spm.ap_spp_id==Spp.id, Sp2d.ap_spm_id==Spm.id, 
+            Spp.id.label('spp_id'), Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm'), 
+            #Spp.jenis, 
+            case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)=="5.1.1"),"LS-GJ"),(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)!="5.1.1"),"LS")], else_="").label('jenis'),
+            func.sum(APInvoiceItem.amount).label('nominal')
+            ).filter(Sp2d.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id,
+            SppItem.ap_spp_id==Spp.id, APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id,
+            APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+            KegiatanItem.rekening_id==Rekening.id,
             Spp.tahun_id==self.session['tahun'], Sp2d.tanggal<mulai,
             Sp2d.status_giro==0
+            ).group_by(Spp.tahun_id, Unit.kode, Unit.nama, 
+            Sp2d.kode, Sp2d.nama, Sp2d.tanggal, Sp2d.status_giro,
+            Spp.id, Spp.kode, Spp.nama, 
+            case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)=="5.1.1"),"LS-GJ"),(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)!="5.1.1"),"LS")], else_="")
             ).order_by(Unit.kode,Sp2d.tanggal
             )
         elif url_dict['act']=='2' :
-          query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), 
+          """query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), 
             Sp2d.kode.label('sp2d_kd'), Sp2d.nama.label('sp2d_nm'), Sp2d.tanggal.label('sp2d_tgl'), Sp2d.status_giro,
             Spp.id.label('spp_id'), Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm'), Spp.jenis, Spp.nominal
             ).filter(Unit.id==Spp.unit_id, Spm.ap_spp_id==Spp.id, Sp2d.ap_spm_id==Spm.id, 
@@ -524,7 +534,26 @@ class ViewTUPPKDLap(BaseViews):
             Sp2d.status_giro==1
             ).order_by(Unit.kode,Sp2d.tanggal
             )
-        
+          """
+          query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), 
+            Sp2d.kode.label('sp2d_kd'), Sp2d.nama.label('sp2d_nm'), Sp2d.tanggal.label('sp2d_tgl'), Sp2d.status_giro,
+            Spp.id.label('spp_id'), Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm'), 
+            #Spp.jenis, 
+            case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)=="5.1.1"),"LS-GJ"),(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)!="5.1.1"),"LS")], else_="").label('jenis'),
+            func.sum(APInvoiceItem.amount).label('nominal')
+            ).filter(Sp2d.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id,
+            SppItem.ap_spp_id==Spp.id, APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id,
+            APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
+            KegiatanItem.rekening_id==Rekening.id,
+            Spp.tahun_id==self.session['tahun'], Sp2d.tanggal<mulai,
+            Sp2d.status_giro==1
+            ).group_by(Spp.tahun_id, Unit.kode, Unit.nama, 
+            Sp2d.kode, Sp2d.nama, Sp2d.tanggal, Sp2d.status_giro,
+            Spp.id, Spp.kode, Spp.nama, 
+            case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)=="5.1.1"),"LS-GJ"),(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)!="5.1.1"),"LS")], else_="")
+            ).order_by(Unit.kode,Sp2d.tanggal
+            )
+          
         generator = b203r010Generator()
         pdf = generator.generate(query)
         response=req.response
@@ -1485,9 +1514,13 @@ class ViewTUPPKDLap(BaseViews):
                func.coalesce(func.sum(case([(Rekening.kode=='7.1.1.01.03',SpmPotongan.nilai)], else_=0)),0).label('pph_pusat'),               
                func.coalesce(func.sum(case([(Rekening.kode=='7.1.1.01.04',SpmPotongan.nilai)], else_=0)),0).label('ppn_pusat'),               
                func.coalesce(func.sum(case([(Rekening.kode=='7.1.1.01.05',SpmPotongan.nilai)], else_=0)),0).label('taperum'),               
-               ).filter(Advist.id==AdvistItem.ap_advist_id, AdvistItem.ap_sp2d_id==Sp2d.id, Sp2d.ap_spm_id==Spm.id,
-               Spm.id==SpmPotongan.ap_spm_id, Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id, SpmPotongan.rekening_id==Rekening.id,
-               Advist.tahun_id==self.session['tahun'], Advist.id==pk_id
+               #).filter(Advist.id==AdvistItem.ap_advist_id, AdvistItem.ap_sp2d_id==Sp2d.id, Sp2d.ap_spm_id==Spm.id,
+               #Spm.id==SpmPotongan.ap_spm_id, Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id, SpmPotongan.rekening_id==Rekening.id,
+               #Advist.tahun_id==self.session['tahun'], Advist.id==pk_id
+               ).join(AdvistItem, Sp2d, Spm, Spp, Unit
+               ).outerjoin(SpmPotongan, Spm.id==SpmPotongan.ap_spm_id
+               ).outerjoin(Rekening, SpmPotongan.rekening_id==Rekening.id
+               ).filter(Advist.tahun_id==self.session['tahun'], Advist.id==pk_id
                ).group_by(Advist.tahun_id, Advist.kode, Advist.nama, Advist.tanggal,
                Sp2d.kode, Sp2d.tanggal,
                Sp2d.nama, Sp2d.no_validasi,

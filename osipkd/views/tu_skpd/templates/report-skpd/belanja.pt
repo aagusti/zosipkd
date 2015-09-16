@@ -80,9 +80,9 @@
             if($(this).val()=="1"){
                 $('#div_tipe').show();
             }
-            if($(this).val()=="2"){
-                $('#div_tipe').hide();
-            }
+            //if($(this).val()=="2"){
+            //    $('#div_tipe').hide();
+            //}
             if($(this).val()=="21"){
                 $('#div_tipe').show();
             }

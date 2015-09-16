@@ -49,7 +49,8 @@
         if(jenis=='8') url = "/aset/lap01/11/act";
         if(jenis=='9') url = "/aset/lap01/12/act";
         if(jenis=='10') url = "/aset/lap01/13/act";*/
-        url = "/aset/lap01/lap"+jenis+"/act";
+        url = "/aset/lap01/"+jenis+"/act";
+        //alert(url);
         window.open(url);
       });
 
@@ -99,7 +100,6 @@
                 "hint": true,
                 "highlight": true,
                 "minLength": 1,
-                "limit": 10,
                 "remote": "/unit/act/headofkode?term=%QUERY", 
             },
             {
@@ -111,7 +111,6 @@
                 "hint": true,
                 "highlight": true,
                 "minLength": 1,
-                "limit": 10,
                 "remote": "/unit/act/headofnama?term=%QUERY", 
             },
             {

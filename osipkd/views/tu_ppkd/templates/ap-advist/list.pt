@@ -61,6 +61,7 @@
                   var bln = $('#bulan').val();
                   oTableUrl = "/ap-advist/act/grid?bulan="+bln;  
                   oTable.fnReloadAjax(oTableUrl);
+                  mID = '';
                   $("#errors").html("<span class=''></span> " + '');
               } else {
                 $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);

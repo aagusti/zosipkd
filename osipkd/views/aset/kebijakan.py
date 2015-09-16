@@ -25,8 +25,8 @@ from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
     
 
-SESS_ADD_FAILED = 'Tambah kategori gagal'
-SESS_EDIT_FAILED = 'Edit kategori gagal'
+SESS_ADD_FAILED = 'Tambah kebijakan gagal'
+SESS_EDIT_FAILED = 'Edit kebijakan gagal'
 
 kat_widget = widget.AutocompleteInputWidget(
         size=60,
@@ -35,22 +35,26 @@ kat_widget = widget.AutocompleteInputWidget(
                 
 class AddSchema(colander.Schema):
     tahun       = colander.SchemaNode(
-                    colander.Integer())
+                    colander.Integer(),
+                    oid = "tahun")
     kategori_id = colander.SchemaNode(
                     colander.String(),
                     widget = widget.HiddenWidget(),
                     oid = "kategori_id")
     kategori_nm = colander.SchemaNode(
                     colander.String(),
-                    widget = kat_widget,
+                    #widget = kat_widget,
                     oid = "kategori_nm",
                     title = "Kategori")
     masa_guna   = colander.SchemaNode(
-                    colander.Integer())
+                    colander.Integer(),
+                    oid = "masa_guna")
     minimum     = colander.SchemaNode(
-                    colander.Integer())
+                    colander.Integer(),
+                    oid = "minimum")
     disabled    = colander.SchemaNode(
-                    colander.Boolean())
+                    colander.Boolean(),
+                    oid = "disabled")
                     
 class EditSchema(AddSchema):
     id = colander.SchemaNode(colander.String(),
@@ -149,13 +153,14 @@ class view_aset_kebijakan(BaseViews):
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    req.session[SESS_ADD_FAILED] = e.render()               
+                    return dict(form=form)              
                     return HTTPFound(location=req.route_url('kebijakan-add'))
                 self.save_request(dict(controls))
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
-        return dict(form=form.render())
+        return dict(form=form)
+        #return dict(form=form.render())
 
         
     ########
@@ -186,7 +191,7 @@ class view_aset_kebijakan(BaseViews):
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
-                    request.session[SESS_EDIT_FAILED] = e.render()               
+                    return dict(form=form)               
                     return HTTPFound(location=request.route_url('kebijakan-edit',
                                       id=row.id))
                 self.save_request(dict(controls), row)
@@ -195,7 +200,8 @@ class view_aset_kebijakan(BaseViews):
             return self.session_failed(SESS_EDIT_FAILED)
         values = row.to_dict()
         values['kategori_nm']= row.kategoris and row.kategoris.uraian or ""
-        return dict(form=form.render(appstruct=values))
+        form.render(appstruct=values)
+        return dict(form=form)
 
     ##########
     # Delete #

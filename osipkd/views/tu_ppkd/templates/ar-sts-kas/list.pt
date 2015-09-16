@@ -137,6 +137,7 @@
                   var bln = $('#bulan').val();
                   oTableUrl = "/ar-sts-kas/act/grid?bulan="+bln;  
                   oTable.fnReloadAjax(oTableUrl);
+                  mID = '';
                   $("#errors").html("<span class=''></span> " + '');
               } else {
                 $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
@@ -372,7 +373,7 @@
             if (mID) {
                 window.open(url);
             } else {
-                alert('Silahkan pilih Kegiatan ID');
+                alert('Silahkan pilih No STS');
             }
         });
         $("#btn_close").click(function () {

@@ -143,6 +143,9 @@
               "bVisible"   : false,
               "aTargets"   : [0]
           },{
+              "bSortable": false,
+              "aTargets"   : [1]
+          },{
               "sClass"     : "right",
               "aTargets"   : [7],
               "mRender"    : function (data, type, full) {

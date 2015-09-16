@@ -169,6 +169,7 @@ class User(UserMixin, BaseModel, CommonModel, Base):
                              nullable=False,
                              default=datetime.utcnow)
     #units = relationship("Unit"
+    security_code_date = Column(DateTime(timezone=True), nullable=True)
     
     def _get_password(self):
         return self._password

@@ -138,6 +138,7 @@
                   var bln = $('#bulan').val();
                   oTableUrl = "/ap-spp/act/grid?bulan="+bln;  
                   oTable.fnReloadAjax(oTableUrl);
+                  mID = '';
                   $("#errors").html("<span class=''></span> " + '');
               } else {
                 $("#errors").html("<span class='glyphicon glyphicon-remove'></span> " + html.msg);
@@ -368,7 +369,7 @@
 	
                 $('#dlgRpt').modal('show');
             } else {
-                alert('Silahkan pilih Kegiatan ID');
+                alert('Silahkan pilih No. SPP');
             }
         });
         $("#btn_close").click(function () {

@@ -50,6 +50,7 @@
           "bAutoWidth": false,
           "bPaginate": true,
           "sPaginationType": "full_numbers",
+          "order"          : [[ 2, "asc" ]],
           
           "lengthMenu": [
               [10, 25, 50, 100],

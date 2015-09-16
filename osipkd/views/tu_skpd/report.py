@@ -486,7 +486,7 @@ class ViewTUSKPDLap(BaseViews):
                   ).outerjoin(Spm,Spm.ap_spp_id==Spp.id
                   ).outerjoin(Sp2d,Sp2d.ap_spm_id==Spm.id
                   ).group_by(Spp.tahun_id, Unit.kode, Unit.nama,
-                  case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)=='5.1.1'),"LS-GJ"),(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)!='5.1.1'),"LS")], else_="").label('jenis'),
+                  case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)=='5.1.1'),"LS-GJ"),(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)!='5.1.1'),"LS")], else_=""),
                   Spp.kode, Spp.nama, Spp.tanggal,
                   Spm.kode, Spm.tanggal,
                   Sp2d.kode, Sp2d.tanggal
@@ -1089,8 +1089,8 @@ class ViewTUSKPDLap(BaseViews):
                   Spm.kode.label('spp_kd'), Spm.nama.label('spp_nm'),
                   case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)=="5.1.1"),"LS-GJ"),(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)!="5.1.1"),"LS")], else_="").label('jenis'),
                   func.sum(case([(Spp.jenis==1,APInvoiceItem.amount)], else_=0)).label('UP'),
-                  func.sum(case([(Spp.jenis==2,APInvoiceItem.amount)], else_=0)).label('GU'),
-                  func.sum(case([(Spp.jenis==3,APInvoiceItem.amount)], else_=0)).label('TU'),
+                  func.sum(case([(Spp.jenis==2,APInvoiceItem.amount)], else_=0)).label('TU'),
+                  func.sum(case([(Spp.jenis==3,APInvoiceItem.amount)], else_=0)).label('GU'),
                   func.sum(case([(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)=='5.1.1'),APInvoiceItem.amount)], else_=0)).label('LS_GJ'),
                   func.sum(case([(and_(Spp.jenis==4,func.substr(Rekening.kode,1,5)!='5.1.1'),APInvoiceItem.amount)], else_=0)).label('LS')
                   ).outerjoin(Spm,Spm.ap_spp_id==Spp.id
@@ -1129,8 +1129,8 @@ class ViewTUSKPDLap(BaseViews):
                   ).order_by(Spm.tanggal).all()
             else:
                 query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.kode.label('unit_kd'),
-                  Unit.nama.label('unit_nm'), Spm.tanggal.label('tgl_spp'), 
-                  Spm.kode.label('spp_kd'), Spm.nama.label('spp_nm'),
+                  Unit.nama.label('unit_nm'), Spm.id.label('spm_id'), Spm.tanggal.label('tgl_spm'), 
+                  Spm.kode.label('spm_kd'), Spm.nama.label('spm_nm'),
                   case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),(Spp.jenis==4,"LS")], else_="").label('jenis'),
                   Spp.id.label('spp_id'), Spp.nominal
                   ).filter(Spm.ap_spp_id==Spp.id, 
