@@ -815,7 +815,9 @@ class ViewTUPPKDLap(BaseViews):
                query = DBSession.query(Sts.tahun_id.label('tahun'), Unit.kode.label('unit_kd'),Unit.nama.label('unit_nm'),
                   Sts.kode, Sts.tgl_sts, Sts.tgl_validasi, Sts.jenis, Sts.nama.label('uraian'), 
                   Sts.nominal, literal_column('1').label('tipe')
-                  ).filter(Sts.unit_id==Unit.id, Sts.jenis==1,
+                  ).filter(Sts.unit_id==Unit.id, 
+                  #Sts.jenis==1,
+                  Sts.jenis.in_([1,2,3]),
                   Sts.unit_id==self.session['unit_id'],
                   Sts.tahun_id==self.session['tahun'],  
                   Sts.tgl_sts.between(mulai,selesai)
@@ -824,7 +826,7 @@ class ViewTUPPKDLap(BaseViews):
                query = DBSession.query(Sts.tahun_id.label('tahun'), Unit.kode.label('unit_kd'),Unit.nama.label('unit_nm'),
                   Sts.kode, Sts.tgl_sts, Sts.tgl_validasi, Sts.jenis, Sts.nama.label('uraian'), 
                   Sts.nominal, literal_column('2').label('tipe')
-                  ).filter(Sts.unit_id==Unit.id, Sts.jenis==2, 
+                  ).filter(Sts.unit_id==Unit.id, Sts.jenis==4, 
                   Sts.unit_id==self.session['unit_id'],
                   Sts.tahun_id==self.session['tahun'],  
                   Sts.tgl_sts.between(mulai,selesai)
@@ -833,7 +835,7 @@ class ViewTUPPKDLap(BaseViews):
                query = DBSession.query(Sts.tahun_id.label('tahun'), Unit.kode.label('unit_kd'),Unit.nama.label('unit_nm'),
                   Sts.kode, Sts.tgl_sts, Sts.tgl_validasi, Sts.jenis, Sts.nama.label('uraian'), 
                   Sts.nominal, literal_column('3').label('tipe')
-                  ).filter(Sts.unit_id==Unit.id, Sts.jenis==3, 
+                  ).filter(Sts.unit_id==Unit.id, Sts.jenis==5, 
                   Sts.unit_id==self.session['unit_id'],
                   Sts.tahun_id==self.session['tahun'],  
                   Sts.tgl_sts.between(mulai,selesai)
@@ -1358,9 +1360,10 @@ class ViewTUPPKDLap(BaseViews):
                (Giro.pos=='20-GIRORKUD','DEPOSITO RKUD'),(Giro.pos=='DEPOSITO BNI','DEPOSITO BNI'),
                (Giro.pos=='DEPOSITO BTN','DEPOSITO BTN'),(Giro.pos=='DEPOSITO MANDIRI','DEPOSITO MANDIRI')], else_='').label('pos'),
                Giro.kode, Giro.nama, Giro.tanggal,
-               Giro.nominal, Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm')
-               ).filter(Giro.unit_id==Unit.id, Giro.tahun_id==self.session['tahun'], Giro.tanggal<=mulai
-               ).order_by(Giro.pos,Giro.tanggal,Unit.kode).all()
+               Giro.nominal
+               #, Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm')
+               ).filter(Giro.tahun_id==self.session['tahun'], Giro.tanggal<=mulai
+               ).order_by(Giro.pos,Giro.tanggal).all()
                
             generator = b203r002Generator()
             pdf = generator.generate(query)
@@ -2125,8 +2128,9 @@ class b203r002Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "nama").text = row.nama
             ET.SubElement(xml_greeting, "tanggal").text = unicode(row.tanggal)
             ET.SubElement(xml_greeting, "nominal").text = unicode(row.nominal)
-            ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
-            ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            #ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
+            #ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
+            ET.SubElement(xml_greeting, "mulai").text = mulai
             ET.SubElement(xml_greeting, "customer").text = customer
             ET.SubElement(xml_greeting, "logo").text = logo
         return self.root

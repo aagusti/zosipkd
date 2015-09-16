@@ -83,6 +83,10 @@
 	<variable name="nm_bulan" class="java.lang.String">
 		<variableExpression><![CDATA[$F{tanggal}.substring(5,7)=="01" ? "Januari" : $F{tanggal}.substring(5,7)=="02" ? "Februari" : $F{tanggal}.substring(5,7)=="03" ? "Maret" : $F{tanggal}.substring(5,7)=="04" ? "April" : $F{tanggal}.substring(5,7)=="05" ? "Mei" : $F{tanggal}.substring(5,7)=="06" ? "Juni" : $F{tanggal}.substring(5,7)=="07" ? "Juli" : $F{tanggal}.substring(5,7)=="08" ? "Agustus" : $F{tanggal}.substring(5,7)=="09" ? "September" : $F{tanggal}.substring(5,7)=="10" ? "Oktober" : $F{tanggal}.substring(5,7)=="11" ? "November" : $F{tanggal}.substring(5,7)=="12" ? "Desember" : ""]]></variableExpression>
 	</variable>
+	<variable name="jenis" class="java.lang.String">
+		<variableExpression><![CDATA[$F{jenis1}=="-GJ" ? "LS-GJ" : $F{jenis1}==" " ? "LS" : $F{jenis}]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{jenis1}=="-GJ" ? "LS-GJ" : $F{jenis1}==" " ? "LS" : $F{jenis}]]></initialValueExpression>
+	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -107,14 +111,14 @@
 				<textElement textAlignment="Center" markup="none">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["SPP-"+$F{jenis}+$F{jenis1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["SPP-"+$V{jenis}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="20" y="73" width="467" height="16"/>
 				<textElement textAlignment="Center" markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Nomor : "+$F{spp_kd}.substring(13)+"/"+$F{jenis}+$F{jenis1}+"/"+$F{unit_kd}+"/"+$F{tahun}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Nomor : "+$F{spp_kd}.substring(13)+"/"+$V{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="20" y="107" width="467" height="16"/>

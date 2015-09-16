@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R00001" language="groovy" pageWidth="612" pageHeight="972" columnWidth="542" leftMargin="50" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.3310000000000013"/>
-	<property name="ireport.x" value="57"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[/apbd/giro]]>
@@ -27,11 +27,8 @@
 	<field name="pos" class="java.lang.String">
 		<fieldDescription><![CDATA[pos]]></fieldDescription>
 	</field>
-	<field name="unit_kd" class="java.lang.String">
-		<fieldDescription><![CDATA[unit_kd]]></fieldDescription>
-	</field>
-	<field name="unit_nm" class="java.lang.String">
-		<fieldDescription><![CDATA[unit_nm]]></fieldDescription>
+	<field name="mulai" class="java.lang.String">
+		<fieldDescription><![CDATA[mulai]]></fieldDescription>
 	</field>
 	<variable name="nominal" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{nominal})]]></variableExpression>
@@ -40,6 +37,9 @@
 		<variableExpression><![CDATA[$V{nominal}]]></variableExpression>
 	</variable>
 	<variable name="tanggal" class="java.lang.String"/>
+	<variable name="nm_bulan" class="java.lang.String">
+		<variableExpression><![CDATA[$F{mulai}.substring(5,7)=="01" ? "Januari" : $F{mulai}.substring(5,7)=="02" ? "Februari" : $F{mulai}.substring(5,7)=="03" ? "Maret" : $F{mulai}.substring(5,7)=="04" ? "April" : $F{mulai}.substring(5,7)=="05" ? "Mei" : $F{mulai}.substring(5,7)=="06" ? "Juni" : $F{mulai}.substring(5,7)=="07" ? "Juli" : $F{mulai}.substring(5,7)=="08" ? "Agustus" : $F{mulai}.substring(5,7)=="09" ? "September" : $F{mulai}.substring(5,7)=="10" ? "Oktober" : $F{mulai}.substring(5,7)=="11" ? "November" : $F{mulai}.substring(5,7)=="12" ? "Desember" : ""]]></variableExpression>
+	</variable>
 	<group name="pos" isStartNewPage="true" isResetPageNumber="true">
 		<groupExpression><![CDATA[$F{pos}]]></groupExpression>
 		<groupHeader>
@@ -132,12 +132,12 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font size="12" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["S.D TANGGAL "+$F{tanggal}.substring(8,10)+"-"+$F{tanggal}.substring(5,7)+"-"+$F{tanggal}.substring(0,4)]]></textFieldExpression>
+					<textFieldExpression><![CDATA["S.D TANGGAL "+$F{mulai}.substring(8,10)+"-"+$F{mulai}.substring(5,7)+"-"+$F{mulai}.substring(0,4)]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="50">
+			<band height="140">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement x="0" y="0" width="20" height="16"/>
 					<box>
@@ -201,6 +201,29 @@
 						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{jml_nominal})]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="320" y="39" width="222" height="15"/>
+					<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["PEMBANTU KUASA BUD"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="320" y="24" width="222" height="15"/>
+					<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Tigaraksa, "+$F{mulai}.substring( 8,10 )+" "+$V{nm_bulan}+" "+$F{mulai}.substring( 0,4 )]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="351" y="102" width="164" height="15"/>
+					<box>
+						<bottomPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+						<font size="10" isBold="true"/>
+					</textElement>
 				</textField>
 			</band>
 		</groupFooter>
@@ -320,7 +343,7 @@
 				<textElement>
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{unit_nm}+" : "+$F{nama}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{nama}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="446" y="0" width="96" height="20"/>

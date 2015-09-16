@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R00001" language="groovy" pageWidth="972" pageHeight="612" orientation="Landscape" columnWidth="932" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.1"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="185"/>
 	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[/apbd/spp]]>
@@ -99,6 +99,9 @@
 	<variable name="nominal_gj" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{nominal_gj})]]></variableExpression>
 	</variable>
+	<variable name="sp2d_kd" class="java.lang.String">
+		<variableExpression><![CDATA[$F{sp2d_kd}.substring( 0, $F{sp2d_kd}.length()-6 )==$F{tahun}+"-"+$F{unit_kd} ? $F{sp2d_kd}.substring(13)+"/"+$V{jenis}+"/"+$F{tahun} : $F{sp2d_kd}]]></variableExpression>
+	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -134,7 +137,7 @@
 	<pageHeader>
 		<band height="62">
 			<staticText>
-				<reportElement x="1" y="1" width="30" height="61"/>
+				<reportElement x="0" y="1" width="22" height="61"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -147,7 +150,7 @@
 				<text><![CDATA[No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="31" y="1" width="56" height="61"/>
+				<reportElement x="22" y="1" width="50" height="61"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -160,7 +163,7 @@
 				<text><![CDATA[Tanggal]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="87" y="1" width="320" height="21"/>
+				<reportElement x="72" y="1" width="320" height="21"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -173,7 +176,7 @@
 				<text><![CDATA[No.SP2D]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="407" y="1" width="154" height="61"/>
+				<reportElement x="392" y="1" width="150" height="61"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -186,7 +189,7 @@
 				<text><![CDATA[Uraian]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="561" y="22" width="72" height="40"/>
+				<reportElement x="542" y="22" width="72" height="40"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -199,7 +202,7 @@
 				<text><![CDATA[UP]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="561" y="1" width="360" height="21"/>
+				<reportElement x="542" y="1" width="360" height="21"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -212,7 +215,7 @@
 				<text><![CDATA[Jumlah SP2D (Rp)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="777" y="22" width="144" height="20"/>
+				<reportElement x="758" y="22" width="144" height="20"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -225,7 +228,7 @@
 				<text><![CDATA[LS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="633" y="22" width="72" height="40"/>
+				<reportElement x="614" y="22" width="72" height="40"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -238,7 +241,7 @@
 				<text><![CDATA[GU]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="705" y="22" width="72" height="40"/>
+				<reportElement x="686" y="22" width="72" height="40"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -251,7 +254,7 @@
 				<text><![CDATA[TU]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="777" y="42" width="72" height="20"/>
+				<reportElement x="758" y="42" width="72" height="20"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -264,7 +267,7 @@
 				<text><![CDATA[Gaji]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="849" y="42" width="72" height="20"/>
+				<reportElement x="830" y="42" width="72" height="20"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -277,7 +280,7 @@
 				<text><![CDATA[Barang & Jasa]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="87" y="22" width="64" height="40"/>
+				<reportElement x="72" y="22" width="64" height="40"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -290,7 +293,7 @@
 				<text><![CDATA[UP]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="151" y="22" width="64" height="40"/>
+				<reportElement x="136" y="22" width="64" height="40"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -303,7 +306,7 @@
 				<text><![CDATA[GU]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="215" y="22" width="64" height="40"/>
+				<reportElement x="200" y="22" width="64" height="40"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -316,7 +319,7 @@
 				<text><![CDATA[TU]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="279" y="42" width="64" height="20"/>
+				<reportElement x="264" y="42" width="64" height="20"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -329,7 +332,7 @@
 				<text><![CDATA[Gaji]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="343" y="42" width="64" height="20"/>
+				<reportElement x="328" y="42" width="64" height="20"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -342,7 +345,7 @@
 				<text><![CDATA[Barang & Jasa]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="279" y="22" width="128" height="21"/>
+				<reportElement x="264" y="22" width="128" height="21"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -354,23 +357,25 @@
 				</textElement>
 				<text><![CDATA[LS]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="902" y="1" width="30" height="61"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Paraf]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<detail>
 		<band height="16" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="31" y="0" width="56" height="16"/>
-				<box>
-					<leftPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{tgl_sp2d}.substring(8,10)+"-"+$F{tgl_sp2d}.substring(5,7)+"-"+$F{tgl_sp2d}.substring(0,4)]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="87" y="0" width="64" height="16"/>
+				<reportElement stretchType="RelativeToBandHeight" x="72" y="0" width="64" height="16" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -378,10 +383,10 @@
 				<textElement verticalAlignment="Top">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{jenis}=="UP" ? $F{sp2d_kd}.substring(13)+"/"+$V{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun} : ""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{jenis}=="UP" ? $V{sp2d_kd} : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="407" y="0" width="154" height="16"/>
+				<reportElement stretchType="RelativeToBandHeight" x="392" y="0" width="150" height="16" isPrintWhenDetailOverflows="true"/>
 				<box leftPadding="3">
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -392,7 +397,7 @@
 				<textFieldExpression><![CDATA[$F{sp2d_nm}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="1" y="0" width="30" height="16"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="22" height="16" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -403,7 +408,7 @@
 				<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="561" y="0" width="72" height="16"/>
+				<reportElement stretchType="RelativeToBandHeight" x="542" y="0" width="72" height="16" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -414,7 +419,7 @@
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{UP})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="633" y="0" width="72" height="16"/>
+				<reportElement stretchType="RelativeToBandHeight" x="614" y="0" width="72" height="16" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -425,7 +430,7 @@
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{GU})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="705" y="0" width="72" height="16"/>
+				<reportElement stretchType="RelativeToBandHeight" x="686" y="0" width="72" height="16" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -436,7 +441,7 @@
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{TU})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="777" y="0" width="72" height="16"/>
+				<reportElement stretchType="RelativeToBandHeight" x="758" y="0" width="72" height="16" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -447,7 +452,7 @@
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{LS_GJ})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="849" y="0" width="72" height="16"/>
+				<reportElement stretchType="RelativeToBandHeight" x="830" y="0" width="72" height="16" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -458,7 +463,7 @@
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{LS})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="151" y="0" width="64" height="16"/>
+				<reportElement stretchType="RelativeToBandHeight" x="136" y="0" width="64" height="16" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -466,10 +471,10 @@
 				<textElement verticalAlignment="Top">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{jenis}=="GU" ? $F{sp2d_kd}.substring(13)+"/"+$V{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun} : ""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{jenis}=="GU" ? $V{sp2d_kd} : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="215" y="0" width="64" height="16"/>
+				<reportElement stretchType="RelativeToBandHeight" x="200" y="0" width="64" height="16" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -477,10 +482,10 @@
 				<textElement verticalAlignment="Top">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{jenis}=="TU" ? $F{sp2d_kd}.substring(13)+"/"+$V{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun} : ""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{jenis}=="TU" ? $V{sp2d_kd} : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="279" y="0" width="64" height="16"/>
+				<reportElement stretchType="RelativeToBandHeight" x="264" y="0" width="64" height="16" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -488,10 +493,10 @@
 				<textElement verticalAlignment="Top">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{jenis}=="LS-GJ" ? $F{sp2d_kd}.substring(13)+"/"+$V{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun} : ""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{jenis}=="LS-GJ" ? $V{sp2d_kd} : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="343" y="0" width="64" height="16"/>
+				<reportElement stretchType="RelativeToBandHeight" x="328" y="0" width="64" height="16" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -499,23 +504,44 @@
 				<textElement verticalAlignment="Top">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{jenis}=="LS" ? $F{sp2d_kd}.substring(13)+"/"+$V{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun} : ""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{jenis}=="LS" ? $V{sp2d_kd} : ""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="22" y="0" width="50" height="16" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tgl_sp2d}.substring(8,10)+"-"+$F{tgl_sp2d}.substring(5,7)+"-"+$F{tgl_sp2d}.substring(0,4)]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="902" y="0" width="30" height="16" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="9"/>
+				</textElement>
 			</textField>
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="46" splitType="Stretch">
+		<band height="32" splitType="Stretch">
 			<textField>
-				<reportElement x="821" y="10" width="100" height="20"/>
+				<reportElement x="830" y="5" width="100" height="20"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$F{unit_kd}+" - "+$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="146" splitType="Stretch">
+		<band height="143" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement x="1" y="0" width="30" height="16"/>
+				<reportElement x="0" y="0" width="22" height="16"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -528,7 +554,7 @@
 				<textFieldExpression><![CDATA[""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="31" y="0" width="56" height="16"/>
+				<reportElement x="72" y="0" width="64" height="16"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -541,20 +567,7 @@
 				<textFieldExpression><![CDATA[""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="87" y="0" width="64" height="16"/>
-				<box>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement markup="none">
-					<font size="9" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[""]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="407" y="0" width="154" height="16"/>
+				<reportElement x="392" y="0" width="150" height="16"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -566,7 +579,7 @@
 				</textElement>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="561" y="0" width="72" height="16"/>
+				<reportElement x="542" y="0" width="72" height="16"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -579,7 +592,7 @@
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{UP_1})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="633" y="0" width="72" height="16"/>
+				<reportElement x="614" y="0" width="72" height="16"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -592,7 +605,7 @@
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{GU_1})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="705" y="0" width="72" height="16"/>
+				<reportElement x="686" y="0" width="72" height="16"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -605,7 +618,7 @@
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{TU_1})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="777" y="0" width="72" height="16"/>
+				<reportElement x="758" y="0" width="72" height="16"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -618,7 +631,7 @@
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{LS_GJ_1})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="849" y="0" width="72" height="16"/>
+				<reportElement x="830" y="0" width="72" height="16"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -631,7 +644,7 @@
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{LS_1})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="151" y="0" width="64" height="16"/>
+				<reportElement x="136" y="0" width="64" height="16"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -644,7 +657,7 @@
 				<textFieldExpression><![CDATA[""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="215" y="0" width="64" height="16"/>
+				<reportElement x="200" y="0" width="64" height="16"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -657,7 +670,7 @@
 				<textFieldExpression><![CDATA[""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="279" y="0" width="64" height="16"/>
+				<reportElement x="264" y="0" width="64" height="16"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -670,7 +683,7 @@
 				<textFieldExpression><![CDATA[""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="343" y="0" width="64" height="16"/>
+				<reportElement x="328" y="0" width="64" height="16"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -716,6 +729,31 @@
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{unit_nm}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="22" y="0" width="50" height="16"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="none">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="902" y="0" width="30" height="16"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" markup="none">
+					<font size="9" isBold="true"/>
+				</textElement>
 			</textField>
 		</band>
 	</summary>

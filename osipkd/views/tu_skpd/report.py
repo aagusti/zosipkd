@@ -278,7 +278,9 @@ class ViewTUSKPDLap(BaseViews):
                query = DBSession.query(Sts.tahun_id.label('tahun'), Unit.kode.label('unit_kd'),Unit.nama.label('unit_nm'),
                   Sts.kode, Sts.tgl_sts, Sts.tgl_validasi, Sts.jenis, Sts.nama.label('uraian'), 
                   Sts.nominal, literal_column('1').label('tipe')
-                  ).filter(Sts.unit_id==Unit.id, Sts.jenis==1,
+                  ).filter(Sts.unit_id==Unit.id, 
+                  #Sts.jenis==1,
+                  Sts.jenis.in_([1,2,3]),
                   Sts.unit_id==self.session['unit_id'],
                   Sts.tahun_id==self.session['tahun'],  
                   Sts.tgl_sts.between(mulai,selesai)
@@ -287,7 +289,7 @@ class ViewTUSKPDLap(BaseViews):
                query = DBSession.query(Sts.tahun_id.label('tahun'), Unit.kode.label('unit_kd'),Unit.nama.label('unit_nm'),
                   Sts.kode, Sts.tgl_sts, Sts.tgl_validasi, Sts.jenis, Sts.nama.label('uraian'), 
                   Sts.nominal, literal_column('2').label('tipe')
-                  ).filter(Sts.unit_id==Unit.id, Sts.jenis==2, 
+                  ).filter(Sts.unit_id==Unit.id, Sts.jenis==4, 
                   Sts.unit_id==self.session['unit_id'],
                   Sts.tahun_id==self.session['tahun'],  
                   Sts.tgl_sts.between(mulai,selesai)
@@ -296,7 +298,7 @@ class ViewTUSKPDLap(BaseViews):
                query = DBSession.query(Sts.tahun_id.label('tahun'), Unit.kode.label('unit_kd'),Unit.nama.label('unit_nm'),
                   Sts.kode, Sts.tgl_sts, Sts.tgl_validasi, Sts.jenis, Sts.nama.label('uraian'), 
                   Sts.nominal, literal_column('3').label('tipe')
-                  ).filter(Sts.unit_id==Unit.id, Sts.jenis==3, 
+                  ).filter(Sts.unit_id==Unit.id, Sts.jenis==5, 
                   Sts.unit_id==self.session['unit_id'],
                   Sts.tahun_id==self.session['tahun'],  
                   Sts.tgl_sts.between(mulai,selesai)
@@ -562,7 +564,8 @@ class ViewTUSKPDLap(BaseViews):
                      Spp.id.label('spp_id'),Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm'), 
                      Spp.tanggal.label('spp_tgl'), Spp.ttd_nip, Spp.ttd_nama, Spp.ttd_jab, Spp.jenis, 
                      Spp.pptk_nip, Spp.pptk_nama, Spp.ap_nama, Spp.ap_bank, Spp.ap_rekening, 
-                     func.substr(Rekening.kode,1,5).label('kode'),
+                     case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="").label('kode'),
+                     #func.substr(Rekening.kode,1,5).label('kode'),
                      func.sum(APInvoiceItem.amount).label('nominal')
                      ).filter(Spp.unit_id==Unit.id, Tahun.id==Spp.tahun_id, Urusan.id==Unit.urusan_id,
                      SppItem.ap_spp_id==Spp.id, SppItem.ap_invoice_id==APInvoiceItem.ap_invoice_id, 
@@ -573,7 +576,9 @@ class ViewTUSKPDLap(BaseViews):
                      Tahun.no_perkdh, Tahun.tgl_perkdh, Spp.id,Spp.kode, Spp.nama, 
                      Spp.tanggal, Spp.ttd_nip, Spp.ttd_nama, Spp.ttd_jab, Spp.jenis, 
                      Spp.pptk_nip, Spp.pptk_nama, Spp.ap_nama, Spp.ap_bank, Spp.ap_rekening, 
-                     func.substr(Rekening.kode,1,5))                         
+                     case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="")
+                     #func.substr(Rekening.kode,1,5)
+                     )                         
             generator = b103r021Generator()
             pdf = generator.generate(query)
             response=req.response
@@ -591,7 +596,8 @@ class ViewTUSKPDLap(BaseViews):
                      Spp.id.label('spp_id'),Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm'), 
                      Spp.tanggal.label('spp_tgl'), Spp.ttd_nip, Spp.ttd_nama, Spp.ttd_jab, Spp.jenis, 
                      Spp.pptk_nip, Spp.pptk_nama, Spp.ap_nama, Spp.ap_bank, Spp.ap_rekening, 
-                     func.substr(Rekening.kode,1,5).label('kode'),
+                     case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="").label('kode'),
+                     #func.substr(Rekening.kode,1,5).label('kode'),
                      func.sum(APInvoiceItem.amount).label('nominal')
                      ).filter(Spp.unit_id==Unit.id, Tahun.id==Spp.tahun_id, Urusan.id==Unit.urusan_id,
                      SppItem.ap_spp_id==Spp.id, SppItem.ap_invoice_id==APInvoiceItem.ap_invoice_id, 
@@ -602,7 +608,9 @@ class ViewTUSKPDLap(BaseViews):
                      Tahun.no_perkdh, Tahun.tgl_perkdh, Spp.id,Spp.kode, Spp.nama, 
                      Spp.tanggal, Spp.ttd_nip, Spp.ttd_nama, Spp.ttd_jab, Spp.jenis, 
                      Spp.pptk_nip, Spp.pptk_nama, Spp.ap_nama, Spp.ap_bank, Spp.ap_rekening, 
-                     func.substr(Rekening.kode,1,5))                         
+                     case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="")
+                     #func.substr(Rekening.kode,1,5)
+                     )                         
             generator = b103r022Generator()
             pdf = generator.generate(query)
             response=req.response
@@ -649,7 +657,8 @@ class ViewTUSKPDLap(BaseViews):
                      Spp.id.label('spp_id'),Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm'), 
                      Spp.tanggal.label('spp_tgl'), Spp.ttd_nip, Spp.ttd_nama, Spp.ttd_jab, Spp.jenis, 
                      Spp.pptk_nip, Spp.pptk_nama, Spp.ap_nama, Spp.ap_bank, Spp.ap_rekening, 
-                     func.substr(Rekening.kode,1,5).label('kode'),
+                     case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="").label('kode'),
+                     #func.substr(Rekening.kode,1,5).label('kode'),
                      func.sum(APInvoiceItem.amount).label('nominal')
                      ).filter(Spp.unit_id==Unit.id, Tahun.id==Spp.tahun_id, Urusan.id==Unit.urusan_id,
                      SppItem.ap_spp_id==Spp.id, SppItem.ap_invoice_id==APInvoiceItem.ap_invoice_id, 
@@ -660,7 +669,9 @@ class ViewTUSKPDLap(BaseViews):
                      Tahun.no_perkdh, Tahun.tgl_perkdh, Spp.id,Spp.kode, Spp.nama, 
                      Spp.tanggal, Spp.ttd_nip, Spp.ttd_nama, Spp.ttd_jab, Spp.jenis, 
                      Spp.pptk_nip, Spp.pptk_nama, Spp.ap_nama, Spp.ap_bank, Spp.ap_rekening, 
-                     func.substr(Rekening.kode,1,5))                         
+                     case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="")
+                     #func.substr(Rekening.kode,1,5)
+                     )                         
             generator = b103r031Generator()
             pdf = generator.generate(query)
             response=req.response
@@ -794,11 +805,11 @@ class ViewTUSKPDLap(BaseViews):
         ### SPP Rincian // UP
         elif url_dict['act']=='spp13' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
-            subq  = DBSession.query(case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="").label('jenis1')
+            subq  = DBSession.query(case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_=" ").label('jenis1')
                      ).filter(Rekening.id==KegiatanItem.rekening_id, KegiatanItem.id==APInvoiceItem.kegiatan_item_id,
                      APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id, SppItem.ap_spp_id==Spp.id,
                      Spp.id==Spm.ap_spp_id, Spp.unit_id==self.session['unit_id'], Spp.tahun_id==self.session['tahun'], Spp.id==pk_id
-                     ).group_by(case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="")
+                     ).group_by(case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_=" ")
                      ).subquery()
             query = DBSession.query(Spp.tahun_id.label('tahun'), 
                   Urusan.kode.label('urusan_kd'),
@@ -834,11 +845,11 @@ class ViewTUSKPDLap(BaseViews):
         ### SPP Rincian // TU
         elif url_dict['act']=='spp23' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
-            subq  = DBSession.query(case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="").label('jenis1')
+            subq  = DBSession.query(case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_=" ").label('jenis1')
                      ).filter(Rekening.id==KegiatanItem.rekening_id, KegiatanItem.id==APInvoiceItem.kegiatan_item_id,
                      APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id, SppItem.ap_spp_id==Spp.id,
                      Spp.id==Spm.ap_spp_id, Spp.unit_id==self.session['unit_id'], Spp.tahun_id==self.session['tahun'], Spp.id==pk_id
-                     ).group_by(case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="")
+                     ).group_by(case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_=" ")
                      ).subquery()
             query = DBSession.query(Spp.tahun_id.label('tahun'), 
                   Urusan.kode.label('urusan_kd'),
@@ -1141,9 +1152,11 @@ class ViewTUSKPDLap(BaseViews):
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
             query = DBSession.query(Spp.tahun_id.label('tahun'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), Unit.alamat,
                      Spm.id.label('spm_id'),Spm.kode.label('spm_kd'), Spm.nama.label('spm_nm'), Spm.tanggal.label('spm_tgl'), Spm.ttd_nip, Spm.ttd_nama, 
-                     Spp.id.label('spp_id'),Spp.jenis.label('jenis'), func.substr(Rekening.kode,1,5).label('kode'),                  
+                     Spp.id.label('spp_id'),Spp.jenis.label('jenis'), 
+                     case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="").label('kode'),
+                     #func.substr(Rekening.kode,1,5).label('kode'),                  
                      Kegiatan.kode.label('keg_kd'), Kegiatan.nama.label('keg_nm'), Program.kode.label('prg_kd'),
-                     Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'), APInvoiceItem.amount,
+                     Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'), func.sum(APInvoiceItem.amount).label('amount'),
                      Jabatan.nama.label('jabatan')
                      ).filter(cast(Spm.ttd_uid, sqlalchemy.String)==Jabatan.kode, Spm.ap_spp_id==Spp.id, Spp.unit_id==Unit.id, 
                      SppItem.ap_spp_id==Spp.id, SppItem.ap_invoice_id==APInvoiceItem.ap_invoice_id, 
@@ -1151,7 +1164,15 @@ class ViewTUSKPDLap(BaseViews):
                      KegiatanItem.rekening_id==Rekening.id, KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
                      KegiatanSub.kegiatan_id==Kegiatan.id, Kegiatan.program_id==Program.id,
                      Spp.unit_id==self.session['unit_id'], Spp.tahun_id==self.session['tahun'], Spm.id==pk_id
-                     ).order_by(Rekening.kode
+                     ).group_by(Spp.tahun_id, Unit.kode, Unit.nama, Unit.alamat,
+                     Spm.id,Spm.kode, Spm.nama, Spm.tanggal, Spm.ttd_nip, Spm.ttd_nama, 
+                     Spp.id,Spp.jenis, 
+                     case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_=""),
+                     #func.substr(Rekening.kode,1,5),                  
+                     Kegiatan.kode, Kegiatan.nama, Program.kode,
+                     Rekening.kode, Rekening.nama, 
+                     Jabatan.nama
+                     ).order_by(Spm.kode, Kegiatan.kode, Rekening.kode
                      )                     
             generator = b103r003_1Generator()
             pdf = generator.generate(query)
@@ -3290,7 +3311,7 @@ class b103r003Generator(JasperGeneratorWithSubreport):
                SppItem.ap_spp_id==row.spp_id
                #, func.substr(Rekening.kode,1,1)=='5'
                ).group_by(Rekening.kode, Rekening.nama, Unit.kode, Kegiatan.kode
-               ).order_by(Rekening.kode)
+               ).order_by(Unit.kode, Kegiatan.kode, Rekening.kode)
             for row2 in rows :
                 xml_a = ET.SubElement(xml_greeting, "rekening")
                 ET.SubElement(xml_a, "rek_kd").text =row2.kode

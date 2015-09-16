@@ -99,17 +99,17 @@
 		<variableExpression><![CDATA[Double.parseDouble($F{nominal})]]></variableExpression>
 	</variable>
 	<variable name="jenis_nm" class="java.lang.String">
-		<variableExpression><![CDATA[$F{jenis}=="1" ? "Uang Persediaan" : $F{jenis}=="2" ? "Tambahan Uang Persediaan" : $F{jenis}=="3" ? "Ganti Uang Persediaan" : ($F{jenis}=="4" && $F{kode}=="5.1.1") ? "Langsung Gaji dan Tunjangan" : ($F{jenis}=="4" && $F{kode}!="5.1.1") ? "Langsung" : ""]]></variableExpression>
-		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "Uang Persediaan" : $F{jenis}=="2" ? "Tambahan Uang Persediaan" : $F{jenis}=="3" ? "Ganti Uang Persediaan" : ($F{jenis}=="4" && $F{kode}=="5.1.1") ? "Langsung Gaji dan Tunjangan" : ($F{jenis}=="4" && $F{kode}!="5.1.1") ? "Langsung" : ""]]></initialValueExpression>
+		<variableExpression><![CDATA[$F{jenis}=="1" ? "Uang Persediaan" : $F{jenis}=="2" ? "Tambahan Uang Persediaan" : $F{jenis}=="3" ? "Ganti Uang Persediaan" : ($F{jenis}=="4" && $F{kode}=="-GJ") ? "Langsung Gaji dan Tunjangan" : ($F{jenis}=="4" && $F{kode}!="-GJ") ? "Langsung" : ""]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "Uang Persediaan" : $F{jenis}=="2" ? "Tambahan Uang Persediaan" : $F{jenis}=="3" ? "Ganti Uang Persediaan" : ($F{jenis}=="4" && $F{kode}=="-GJ") ? "Langsung Gaji dan Tunjangan" : ($F{jenis}=="4" && $F{kode}!="-GJ") ? "Langsung" : ""]]></initialValueExpression>
 	</variable>
 	<variable name="nm_bulan" class="java.lang.String">
 		<variableExpression><![CDATA[$F{spp_tgl}.substring(5,7)=="01" ? "Januari" : $F{spp_tgl}.substring(5,7)=="02" ? "Februari" : $F{spp_tgl}.substring(5,7)=="03" ? "Maret" : $F{spp_tgl}.substring(5,7)=="04" ? "April" : $F{spp_tgl}.substring(5,7)=="05" ? "Mei" : $F{spp_tgl}.substring(5,7)=="06" ? "Juni" : $F{spp_tgl}.substring(5,7)=="07" ? "Juli" : $F{spp_tgl}.substring(5,7)=="08" ? "Agustus" : $F{spp_tgl}.substring(5,7)=="09" ? "September" : $F{spp_tgl}.substring(5,7)=="10" ? "Oktober" : $F{spp_tgl}.substring(5,7)=="11" ? "November" : $F{spp_tgl}.substring(5,7)=="12" ? "Desember" : ""]]></variableExpression>
 	</variable>
 	<variable name="jenis" class="java.lang.String">
-		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : ($F{jenis}=="4" && $F{kode}=="5.1.1") ? "LS Gaji dan Tunjangan" : ($F{jenis}=="4" && $F{kode}!="5.1.1") ? "LS" : ""]]></initialValueExpression>
+		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : ($F{jenis}=="4" && $F{kode}=="-GJ") ? "LS Gaji dan Tunjangan" : ($F{jenis}=="4" && $F{kode}!="-GJ") ? "LS" : ""]]></initialValueExpression>
 	</variable>
 	<variable name="jenis_1" class="java.lang.String">
-		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : ($F{jenis}=="4" && $F{kode}=="5.1.1") ? "LS-GJ" : ($F{jenis}=="4" && $F{kode}!="5.1.1") ? "LS" : ""]]></initialValueExpression>
+		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : ($F{jenis}=="4" && $F{kode}=="-GJ") ? "LS-GJ" : ($F{jenis}=="4" && $F{kode}!="-GJ") ? "LS" : ""]]></initialValueExpression>
 	</variable>
 	<variable name="sisa" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{jml_spd})-Double.parseDouble($F{jml_apinvoice_lalu})]]></variableExpression>

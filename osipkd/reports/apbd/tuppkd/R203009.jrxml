@@ -43,16 +43,16 @@
 		<fieldDescription><![CDATA[logo]]></fieldDescription>
 	</field>
 	<variable name="jumlah1" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{jenis}=="1" ? Double.parseDouble($F{nominal}) : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{jenis}=="1" || $F{jenis}=="2" || $F{jenis}=="3" ? Double.parseDouble($F{nominal}) : 0]]></variableExpression>
 	</variable>
 	<variable name="total1" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$V{jumlah1}]]></variableExpression>
 	</variable>
 	<variable name="jumlah2" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{jenis}=="2" ? Double.parseDouble($F{nominal}) : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{jenis}=="4" ? Double.parseDouble($F{nominal}) : 0]]></variableExpression>
 	</variable>
 	<variable name="jumlah3" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{jenis}=="3" ? Double.parseDouble($F{nominal}) : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{jenis}=="5" ? Double.parseDouble($F{nominal}) : 0]]></variableExpression>
 	</variable>
 	<variable name="total2" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$V{jumlah2}]]></variableExpression>
@@ -61,7 +61,7 @@
 		<variableExpression><![CDATA[$V{jumlah3}]]></variableExpression>
 	</variable>
 	<variable name="jenis" class="java.lang.String">
-		<variableExpression><![CDATA[$F{jenis}=="1" ? "P" : $F{jenis}=="2" ? "CP" : $F{jenis}=="3" ? "L" : ""]]></variableExpression>
+		<variableExpression><![CDATA[$F{jenis}=="1" || $F{jenis}=="2" || $F{jenis}=="3"  ? "P" : $F{jenis}=="4" ? "CP" : $F{jenis}=="5" ? "L" : ""]]></variableExpression>
 	</variable>
 	<variable name="kode" class="java.lang.String">
 		<variableExpression><![CDATA[$F{kode}.substring($F{kode}.length()-5,$F{kode}.length())]]></variableExpression>

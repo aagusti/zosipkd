@@ -298,7 +298,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Top"/>
-				<textFieldExpression><![CDATA[$F{sp2d_kd}.substring(13)+"/"+$F{jenis}+"/"+$F{tahun}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{sp2d_kd}+"/"+$F{jenis}+"/"+$F{tahun}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="353" y="0" width="60" height="20"/>

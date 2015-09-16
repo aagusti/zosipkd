@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R00001" language="groovy" pageWidth="1008" pageHeight="612" orientation="Landscape" columnWidth="968" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.1"/>
-	<property name="ireport.x" value="371"/>
+	<property name="ireport.x" value="12"/>
 	<property name="ireport.y" value="0"/>
 	<queryString language="xPath">
 		<![CDATA[/apbd/spp]]>
 	</queryString>
-	<field name="tahun_id" class="java.lang.String">
-		<fieldDescription><![CDATA[tahun_id]]></fieldDescription>
+	<field name="tahun" class="java.lang.String">
+		<fieldDescription><![CDATA[tahun]]></fieldDescription>
 	</field>
 	<field name="unit_nm" class="java.lang.String">
 		<fieldDescription><![CDATA[unit_nm]]></fieldDescription>
@@ -77,6 +77,9 @@
 	</variable>
 	<variable name="LS_1" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$V{LS}]]></variableExpression>
+	</variable>
+	<variable name="spp_kd" class="java.lang.String">
+		<variableExpression><![CDATA[$F{spp_kd}.substring( 0, $F{spp_kd}.length()-6 )==$F{tahun}+"-"+$F{unit_kd} ? $F{spp_kd}.substring(13)+"/"+$F{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun} : $F{spp_kd}]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -238,7 +241,7 @@
 	<detail>
 		<band height="20" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="42" y="0" width="62" height="20"/>
+				<reportElement stretchType="RelativeToBandHeight" x="42" y="0" width="62" height="20" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -247,16 +250,16 @@
 				<textFieldExpression><![CDATA[$F{tgl_spp}.substring(8,10)+"-"+$F{tgl_spp}.substring(5,7)+"-"+$F{tgl_spp}.substring(0,4)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="104" y="0" width="87" height="20"/>
+				<reportElement stretchType="RelativeToBandHeight" x="104" y="0" width="87" height="20" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Top"/>
-				<textFieldExpression><![CDATA[$F{spp_kd}.substring(13)+"/"+$F{jenis}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{spp_kd}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="191" y="0" width="289" height="20"/>
+				<reportElement stretchType="RelativeToBandHeight" x="191" y="0" width="289" height="20" isPrintWhenDetailOverflows="true"/>
 				<box leftPadding="3">
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -265,7 +268,7 @@
 				<textFieldExpression><![CDATA[$F{spp_nm}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="1" y="0" width="41" height="20"/>
+				<reportElement stretchType="RelativeToBandHeight" x="1" y="0" width="41" height="20" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -274,7 +277,7 @@
 				<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="480" y="0" width="80" height="20"/>
+				<reportElement stretchType="RelativeToBandHeight" x="480" y="0" width="80" height="20" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -283,7 +286,7 @@
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{UP})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="560" y="0" width="80" height="20"/>
+				<reportElement stretchType="RelativeToBandHeight" x="560" y="0" width="80" height="20" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -292,7 +295,7 @@
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{GU})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="640" y="0" width="80" height="20"/>
+				<reportElement stretchType="RelativeToBandHeight" x="640" y="0" width="80" height="20" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -301,7 +304,7 @@
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{TU})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="720" y="0" width="80" height="20"/>
+				<reportElement stretchType="RelativeToBandHeight" x="720" y="0" width="80" height="20" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -310,7 +313,7 @@
 				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format($V{LS_GJ})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="800" y="0" width="80" height="20"/>
+				<reportElement stretchType="RelativeToBandHeight" x="800" y="0" width="80" height="20" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
