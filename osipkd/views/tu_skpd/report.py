@@ -3958,10 +3958,19 @@ class b104r2004Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "logo").text = logo
         return self.root 
 
-class b104r300Generator(JasperGenerator):
+class b103r003_10Generator(JasperGeneratorWithSubreport):
     def __init__(self):
-        super(b104r300Generator, self).__init__()
-        self.reportname = get_rpath('apbd/tuskpd/R104300.jrxml')
+        self.mainreport = get_rpath('apbd/tuskpd/R103003_10.jrxml')
+        self.subreportlist = []
+        #self.subreportlist.append(get_rpath('apbd/tuskpd/R103003_subreport1.jrxml'))
+        self.xpath = '/apbd/spm'
+        self.root = ET.Element('apbd')
+
+class b104r300Generator(JasperGeneratorWithSubreport):
+    def __init__(self):
+        self.mainreport = get_rpath('apbd/tuskpd/R104300.jrxml')
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/tuskpd/R104300_subreport1.jrxml'))
         self.xpath = '/apbd/spj'
         self.root = ET.Element('apbd') 
 
@@ -4002,7 +4011,83 @@ class b104r300Generator(JasperGenerator):
             for row3 in rows2 :
                ET.SubElement(xml_greeting, "bend_nama").text = row3.bend_nama
                ET.SubElement(xml_greeting, "bend_nip").text = row3.bend_nip
-            
+
+            subq = DBSession.query(APInvoice.id, 
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, Rekening.kode=='7.1.1.02.01'),SpmPotongan.amount)], else_=0)),0).label('ppn_lalu'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, Rekening.kode=='7.1.1.02.01'),SpmPotongan.amount)], else_=0)),0).label('ppn_kini'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, Rekening.kode=='7.1.1.02.02'),SpmPotongan.amount)], else_=0)),0).label('pph21_lalu'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, Rekening.kode=='7.1.1.02.02'),SpmPotongan.amount)], else_=0)),0).label('pph21_kini'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, Rekening.kode=='7.1.1.02.03'),SpmPotongan.amount)], else_=0)),0).label('pph22_lalu'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, Rekening.kode=='7.1.1.02.03'),SpmPotongan.amount)], else_=0)),0).label('pph22_kini'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, Rekening.kode=='7.1.1.02.04'),SpmPotongan.amount)], else_=0)),0).label('pph23_lalu'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, Rekening.kode=='7.1.1.02.04'),SpmPotongan.amount)], else_=0)),0).label('pph23_kini'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, func.substr(Rekening.kode,1,3)=='7.1', 
+                not_(Rekening.kode.in_('7.1.1.02.01','7.1.1.02.02','7.1.1.02.03','7.1.1.02.04')),SpmPotongan.amount)], else_=0)),0).label('lain_lalu'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, func.substr(Rekening.kode,1,3)=='7.1', 
+                not_(Rekening.kode.in_('7.1.1.02.01','7.1.1.02.02','7.1.1.02.03','7.1.1.02.04')),SpmPotongan.amount)], else_=0)),0).label('lain_kini'),
+               ).filter(SpmPotongan.rekening_id==Rekening.id, SpmPotongan.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id,
+                SppItem.ap_spp_id==Spp.id, SppItem.ap_invoice_id==APInvoice.id,
+                APInvoice.unit_id==row.unit_id, APInvoice.tahun_id==row.tahun
+               ).group_by(APInvoice.id
+               ).subquery()
+
+            subq2 = DBSession.query(APInvoice.tahun_id, APInvoice.id, APInvoice.tanggal, Unit.id.label('unit_id'), 
+               case([(and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)=='5.1.1'),'LSG'), 
+               (and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)!='5.1.1'),'LS')], else_='LAIN').label('jenis'),
+               func.coalesce(func.sum(APInvoiceItem.amount),0).label('amount'), 
+               subq.c.ppn_lalu, subq.c.ppn_kini, subq.c.pph21_lalu, subq.c.pph21_kini, subq.c.pph22_lalu, subq.c.pph22_kini, 
+               subq.c.pph23_lalu, subq.c.pph23_kini, subq.c.lain_lalu, subq.c.lain_kini
+               ).join(Unit,APInvoiceItem, KegiatanItem, Rekening
+               ).outerjoin(subq, APInvoice.id==subq.c.id
+               ).filter(APInvoice.unit_id==row.unit_id, APInvoice.tahun_id==row.tahun
+               ).group_by(APInvoice.tahun_id, APInvoice.id, APInvoice.tanggal, Unit.id, 
+               case([(and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)=='5.1.1'),'LSG'), 
+               (and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)!='5.1.1'),'LS')], else_='LAIN'),
+               subq.c.ppn_lalu, subq.c.ppn_kini, subq.c.pph21_lalu, subq.c.pph21_kini, subq.c.pph22_lalu, subq.c.pph22_kini, 
+               subq.c.pph23_lalu, subq.c.pph23_kini, subq.c.lain_lalu, subq.c.lain_kini
+               ).subquery()
+               
+            rowitem = DBSession.query(
+               )
+               
+            rowitem = DBSession.query(
+               ).filter(
+               )
+            for row4 in rowitem :
+                xml_a = ET.SubElement(xml_greeting, "item")
+                ET.SubElement(xml_a, "unit_id").text =unicode(row4.unit_id)
+                ET.SubElement(xml_a, "tahun_id").text =unicode(row4.tahun_id)
+                ET.SubElement(xml_a, "lsg_amount_lalu").text =unicode(row4.lsg_amount_lalu)
+                ET.SubElement(xml_a, "lsg_amount_kini").text =unicode(row4.lsg_amount_kini)
+                ET.SubElement(xml_a, "ls_amount_lalu").text =unicode(row4.ls_amount_lalu)
+                ET.SubElement(xml_a, "ls_amount_kini").text =unicode(row4.ls_amount_kini)
+                ET.SubElement(xml_a, "lain_amount_lalu").text =unicode(row4.lain_amount_lalu)
+                ET.SubElement(xml_a, "lain_amount_kini").text =unicode(row4.lain_amount_kini)
+                ET.SubElement(xml_a, "lsg_ppn_lalu").text =unicode(row4.lsg_ppn_lalu)
+                ET.SubElement(xml_a, "lsg_ppn_kini").text =unicode(row4.lsg_ppn_kini)
+                ET.SubElement(xml_a, "ls_ppn_lalu").text =unicode(row4.ls_ppn_lalu)
+                ET.SubElement(xml_a, "ls_ppn_kini").text =unicode(row4.ls_ppn_kini)
+                ET.SubElement(xml_a, "lain_ppn_lalu").text =unicode(row4.lain_ppn_lalu)
+                ET.SubElement(xml_a, "lain_ppn_kini").text =unicode(row4.lain_ppn_kini)
+                ET.SubElement(xml_a, "lsg_pph21_lalu").text =unicode(row4.lsg_pph21_lalu)
+                ET.SubElement(xml_a, "lsg_pph21_kini").text =unicode(row4.lsg_pph21_kini)
+                ET.SubElement(xml_a, "ls_pph21_lalu").text =unicode(row4.ls_pph21_lalu)
+                ET.SubElement(xml_a, "ls_pph21_kini").text =unicode(row4.ls_pph21_kini)
+                ET.SubElement(xml_a, "lain_pph21_lalu").text =unicode(row4.lain_pph21_lalu)
+                ET.SubElement(xml_a, "lain_pph21_kini").text =unicode(row4.lain_pph21_kini)
+                ET.SubElement(xml_a, "lsg_pph22_lalu").text =unicode(row4.lsg_pph22_lalu)
+                ET.SubElement(xml_a, "lsg_pph22_kini").text =unicode(row4.lsg_pph22_kini)
+                ET.SubElement(xml_a, "ls_pph22_lalu").text =unicode(row4.ls_pph22_lalu)
+                ET.SubElement(xml_a, "ls_pph22_kini").text =unicode(row4.ls_pph22_kini)
+                ET.SubElement(xml_a, "lain_pph22_lalu").text =unicode(row4.lain_pph22_lalu)
+                ET.SubElement(xml_a, "lain_pph22_kini").text =unicode(row4.lain_pph22_kini)
+                ET.SubElement(xml_a, "lsg_pph23_lalu").text =unicode(row4.lsg_pph23_lalu)
+                ET.SubElement(xml_a, "lsg_pph23_kini").text =unicode(row4.lsg_pph23_kini)
+                ET.SubElement(xml_a, "ls_pph23_lalu").text =unicode(row4.ls_pph23_lalu)
+                ET.SubElement(xml_a, "ls_pph23_kini").text =unicode(row4.ls_pph23_kini)
+                ET.SubElement(xml_a, "lain_pph23_lalu").text =unicode(row4.lain_pph23_lalu)
+                ET.SubElement(xml_a, "lain_pph23_kini").text =unicode(row4.lain_pph23_kini)
+               
         return self.root 
 
 class b104r400Generator(JasperGenerator):

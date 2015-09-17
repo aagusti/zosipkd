@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="R104300_subreport1" language="groovy" pageWidth="1008" pageHeight="612" orientation="Landscape" columnWidth="968" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="4"/>
+	<property name="ireport.y" value="0"/>
+	<queryString language="xPath">
+		<![CDATA[/apbd/spj/item]]>
+	</queryString>
+	<field name="unit_id" class="java.lang.String">
+		<fieldDescription><![CDATA[unit_id]]></fieldDescription>
+	</field>
+	<field name="tahun_id" class="java.lang.String">
+		<fieldDescription><![CDATA[tahun_id]]></fieldDescription>
+	</field>
+	<field name="lsg_amount_lalu" class="java.lang.String">
+		<fieldDescription><![CDATA[lsg_amount_lalu]]></fieldDescription>
+	</field>
+	<field name="lsg_amount_kini" class="java.lang.String">
+		<fieldDescription><![CDATA[lsg_amount_kini]]></fieldDescription>
+	</field>
+	<field name="ls_amount_lalu" class="java.lang.String">
+		<fieldDescription><![CDATA[ls_amount_lalu]]></fieldDescription>
+	</field>
+	<field name="ls_amount_kini" class="java.lang.String">
+		<fieldDescription><![CDATA[ls_amount_kini]]></fieldDescription>
+	</field>
+	<field name="lain_amount_lalu" class="java.lang.String">
+		<fieldDescription><![CDATA[lain_amount_lalu]]></fieldDescription>
+	</field>
+	<field name="lain_amount_kini" class="java.lang.String">
+		<fieldDescription><![CDATA[lain_amount_kini]]></fieldDescription>
+	</field>
+	<field name="lsg_ppn_lalu" class="java.lang.String">
+		<fieldDescription><![CDATA[lsg_ppn_lalu]]></fieldDescription>
+	</field>
+	<field name="lsg_ppn_kini" class="java.lang.String">
+		<fieldDescription><![CDATA[lsg_ppn_kini]]></fieldDescription>
+	</field>
+	<field name="ls_ppn_lalu" class="java.lang.String">
+		<fieldDescription><![CDATA[ls_ppn_lalu]]></fieldDescription>
+	</field>
+	<field name="ls_ppn_kini" class="java.lang.String">
+		<fieldDescription><![CDATA[ls_ppn_kini]]></fieldDescription>
+	</field>
+	<field name="lain_ppn_lalu" class="java.lang.String">
+		<fieldDescription><![CDATA[lain_ppn_lalu]]></fieldDescription>
+	</field>
+	<field name="lain_ppn_kini" class="java.lang.String">
+		<fieldDescription><![CDATA[lain_ppn_kini]]></fieldDescription>
+	</field>
+	<field name="lsg_pph21_lalu" class="java.lang.String">
+		<fieldDescription><![CDATA[lsg_pph21_lalu]]></fieldDescription>
+	</field>
+	<field name="lsg_pph21_kini" class="java.lang.String">
+		<fieldDescription><![CDATA[lsg_pph21_kini]]></fieldDescription>
+	</field>
+	<field name="ls_pph21_lalu" class="java.lang.String">
+		<fieldDescription><![CDATA[ls_pph21_lalu]]></fieldDescription>
+	</field>
+	<field name="ls_pph21_kini" class="java.lang.String">
+		<fieldDescription><![CDATA[ls_pph21_kini]]></fieldDescription>
+	</field>
+	<field name="lain_pph21_lalu" class="java.lang.String">
+		<fieldDescription><![CDATA[lain_pph21_lalu]]></fieldDescription>
+	</field>
+	<field name="lain_pph21_kini" class="java.lang.String">
+		<fieldDescription><![CDATA[lain_pph21_kini]]></fieldDescription>
+	</field>
+	<field name="lsg_pph22_lalu" class="java.lang.String">
+		<fieldDescription><![CDATA[lsg_pph22_lalu]]></fieldDescription>
+	</field>
+	<field name="lsg_pph22_kini" class="java.lang.String">
+		<fieldDescription><![CDATA[lsg_pph22_kini]]></fieldDescription>
+	</field>
+	<field name="ls_pph22_lalu" class="java.lang.String">
+		<fieldDescription><![CDATA[ls_pph22_lalu]]></fieldDescription>
+	</field>
+	<field name="ls_pph22_kini" class="java.lang.String">
+		<fieldDescription><![CDATA[ls_pph22_kini]]></fieldDescription>
+	</field>
+	<field name="lain_pph22_lalu" class="java.lang.String">
+		<fieldDescription><![CDATA[lain_pph22_lalu]]></fieldDescription>
+	</field>
+	<field name="lain_pph22_kini" class="java.lang.String">
+		<fieldDescription><![CDATA[lain_pph22_kini]]></fieldDescription>
+	</field>
+	<field name="lsg_pph23_lalu" class="java.lang.String">
+		<fieldDescription><![CDATA[lsg_pph23_lalu]]></fieldDescription>
+	</field>
+	<field name="lsg_pph23_kini" class="java.lang.String">
+		<fieldDescription><![CDATA[lsg_pph23_kini]]></fieldDescription>
+	</field>
+	<field name="ls_pph23_lalu" class="java.lang.String">
+		<fieldDescription><![CDATA[ls_pph23_lalu]]></fieldDescription>
+	</field>
+	<field name="ls_pph23_kini" class="java.lang.String">
+		<fieldDescription><![CDATA[ls_pph23_kini]]></fieldDescription>
+	</field>
+	<field name="lain_pph23_lalu" class="java.lang.String">
+		<fieldDescription><![CDATA[lain_pph23_lalu]]></fieldDescription>
+	</field>
+	<field name="lain_pph23_kini" class="java.lang.String">
+		<fieldDescription><![CDATA[lain_pph23_kini]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<staticText>
+				<reportElement x="17" y="10" width="106" height="12"/>
+				<textElement markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Penerimaan]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="17" y="22" width="106" height="12"/>
+				<textElement markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[SP2D]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="17" y="34" width="106" height="12"/>
+				<textElement markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Potongan Pajak]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="22" y="58" width="101" height="12"/>
+				<textElement markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[b. PPh-21]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="22" y="46" width="101" height="12"/>
+				<textElement markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[a. Ppn]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="22" y="70" width="101" height="12"/>
+				<textElement markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[c. PPh-22]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="22" y="82" width="101" height="12"/>
+				<textElement markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[d. PPh-23]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="22" y="94" width="101" height="12"/>
+				<textElement markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[- Lain-lain]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="17" y="106" width="106" height="12"/>
+				<textElement markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Jumlah Penerimaan]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="247" y="22" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lsg_amount_lalu}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="307" y="22" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lsg_amount_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="367" y="22" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lsg_amount_lalu})+Double.parseDouble($F{lsg_amount_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="487" y="22" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{ls_amount_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="427" y="22" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{ls_amount_lalu}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="547" y="22" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{ls_amount_lalu})+Double.parseDouble($F{ls_amount_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="607" y="22" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lain_amount_lalu}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="727" y="22" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lain_amount_lalu})+Double.parseDouble($F{lain_amount_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="667" y="22" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lain_amount_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="727" y="46" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lain_ppn_lalu})+Double.parseDouble($F{lain_ppn_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="427" y="46" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{ls_ppn_lalu}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="667" y="46" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lain_ppn_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="547" y="46" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{ls_ppn_lalu})+Double.parseDouble($F{ls_ppn_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="307" y="46" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lsg_ppn_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="487" y="46" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{ls_ppn_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="607" y="46" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lain_ppn_lalu}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="247" y="46" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lsg_ppn_lalu}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="367" y="46" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lsg_ppn_lalu})+Double.parseDouble($F{lsg_ppn_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="607" y="58" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lain_pph21_lalu}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="427" y="58" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{ls_pph21_lalu}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="307" y="58" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lsg_pph21_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="247" y="58" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lsg_pph21_lalu}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="367" y="58" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lsg_pph21_lalu})+Double.parseDouble($F{lsg_pph21_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="727" y="58" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lain_pph21_lalu})+Double.parseDouble($F{lain_pph21_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="547" y="58" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{ls_pph21_lalu})+Double.parseDouble($F{ls_pph21_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="667" y="58" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lain_pph21_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="487" y="58" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{ls_pph21_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="727" y="70" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lain_pph22_lalu})+Double.parseDouble($F{lain_pph22_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="307" y="70" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lsg_pph22_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="667" y="70" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lain_pph22_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="427" y="70" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{ls_pph22_lalu}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="367" y="70" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lsg_pph22_lalu})+Double.parseDouble($F{lsg_pph22_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="247" y="70" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lsg_pph22_lalu}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="547" y="70" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{ls_pph22_lalu})+Double.parseDouble($F{ls_pph22_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="607" y="70" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lain_pph22_lalu}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="487" y="70" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{ls_pph22_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="667" y="82" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lain_pph23_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="427" y="82" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{ls_pph23_lalu}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="487" y="82" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{ls_pph23_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="367" y="82" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lsg_pph23_lalu})+Double.parseDouble($F{lsg_pph23_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="547" y="82" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{ls_pph23_lalu})+Double.parseDouble($F{ls_pph23_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="607" y="82" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lain_pph23_lalu}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="307" y="82" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lsg_pph23_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="727" y="82" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lain_pph23_lalu})+Double.parseDouble($F{lain_pph23_kini}))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="247" y="82" width="60" height="12"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{lsg_pph23_lalu}))]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
