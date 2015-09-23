@@ -14,21 +14,27 @@
                 $('#div_tipe').show();
                 $('#div_bulan').hide();
                 $('#div_tanggal').show();
+                $('#standard').hide();
                 $('#custom').hide();
                 $('#gaji').hide();
                 $('#ppnpph').hide();
+                $('#apbd').hide();
+                $('#papbd').hide();
             }
             if($(this).val()=="2"){
                 $('#div_jenis').show();
                 $('#div_tipe').show();
                 $('#div_bulan').hide();
                 $('#div_tanggal').show();
+                $('#standard').show();
                 $('#potongan').hide();
                 $('#custom').hide();
                 $('#gaji').hide();
                 $('#ppnpph').hide();
                 $('#skpd').show();
                 $('#21').hide();
+                $('#apbd').hide();
+                $('#papbd').hide();
             }
             if($(this).val()=="3"){
                 $('#div_jenis').show();
@@ -36,43 +42,59 @@
                 $('#div_bulan').hide();
                 $('#div_tanggal').show();
                 $('#potongan').show();
+                $('#standard').show();
                 $('#custom').hide();
                 $('#gaji').hide();
                 $('#ppnpph').hide();
                 $('#skpd').hide();
                 $('#21').show();
+                $('#apbd').hide();
+                $('#papbd').hide();
             }
             if($(this).val()=="4"){
-                $('#div_jenis').hide();
+                $('#div_jenis').show();
                 $('#div_tipe').hide();
                 $('#div_bulan').show();
                 $('#div_tanggal').hide();
+                $('#potongan').hide();
+                $('#standard').hide();
                 $('#custom').hide();
                 $('#gaji').hide();
                 $('#ppnpph').hide();
                 $('#skpd').hide();
                 $('#21').hide();
+                $('#apbd').show();
+                $('#papbd').show();
             }
             if($(this).val()=="5"){
-                $('#div_jenis').hide();
+                $('#div_jenis').show();
                 $('#div_tipe').hide();
                 $('#div_bulan').show();
                 $('#div_tanggal').hide();
+                $('#potongan').hide();
+                $('#standard').hide();
                 $('#custom').hide();
                 $('#gaji').hide();
                 $('#ppnpph').hide();
+                $('#skpd').hide();
+                $('#21').hide();
+                $('#apbd').show();
+                $('#papbd').show();
             }
             if($(this).val()=="6"){
                 $('#div_jenis').show();
                 $('#div_tipe').show();
                 $('#div_bulan').hide();
                 $('#div_tanggal').show();
+                $('#standard').show();
                 $('#potongan').hide();
                 $('#custom').show();
                 $('#gaji').show();
                 $('#ppnpph').show();
                 $('#skpd').hide();
                 $('#21').show();
+                $('#apbd').hide();
+                $('#papbd').hide();
             }
         });
 
@@ -166,7 +188,7 @@
               window.open('/ap-report-skpd/act/'+rpt+jenis+'?tipe='+tipe+'&mulai='+mulai+'&selesai='+selesai);
             } else {
               if(rpt=="4" || rpt=="5") {
-                window.open('/ap-report-skpd/act/'+rpt+'?bulan='+bulan);
+                window.open('/ap-report-skpd/act/'+rpt+'?bulan='+bulan+'&japbd='+jenis);
               } else {
                 window.open('/ap-report-skpd/act/'+rpt+'?tipe='+tipe+'&mulai='+mulai+'&selesai='+selesai);
               }
@@ -311,7 +333,7 @@
                 <label class="control-label col-xs-2" for="jenis">Format Laporan</label>
                 <div class="col-xs-2">
                     <div class="form-group"> 
-                        <div class="radio">
+                        <div class="radio" id="standard">
                             <label><input type="radio" name="jenis" value="1">Standard</label>
                         </div>
                         <div class="radio" id="skpd">
@@ -331,6 +353,12 @@
                         </div>
                         <div class="radio" id="ppnpph">
                             <label><input type="radio" name="jenis" value="6">PPN/PPH</label>
+                        </div>
+                        <div class="radio" id="apbd">
+                            <label><input type="radio" name="jenis" value="7">Anggaran APBD Murni</label>
+                        </div>
+                        <div class="radio" id="papbd">
+                            <label><input type="radio" name="jenis" value="8">Anggaran Perubahan APBD</label>
                         </div>
                     </div>
                 </div>

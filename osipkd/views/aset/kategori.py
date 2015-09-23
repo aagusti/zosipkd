@@ -19,7 +19,7 @@ from osipkd.models import (
     DBSession,
     Group
     )
-from osipkd.models.aset_models import AsetKategori
+from osipkd.models.aset_models import AsetKategori, AsetKib
 
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
@@ -129,7 +129,7 @@ class view_kategori(BaseViews):
                 d['uraian']        = k[2]
                 r.append(d)    
             return r
-            
+                        
         elif url_dict['act']=='changeid':
             row = AsetKategori.get_by_id('kategori_id' in params and params['kategori_id'] or 0)
             if row:

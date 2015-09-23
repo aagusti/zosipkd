@@ -224,6 +224,7 @@
               "hint"     : true,
               "highlight": true,
               "minLength": 1,
+              "limit"    : 10,
               "remote"   : "/aset/pemilik/headofnama/act/?term=%QUERY", 
           },{
              "name"      : 'pemilik_nm',
@@ -251,6 +252,7 @@
             "hint"     : true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote"   : "/aset/kategori/headofkode/act/?term=%QUERY", 
         },{
            "name"      : 'kategori_kd',
@@ -261,6 +263,7 @@
             "hint"     : true,
             "highlight": true,
             "minLength": 1,
+            "limit"    : 10,
             "remote"   : "/aset/kategori/headofnama/act/?term=%QUERY", 
         },{
            "name"      : 'kategori_nm',

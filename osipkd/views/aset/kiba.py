@@ -20,7 +20,7 @@ from osipkd.models import (
     Group
     )
 from kibs import KibSchema    
-from osipkd.models.aset_models import AsetKategori, AsetKib
+from osipkd.models.aset_models import AsetKategori, AsetKib, AsetPemilik
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
     
@@ -134,6 +134,66 @@ class view_aset_kiba(BaseViews):
                 d['uraian']      = k[3]
                 d['tanggal']     = "%s" % k[4]
                 r.append(d)    
+            return r
+
+        elif url_dict['act']=='headofkode1':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(AsetKib.id, AsetKategori.kode, AsetKib.no_register, AsetKategori.uraian.label('kategori_nm'),
+                  AsetKib.uraian.label('uraian'), AsetKib.tgl_perolehan, AsetKib.cara_perolehan,
+                  AsetKib.th_beli, AsetKib.asal_usul, AsetKib.harga, AsetKib.jumlah, AsetKib.satuan, AsetKib.kondisi, AsetKib.kib
+                  ).filter(AsetKib.kategori_id==AsetKategori.id, 
+                           AsetKib.unit_id == ses['unit_id'],
+                           AsetKategori.kode.ilike('%%%s%%' % term))        
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = ''.join([k[1],'-',str(k[2])])
+                d['kode']        = k[1]
+                d['no_register'] = k[2]
+                d['kategori_nm'] = k[3]
+                d['uraian']      = k[4]
+                d['tgl_perolehan']  = "%s" % k[5]
+                d['cara_perolehan'] = k[6]
+                d['th_beli']        = k[7]
+                d['asal_usul']      = k[8]
+                d['harga']          = k[9]
+                d['jumlah']         = k[10]
+                d['satuan']         = k[11]
+                d['kondisi']        = k[12]
+                d['kib']            = k[13]
+                r.append(d)               
+            return r
+            
+        elif url_dict['act']=='headofnama1':
+            term = 'term' in params and params['term'] or ''
+            q = DBSession.query(AsetKib.id, AsetKategori.kode, AsetKib.no_register, AsetKategori.uraian.label('kategori_nm'),
+                  AsetKib.uraian.label('uraian'), AsetKib.tgl_perolehan, AsetKib.cara_perolehan,
+                  AsetKib.th_beli, AsetKib.asal_usul, AsetKib.harga, AsetKib.jumlah, AsetKib.satuan, AsetKib.kondisi, AsetKib.kib
+                  ).filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.pemilik_id==AsetPemilik.id, 
+                           AsetKib.unit_id == ses['unit_id'],
+                           AsetKategori.uraian.ilike('%%%s%%' % term))        
+            rows = q.all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[3]
+                d['kode']        = ''.join([k[1],'-',str(k[2])])
+                d['no_register'] = k[2]
+                d['kategori_nm'] = k[3]
+                d['uraian']      = k[4]
+                d['tgl_perolehan']  = "%s" % k[5]
+                d['cara_perolehan'] = k[6]
+                d['th_beli']        = k[7]
+                d['asal_usul']      = k[8]
+                d['harga']          = k[9]
+                d['jumlah']         = k[10]
+                d['satuan']         = k[11]
+                d['kondisi']        = k[12]
+                d['kib']            = k[13]
+                r.append(d)               
             return r
             
     #######    

@@ -48,6 +48,7 @@ class AddSchema(KibSchema):
                             title="Beton")
     c_luas_lantai       = colander.SchemaNode(
                             colander.Integer(),
+                            missing=colander.drop,
                             title="L. Lantai")
     c_lokasi            = colander.SchemaNode(
                             colander.String(),
@@ -65,7 +66,8 @@ class AddSchema(KibSchema):
                                 colander.String(),
                             title="Kd. Tanah")
     c_luas_bangunan     = colander.SchemaNode(
-                                colander.Integer(),
+                            colander.Integer(),
+                            missing=colander.drop,
                             title="Luas Bng")
                     
 class EditSchema(AddSchema):

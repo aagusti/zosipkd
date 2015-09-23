@@ -89,14 +89,17 @@ class KibSchema(colander.Schema):
                         oid = "pemilik_nm",
                         title = "Pemilik")                      
     uraian          = colander.SchemaNode(
-                        colander.String())
+                        colander.String(),
+                        oid = "uraian")
     tgl_perolehan   = colander.SchemaNode(
                         colander.Date(),
-                        title="Tanggal")
+                        title="Tanggal",
+                        oid = "tgl_perolehan")
     cara_perolehan  = colander.SchemaNode(
                         colander.String(),
                         widget=widget.SelectWidget(values=cara),
-                        title="Perolehan")
+                        title="Perolehan",
+                        oid = "cara_perolehan")
     th_beli         = colander.SchemaNode(
                         colander.Integer(),
                         title="Thn. Beli")

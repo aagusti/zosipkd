@@ -233,3 +233,27 @@ class AsetHistSusut(UraianModel, Base):
     nilai_susut   = Column(BigInteger,   nullable=False, default=0)
     is_kapitasi   = Column(SmallInteger, nullable=False, default=0)
     
+class AsetPemeliharaan(DefaultModel, Base):
+    __tablename__  = 'pemeliharaans'
+    __table_args__ = {'extend_existing':True,'schema' : 'aset'}
+    
+    units        = relationship("Unit", backref="pemeliharaans")
+    kibs         = relationship("AsetKib", backref="pemeliharaans")
+    
+    unit_id      = Column(Integer, ForeignKey("admin.units.id"), nullable=False)
+    kib_id       = Column(BigInteger, ForeignKey("aset.kibs.id"), nullable=False)
+    
+    nilai        = Column(BigInteger, default=0)
+    masa_manfaat = Column(SmallInteger, nullable=False, default=0)
+    no_sp2d      = Column(String(50))
+    no_bast      = Column(String(50))
+    no_kontrak   = Column(String(50))
+    tgl_bast     = Column(Date)
+    th_pemeliharaan = Column(Integer)
+    created      = Column(DateTime, nullable=False, default=datetime.now,
+                   server_default='now()')
+    updated      = Column(DateTime)
+    create_uid   = Column(Integer, nullable=False, default=1,
+                   server_default='1')
+    update_uid   = Column(Integer)
+    

@@ -61,44 +61,44 @@
             </div>
           </div>
         </div>
-		    <hr>
-        <!--Status Validasi---------------------------------------------------------------->
-        <div class="form-group" id="div_validasi">
-            <div class="row">
-                <label class="control-label col-xs-2" for="validasi">Validasi</label>
-                <div class="col-xs-2">
-                    <div class="form-group"> 
-                        <div class="radio">
-                            <label><input type="radio" name="validasi" value="1">Belum Validasi</label>
-                        </div>
-                        <div class="radio">
-                            <label><input type="radio" name="validasi" value="2">Sudah Validasi</label>
-                        </div>
-                    </div>
-                </div>
+    </div>
+
+    <div class="panel-body">
+      <!--Status Validasi---------------------------------------------------------------->
+      <div class="form-group" id="div_validasi">
+        <label class="control-label col-xs-2" for="jenis">Validasi</label>
+        <div class="col-sm-3">
+            <div class="radio">
+                <label><input type="radio" name="validasi" value="1">Belum Validasi</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="validasi" value="2">Sudah Validasi</label>
             </div>
         </div>
-        <br>
-        <div class="row">
-          <label for="req-tanggal" class="control-label col-xs-2" id="req-tanggal">
-                  s.d Tanggal</label>
-          <div class="col-xs-2">
-             <input id="tanggal" class="form-control" type="text" readonly 
-                    value="${request.session['tanggal']}" name="tanggal"/>
-          </div>
+      </div><br>
+
+      <!--Periode----------------------------------------------------------------> 
+      <div class="form-group">
+        <label for="req-tanggal" class="control-label col-xs-2" id="req-tanggal">
+                s.d Tanggal</label>
+        <div class="col-xs-2">
+           <input id="tanggal" class="form-control" type="text" readonly 
+                  value="${request.session['tanggal']}" name="tanggal"/>
         </div>
-        <br>
-        <!--Tombol---------------------------------------------------------------->
-        <div class="form-group">
-            <div class="col-md-9">
-                <button id="btn_cetak" name="btn_cetak" type="button" class="btn btn-primary "
-                    value="btn_cetak">Cetak</button>
-                <button id="btn_close" name="btn_close" type="button" class="btn btn-warning"
-                    value="btn_close">Tutup</button>
-            </div>  
-        </div>    
+      </div>
+      <br>
+      
+      <!--Button---------------------------------------------------------------->
+      <div class="form-group">
+          <div class="col-md-9">
+              <button id="btn_cetak" name="btn_cetak" type="button" class="btn btn-primary "
+                  value="btn_cetak">Cetak</button>
+              <button id="btn_close" name="btn_close" type="button" class="btn btn-warning"
+                  value="btn_close">Tutup</button>
+          </div>  
+      </div> 
     </div>
-	
+
   </fieldset>
 </form>
 </div> 

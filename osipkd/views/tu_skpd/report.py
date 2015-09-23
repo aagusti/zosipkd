@@ -10,6 +10,7 @@ from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
 #from sqlalchemy import not_, func, case
 from sqlalchemy import *
+from sqlalchemy.orm import aliased
 from sqlalchemy.sql.expression import literal_column
 from pyramid.view import (view_config,)
 from pyramid.httpexceptions import ( HTTPFound, )
@@ -327,6 +328,11 @@ class ViewTUSKPDLap(BaseViews):
         global kpa_nip
         global bend_nm
         global bend_nip
+        global japbd
+        global pa_nama
+        global pa_nip
+        global benda_nama
+        global benda_nip
         req    = self.request
         params = req.params
         url_dict = req.matchdict
@@ -1483,36 +1489,45 @@ class ViewTUSKPDLap(BaseViews):
         ### SPJ Fungsional
         elif url_dict['act']=='4' :
             bulan = 'bulan' in params and params['bulan'] and int(params['bulan']) or 0
-            subq = DBSession.query(Urusan.kode.label('urusan_kd'), Unit.id.label('unit_id'),Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
-                      Program.kode.label('program_kd'), Kegiatan.kode.label('keg_kd'),
-                      Kegiatan.nama.label('keg_nm'), Rekening.kode.label('rek_kd'),
-                      Rekening.nama.label('rek_nm'), Spp.tahun_id.label('tahun'), Sp2d.tanggal.label('tanggal'),
-                      Spp.jenis.label('jenis'), (KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran'),
-                      func.current_date().label('tgl_now'), APInvoiceItem.amount.label('nilai')
-                      ).filter(Sp2d.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id,
-                      Spp.unit_id==Unit.id, Spp.id==SppItem.ap_spp_id,
-                      SppItem.ap_invoice_id==APInvoiceItem.ap_invoice_id,
-                      APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
-                      KegiatanItem.rekening_id==Rekening.id,
-                      KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
-                      Unit.urusan_id==Urusan.id, KegiatanSub.kegiatan_id==Kegiatan.id,
-                      Kegiatan.program_id==Program.id,
-                      Spp.unit_id==self.session['unit_id'], Spp.tahun_id==self.session['tahun']
-                      ).subquery()
-                
-            query = DBSession.query(subq.c.urusan_kd, subq.c.unit_id, subq.c.unit_kd, subq.c.unit_nm, subq.c.program_kd, subq.c.keg_kd,
-                      subq.c.keg_nm, subq.c.rek_kd, subq.c.rek_nm, subq.c.tahun, subq.c.tgl_now, func.sum(subq.c.anggaran).label('anggaran'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)<bulan, subq.c.jenis==4,func.substr(subq.c.rek_kd,1,5)=='5.1.1'),subq.c.nilai)], else_=0)).label('LSG_lalu'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)==bulan, subq.c.jenis==4,func.substr(subq.c.rek_kd,1,5)=='5.1.1'),subq.c.nilai)], else_=0)).label('LSG_kini'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)<bulan, subq.c.jenis==4,not_(func.substr(subq.c.rek_kd,1,5)=='5.1.1')),subq.c.nilai)], else_=0)).label('LS_lalu'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)==bulan, subq.c.jenis==4,not_(func.substr(subq.c.rek_kd,1,5)=='5.1.1')),subq.c.nilai)], else_=0)).label('LS_kini'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)<bulan, not_(subq.c.jenis==4)),subq.c.nilai)], else_=0)).label('Lain_lalu'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)==bulan, not_(subq.c.jenis==4)),subq.c.nilai)], else_=0)).label('Lain_kini'),
-                      ).group_by(subq.c.urusan_kd, subq.c.unit_id, subq.c.unit_kd, subq.c.unit_nm, subq.c.program_kd, subq.c.keg_kd,
-                      subq.c.keg_nm, subq.c.rek_kd, subq.c.rek_nm, subq.c.tahun, subq.c.tgl_now 
-                      ).order_by(subq.c.keg_kd
-                      )
+            japbd = 'japbd' in params and params['japbd'] and int(params['japbd']) or 0
+            rek = aliased(Rekening)
+            query = DBSession.query(Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+              Kegiatan.kode.label('keg_kd'), Kegiatan.nama.label('keg_nm'), 
+              KegiatanSub.id.label('keg_sub_id'), Rekening.id.label('rek_id'), Rekening.kode.label('rek_kd'),
+              Rekening.nama.label('rek_nm'), KegiatanSub.tahun_id.label('tahun'), 
+              func.sum(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('dpa'),                      
+              func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('dppa'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, APInvoice.jenis==4,func.substr(rek.kode,1,5)=='5.1.1'),APInvoiceItem.amount)], else_=0)),0).label('LSG_lalu'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, APInvoice.jenis==4,func.substr(rek.kode,1,5)=='5.1.1'),APInvoiceItem.amount)], else_=0)),0).label('LSG_kini'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, APInvoice.jenis==4,not_(func.substr(rek.kode,1,5)=='5.1.1')),APInvoiceItem.amount)], else_=0)),0).label('LS_lalu'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, APInvoice.jenis==4,not_(func.substr(rek.kode,1,5)=='5.1.1')),APInvoiceItem.amount)], else_=0)),0).label('LS_kini'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, not_(APInvoice.jenis==4)),APInvoiceItem.amount)], else_=0)),0).label('Lain_lalu'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, not_(APInvoice.jenis==4)),APInvoiceItem.amount)], else_=0)),0).label('Lain_kini')
+              ).join(KegiatanSub, KegiatanItem, Rekening, Kegiatan
+              ).outerjoin(APInvoiceItem, APInvoiceItem.kegiatan_item_id==KegiatanItem.id
+              ).outerjoin(APInvoice, APInvoiceItem.ap_invoice_id==APInvoice.id
+              ).outerjoin(rek, KegiatanItem.rekening_id==rek.id
+              ).filter(Kegiatan.kode!='0.00.00.99', KegiatanSub.unit_id==self.session['unit_id'], 
+              KegiatanSub.tahun_id==self.session['tahun']
+              ).group_by(Unit.id, Unit.kode, Unit.nama, Kegiatan.kode, Kegiatan.nama, 
+              KegiatanSub.id, Rekening.id, Rekening.kode, Rekening.nama, KegiatanSub.tahun_id,
+              ).order_by(Kegiatan.kode, Rekening.kode
+              )
 
+            rows = DBSession.query(Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
+               ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
+               Pejabat.unit_id==self.session['unit_id'], Jabatan.kode=='200')
+            for row1 in rows :
+              pa_nama = row1.pa_nama
+              pa_nip  = row1.pa_nama
+            
+            rows2 = DBSession.query(Pegawai.nama.label('bend_nama'), Pegawai.kode.label('bend_nip')
+               ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
+               Pejabat.unit_id==self.session['unit_id'], Jabatan.kode=='236')
+            for row2 in rows2 :
+              benda_nama = row2.bend_nama
+              benda_nip  = row2.bend_nama
+              
             generator = b104r300Generator()
             pdf = generator.generate(query)
             response=req.response
@@ -1524,36 +1539,45 @@ class ViewTUSKPDLap(BaseViews):
         ### SPJ Administratif
         elif url_dict['act']=='5' :
             bulan = 'bulan' in params and params['bulan'] and int(params['bulan']) or 0
-            subq = DBSession.query(Urusan.kode.label('urusan_kd'), Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
-                      Program.kode.label('program_kd'), Kegiatan.kode.label('keg_kd'),
-                      Kegiatan.nama.label('keg_nm'), Rekening.kode.label('rek_kd'),
-                      Rekening.nama.label('rek_nm'), Spp.tahun_id.label('tahun'), Sp2d.tanggal.label('tanggal'),
-                      Spp.jenis.label('jenis'), (KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran'),
-                      APInvoiceItem.amount.label('nilai')
-                      ).filter(Sp2d.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id,
-                      Spp.unit_id==Unit.id, Spp.id==SppItem.ap_spp_id,
-                      SppItem.ap_invoice_id==APInvoiceItem.ap_invoice_id,
-                      APInvoiceItem.kegiatan_item_id==KegiatanItem.id,
-                      KegiatanItem.rekening_id==Rekening.id,
-                      KegiatanItem.kegiatan_sub_id==KegiatanSub.id,
-                      Unit.urusan_id==Urusan.id, KegiatanSub.kegiatan_id==Kegiatan.id,
-                      Kegiatan.program_id==Program.id,
-                      Spp.unit_id==self.session['unit_id'], Spp.tahun_id==self.session['tahun']
-                      ).subquery()
-                
-            query = DBSession.query(subq.c.urusan_kd, subq.c.unit_id, subq.c.unit_kd, subq.c.unit_nm, subq.c.program_kd, subq.c.keg_kd,
-                      subq.c.keg_nm, subq.c.rek_kd, subq.c.rek_nm, subq.c.tahun, func.sum(subq.c.anggaran).label('anggaran'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)<bulan, subq.c.jenis==4,func.substr(subq.c.rek_kd,1,5)=='5.1.1'),subq.c.nilai)], else_=0)).label('LSG_lalu'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)==bulan, subq.c.jenis==4,func.substr(subq.c.rek_kd,1,5)=='5.1.1'),subq.c.nilai)], else_=0)).label('LSG_kini'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)<bulan, subq.c.jenis==4,not_(func.substr(subq.c.rek_kd,1,5)=='5.1.1')),subq.c.nilai)], else_=0)).label('LS_lalu'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)==bulan, subq.c.jenis==4,not_(func.substr(subq.c.rek_kd,1,5)=='5.1.1')),subq.c.nilai)], else_=0)).label('LS_kini'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)<bulan, not_(subq.c.jenis==4)),subq.c.nilai)], else_=0)).label('Lain_lalu'),
-                      func.sum(case([(and_(extract('month',subq.c.tanggal)==bulan, not_(subq.c.jenis==4)),subq.c.nilai)], else_=0)).label('Lain_kini'),
-                      ).group_by(subq.c.urusan_kd, subq.c.unit_id, subq.c.unit_kd, subq.c.unit_nm, subq.c.program_kd, subq.c.keg_kd,
-                      subq.c.keg_nm, subq.c.rek_kd, subq.c.rek_nm, subq.c.tahun 
-                      ).order_by(subq.c.keg_kd
-                      )
-
+            japbd = 'japbd' in params and params['japbd'] and int(params['japbd']) or 0
+            rek = aliased(Rekening)
+            query = DBSession.query(Unit.id.label('unit_id'), Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'),
+              Kegiatan.kode.label('keg_kd'), Kegiatan.nama.label('keg_nm'), 
+              KegiatanSub.id.label('keg_sub_id'), Rekening.id.label('rek_id'), Rekening.kode.label('rek_kd'),
+              Rekening.nama.label('rek_nm'), KegiatanSub.tahun_id.label('tahun'), 
+              func.sum(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('dpa'),                      
+              func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('dppa'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, APInvoice.jenis==4,func.substr(rek.kode,1,5)=='5.1.1'),APInvoiceItem.amount)], else_=0)),0).label('LSG_lalu'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, APInvoice.jenis==4,func.substr(rek.kode,1,5)=='5.1.1'),APInvoiceItem.amount)], else_=0)),0).label('LSG_kini'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, APInvoice.jenis==4,not_(func.substr(rek.kode,1,5)=='5.1.1')),APInvoiceItem.amount)], else_=0)),0).label('LS_lalu'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, APInvoice.jenis==4,not_(func.substr(rek.kode,1,5)=='5.1.1')),APInvoiceItem.amount)], else_=0)),0).label('LS_kini'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, not_(APInvoice.jenis==4)),APInvoiceItem.amount)], else_=0)),0).label('Lain_lalu'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, not_(APInvoice.jenis==4)),APInvoiceItem.amount)], else_=0)),0).label('Lain_kini')
+              ).join(KegiatanSub, KegiatanItem, Rekening, Kegiatan
+              ).outerjoin(APInvoiceItem, APInvoiceItem.kegiatan_item_id==KegiatanItem.id
+              ).outerjoin(APInvoice, APInvoiceItem.ap_invoice_id==APInvoice.id
+              ).outerjoin(rek, KegiatanItem.rekening_id==rek.id
+              ).filter(Kegiatan.kode!='0.00.00.99', KegiatanSub.unit_id==self.session['unit_id'], 
+              KegiatanSub.tahun_id==self.session['tahun']
+              ).group_by(Unit.id, Unit.kode, Unit.nama, Kegiatan.kode, Kegiatan.nama, 
+              KegiatanSub.id, Rekening.id, Rekening.kode, Rekening.nama, KegiatanSub.tahun_id,
+              ).order_by(Kegiatan.kode, Rekening.kode
+              )
+              
+            rows = DBSession.query(Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
+               ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
+               Pejabat.unit_id==self.session['unit_id'], Jabatan.kode=='200')
+            for row1 in rows :
+              pa_nama = row1.pa_nama
+              pa_nip  = row1.pa_nama
+            
+            rows2 = DBSession.query(Pegawai.nama.label('bend_nama'), Pegawai.kode.label('bend_nip')
+               ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
+               Pejabat.unit_id==self.session['unit_id'], Jabatan.kode=='236')
+            for row2 in rows2 :
+              benda_nama = row2.bend_nama
+              benda_nip  = row2.bend_nama
+              
             generator = b104r400Generator()
             pdf = generator.generate(query)
             response=req.response
@@ -3977,17 +4001,18 @@ class b104r300Generator(JasperGeneratorWithSubreport):
     def generate_xml(self, tobegreeted):
         for row in tobegreeted:
             xml_greeting  =  ET.SubElement(self.root, 'spj')
-            ET.SubElement(xml_greeting, "urusan_kd").text = row.urusan_kd
             ET.SubElement(xml_greeting, "unit_id").text = unicode(row.unit_id)
             ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
             ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
-            ET.SubElement(xml_greeting, "program_kd").text = row.program_kd
             ET.SubElement(xml_greeting, "keg_kd").text = row.keg_kd
             ET.SubElement(xml_greeting, "keg_nm").text = row.keg_nm
+            ET.SubElement(xml_greeting, "keg_sub_id").text = unicode(row.keg_sub_id)
+            ET.SubElement(xml_greeting, "rek_id").text = unicode(row.rek_id)
             ET.SubElement(xml_greeting, "rek_kd").text = row.rek_kd
             ET.SubElement(xml_greeting, "rek_nm").text = row.rek_nm
             ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
-            ET.SubElement(xml_greeting, "anggaran").text = unicode(row.anggaran)
+            ET.SubElement(xml_greeting, "dpa").text = unicode(row.dpa)
+            ET.SubElement(xml_greeting, "dppa").text = unicode(row.dppa)
             ET.SubElement(xml_greeting, "LSG_lalu").text = unicode(row.LSG_lalu)
             ET.SubElement(xml_greeting, "LSG_kini").text = unicode(row.LSG_kini)
             ET.SubElement(xml_greeting, "LS_lalu").text = unicode(row.LS_lalu)
@@ -3997,62 +4022,149 @@ class b104r300Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_greeting, "bulan").text = unicode(bulan)
             ET.SubElement(xml_greeting, "customer").text = customer
             ET.SubElement(xml_greeting, "logo").text = logo
+            ET.SubElement(xml_greeting, "japbd").text = unicode(japbd)
             
-            rows = DBSession.query(Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
+            """rows = DBSession.query(Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
                Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_greeting, "pa_nama").text = row2.pa_nama
                ET.SubElement(xml_greeting, "pa_nip").text = row2.pa_nip
+            """
+            ET.SubElement(xml_greeting, "pa_nama").text = pa_nama
+            ET.SubElement(xml_greeting, "pa_nip").text = pa_nip
             
-            rows2 = DBSession.query(Pegawai.nama.label('bend_nama'), Pegawai.kode.label('bend_nip')
+            """rows2 = DBSession.query(Pegawai.nama.label('bend_nama'), Pegawai.kode.label('bend_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
                Pejabat.unit_id==row.unit_id, Jabatan.kode=='236')
             for row3 in rows2 :
                ET.SubElement(xml_greeting, "bend_nama").text = row3.bend_nama
                ET.SubElement(xml_greeting, "bend_nip").text = row3.bend_nip
-
-            subq = DBSession.query(APInvoice.id, 
-                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, Rekening.kode=='7.1.1.02.01'),SpmPotongan.amount)], else_=0)),0).label('ppn_lalu'),
-                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, Rekening.kode=='7.1.1.02.01'),SpmPotongan.amount)], else_=0)),0).label('ppn_kini'),
-                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, Rekening.kode=='7.1.1.02.02'),SpmPotongan.amount)], else_=0)),0).label('pph21_lalu'),
-                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, Rekening.kode=='7.1.1.02.02'),SpmPotongan.amount)], else_=0)),0).label('pph21_kini'),
-                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, Rekening.kode=='7.1.1.02.03'),SpmPotongan.amount)], else_=0)),0).label('pph22_lalu'),
-                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, Rekening.kode=='7.1.1.02.03'),SpmPotongan.amount)], else_=0)),0).label('pph22_kini'),
-                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, Rekening.kode=='7.1.1.02.04'),SpmPotongan.amount)], else_=0)),0).label('pph23_lalu'),
-                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, Rekening.kode=='7.1.1.02.04'),SpmPotongan.amount)], else_=0)),0).label('pph23_kini'),
+            """
+            ET.SubElement(xml_greeting, "bend_nama").text = benda_nama
+            ET.SubElement(xml_greeting, "bend_nip").text = benda_nip
+            
+            subq = DBSession.query(APInvoice.id, Sp2d.id.label('sp2d_id'), 
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, Rekening.kode=='7.1.1.02.01'),SpmPotongan.nilai)], else_=0)),0).label('ppn_lalu'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, Rekening.kode=='7.1.1.02.01'),SpmPotongan.nilai)], else_=0)),0).label('ppn_kini'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, Rekening.kode=='7.1.1.02.02'),SpmPotongan.nilai)], else_=0)),0).label('pph21_lalu'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, Rekening.kode=='7.1.1.02.02'),SpmPotongan.nilai)], else_=0)),0).label('pph21_kini'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, Rekening.kode=='7.1.1.02.03'),SpmPotongan.nilai)], else_=0)),0).label('pph22_lalu'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, Rekening.kode=='7.1.1.02.03'),SpmPotongan.nilai)], else_=0)),0).label('pph22_kini'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, Rekening.kode=='7.1.1.02.04'),SpmPotongan.nilai)], else_=0)),0).label('pph23_lalu'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, Rekening.kode=='7.1.1.02.04'),SpmPotongan.nilai)], else_=0)),0).label('pph23_kini'),
                 func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, func.substr(Rekening.kode,1,3)=='7.1', 
-                not_(Rekening.kode.in_('7.1.1.02.01','7.1.1.02.02','7.1.1.02.03','7.1.1.02.04')),SpmPotongan.amount)], else_=0)),0).label('lain_lalu'),
+                not_(Rekening.kode.in_(['7.1.1.02.01','7.1.1.02.02','7.1.1.02.03','7.1.1.02.04']))),SpmPotongan.nilai)], else_=0)),0).label('lain_lalu'),
                 func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, func.substr(Rekening.kode,1,3)=='7.1', 
-                not_(Rekening.kode.in_('7.1.1.02.01','7.1.1.02.02','7.1.1.02.03','7.1.1.02.04')),SpmPotongan.amount)], else_=0)),0).label('lain_kini'),
-               ).filter(SpmPotongan.rekening_id==Rekening.id, SpmPotongan.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id,
-                SppItem.ap_spp_id==Spp.id, SppItem.ap_invoice_id==APInvoice.id,
+                not_(Rekening.kode.in_(['7.1.1.02.01','7.1.1.02.02','7.1.1.02.03','7.1.1.02.04']))),SpmPotongan.nilai)], else_=0)),0).label('lain_kini'),
+               ).join(SppItem, Spp, Spm, SpmPotongan, Rekening
+               ).outerjoin(Sp2d, Sp2d.ap_spm_id==Spm.id
+               ).filter(
+                #SpmPotongan.rekening_id==Rekening.id, SpmPotongan.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id,
+                #SppItem.ap_spp_id==Spp.id, SppItem.ap_invoice_id==APInvoice.id,
                 APInvoice.unit_id==row.unit_id, APInvoice.tahun_id==row.tahun
-               ).group_by(APInvoice.id
+               ).group_by(APInvoice.id, Sp2d.id
                ).subquery()
 
             subq2 = DBSession.query(APInvoice.tahun_id, APInvoice.id, APInvoice.tanggal, Unit.id.label('unit_id'), 
                case([(and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)=='5.1.1'),'LSG'), 
                (and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)!='5.1.1'),'LS')], else_='LAIN').label('jenis'),
                func.coalesce(func.sum(APInvoiceItem.amount),0).label('amount'), 
-               subq.c.ppn_lalu, subq.c.ppn_kini, subq.c.pph21_lalu, subq.c.pph21_kini, subq.c.pph22_lalu, subq.c.pph22_kini, 
+               case([(subq.c.sp2d_id>0,subq.c.sp2d_id)], else_=0).label('sp2d_id'), subq.c.ppn_lalu, subq.c.ppn_kini, subq.c.pph21_lalu, subq.c.pph21_kini, subq.c.pph22_lalu, subq.c.pph22_kini, 
                subq.c.pph23_lalu, subq.c.pph23_kini, subq.c.lain_lalu, subq.c.lain_kini
                ).join(Unit,APInvoiceItem, KegiatanItem, Rekening
                ).outerjoin(subq, APInvoice.id==subq.c.id
-               ).filter(APInvoice.unit_id==row.unit_id, APInvoice.tahun_id==row.tahun
+               ).filter(Unit.id==row.unit_id, APInvoice.tahun_id==row.tahun
                ).group_by(APInvoice.tahun_id, APInvoice.id, APInvoice.tanggal, Unit.id, 
                case([(and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)=='5.1.1'),'LSG'), 
                (and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)!='5.1.1'),'LS')], else_='LAIN'),
-               subq.c.ppn_lalu, subq.c.ppn_kini, subq.c.pph21_lalu, subq.c.pph21_kini, subq.c.pph22_lalu, subq.c.pph22_kini, 
+               case([(subq.c.sp2d_id>0,subq.c.sp2d_id)], else_=0), subq.c.ppn_lalu, subq.c.ppn_kini, subq.c.pph21_lalu, subq.c.pph21_kini, subq.c.pph22_lalu, subq.c.pph22_kini, 
                subq.c.pph23_lalu, subq.c.pph23_kini, subq.c.lain_lalu, subq.c.lain_kini
                ).subquery()
                
-            rowitem = DBSession.query(
+            rowitem = DBSession.query(subq2.c.tahun_id, subq2.c.unit_id, 
+               #Amount
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.amount)], else_=0)),0).label('lsg_amount_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG'),subq2.c.amount)], else_=0)),0).label('lsg_amount_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.amount)], else_=0)),0).label('lsg_amount_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG'),subq2.c.amount)], else_=0)),0).label('lsg_amount_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.amount)], else_=0)),0).label('ls_amount_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS'),subq2.c.amount)], else_=0)),0).label('ls_amount_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.amount)], else_=0)),0).label('ls_amount_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS'),subq2.c.amount)], else_=0)),0).label('ls_amount_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.amount)], else_=0)),0).label('lain_amount_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN'),subq2.c.amount)], else_=0)),0).label('lain_amount_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.amount)], else_=0)),0).label('lain_amount_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN'),subq2.c.amount)], else_=0)),0).label('lain_amount_kini1'),
+               #PPn
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.ppn_lalu)], else_=0)),0).label('lsg_ppn_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.ppn_kini)], else_=0)),0).label('lsg_ppn_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.ppn_lalu)], else_=0)),0).label('ls_ppn_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.ppn_kini)], else_=0)),0).label('ls_ppn_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.ppn_lalu)], else_=0)),0).label('lain_ppn_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.ppn_kini)], else_=0)),0).label('lain_ppn_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG'),subq2.c.ppn_lalu)], else_=0)),0).label('lsg_ppn_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG'),subq2.c.ppn_kini)], else_=0)),0).label('lsg_ppn_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS'),subq2.c.ppn_lalu)], else_=0)),0).label('ls_ppn_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS'),subq2.c.ppn_kini)], else_=0)),0).label('ls_ppn_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN'),subq2.c.ppn_lalu)], else_=0)),0).label('lain_ppn_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN'),subq2.c.ppn_kini)], else_=0)),0).label('lain_ppn_kini1'),
+               #PPh21
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.pph21_lalu)], else_=0)),0).label('lsg_pph21_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.pph21_kini)], else_=0)),0).label('lsg_pph21_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.pph21_lalu)], else_=0)),0).label('ls_pph21_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.pph21_kini)], else_=0)),0).label('ls_pph21_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.pph21_lalu)], else_=0)),0).label('lain_pph21_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.pph21_kini)], else_=0)),0).label('lain_pph21_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG'),subq2.c.pph21_lalu)], else_=0)),0).label('lsg_pph21_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG'),subq2.c.pph21_kini)], else_=0)),0).label('lsg_pph21_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS'),subq2.c.pph21_lalu)], else_=0)),0).label('ls_pph21_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS'),subq2.c.pph21_kini)], else_=0)),0).label('ls_pph21_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN'),subq2.c.pph21_lalu)], else_=0)),0).label('lain_pph21_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN'),subq2.c.pph21_kini)], else_=0)),0).label('lain_pph21_kini1'),
+               #PPh22
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.pph22_lalu)], else_=0)),0).label('lsg_pph22_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.pph22_kini)], else_=0)),0).label('lsg_pph22_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.pph22_lalu)], else_=0)),0).label('ls_pph22_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.pph22_kini)], else_=0)),0).label('ls_pph22_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.pph22_lalu)], else_=0)),0).label('lain_pph22_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.pph22_kini)], else_=0)),0).label('lain_pph22_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG'),subq2.c.pph22_lalu)], else_=0)),0).label('lsg_pph22_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG'),subq2.c.pph22_kini)], else_=0)),0).label('lsg_pph22_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS'),subq2.c.pph22_lalu)], else_=0)),0).label('ls_pph22_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS'),subq2.c.pph22_kini)], else_=0)),0).label('ls_pph22_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN'),subq2.c.pph22_lalu)], else_=0)),0).label('lain_pph22_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN'),subq2.c.pph22_kini)], else_=0)),0).label('lain_pph22_kini1'),
+               #PPh23
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.pph23_lalu)], else_=0)),0).label('lsg_pph23_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.pph23_kini)], else_=0)),0).label('lsg_pph23_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.pph23_lalu)], else_=0)),0).label('ls_pph23_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.pph23_kini)], else_=0)),0).label('ls_pph23_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.pph23_lalu)], else_=0)),0).label('lain_pph23_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.pph23_kini)], else_=0)),0).label('lain_pph23_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG'),subq2.c.pph23_lalu)], else_=0)),0).label('lsg_pph23_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG'),subq2.c.pph23_kini)], else_=0)),0).label('lsg_pph23_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS'),subq2.c.pph23_lalu)], else_=0)),0).label('ls_pph23_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS'),subq2.c.pph23_kini)], else_=0)),0).label('ls_pph23_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN'),subq2.c.pph23_lalu)], else_=0)),0).label('lain_pph23_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN'),subq2.c.pph23_kini)], else_=0)),0).label('lain_pph23_kini1'),
+               #Lainnya
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.lain_lalu)], else_=0)),0).label('lsg_lain_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.lain_kini)], else_=0)),0).label('lsg_lain_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.lain_lalu)], else_=0)),0).label('ls_lain_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.lain_kini)], else_=0)),0).label('ls_lain_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.lain_lalu)], else_=0)),0).label('lain_lain_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.lain_kini)], else_=0)),0).label('lain_lain_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG'),subq2.c.lain_lalu)], else_=0)),0).label('lsg_lain_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG'),subq2.c.lain_kini)], else_=0)),0).label('lsg_lain_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS'),subq2.c.lain_lalu)], else_=0)),0).label('ls_lain_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS'),subq2.c.lain_kini)], else_=0)),0).label('ls_lain_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN'),subq2.c.lain_lalu)], else_=0)),0).label('lain_lain_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN'),subq2.c.lain_kini)], else_=0)),0).label('lain_lain_kini1'),
+               #).filter(subq2.c.tahun_id==row.unit_id, subq2.c.unit_id==row.tahun
+               ).group_by(subq2.c.tahun_id, subq2.c.unit_id
                )
                
-            rowitem = DBSession.query(
-               ).filter(
-               )
             for row4 in rowitem :
                 xml_a = ET.SubElement(xml_greeting, "item")
                 ET.SubElement(xml_a, "unit_id").text =unicode(row4.unit_id)
@@ -4087,30 +4199,89 @@ class b104r300Generator(JasperGeneratorWithSubreport):
                 ET.SubElement(xml_a, "ls_pph23_kini").text =unicode(row4.ls_pph23_kini)
                 ET.SubElement(xml_a, "lain_pph23_lalu").text =unicode(row4.lain_pph23_lalu)
                 ET.SubElement(xml_a, "lain_pph23_kini").text =unicode(row4.lain_pph23_kini)
-               
+                ET.SubElement(xml_a, "lsg_lain_lalu").text =unicode(row4.lsg_lain_lalu)
+                ET.SubElement(xml_a, "lsg_lain_kini").text =unicode(row4.lsg_lain_kini)
+                ET.SubElement(xml_a, "ls_lain_lalu").text =unicode(row4.ls_lain_lalu)
+                ET.SubElement(xml_a, "ls_lain_kini").text =unicode(row4.ls_lain_kini)
+                ET.SubElement(xml_a, "lain_lain_lalu").text =unicode(row4.lain_lain_lalu)
+                ET.SubElement(xml_a, "lain_lain_kini").text =unicode(row4.lain_lain_kini)
+
+                ET.SubElement(xml_a, "lsg_tot_lalu").text =unicode(row4.lsg_amount_lalu + row4.lsg_ppn_lalu + row4.lsg_pph21_lalu + row4.lsg_pph22_lalu + row4.lsg_pph23_lalu + row4.lsg_lain_lalu)
+                ET.SubElement(xml_a, "lsg_tot_kini").text =unicode(row4.lsg_amount_kini + row4.lsg_ppn_kini + row4.lsg_pph21_kini + row4.lsg_pph22_kini + row4.lsg_pph23_kini + row4.lsg_lain_kini)
+                ET.SubElement(xml_a, "ls_tot_lalu").text =unicode(row4.ls_amount_lalu + row4.ls_ppn_lalu + row4.ls_pph21_lalu + row4.ls_pph22_lalu + row4.ls_pph23_lalu + row4.ls_lain_lalu)
+                ET.SubElement(xml_a, "ls_tot_kini").text =unicode(row4.ls_amount_kini + row4.ls_ppn_kini + row4.ls_pph21_kini + row4.ls_pph22_kini + row4.ls_pph23_kini + row4.ls_lain_kini)
+                ET.SubElement(xml_a, "lain_tot_lalu").text =unicode(row4.ls_amount_lalu + row4.ls_ppn_lalu + row4.ls_pph21_lalu + row4.ls_pph22_lalu + row4.ls_pph23_lalu + row4.ls_lain_lalu)
+                ET.SubElement(xml_a, "lain_tot_kini").text =unicode(row4.ls_amount_kini + row4.ls_ppn_kini + row4.ls_pph21_kini + row4.ls_pph22_kini + row4.ls_pph23_kini + row4.ls_lain_kini)
+                
+                ET.SubElement(xml_a, "lsg_amount_lalu1").text =unicode(row4.lsg_amount_lalu1)
+                ET.SubElement(xml_a, "lsg_amount_kini1").text =unicode(row4.lsg_amount_kini1)
+                ET.SubElement(xml_a, "ls_amount_lalu1").text =unicode(row4.ls_amount_lalu1)
+                ET.SubElement(xml_a, "ls_amount_kini1").text =unicode(row4.ls_amount_kini1)
+                ET.SubElement(xml_a, "lain_amount_lalu1").text =unicode(row4.lain_amount_lalu1)
+                ET.SubElement(xml_a, "lain_amount_kini1").text =unicode(row4.lain_amount_kini1)
+                ET.SubElement(xml_a, "lsg_ppn_lalu1").text =unicode(row4.lsg_ppn_lalu1)
+                ET.SubElement(xml_a, "lsg_ppn_kini1").text =unicode(row4.lsg_ppn_kini1)
+                ET.SubElement(xml_a, "ls_ppn_lalu1").text =unicode(row4.ls_ppn_lalu1)
+                ET.SubElement(xml_a, "ls_ppn_kini1").text =unicode(row4.ls_ppn_kini1)
+                ET.SubElement(xml_a, "lain_ppn_lalu1").text =unicode(row4.lain_ppn_lalu1)
+                ET.SubElement(xml_a, "lain_ppn_kini1").text =unicode(row4.lain_ppn_kini1)
+                ET.SubElement(xml_a, "lsg_pph21_lalu1").text =unicode(row4.lsg_pph21_lalu1)
+                ET.SubElement(xml_a, "lsg_pph21_kini1").text =unicode(row4.lsg_pph21_kini1)
+                ET.SubElement(xml_a, "ls_pph21_lalu1").text =unicode(row4.ls_pph21_lalu1)
+                ET.SubElement(xml_a, "ls_pph21_kini1").text =unicode(row4.ls_pph21_kini1)
+                ET.SubElement(xml_a, "lain_pph21_lalu1").text =unicode(row4.lain_pph21_lalu1)
+                ET.SubElement(xml_a, "lain_pph21_kini1").text =unicode(row4.lain_pph21_kini1)
+                ET.SubElement(xml_a, "lsg_pph22_lalu1").text =unicode(row4.lsg_pph22_lalu1)
+                ET.SubElement(xml_a, "lsg_pph22_kini1").text =unicode(row4.lsg_pph22_kini1)
+                ET.SubElement(xml_a, "ls_pph22_lalu1").text =unicode(row4.ls_pph22_lalu1)
+                ET.SubElement(xml_a, "ls_pph22_kini1").text =unicode(row4.ls_pph22_kini1)
+                ET.SubElement(xml_a, "lain_pph22_lalu1").text =unicode(row4.lain_pph22_lalu1)
+                ET.SubElement(xml_a, "lain_pph22_kini1").text =unicode(row4.lain_pph22_kini1)
+                ET.SubElement(xml_a, "lsg_pph23_lalu1").text =unicode(row4.lsg_pph23_lalu1)
+                ET.SubElement(xml_a, "lsg_pph23_kini1").text =unicode(row4.lsg_pph23_kini1)
+                ET.SubElement(xml_a, "ls_pph23_lalu1").text =unicode(row4.ls_pph23_lalu1)
+                ET.SubElement(xml_a, "ls_pph23_kini1").text =unicode(row4.ls_pph23_kini1)
+                ET.SubElement(xml_a, "lain_pph23_lalu1").text =unicode(row4.lain_pph23_lalu1)
+                ET.SubElement(xml_a, "lain_pph23_kini1").text =unicode(row4.lain_pph23_kini1)
+                ET.SubElement(xml_a, "lsg_lain_lalu1").text =unicode(row4.lsg_lain_lalu1)
+                ET.SubElement(xml_a, "lsg_lain_kini1").text =unicode(row4.lsg_lain_kini1)
+                ET.SubElement(xml_a, "ls_lain_lalu1").text =unicode(row4.ls_lain_lalu1)
+                ET.SubElement(xml_a, "ls_lain_kini1").text =unicode(row4.ls_lain_kini1)
+                ET.SubElement(xml_a, "lain_lain_lalu1").text =unicode(row4.lain_lain_lalu1)
+                ET.SubElement(xml_a, "lain_lain_kini1").text =unicode(row4.lain_lain_kini1)
+
+                ET.SubElement(xml_a, "lsg_tot_lalu1").text =unicode(row4.lsg_amount_lalu1 + row4.lsg_ppn_lalu1 + row4.lsg_pph21_lalu1 + row4.lsg_pph22_lalu1 + row4.lsg_pph23_lalu1 + row4.lsg_lain_lalu1)
+                ET.SubElement(xml_a, "lsg_tot_kini1").text =unicode(row4.lsg_amount_kini1 + row4.lsg_ppn_kini1 + row4.lsg_pph21_kini1 + row4.lsg_pph22_kini1 + row4.lsg_pph23_kini1 + row4.lsg_lain_kini1)
+                ET.SubElement(xml_a, "ls_tot_lalu1").text =unicode(row4.ls_amount_lalu1 + row4.ls_ppn_lalu1 + row4.ls_pph21_lalu1 + row4.ls_pph22_lalu1 + row4.ls_pph23_lalu1 + row4.ls_lain_lalu1)
+                ET.SubElement(xml_a, "ls_tot_kini1").text =unicode(row4.ls_amount_kini1 + row4.ls_ppn_kini1 + row4.ls_pph21_kini1 + row4.ls_pph22_kini1 + row4.ls_pph23_kini1 + row4.ls_lain_kini1)
+                ET.SubElement(xml_a, "lain_tot_lalu1").text =unicode(row4.ls_amount_lalu1 + row4.ls_ppn_lalu1 + row4.ls_pph21_lalu1 + row4.ls_pph22_lalu1 + row4.ls_pph23_lalu1 + row4.ls_lain_lalu1)
+                ET.SubElement(xml_a, "lain_tot_kini1").text =unicode(row4.ls_amount_kini1 + row4.ls_ppn_kini1 + row4.ls_pph21_kini1 + row4.ls_pph22_kini1 + row4.ls_pph23_kini1 + row4.ls_lain_kini1)
+                
         return self.root 
 
-class b104r400Generator(JasperGenerator):
+class b104r400Generator(JasperGeneratorWithSubreport):
     def __init__(self):
-        super(b104r400Generator, self).__init__()
-        self.reportname = get_rpath('apbd/tuskpd/R104400.jrxml')
+        self.mainreport = get_rpath('apbd/tuskpd/R104400.jrxml')
+        self.subreportlist = []
+        self.subreportlist.append(get_rpath('apbd/tuskpd/R104400_subreport1.jrxml'))
         self.xpath = '/apbd/spj'
         self.root = ET.Element('apbd') 
 
     def generate_xml(self, tobegreeted):
         for row in tobegreeted:
             xml_greeting  =  ET.SubElement(self.root, 'spj')
-            ET.SubElement(xml_greeting, "urusan_kd").text = row.urusan_kd
             ET.SubElement(xml_greeting, "unit_id").text = unicode(row.unit_id)
             ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
             ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
-            ET.SubElement(xml_greeting, "program_kd").text = row.program_kd
             ET.SubElement(xml_greeting, "keg_kd").text = row.keg_kd
             ET.SubElement(xml_greeting, "keg_nm").text = row.keg_nm
+            ET.SubElement(xml_greeting, "keg_sub_id").text = unicode(row.keg_sub_id)
+            ET.SubElement(xml_greeting, "rek_id").text = unicode(row.rek_id)
             ET.SubElement(xml_greeting, "rek_kd").text = row.rek_kd
             ET.SubElement(xml_greeting, "rek_nm").text = row.rek_nm
             ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
-            ET.SubElement(xml_greeting, "anggaran").text = unicode(row.anggaran)
+            ET.SubElement(xml_greeting, "dpa").text = unicode(row.dpa)
+            ET.SubElement(xml_greeting, "dppa").text = unicode(row.dppa)
             ET.SubElement(xml_greeting, "LSG_lalu").text = unicode(row.LSG_lalu)
             ET.SubElement(xml_greeting, "LSG_kini").text = unicode(row.LSG_kini)
             ET.SubElement(xml_greeting, "LS_lalu").text = unicode(row.LS_lalu)
@@ -4120,21 +4291,241 @@ class b104r400Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "bulan").text = unicode(bulan)
             ET.SubElement(xml_greeting, "customer").text = customer
             ET.SubElement(xml_greeting, "logo").text = logo
+            ET.SubElement(xml_greeting, "japbd").text = unicode(japbd)
             
-            rows = DBSession.query(Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
+            """rows = DBSession.query(Pegawai.nama.label('pa_nama'), Pegawai.kode.label('pa_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
                Pejabat.unit_id==row.unit_id, Jabatan.kode=='200')
             for row2 in rows :
                ET.SubElement(xml_greeting, "pa_nama").text = row2.pa_nama
                ET.SubElement(xml_greeting, "pa_nip").text = row2.pa_nip
+            """
+            ET.SubElement(xml_greeting, "pa_nama").text = pa_nama
+            ET.SubElement(xml_greeting, "pa_nip").text = pa_nip
             
-            rows2 = DBSession.query(Pegawai.nama.label('bend_nama'), Pegawai.kode.label('bend_nip')
+            """rows2 = DBSession.query(Pegawai.nama.label('bend_nama'), Pegawai.kode.label('bend_nip')
                ).filter(Pejabat.pegawai_id==Pegawai.id, Pejabat.jabatan_id==Jabatan.id, 
                Pejabat.unit_id==row.unit_id, Jabatan.kode=='236')
             for row3 in rows2 :
                ET.SubElement(xml_greeting, "bend_nama").text = row3.bend_nama
                ET.SubElement(xml_greeting, "bend_nip").text = row3.bend_nip
+            """
+            ET.SubElement(xml_greeting, "bend_nama").text = benda_nama
+            ET.SubElement(xml_greeting, "bend_nip").text = benda_nip
+            
+            subq = DBSession.query(APInvoice.id, Sp2d.id.label('sp2d_id'), 
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, Rekening.kode=='7.1.1.02.01'),SpmPotongan.nilai)], else_=0)),0).label('ppn_lalu'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, Rekening.kode=='7.1.1.02.01'),SpmPotongan.nilai)], else_=0)),0).label('ppn_kini'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, Rekening.kode=='7.1.1.02.02'),SpmPotongan.nilai)], else_=0)),0).label('pph21_lalu'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, Rekening.kode=='7.1.1.02.02'),SpmPotongan.nilai)], else_=0)),0).label('pph21_kini'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, Rekening.kode=='7.1.1.02.03'),SpmPotongan.nilai)], else_=0)),0).label('pph22_lalu'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, Rekening.kode=='7.1.1.02.03'),SpmPotongan.nilai)], else_=0)),0).label('pph22_kini'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, Rekening.kode=='7.1.1.02.04'),SpmPotongan.nilai)], else_=0)),0).label('pph23_lalu'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, Rekening.kode=='7.1.1.02.04'),SpmPotongan.nilai)], else_=0)),0).label('pph23_kini'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, func.substr(Rekening.kode,1,3)=='7.1', 
+                not_(Rekening.kode.in_(['7.1.1.02.01','7.1.1.02.02','7.1.1.02.03','7.1.1.02.04']))),SpmPotongan.nilai)], else_=0)),0).label('lain_lalu'),
+                func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, func.substr(Rekening.kode,1,3)=='7.1', 
+                not_(Rekening.kode.in_(['7.1.1.02.01','7.1.1.02.02','7.1.1.02.03','7.1.1.02.04']))),SpmPotongan.nilai)], else_=0)),0).label('lain_kini'),
+               ).join(SppItem, Spp, Spm, SpmPotongan, Rekening
+               ).outerjoin(Sp2d, Sp2d.ap_spm_id==Spm.id
+               ).filter(
+                #SpmPotongan.rekening_id==Rekening.id, SpmPotongan.ap_spm_id==Spm.id, Spm.ap_spp_id==Spp.id,
+                #SppItem.ap_spp_id==Spp.id, SppItem.ap_invoice_id==APInvoice.id,
+                APInvoice.unit_id==row.unit_id, APInvoice.tahun_id==row.tahun
+               ).group_by(APInvoice.id, Sp2d.id
+               ).subquery()
+
+            subq2 = DBSession.query(APInvoice.tahun_id, APInvoice.id, APInvoice.tanggal, Unit.id.label('unit_id'), 
+               case([(and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)=='5.1.1'),'LSG'), 
+               (and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)!='5.1.1'),'LS')], else_='LAIN').label('jenis'),
+               func.coalesce(func.sum(APInvoiceItem.amount),0).label('amount'), 
+               case([(subq.c.sp2d_id>0,subq.c.sp2d_id)], else_=0).label('sp2d_id'), subq.c.ppn_lalu, subq.c.ppn_kini, subq.c.pph21_lalu, subq.c.pph21_kini, subq.c.pph22_lalu, subq.c.pph22_kini, 
+               subq.c.pph23_lalu, subq.c.pph23_kini, subq.c.lain_lalu, subq.c.lain_kini
+               ).join(Unit,APInvoiceItem, KegiatanItem, Rekening
+               ).outerjoin(subq, APInvoice.id==subq.c.id
+               ).filter(Unit.id==row.unit_id, APInvoice.tahun_id==row.tahun
+               ).group_by(APInvoice.tahun_id, APInvoice.id, APInvoice.tanggal, Unit.id, 
+               case([(and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)=='5.1.1'),'LSG'), 
+               (and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)!='5.1.1'),'LS')], else_='LAIN'),
+               case([(subq.c.sp2d_id>0,subq.c.sp2d_id)], else_=0), subq.c.ppn_lalu, subq.c.ppn_kini, subq.c.pph21_lalu, subq.c.pph21_kini, subq.c.pph22_lalu, subq.c.pph22_kini, 
+               subq.c.pph23_lalu, subq.c.pph23_kini, subq.c.lain_lalu, subq.c.lain_kini
+               ).subquery()
                
+            rowitem = DBSession.query(subq2.c.tahun_id, subq2.c.unit_id, 
+               #Amount
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.amount)], else_=0)),0).label('lsg_amount_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG'),subq2.c.amount)], else_=0)),0).label('lsg_amount_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.amount)], else_=0)),0).label('lsg_amount_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG'),subq2.c.amount)], else_=0)),0).label('lsg_amount_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.amount)], else_=0)),0).label('ls_amount_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS'),subq2.c.amount)], else_=0)),0).label('ls_amount_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.amount)], else_=0)),0).label('ls_amount_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS'),subq2.c.amount)], else_=0)),0).label('ls_amount_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.amount)], else_=0)),0).label('lain_amount_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN'),subq2.c.amount)], else_=0)),0).label('lain_amount_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.amount)], else_=0)),0).label('lain_amount_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN'),subq2.c.amount)], else_=0)),0).label('lain_amount_kini1'),
+               #PPn
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.ppn_lalu)], else_=0)),0).label('lsg_ppn_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.ppn_kini)], else_=0)),0).label('lsg_ppn_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.ppn_lalu)], else_=0)),0).label('ls_ppn_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.ppn_kini)], else_=0)),0).label('ls_ppn_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.ppn_lalu)], else_=0)),0).label('lain_ppn_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.ppn_kini)], else_=0)),0).label('lain_ppn_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG'),subq2.c.ppn_lalu)], else_=0)),0).label('lsg_ppn_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG'),subq2.c.ppn_kini)], else_=0)),0).label('lsg_ppn_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS'),subq2.c.ppn_lalu)], else_=0)),0).label('ls_ppn_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS'),subq2.c.ppn_kini)], else_=0)),0).label('ls_ppn_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN'),subq2.c.ppn_lalu)], else_=0)),0).label('lain_ppn_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN'),subq2.c.ppn_kini)], else_=0)),0).label('lain_ppn_kini1'),
+               #PPh21
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.pph21_lalu)], else_=0)),0).label('lsg_pph21_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.pph21_kini)], else_=0)),0).label('lsg_pph21_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.pph21_lalu)], else_=0)),0).label('ls_pph21_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.pph21_kini)], else_=0)),0).label('ls_pph21_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.pph21_lalu)], else_=0)),0).label('lain_pph21_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.pph21_kini)], else_=0)),0).label('lain_pph21_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG'),subq2.c.pph21_lalu)], else_=0)),0).label('lsg_pph21_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG'),subq2.c.pph21_kini)], else_=0)),0).label('lsg_pph21_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS'),subq2.c.pph21_lalu)], else_=0)),0).label('ls_pph21_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS'),subq2.c.pph21_kini)], else_=0)),0).label('ls_pph21_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN'),subq2.c.pph21_lalu)], else_=0)),0).label('lain_pph21_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN'),subq2.c.pph21_kini)], else_=0)),0).label('lain_pph21_kini1'),
+               #PPh22
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.pph22_lalu)], else_=0)),0).label('lsg_pph22_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.pph22_kini)], else_=0)),0).label('lsg_pph22_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.pph22_lalu)], else_=0)),0).label('ls_pph22_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.pph22_kini)], else_=0)),0).label('ls_pph22_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.pph22_lalu)], else_=0)),0).label('lain_pph22_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.pph22_kini)], else_=0)),0).label('lain_pph22_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG'),subq2.c.pph22_lalu)], else_=0)),0).label('lsg_pph22_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG'),subq2.c.pph22_kini)], else_=0)),0).label('lsg_pph22_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS'),subq2.c.pph22_lalu)], else_=0)),0).label('ls_pph22_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS'),subq2.c.pph22_kini)], else_=0)),0).label('ls_pph22_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN'),subq2.c.pph22_lalu)], else_=0)),0).label('lain_pph22_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN'),subq2.c.pph22_kini)], else_=0)),0).label('lain_pph22_kini1'),
+               #PPh23
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.pph23_lalu)], else_=0)),0).label('lsg_pph23_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.pph23_kini)], else_=0)),0).label('lsg_pph23_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.pph23_lalu)], else_=0)),0).label('ls_pph23_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.pph23_kini)], else_=0)),0).label('ls_pph23_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.pph23_lalu)], else_=0)),0).label('lain_pph23_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.pph23_kini)], else_=0)),0).label('lain_pph23_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG'),subq2.c.pph23_lalu)], else_=0)),0).label('lsg_pph23_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG'),subq2.c.pph23_kini)], else_=0)),0).label('lsg_pph23_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS'),subq2.c.pph23_lalu)], else_=0)),0).label('ls_pph23_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS'),subq2.c.pph23_kini)], else_=0)),0).label('ls_pph23_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN'),subq2.c.pph23_lalu)], else_=0)),0).label('lain_pph23_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN'),subq2.c.pph23_kini)], else_=0)),0).label('lain_pph23_kini1'),
+               #Lainnya
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.lain_lalu)], else_=0)),0).label('lsg_lain_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG', subq2.c.sp2d_id<>0),subq2.c.lain_kini)], else_=0)),0).label('lsg_lain_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.lain_lalu)], else_=0)),0).label('ls_lain_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS', subq2.c.sp2d_id<>0),subq2.c.lain_kini)], else_=0)),0).label('ls_lain_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.lain_lalu)], else_=0)),0).label('lain_lain_lalu'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN', subq2.c.sp2d_id<>0),subq2.c.lain_kini)], else_=0)),0).label('lain_lain_kini'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LSG'),subq2.c.lain_lalu)], else_=0)),0).label('lsg_lain_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LSG'),subq2.c.lain_kini)], else_=0)),0).label('lsg_lain_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LS'),subq2.c.lain_lalu)], else_=0)),0).label('ls_lain_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LS'),subq2.c.lain_kini)], else_=0)),0).label('ls_lain_kini1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)<bulan, subq2.c.jenis=='LAIN'),subq2.c.lain_lalu)], else_=0)),0).label('lain_lain_lalu1'),
+               func.coalesce(func.sum(case([(and_(extract('month',subq2.c.tanggal)==bulan, subq2.c.jenis=='LAIN'),subq2.c.lain_kini)], else_=0)),0).label('lain_lain_kini1'),
+               #).filter(subq2.c.tahun_id==row.unit_id, subq2.c.unit_id==row.tahun
+               ).group_by(subq2.c.tahun_id, subq2.c.unit_id
+               )
+               
+            for row4 in rowitem :
+                xml_a = ET.SubElement(xml_greeting, "item")
+                ET.SubElement(xml_a, "unit_id").text =unicode(row4.unit_id)
+                ET.SubElement(xml_a, "tahun_id").text =unicode(row4.tahun_id)
+                ET.SubElement(xml_a, "lsg_amount_lalu").text =unicode(row4.lsg_amount_lalu)
+                ET.SubElement(xml_a, "lsg_amount_kini").text =unicode(row4.lsg_amount_kini)
+                ET.SubElement(xml_a, "ls_amount_lalu").text =unicode(row4.ls_amount_lalu)
+                ET.SubElement(xml_a, "ls_amount_kini").text =unicode(row4.ls_amount_kini)
+                ET.SubElement(xml_a, "lain_amount_lalu").text =unicode(row4.lain_amount_lalu)
+                ET.SubElement(xml_a, "lain_amount_kini").text =unicode(row4.lain_amount_kini)
+                ET.SubElement(xml_a, "lsg_ppn_lalu").text =unicode(row4.lsg_ppn_lalu)
+                ET.SubElement(xml_a, "lsg_ppn_kini").text =unicode(row4.lsg_ppn_kini)
+                ET.SubElement(xml_a, "ls_ppn_lalu").text =unicode(row4.ls_ppn_lalu)
+                ET.SubElement(xml_a, "ls_ppn_kini").text =unicode(row4.ls_ppn_kini)
+                ET.SubElement(xml_a, "lain_ppn_lalu").text =unicode(row4.lain_ppn_lalu)
+                ET.SubElement(xml_a, "lain_ppn_kini").text =unicode(row4.lain_ppn_kini)
+                ET.SubElement(xml_a, "lsg_pph21_lalu").text =unicode(row4.lsg_pph21_lalu)
+                ET.SubElement(xml_a, "lsg_pph21_kini").text =unicode(row4.lsg_pph21_kini)
+                ET.SubElement(xml_a, "ls_pph21_lalu").text =unicode(row4.ls_pph21_lalu)
+                ET.SubElement(xml_a, "ls_pph21_kini").text =unicode(row4.ls_pph21_kini)
+                ET.SubElement(xml_a, "lain_pph21_lalu").text =unicode(row4.lain_pph21_lalu)
+                ET.SubElement(xml_a, "lain_pph21_kini").text =unicode(row4.lain_pph21_kini)
+                ET.SubElement(xml_a, "lsg_pph22_lalu").text =unicode(row4.lsg_pph22_lalu)
+                ET.SubElement(xml_a, "lsg_pph22_kini").text =unicode(row4.lsg_pph22_kini)
+                ET.SubElement(xml_a, "ls_pph22_lalu").text =unicode(row4.ls_pph22_lalu)
+                ET.SubElement(xml_a, "ls_pph22_kini").text =unicode(row4.ls_pph22_kini)
+                ET.SubElement(xml_a, "lain_pph22_lalu").text =unicode(row4.lain_pph22_lalu)
+                ET.SubElement(xml_a, "lain_pph22_kini").text =unicode(row4.lain_pph22_kini)
+                ET.SubElement(xml_a, "lsg_pph23_lalu").text =unicode(row4.lsg_pph23_lalu)
+                ET.SubElement(xml_a, "lsg_pph23_kini").text =unicode(row4.lsg_pph23_kini)
+                ET.SubElement(xml_a, "ls_pph23_lalu").text =unicode(row4.ls_pph23_lalu)
+                ET.SubElement(xml_a, "ls_pph23_kini").text =unicode(row4.ls_pph23_kini)
+                ET.SubElement(xml_a, "lain_pph23_lalu").text =unicode(row4.lain_pph23_lalu)
+                ET.SubElement(xml_a, "lain_pph23_kini").text =unicode(row4.lain_pph23_kini)
+                ET.SubElement(xml_a, "lsg_lain_lalu").text =unicode(row4.lsg_lain_lalu)
+                ET.SubElement(xml_a, "lsg_lain_kini").text =unicode(row4.lsg_lain_kini)
+                ET.SubElement(xml_a, "ls_lain_lalu").text =unicode(row4.ls_lain_lalu)
+                ET.SubElement(xml_a, "ls_lain_kini").text =unicode(row4.ls_lain_kini)
+                ET.SubElement(xml_a, "lain_lain_lalu").text =unicode(row4.lain_lain_lalu)
+                ET.SubElement(xml_a, "lain_lain_kini").text =unicode(row4.lain_lain_kini)
+
+                ET.SubElement(xml_a, "lsg_tot_lalu").text =unicode(row4.lsg_amount_lalu + row4.lsg_ppn_lalu + row4.lsg_pph21_lalu + row4.lsg_pph22_lalu + row4.lsg_pph23_lalu + row4.lsg_lain_lalu)
+                ET.SubElement(xml_a, "lsg_tot_kini").text =unicode(row4.lsg_amount_kini + row4.lsg_ppn_kini + row4.lsg_pph21_kini + row4.lsg_pph22_kini + row4.lsg_pph23_kini + row4.lsg_lain_kini)
+                ET.SubElement(xml_a, "ls_tot_lalu").text =unicode(row4.ls_amount_lalu + row4.ls_ppn_lalu + row4.ls_pph21_lalu + row4.ls_pph22_lalu + row4.ls_pph23_lalu + row4.ls_lain_lalu)
+                ET.SubElement(xml_a, "ls_tot_kini").text =unicode(row4.ls_amount_kini + row4.ls_ppn_kini + row4.ls_pph21_kini + row4.ls_pph22_kini + row4.ls_pph23_kini + row4.ls_lain_kini)
+                ET.SubElement(xml_a, "lain_tot_lalu").text =unicode(row4.ls_amount_lalu + row4.ls_ppn_lalu + row4.ls_pph21_lalu + row4.ls_pph22_lalu + row4.ls_pph23_lalu + row4.ls_lain_lalu)
+                ET.SubElement(xml_a, "lain_tot_kini").text =unicode(row4.ls_amount_kini + row4.ls_ppn_kini + row4.ls_pph21_kini + row4.ls_pph22_kini + row4.ls_pph23_kini + row4.ls_lain_kini)
+                
+                ET.SubElement(xml_a, "lsg_amount_lalu1").text =unicode(row4.lsg_amount_lalu1)
+                ET.SubElement(xml_a, "lsg_amount_kini1").text =unicode(row4.lsg_amount_kini1)
+                ET.SubElement(xml_a, "ls_amount_lalu1").text =unicode(row4.ls_amount_lalu1)
+                ET.SubElement(xml_a, "ls_amount_kini1").text =unicode(row4.ls_amount_kini1)
+                ET.SubElement(xml_a, "lain_amount_lalu1").text =unicode(row4.lain_amount_lalu1)
+                ET.SubElement(xml_a, "lain_amount_kini1").text =unicode(row4.lain_amount_kini1)
+                ET.SubElement(xml_a, "lsg_ppn_lalu1").text =unicode(row4.lsg_ppn_lalu1)
+                ET.SubElement(xml_a, "lsg_ppn_kini1").text =unicode(row4.lsg_ppn_kini1)
+                ET.SubElement(xml_a, "ls_ppn_lalu1").text =unicode(row4.ls_ppn_lalu1)
+                ET.SubElement(xml_a, "ls_ppn_kini1").text =unicode(row4.ls_ppn_kini1)
+                ET.SubElement(xml_a, "lain_ppn_lalu1").text =unicode(row4.lain_ppn_lalu1)
+                ET.SubElement(xml_a, "lain_ppn_kini1").text =unicode(row4.lain_ppn_kini1)
+                ET.SubElement(xml_a, "lsg_pph21_lalu1").text =unicode(row4.lsg_pph21_lalu1)
+                ET.SubElement(xml_a, "lsg_pph21_kini1").text =unicode(row4.lsg_pph21_kini1)
+                ET.SubElement(xml_a, "ls_pph21_lalu1").text =unicode(row4.ls_pph21_lalu1)
+                ET.SubElement(xml_a, "ls_pph21_kini1").text =unicode(row4.ls_pph21_kini1)
+                ET.SubElement(xml_a, "lain_pph21_lalu1").text =unicode(row4.lain_pph21_lalu1)
+                ET.SubElement(xml_a, "lain_pph21_kini1").text =unicode(row4.lain_pph21_kini1)
+                ET.SubElement(xml_a, "lsg_pph22_lalu1").text =unicode(row4.lsg_pph22_lalu1)
+                ET.SubElement(xml_a, "lsg_pph22_kini1").text =unicode(row4.lsg_pph22_kini1)
+                ET.SubElement(xml_a, "ls_pph22_lalu1").text =unicode(row4.ls_pph22_lalu1)
+                ET.SubElement(xml_a, "ls_pph22_kini1").text =unicode(row4.ls_pph22_kini1)
+                ET.SubElement(xml_a, "lain_pph22_lalu1").text =unicode(row4.lain_pph22_lalu1)
+                ET.SubElement(xml_a, "lain_pph22_kini1").text =unicode(row4.lain_pph22_kini1)
+                ET.SubElement(xml_a, "lsg_pph23_lalu1").text =unicode(row4.lsg_pph23_lalu1)
+                ET.SubElement(xml_a, "lsg_pph23_kini1").text =unicode(row4.lsg_pph23_kini1)
+                ET.SubElement(xml_a, "ls_pph23_lalu1").text =unicode(row4.ls_pph23_lalu1)
+                ET.SubElement(xml_a, "ls_pph23_kini1").text =unicode(row4.ls_pph23_kini1)
+                ET.SubElement(xml_a, "lain_pph23_lalu1").text =unicode(row4.lain_pph23_lalu1)
+                ET.SubElement(xml_a, "lain_pph23_kini1").text =unicode(row4.lain_pph23_kini1)
+                ET.SubElement(xml_a, "lsg_lain_lalu1").text =unicode(row4.lsg_lain_lalu1)
+                ET.SubElement(xml_a, "lsg_lain_kini1").text =unicode(row4.lsg_lain_kini1)
+                ET.SubElement(xml_a, "ls_lain_lalu1").text =unicode(row4.ls_lain_lalu1)
+                ET.SubElement(xml_a, "ls_lain_kini1").text =unicode(row4.ls_lain_kini1)
+                ET.SubElement(xml_a, "lain_lain_lalu1").text =unicode(row4.lain_lain_lalu1)
+                ET.SubElement(xml_a, "lain_lain_kini1").text =unicode(row4.lain_lain_kini1)
+
+                ET.SubElement(xml_a, "lsg_tot_lalu1").text =unicode(row4.lsg_amount_lalu1 + row4.lsg_ppn_lalu1 + row4.lsg_pph21_lalu1 + row4.lsg_pph22_lalu1 + row4.lsg_pph23_lalu1 + row4.lsg_lain_lalu1)
+                ET.SubElement(xml_a, "lsg_tot_kini1").text =unicode(row4.lsg_amount_kini1 + row4.lsg_ppn_kini1 + row4.lsg_pph21_kini1 + row4.lsg_pph22_kini1 + row4.lsg_pph23_kini1 + row4.lsg_lain_kini1)
+                ET.SubElement(xml_a, "ls_tot_lalu1").text =unicode(row4.ls_amount_lalu1 + row4.ls_ppn_lalu1 + row4.ls_pph21_lalu1 + row4.ls_pph22_lalu1 + row4.ls_pph23_lalu1 + row4.ls_lain_lalu1)
+                ET.SubElement(xml_a, "ls_tot_kini1").text =unicode(row4.ls_amount_kini1 + row4.ls_ppn_kini1 + row4.ls_pph21_kini1 + row4.ls_pph22_kini1 + row4.ls_pph23_kini1 + row4.ls_lain_kini1)
+                ET.SubElement(xml_a, "lain_tot_lalu1").text =unicode(row4.ls_amount_lalu1 + row4.ls_ppn_lalu1 + row4.ls_pph21_lalu1 + row4.ls_pph22_lalu1 + row4.ls_pph23_lalu1 + row4.ls_lain_lalu1)
+                ET.SubElement(xml_a, "lain_tot_kini1").text =unicode(row4.ls_amount_kini1 + row4.ls_ppn_kini1 + row4.ls_pph21_kini1 + row4.ls_pph22_kini1 + row4.ls_pph23_kini1 + row4.ls_lain_kini1)
+                
         return self.root 
 """
 class b105r011Generator(JasperGenerator):
