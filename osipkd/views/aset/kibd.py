@@ -226,9 +226,25 @@ class view_aset_kibd(BaseViews):
         rowd['keterangan']      = row.keterangan
 
         rowd['d_konstruksi']       = row.d_konstruksi
-        rowd['d_panjang']          = row.d_panjang
-        rowd['d_lebar']            = row.d_lebar
-        rowd['d_luas']             = row.d_luas
+
+        if row.d_panjang == None :
+           rowd['d_panjang'] = 0
+        else :
+           rowd['d_panjang'] = row.d_panjang
+           
+        if row.d_lebar == None :
+           rowd['d_lebar'] = 0
+        else :
+           rowd['d_lebar'] = row.d_lebar
+
+        if row.d_luas== None :
+           rowd['d_luas'] = 0
+        else :
+           rowd['d_luas'] = row.d_luas
+           
+        #rowd['d_panjang']          = row.d_panjang
+        #rowd['d_lebar']            = row.d_lebar
+        #rowd['d_luas']             = row.d_luas
         rowd['d_lokasi']           = row.d_lokasi
         rowd['d_dokumen_tanggal']  = row.d_dokumen_tanggal
         rowd['d_dokumen_nomor']    = row.d_dokumen_nomor

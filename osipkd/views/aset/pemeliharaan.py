@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, or_, cast
 from pyramid.view import (
     view_config,
     )
@@ -26,7 +26,28 @@ from osipkd.views.base_view import BaseViews
     
 SESS_ADD_FAILED = 'Tambah aset-pemeliharaan gagal'
 SESS_EDIT_FAILED = 'Edit aset-pemeliharaan gagal'
-
+        
+def deferred_kondisi(node, kw):
+    values = kw.get('kondisi', [])
+    return widget.SelectWidget(values=values)
+    
+kondisi = (
+    ('B', 'Baik'),
+    ('KB', 'Kurang Baik'),
+    ('RB', 'Rusak Berat'),
+    )
+    
+def deferred_cara(node, kw):
+    values = kw.get('cara', [])
+    return widget.SelectWidget(values=values)
+    
+cara = (
+    ('Pembelian', 'Pembelian'),
+    ('Hibah', 'Hibah'),
+    ('Mutasi', 'Mutasi'),
+    ('Lainnya', 'Lainnya'),
+    )
+    
 class AddSchema(colander.Schema):
     unit_id         = colander.SchemaNode(
                         colander.Integer(),
@@ -42,28 +63,11 @@ class AddSchema(colander.Schema):
                         #widget = unit_nm_widget,
                         oid = "unit_nm",
                         title = "SKPD Uraian")
-    kategori_id     = colander.SchemaNode(
-                        colander.Integer(),
-                        oid = "kategori_id")
-    kategori_kd     = colander.SchemaNode(
-                        colander.String(),
-                        oid = "kategori_kd",
-                        title = "Kategori")
-    kategori_nm     = colander.SchemaNode(
-                        colander.String(),
-                        oid = "kategori_nm",
-                        title = "Kategori Uraian")
-    kib_id          = colander.SchemaNode(
-                        colander.Integer(),
-                        oid = "kib_id",
-                        title = "Aset ID")
-    kib_nm          = colander.SchemaNode(
-                        colander.String(),
-                        oid = "kib_nm",
-                        title = "Kib")
+                        
     th_pemeliharaan = colander.SchemaNode(
                         colander.Integer(),
-                        oid = "tahun")
+                        oid = "th_pemeliharaan",
+                        title = "Thn.Pelihara")
     nilai           = colander.SchemaNode(
                         colander.Integer(),
                         oid = "nilai",
@@ -71,6 +75,7 @@ class AddSchema(colander.Schema):
     masa_manfaat    = colander.SchemaNode(
                         colander.Integer(),
                         oid = "masa_manfaat",
+                        title = "Masa guna",
                         missing=colander.drop)
     no_sp2d         = colander.SchemaNode(
                         colander.String(),
@@ -82,21 +87,33 @@ class AddSchema(colander.Schema):
                         oid = "no_bast",
                         title = "No. BAST",
                         missing=colander.drop)
-    no_kontrak      = colander.SchemaNode(
-                        colander.String(),
-                        oid = "no_kontrak",
-                        title = "No. Kontrak",
-                        missing=colander.drop)
     tgl_bast        = colander.SchemaNode(
                         colander.Date(),
                         missing=colander.drop,
-                        title="Tanggal BAST")
+                        title="Tgl. BAST")
+    no_kontrak      = colander.SchemaNode(
+                        colander.String(),
+                        oid = "no_kontrak",
+                        title = "No.Kontrak",
+                        missing=colander.drop)
     keterangan      = colander.SchemaNode(
                         colander.String(),
                         oid = "keterangan",
                         title = "Keterangan",
                         missing=colander.drop)
                         
+    ## Headof KIB ##
+    kib_id          = colander.SchemaNode(
+                        colander.Integer(),
+                        oid = "kib_id",)
+    kategori_kd     = colander.SchemaNode(
+                        colander.String(),
+                        oid = "kategori_kd",
+                        title = "Kategori")
+    kategori_nm     = colander.SchemaNode(
+                        colander.String(),
+                        oid = "kategori_nm",
+                        title = "Kategori Uraian")
     uraian          = colander.SchemaNode(
                         colander.String(),
                         oid = "uraian",
@@ -105,41 +122,45 @@ class AddSchema(colander.Schema):
     tgl_perolehan   = colander.SchemaNode(
                         colander.Date(),
                         missing=colander.drop,
-                        title="Tgl. Perolehan")
+                        oid = "tgl_perolehan",
+                        title="Tgl.Perolehan")
     cara_perolehan  = colander.SchemaNode(
                         colander.String(),
+                        widget=widget.SelectWidget(values=cara),
                         oid = "cara_perolehan",
-                        title = "Cara Perolehan",
+                        title = "Perolehan",
                         missing=colander.drop)
     th_beli         = colander.SchemaNode(
                         colander.String(),
                         oid = "th_beli",
                         title = "Tahun Beli",
                         missing=colander.drop)
-    asal_usul        = colander.SchemaNode(
+    asal_usul       = colander.SchemaNode(
                         colander.String(),
                         oid = "asal_usul",
-                        title = "Asal Usul",
+                        title = "Asal-usul",
                         missing=colander.drop)
-    harga            = colander.SchemaNode(
+    harga           = colander.SchemaNode(
                         colander.Integer(),
                         oid = "harga",
                         missing=colander.drop)
-    jumlah            = colander.SchemaNode(
+    jumlah          = colander.SchemaNode(
                         colander.Integer(),
                         oid = "jumlah",
                         missing=colander.drop)
-    satuan            = colander.SchemaNode(
+    satuan          = colander.SchemaNode(
                         colander.String(),
                         oid = "satuan",
                         missing=colander.drop)
-    kondisi            = colander.SchemaNode(
+    kondisi         = colander.SchemaNode(
                         colander.String(),
+                        widget=widget.SelectWidget(values=kondisi),
                         oid = "kondisi",
                         missing=colander.drop)
-    kib                = colander.SchemaNode(
+    kib             = colander.SchemaNode(
                         colander.String(),
                         oid = "kib",
+                        title = "KIB",
                         missing=colander.drop)
 
 class EditSchema(AddSchema):
@@ -172,7 +193,7 @@ class view_aset_pemeliharaan(BaseViews):
         if url_dict['act']=='grid':
             columns = []
             columns.append(ColumnDT('id'))
-            columns.append(ColumnDT('tahun'))
+            columns.append(ColumnDT('th_pemeliharaan'))
             columns.append(ColumnDT('kategori_kd'))
             columns.append(ColumnDT('no_register'))
             columns.append(ColumnDT('kategori_nm'))
@@ -180,14 +201,47 @@ class view_aset_pemeliharaan(BaseViews):
             columns.append(ColumnDT('th_beli'))
             
             query = DBSession.query(AsetPemeliharaan.id,
-                                    AsetPemeliharaan.th_pemeliharaan.label('tahun'),
+                                    AsetPemeliharaan.th_pemeliharaan,
                                     AsetKategori.kode.label('kategori_kd'),
                                     AsetKib.no_register,
                                     AsetKategori.uraian.label('kategori_nm'),
                                     AsetPemeliharaan.nilai,
                                     AsetKib.th_beli,
                     ).join(AsetKib, AsetKategori
-                    ).filter(AsetPemeliharaan.unit_id==ses['unit_id']
+                    ).filter(AsetPemeliharaan.unit_id==ses['unit_id'],
+                             AsetPemeliharaan.unit_id == Unit.id,
+                             AsetPemeliharaan.kib_id  == AsetKib.id,
+                             AsetKib.kategori_id      == AsetKategori.id,
+                    )
+                       
+            rowTable = DataTables(req, AsetPemeliharaan, query, columns)
+            return rowTable.output_result()
+            
+        elif url_dict['act']=='grid1':
+            cari = 'cari' in params and params['cari'] or ''
+            columns = []
+            columns.append(ColumnDT('id'))
+            columns.append(ColumnDT('th_pemeliharaan'))
+            columns.append(ColumnDT('kode'))
+            columns.append(ColumnDT('no_register'))
+            columns.append(ColumnDT('uraian'))
+            columns.append(ColumnDT('nilai'))
+            columns.append(ColumnDT('th_beli'))
+            
+            query = DBSession.query(AsetPemeliharaan.id,
+                                    AsetPemeliharaan.th_pemeliharaan,
+                                    AsetKategori.kode,
+                                    AsetKib.no_register,
+                                    AsetKategori.uraian,
+                                    AsetPemeliharaan.nilai,
+                                    AsetKib.th_beli,
+                    ).join(AsetKib, AsetKategori
+                    ).filter(AsetPemeliharaan.unit_id == ses['unit_id'],
+                             AsetPemeliharaan.unit_id == Unit.id,
+                             AsetPemeliharaan.kib_id  == AsetKib.id,
+                             AsetKib.kategori_id      == AsetKategori.id,
+                             or_(AsetKategori.kode.ilike('%%%s%%' % cari),
+                                 AsetKategori.uraian.ilike('%%%s%%' % cari),)
                     )
                        
             rowTable = DataTables(req, AsetPemeliharaan, query, columns)
@@ -269,7 +323,7 @@ class view_aset_pemeliharaan(BaseViews):
         return DBSession.query(AsetPemeliharaan).filter(AsetPemeliharaan.id==self.request.matchdict['id'])
         
     def id_not_found(request):    
-        msg = 'User ID %s not found.' % request.matchdict['id']
+        msg = 'Pemeliharaan ID %s not found.' % request.matchdict['id']
         request.session.flash(msg, 'error')
         return self.route_list()
 
@@ -296,6 +350,31 @@ class view_aset_pemeliharaan(BaseViews):
             del request.session[SESS_EDIT_FAILED]
             return dict(form=form)
         values = row.to_dict()
+        values['kategori_kd']    = row and row.kibs.kats.kode      or ''
+        values['kategori_nm']    = row and row.kibs.kats.uraian    or ''
+        values['uraian']         = row and row.kibs.uraian         or ''
+        values['tgl_perolehan']  = row and row.kibs.tgl_perolehan  or ''
+        values['cara_perolehan'] = row and row.kibs.cara_perolehan or ''
+        values['th_beli']        = row and row.kibs.th_beli        or ''
+        values['asal_usul']      = row and row.kibs.asal_usul      or ''
+        values['harga']          = row and row.kibs.harga          or 0
+        values['jumlah']         = row and row.kibs.jumlah         or 0
+        values['satuan']         = row and row.kibs.satuan         or ''
+        values['kondisi']        = row and row.kibs.kondisi        or ''
+        values['kib']            = row and row.kibs.kib            or ''
+        
+        if values['no_sp2d'] == None :
+           values['no_sp2d'] = ""
+           
+        if values['no_bast'] == None :
+           values['no_bast'] = ""
+           
+        if values['no_kontrak'] == None :
+           values['no_kontrak'] = ""
+           
+        #if values['keterangan'] == None :
+        #   values['keterangan'] = ""
+           
         form.set_appstruct(values) 
         return dict(form=form)
 
@@ -312,7 +391,7 @@ class view_aset_pemeliharaan(BaseViews):
         if not row:
             return id_not_found(request)
             
-        form = Form(colander.Schema(), buttons=('hapus','cancel'))
+        form = Form(colander.Schema(), buttons=('hapus','batal'))
         values= {}
         if request.POST:
             if 'hapus' in request.POST:

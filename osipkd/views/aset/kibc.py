@@ -230,13 +230,21 @@ class view_aset_kibc(BaseViews):
         rowd['kib']                 = row.kib
         rowd['c_bertingkat_tidak']  = row.c_bertingkat_tidak
         rowd['c_beton_tidak']       = row.c_beton_tidak
-        rowd['c_luas_lantai']       = row.c_luas_lantai
         rowd['c_lokasi']            = row.c_lokasi
         rowd['c_dokumen_tanggal']   = row.c_dokumen_tanggal
         rowd['c_dokumen_nomor']     = row.c_dokumen_nomor
         rowd['c_status_tanah']      = row.c_status_tanah
         rowd['c_kode_tanah']        = row.c_kode_tanah
-        rowd['c_luas_bangunan']     = row.c_luas_bangunan
+
+        if row.c_luas_lantai == None :
+           rowd['c_luas_lantai'] = 0
+        else :
+           rowd['c_luas_lantai'] = row.c_luas_lantai
+           
+        if row.c_luas_bangunan == None :
+           rowd['c_luas_bangunan'] = 0
+        else :
+           rowd['c_luas_bangunan'] = row.c_luas_bangunan
 
         form = self.get_form(EditSchema)
         form.set_appstruct(rowd)

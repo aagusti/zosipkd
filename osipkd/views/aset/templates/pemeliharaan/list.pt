@@ -143,8 +143,20 @@
                 "aTargets"   : [0]
             },{
                 "bSearchable": true,
+                "bSortable"  : true,
+                "aTargets"   : [1,5]
+            },{
+                "bSearchable": false,
                 "bSortable"  : false,
-                "aTargets"   : [1,2,5]
+                "aTargets"   : [2,3,4,6]
+            },{
+                "sClass"     : "right",
+                "aTargets"   : [5],
+                "mRender"    : function (data, type, full) {
+                               return formatNumber(data);}
+            },{
+                "sClass"     : "center",
+                "aTargets"   : [6]
             }],
             "aoColumns": [
               null,
@@ -155,6 +167,21 @@
               {"width": "80px"},
               {"width": "10px"},
             ],
+        });
+        
+        $('#table1_filter input').unbind();
+        $('#table1_filter input').bind('keyup', function(e) {
+            if(e.keyCode == 13) {
+                oTable.fnFilter(this.value);   
+            }else{
+                var existingString = $("#table1_filter input").val();
+                if (existingString.length > 1) {
+                    var oTableUrl1 = "/aset/pemeliharaan/act/grid1?cari="+existingString;
+                    oTable.fnReloadAjax(oTableUrl1);
+                }else{
+                    oTable.fnReloadAjax(oTableUrl);
+                }
+            }
         });
         
         function formatNumber(n) {
@@ -170,7 +197,6 @@
                 iPos = oTable.fnGetPosition(this);
                 var aData = oTable.fnGetData(iPos);
                 mID = aData[0];
-                //mID2 = aData[4];
                 oTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
             }

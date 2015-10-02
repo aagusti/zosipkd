@@ -46,6 +46,7 @@ class AddSchema(KibSchema):
                           oid="kib")
     b_kd_ruang       = colander.SchemaNode(
                           colander.Integer(),
+                          missing=colander.drop,
                           oid = "b_kd_ruang")
     b_nm_ruang       = colander.SchemaNode(
                           colander.String(),
@@ -96,8 +97,8 @@ class AddSchema(KibSchema):
                           missing=colander.drop,
                           title="Warna")
     b_thbuat         = colander.SchemaNode(
-                          colander.Integer(),
-                          #missing=colander.drop,
+                          colander.String(),
+                          missing=colander.drop,
                           title="Th. Buat")
                     
 class EditSchema(AddSchema):
@@ -258,8 +259,14 @@ class view_aset_kibb(BaseViews):
         rowd['keterangan']      = row.keterangan
 
         rowd['kib']             = row.kib
-        rowd['b_kd_ruang']      = row.b_kd_ruang
-        rowd['b_nm_ruang']      = row.ruangs.uraian 
+        
+        if row.b_kd_ruang == None :
+           rowd['b_kd_ruang']  = 0
+           rowd['b_nm_ruang']  = ""
+        else :
+           rowd['b_kd_ruang']  = row.b_kd_ruang
+           rowd['b_nm_ruang']  = row.ruangs.uraian 
+           
         rowd['b_merk']          = row.b_merk
         rowd['b_type']          = row.b_type
         rowd['b_cc']            = row.b_cc
