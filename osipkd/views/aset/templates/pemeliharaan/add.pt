@@ -83,7 +83,7 @@
                   $('#kib_id').val(datum.id);
                   $('#kategori_nm').val(datum.kategori_nm);
                   $('#no_register').val(datum.no_register);
-                  $('#uraian').val(datum.kategori_nm);
+                  //$('#uraian').val(datum.kategori_nm);
 
                   if(datum.tgl_perolehan == 'None'){
                       $('#tgl_perolehan').val('');
@@ -91,7 +91,7 @@
                       $('#tgl_perolehan').val(datum.tgl_perolehan);
                   }
                   
-                  $('#cara_perolehan').val(datum.cara_perolehan);
+                  //$('#cara_perolehan').val(datum.cara_perolehan);
                   $('#th_beli').val(datum.th_beli);
                   $('#asal_usul').val(datum.asal_usul);
                   $('#harga').val(datum.harga);
@@ -99,6 +99,10 @@
                   $('#satuan').val(datum.satuan);
                   $('#kondisi').val(datum.kondisi);
                   $('#kib').val(datum.kib);
+                  $('#pemilik_id').val(datum.pemilik_id);
+                  $('#pemilik_nm').val(datum.pemilik_nm);
+                  $('#masa_manfaat_awal').val(datum.masa_manfaat_awal);
+                  $('#keterangan_awal').val(datum.keterangan_awal);
               });
               
               // HeadOfNama //
@@ -118,7 +122,7 @@
                   $('#kategori_kd').val(datum.kode);
                   $('#kategori_nm').val(datum.kategori_nm);
                   $('#no_register').val(datum.no_register);
-                  $('#uraian').val(datum.kategori_nm);
+                  //$('#uraian').val(datum.kategori_nm);
                   
                   if(datum.tgl_perolehan == 'None'){
                       $('#tgl_perolehan').val('');
@@ -126,7 +130,7 @@
                       $('#tgl_perolehan').val(datum.tgl_perolehan);
                   }
                   
-                  $('#cara_perolehan').val(datum.cara_perolehan);
+                  //$('#cara_perolehan').val(datum.cara_perolehan);
                   $('#th_beli').val(datum.th_beli);
                   $('#asal_usul').val(datum.asal_usul);
                   $('#harga').val(datum.harga);
@@ -134,23 +138,39 @@
                   $('#satuan').val(datum.satuan);
                   $('#kondisi').val(datum.kondisi);
                   $('#kib').val(datum.kib);
+                  $('#pemilik_id').val(datum.pemilik_id);
+                  $('#pemilik_nm').val(datum.pemilik_nm);
+                  $('#masa_manfaat_awal').val(datum.masa_manfaat_awal);
+                  $('#keterangan_awal').val(datum.keterangan_awal);
               });
         </script>
         
         <div class="form-group"> 
-          <div tal:define="field form['uraian']" id="item-${field.oid}">
+          <div tal:define="field form['pemilik_id']" style="display: none;">
+              ${structure:field.serialize()}
+          </div>
+          <div tal:define="field form['pemilik_nm']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
-            <div class="col-md-11">
+            <div class="col-md-3">
                 ${structure:field.serialize()}
                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                  tal:repeat="error field.error.messages()">
                  ${error}</p>
             </div>
           </div>
-        </div>
-        
-        <div class="form-group"> 
+          <div tal:define="field form['keterangan_awal']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-7">
+              ${structure:field.serialize()}
+                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
+          </div>
+        </div>  
+        <div class="form-group">           
           <div tal:define="field form['tgl_perolehan']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
@@ -161,7 +181,7 @@
                  ${error}</p>
             </div>
           </div>
-          <div tal:define="field form['cara_perolehan']" id="item-${field.oid}">
+          <div tal:define="field form['asal_usul']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
             <div class="col-md-2">
@@ -170,30 +190,7 @@
                  tal:repeat="error field.error.messages()">
                  ${error}</p>
             </div>
-          </div>
-          <div tal:define="field form['th_beli']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
-                    ${field.title}</label>
-            <div class="col-md-1">
-                ${structure:field.serialize()}
-                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                 tal:repeat="error field.error.messages()">
-                 ${error}</p>
-            </div>
-          </div>
-          <div tal:define="field form['asal_usul']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
-                    ${field.title}</label>
-            <div class="col-md-3">
-                ${structure:field.serialize()}
-                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                 tal:repeat="error field.error.messages()">
-                 ${error}</p>
-            </div>
           </div>        
-        </div>
-        
-        <div class="form-group"> 
           <div tal:define="field form['harga']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
@@ -214,7 +211,10 @@
                  ${error}</p>
             </div>
           </div>
-          <div tal:define="field form['satuan']" id="item-${field.oid}">
+        </div>
+        
+        <div class="form-group"> 
+          <div tal:define="field form['th_beli']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
             <div class="col-md-1">
@@ -225,19 +225,16 @@
             </div>
           </div>
           <div tal:define="field form['kondisi']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                     ${field.title}</label>
-            <div class="col-md-3">
+            <div class="col-md-2">
               ${structure:field.serialize()}
                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                  tal:repeat="error field.error.messages()">
                  ${error}</p>
             </div>
-          </div>        
-        </div>
-        <hr>
-        <div class="form-group"> 
-          <div tal:define="field form['th_pemeliharaan']" id="item-${field.oid}">
+          </div>  
+          <div tal:define="field form['satuan']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
             <div class="col-md-1">
@@ -247,8 +244,33 @@
                  ${error}</p>
             </div>
           </div>
+        <div tal:define="field form['masa_manfaat_awal']" id="item-${field.oid}">
+          <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
+                  ${field.title}</label>
+          <div class="col-md-2">
+            ${structure:field.serialize()}
+              <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+               tal:repeat="error field.error.messages()">
+               ${error}</p>
+          </div>
+        </div>
+        </div>
+      <div class="form-group"> 
+      </div>      
+        <hr>
+        <div class="form-group"> 
+          <div tal:define="field form['th_pemeliharaan']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-1">
+                ${structure:field.serialize()}
+                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
+          </div>
           <div tal:define="field form['masa_manfaat']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                     ${field.title}</label>
             <div class="col-md-1">
                 ${structure:field.serialize()}
@@ -260,7 +282,17 @@
           <div tal:define="field form['nilai']" id="item-${field.oid}">
             <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
                     ${field.title}</label>
-            <div class="col-md-3">
+            <div class="col-md-2">
+                ${structure:field.serialize()}
+                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
+                 tal:repeat="error field.error.messages()">
+                 ${error}</p>
+            </div>
+          </div>
+          <div tal:define="field form['no_sp2d']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+                    ${field.title}</label>
+            <div class="col-md-2">
                 ${structure:field.serialize()}
                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                  tal:repeat="error field.error.messages()">
@@ -270,8 +302,8 @@
         </div>
         
         <div class="form-group"> 
-          <div tal:define="field form['no_sp2d']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+          <div tal:define="field form['no_kontrak']" id="item-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                     ${field.title}</label>
             <div class="col-md-3">
                 ${structure:field.serialize()}
@@ -303,20 +335,10 @@
         </div>
         
         <div class="form-group"> 
-          <div tal:define="field form['no_kontrak']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
-                    ${field.title}</label>
-            <div class="col-md-3">
-                ${structure:field.serialize()}
-                <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
-                 tal:repeat="error field.error.messages()">
-                 ${error}</p>
-            </div>
-          </div>
           <div tal:define="field form['keterangan']" id="item-${field.oid}">
-            <label for="${field.oid}" class="control-label col-md-1" id="req-${field.oid}">
+            <label for="${field.oid}" class="control-label col-md-2" id="req-${field.oid}">
                     ${field.title}</label>
-            <div class="col-md-6">
+            <div class="col-md-7">
               ${structure:field.serialize()}
                 <p id="error-${field.oid}" class="help-block" tal:condition="field.error"
                  tal:repeat="error field.error.messages()">
@@ -350,6 +372,10 @@
         $('#satuan').attr('readonly',true);
         $('#kondisi').attr('readonly',true);
         $('#kib').attr('readonly',true);
+        $('#pemilik_id').attr('readonly',true);
+        $('#pemilik_nm').attr('readonly',true);
+        $('#masa_manfaat_awal').attr('readonly',true);
+        $('#keterangan_awal').attr('readonly',true);
       })  
   </script>
   </div>

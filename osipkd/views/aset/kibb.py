@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func
+from sqlalchemy import not_, func, or_
 from pyramid.view import (
     view_config,
     )
@@ -23,7 +23,7 @@ from kibs import KibSchema
 from osipkd.models.aset_models import AsetKategori, AsetKib
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
-    
+from osipkd.models.pemda_model import Unit    
 
 SESS_ADD_FAILED = 'Tambah kibb gagal'
 SESS_EDIT_FAILED = 'Edit kibb gagal'
@@ -47,10 +47,13 @@ class AddSchema(KibSchema):
     b_kd_ruang       = colander.SchemaNode(
                           colander.Integer(),
                           missing=colander.drop,
+                          #default=0,
                           oid = "b_kd_ruang")
     b_nm_ruang       = colander.SchemaNode(
                           colander.String(),
+                          missing=colander.drop,
                           title="Ruang",
+                          default='',
                           oid = "b_nm_ruang")
     b_merk           = colander.SchemaNode(
                           colander.String(),
@@ -128,18 +131,23 @@ class view_aset_kibb(BaseViews):
             columns = []
             columns.append(ColumnDT('id'))
             columns.append(ColumnDT('units.kode'))
+            columns.append(ColumnDT('units.nama'))
             columns.append(ColumnDT('kats.kode'))
             columns.append(ColumnDT('no_register'))
-            columns.append(ColumnDT('uraian'))
-            columns.append(ColumnDT('tahun'))
+            #columns.append(ColumnDT('uraian'))
+            columns.append(ColumnDT('kats.uraian'))
+            columns.append(ColumnDT('tgl_perolehan', filter=self._DTstrftime))
             columns.append(ColumnDT('th_beli'))
             columns.append(ColumnDT('harga'))
             columns.append(ColumnDT('kondisi'))
             query = DBSession.query(AsetKib).\
-                    join(AsetKategori).\
-                    filter(AsetKib.unit_id == ses['unit_id'], 
+                    join(AsetKategori,Unit).\
+                    filter(AsetKib.unit_id == Unit.id,
+                           #AsetKib.unit_id == ses['unit_id'], 
                            AsetKib.kategori_id==AsetKategori.id,
-                           AsetKib.kib=='B')
+                           AsetKib.kib=='B', 
+                           func.substr(Unit.kode,1,func.length(ses['unit_kd']))==ses['unit_kd'],
+                           or_(AsetKib.disabled=='0',AsetKib.disabled==None))
             rowTable = DataTables(req, AsetKib, query, columns)
             return rowTable.output_result()
 
@@ -177,6 +185,7 @@ class view_aset_kibb(BaseViews):
         c = row.kategori_id
         if not row.no_register:
             row.no_register = AsetKib.get_no_register(a,b,c)+1;
+        row.jumlah=1
                 
         DBSession.add(row)
         DBSession.flush()
@@ -206,11 +215,107 @@ class view_aset_kibb(BaseViews):
         if req.POST:
             if 'simpan' in req.POST:
                 controls = req.POST.items()
+                controls_dicted = dict(controls)
+                
+                # Ambil value data
+                units_id                    = controls_dicted['unit_id']                 
+                units_nama                  = controls_dicted['unit_nm']                 
+                units_kode                  = controls_dicted['unit_kd']                 
+                kats_id                     = controls_dicted['kategori_id']             
+                kats_kode                   = controls_dicted['kategori_kd']             
+                kats_uraian                 = controls_dicted['kategori_nm']             
+                no_register                 = controls_dicted['no_register']              
+                pemiliks_id                 = controls_dicted['pemilik_id']              
+                pemiliks_uraian             = controls_dicted['pemilik_nm']              
+                masa_manfaat                = controls_dicted['masa_manfaat']              
+                #uraian                      = controls_dicted['uraian']                  
+                tahun                       = controls_dicted['tahun']                  
+                tgl_perolehan               = controls_dicted['tgl_perolehan']           
+                #cara_perolehan              = controls_dicted['cara_perolehan']          
+                th_beli                     = controls_dicted['th_beli']                 
+                asal_usul                   = controls_dicted['asal_usul']               
+                harga                       = controls_dicted['harga']                   
+                # Ambil jumlah  
+                jml                         = controls_dicted['jumlah']
+                jmlh                        = "%s" % jml
+                jumlah                      = int(jmlh)
+                controls_dicted['jumlah']   = 1
+                satuan                      = controls_dicted['satuan']                  
+                kondisi                     = controls_dicted['kondisi']                 
+                keterangan                  = controls_dicted['keterangan']              
+    
+                kib                         = controls_dicted['kib']                     
+                b_kd_ruang                  = controls_dicted['b_kd_ruang']                     
+                b_nm_ruang                  = controls_dicted['b_nm_ruang']                     
+
+                if b_kd_ruang==None:
+                    b_kd_ruang1 = 0
+                    b_nm_ruang1 = ""
+                else :
+                    b_kd_ruang1                  = controls_dicted['b_kd_ruang']
+                    b_nm_ruang1                  = controls_dicted['b_nm_ruang']
+                    
+                b_nm_ruang                  = controls_dicted['b_nm_ruang']                     
+                b_merk                      = controls_dicted['b_merk']           
+                b_type                      = controls_dicted['b_type']           
+                b_cc                        = controls_dicted['b_cc']             
+                b_bahan                     = controls_dicted['b_bahan']          
+                b_nomor_pabrik              = controls_dicted['b_nomor_pabrik']   
+                b_nomor_rangka              = controls_dicted['b_nomor_rangka']   
+                b_nomor_mesin               = controls_dicted['b_nomor_mesin']    
+                b_nomor_polisi              = controls_dicted['b_nomor_polisi']   
+                b_nomor_bpkb                = controls_dicted['b_nomor_bpkb']     
+                b_ukuran                    = controls_dicted['b_ukuran']         
+                b_warna                     = controls_dicted['b_warna']          
+                b_thbuat                    = controls_dicted['b_thbuat']         
+
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
                     return dict(form=form, kat_prefix=KAT_PREFIX)
-                self.save_request(dict(controls))
+                row = self.save_request(dict(controls))
+                
+                # Array insert sesuai jumlah
+                a = jumlah - 1
+                b = 0
+                for b in range (0,a):
+                    aset = AsetKib()            
+                    aset.unit_id              = units_id            
+                    aset.kategori_id          = kats_id             
+                    aset.pemilik_id           = pemiliks_id         
+                    #aset.uraian               = uraian              
+                    aset.tahun                = tahun              
+                    aset.no_register          = AsetKib.get_no_register(tahun,units_id,kats_id)+1;
+                    aset.tgl_perolehan        = tgl_perolehan       
+                    #aset.cara_perolehan       = cara_perolehan      
+                    aset.th_beli              = th_beli             
+                    aset.asal_usul            = asal_usul           
+                    aset.harga                = harga               
+                    aset.jumlah               = 1              
+                    aset.satuan               = satuan              
+                    aset.kondisi              = kondisi             
+                    aset.keterangan           = keterangan          
+                    aset.masa_manfaat         = masa_manfaat              
+                    aset.kib                  = kib                 
+
+                    aset.b_kd_ruang           = b_kd_ruang1    
+                    aset.b_nm_ruang           = b_nm_ruang1    
+                    aset.b_merk               = b_merk        
+                    aset.b_type               = b_type        
+                    aset.b_cc                 = b_cc          
+                    aset.b_bahan              = b_bahan       
+                    aset.b_nomor_pabrik       = b_nomor_pabrik
+                    aset.b_nomor_rangka       = b_nomor_rangka
+                    aset.b_nomor_mesin        = b_nomor_mesin 
+                    aset.b_nomor_polisi       = b_nomor_polisi
+                    aset.b_nomor_bpkb         = b_nomor_bpkb  
+                    aset.b_ukuran             = b_ukuran      
+                    aset.b_warna              = b_warna       
+                    aset.b_thbuat             = b_thbuat      
+                    
+                    DBSession.add(aset)
+                    DBSession.flush()
+                    
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
@@ -247,9 +352,9 @@ class view_aset_kibb(BaseViews):
         rowd['no_register']     = row.no_register
         rowd['pemilik_id']      = row.pemiliks.id
         rowd['pemilik_nm']      = row.pemiliks.uraian
-        rowd['uraian']          = row.uraian
+        #rowd['uraian']          = row.uraian
         rowd['tgl_perolehan']   = row.tgl_perolehan
-        rowd['cara_perolehan']  = row.cara_perolehan
+        #rowd['cara_perolehan']  = row.cara_perolehan
         rowd['th_beli']         = row.th_beli
         rowd['asal_usul']       = row.asal_usul
         rowd['harga']           = row.harga
@@ -257,6 +362,11 @@ class view_aset_kibb(BaseViews):
         rowd['satuan']          = row.satuan
         rowd['kondisi']         = row.kondisi
         rowd['keterangan']      = row.keterangan
+        #rowd['masa_manfaat']    = row.masa_manfaat
+        if row.masa_manfaat == None :
+           rowd['masa_manfaat']  = 0
+        else :
+           rowd['masa_manfaat']  = row.masa_manfaat
 
         rowd['kib']             = row.kib
         
@@ -311,12 +421,12 @@ class view_aset_kibb(BaseViews):
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
-                msg = 'KIB ID %d %s sudah dihapus.' % (row.id, row.uraian)
+                msg = 'KIB ID %d %s sudah dihapus.' % (row.id, row.kats.uraian)
                 try:
                   q.delete()
                   DBSession.flush()
                 except:
-                  msg = 'KIB ID %d %s tidak dapat dihapus.' % (row.id, row.uraian)
+                  msg = 'KIB ID %d %s tidak dapat dihapus.' % (row.id, row.kats.uraian)
                 request.session.flash(msg)
             return self.route_list()
         return dict(row=row, form=form.render())

@@ -23,7 +23,7 @@ from kibs import KibSchema
 from osipkd.models.aset_models import AsetKategori, AsetKib, AsetPemilik
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
-    
+from osipkd.models.pemda_model import Unit    
 
 SESS_ADD_FAILED = 'Tambah kiba gagal'
 SESS_EDIT_FAILED = 'Edit kiba gagal'
@@ -33,15 +33,15 @@ kat_widget = widget.AutocompleteInputWidget(
         values = '/aset/kiba/headofnama/act',
         min_length=1)
 
-def deferred_kondisi(node, kw):
-    values = kw.get('kondisi', [])
-    return widget.SelectWidget(values=values)
+#def deferred_kondisi(node, kw):
+#    values = kw.get('kondisi', [])
+#    return widget.SelectWidget(values=values)
     
-KONDISI = (
-    ('B', 'Baik'),
-    ('KB', 'Kurang Baik'),
-    ('RB', 'Rusak Berat'),
-    )
+#KONDISI = (
+#    ('B', 'Baik'),
+#    ('KB', 'Kurang Baik'),
+#    ('RB', 'Rusak Berat'),
+#    )
     
 class AddSchema(KibSchema):
     kib                   = colander.SchemaNode(
@@ -57,7 +57,7 @@ class AddSchema(KibSchema):
                               title="Alamat")
     a_hak_tanah           = colander.SchemaNode(
                               colander.String(),
-                              title="Hak Tnh.")
+                              title="Status Tnh")
     a_sertifikat_tanggal  = colander.SchemaNode(
                               colander.Date(),
                               title="Tgl. Sert.")
@@ -66,7 +66,7 @@ class AddSchema(KibSchema):
                               title="No. Sert.")
     a_penggunaan          = colander.SchemaNode(
                               colander.String(),
-                              title="Pengguna")
+                              title="Penggunaan")
                     
 class EditSchema(AddSchema):
     id = colander.SchemaNode(colander.String(),
@@ -95,19 +95,25 @@ class view_aset_kiba(BaseViews):
             columns = []
             columns.append(ColumnDT('id'))
             columns.append(ColumnDT('units.kode'))
+            columns.append(ColumnDT('units.nama'))
             columns.append(ColumnDT('kats.kode'))
             columns.append(ColumnDT('no_register'))
-            columns.append(ColumnDT('uraian'))
-            columns.append(ColumnDT('tahun'))
+            #columns.append(ColumnDT('uraian'))
+            columns.append(ColumnDT('kats.uraian'))
+            #columns.append(ColumnDT('tahun'))
+            columns.append(ColumnDT('tgl_perolehan', filter=self._DTstrftime))
             columns.append(ColumnDT('th_beli'))
             columns.append(ColumnDT('harga'))
             columns.append(ColumnDT('kondisi'))
             
             query = DBSession.query(AsetKib).\
-                    join(AsetKategori).\
-                    filter(AsetKib.unit_id == ses['unit_id'], 
+                    join(AsetKategori, Unit).\
+                    filter(AsetKib.unit_id == Unit.id,
+                           #AsetKib.unit_id == ses['unit_id'], 
                            AsetKib.kategori_id==AsetKategori.id,
-                           AsetKib.kib=='A')
+                           AsetKib.kib=='A', 
+                           func.substr(Unit.kode,1,func.length(ses['unit_kd']))==ses['unit_kd'],
+                           or_(AsetKib.disabled=='0',AsetKib.disabled==None))
             rowTable = DataTables(req, AsetKib, query, columns)
             return rowTable.output_result()
          
@@ -116,13 +122,13 @@ class view_aset_kiba(BaseViews):
             q = DBSession.query(AsetKib.id,
                                 AsetKategori.kode,
                                 AsetKib.no_register,
-                                AsetKib.uraian,
+                                AsetKategori.uraian,
                                 AsetKib.tgl_perolehan).\
                     join(AsetKategori).\
                     filter(AsetKib.unit_id == ses['unit_id'], 
                            AsetKib.kategori_id == AsetKategori.id,
                            or_(AsetKategori.kode.ilike('%%%s%%' % term),
-                               AsetKib.uraian.ilike('%%%s%%' % term))).\
+                               AsetKategori.uraian.ilike('%%%s%%' % term))).\
                     order_by(AsetKib.no_register)
             rows = q.all()
             r = []
@@ -140,8 +146,10 @@ class view_aset_kiba(BaseViews):
             term = 'term' in params and params['term'] or ''
             q = DBSession.query(AsetKib.id, AsetKategori.kode, AsetKib.no_register, AsetKategori.uraian.label('kategori_nm'),
                   AsetKib.uraian.label('uraian'), AsetKib.tgl_perolehan, AsetKib.cara_perolehan,
-                  AsetKib.th_beli, AsetKib.asal_usul, AsetKib.harga, AsetKib.jumlah, AsetKib.satuan, AsetKib.kondisi, AsetKib.kib
+                  AsetKib.th_beli, AsetKib.asal_usul, AsetKib.harga, AsetKib.jumlah, AsetKib.satuan, AsetKib.kondisi, AsetKib.kib,
+                  AsetKib.pemilik_id, AsetPemilik.uraian.label('pemilik_nm'), AsetKib.masa_manfaat.label('masa_manfaat_awal'), AsetKib.keterangan.label('keterangan_awal')
                   ).filter(AsetKib.kategori_id==AsetKategori.id, 
+                           AsetKib.pemilik_id==AsetPemilik.id,
                            AsetKib.unit_id == ses['unit_id'],
                            AsetKategori.kode.ilike('%%%s%%' % term))        
             rows = q.all()
@@ -163,6 +171,10 @@ class view_aset_kiba(BaseViews):
                 d['satuan']         = k[11]
                 d['kondisi']        = k[12]
                 d['kib']            = k[13]
+                d['pemilik_id']        = k[14]
+                d['pemilik_nm']        = k[15]
+                d['masa_manfaat_awal'] = k[16]
+                d['keterangan_awal']        = k[17]
                 r.append(d)               
             return r
             
@@ -170,8 +182,10 @@ class view_aset_kiba(BaseViews):
             term = 'term' in params and params['term'] or ''
             q = DBSession.query(AsetKib.id, AsetKategori.kode, AsetKib.no_register, AsetKategori.uraian.label('kategori_nm'),
                   AsetKib.uraian.label('uraian'), AsetKib.tgl_perolehan, AsetKib.cara_perolehan,
-                  AsetKib.th_beli, AsetKib.asal_usul, AsetKib.harga, AsetKib.jumlah, AsetKib.satuan, AsetKib.kondisi, AsetKib.kib
+                  AsetKib.th_beli, AsetKib.asal_usul, AsetKib.harga, AsetKib.jumlah, AsetKib.satuan, AsetKib.kondisi, AsetKib.kib,
+                  AsetKib.pemilik_id, AsetPemilik.uraian.label('pemilik_nm'), AsetKib.masa_manfaat.label('masa_manfaat_awal'), AsetKib.keterangan.label('keterangan_awal')
                   ).filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.pemilik_id==AsetPemilik.id, 
+                           AsetKib.pemilik_id==AsetPemilik.id,
                            AsetKib.unit_id == ses['unit_id'],
                            AsetKategori.uraian.ilike('%%%s%%' % term))        
             rows = q.all()
@@ -193,7 +207,41 @@ class view_aset_kiba(BaseViews):
                 d['satuan']         = k[11]
                 d['kondisi']        = k[12]
                 d['kib']            = k[13]
+                d['pemilik_id']        = k[14]
+                d['pemilik_nm']        = k[15]
+                d['masa_manfaat_awal'] = k[16]
+                d['keterangan_awal']        = k[17]
                 r.append(d)               
+            return r
+            
+        elif url_dict['act']=='headofkode3':
+            term = 'term' in params and params['term'] or '' 
+            rows = DBSession.query(Unit.id, Unit.kode, Unit.nama
+                      ).filter(func.substr(Unit.kode,1,func.length(ses['unit_kd']))==ses['unit_kd'],
+                      Unit.kode.ilike('%%%s%%' % term) ).all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[1]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
+            return r
+
+        elif url_dict['act']=='headofnama3':
+            term = 'term' in params and params['term'] or '' 
+            rows = DBSession.query(Unit.id, Unit.kode, Unit.nama
+                      ).filter(func.substr(Unit.kode,1,func.length(ses['unit_kd']))==ses['unit_kd'],
+                      Unit.nama.ilike('%%%s%%' % term) ).all()
+            r = []
+            for k in rows:
+                d={}
+                d['id']          = k[0]
+                d['value']       = k[2]
+                d['kode']        = k[1]
+                d['nama']        = k[2]
+                r.append(d)
             return r
             
     #######    
@@ -204,7 +252,9 @@ class view_aset_kiba(BaseViews):
             uid = form.request.matchdict['id']
             q = DBSession.query(AsetKib).filter_by(id=uid)
             kebijakan = q.first()
+            print ">>>>>>>>>>>>>>>31"
         else:
+            print ">>>>>>>>>>>>>>>32"
             kebijakan = None
                 
     def get_form(self, class_form, row=None):
@@ -230,7 +280,8 @@ class view_aset_kiba(BaseViews):
         c = row.kategori_id
         if not row.no_register:
             row.no_register = AsetKib.get_no_register(a,b,c)+1;
-                
+        row.jumlah=1
+        
         DBSession.add(row)
         DBSession.flush()
         return row
@@ -259,11 +310,86 @@ class view_aset_kiba(BaseViews):
         if req.POST:
             if 'simpan' in req.POST:
                 controls = req.POST.items()
+                controls_dicted = dict(controls)
+                
+                # Ambil value data
+                units_id                    = controls_dicted['unit_id']                 
+                units_nama                  = controls_dicted['unit_nm']                 
+                units_kode                  = controls_dicted['unit_kd']                 
+                kats_id                     = controls_dicted['kategori_id']             
+                kats_kode                   = controls_dicted['kategori_kd']             
+                kats_uraian                 = controls_dicted['kategori_nm']             
+                no_register                 = controls_dicted['no_register']              
+                pemiliks_id                 = controls_dicted['pemilik_id']              
+                pemiliks_uraian             = controls_dicted['pemilik_nm']              
+                masa_manfaat                = controls_dicted['masa_manfaat']              
+                #uraian                      = controls_dicted['uraian']                  
+                tahun                       = controls_dicted['tahun']                  
+                tgl_perolehan               = controls_dicted['tgl_perolehan']           
+                #cara_perolehan              = controls_dicted['cara_perolehan']          
+                th_beli                     = controls_dicted['th_beli']                 
+                asal_usul                   = controls_dicted['asal_usul']               
+                harga                       = controls_dicted['harga']                   
+                # Ambil jumlah  
+                jml                         = controls_dicted['jumlah']
+                jmlh                        = "%s" % jml
+                jumlah                      = int(jmlh)
+                controls_dicted['jumlah']   = 1
+                satuan                      = controls_dicted['satuan']                  
+                kondisi                     = controls_dicted['kondisi']                 
+                keterangan                  = controls_dicted['keterangan']              
+    
+                kib                         = controls_dicted['kib']                     
+                a_luas_m2                   = controls_dicted['a_luas_m2']               
+                if a_luas_m2==None:
+                    a_luas_m2 = 0
+                else :
+                    a_luas_m2                  = controls_dicted['a_luas_m2']
+                    
+                a_alamat                    = controls_dicted['a_alamat']                
+                a_hak_tanah                 = controls_dicted['a_hak_tanah']             
+                a_sertifikat_tanggal        = controls_dicted['a_sertifikat_tanggal']    
+                a_sertifikat_nomor          = controls_dicted['a_sertifikat_nomor']      
+                a_penggunaan                = controls_dicted['a_penggunaan']            
+                
                 try:
                     c = form.validate(controls)
                 except ValidationFailure, e:
                     return dict(form=form, kat_prefix=KAT_PREFIX)
-                self.save_request(dict(controls))
+                row = self.save_request(dict(controls))
+
+                # Array insert sesuai jumlah
+                a = jumlah - 1
+                b = 0
+                for b in range (0,a):
+                    aset = AsetKib()            
+                    aset.unit_id              = units_id            
+                    aset.kategori_id          = kats_id             
+                    aset.pemilik_id           = pemiliks_id         
+                    #aset.uraian               = uraian              
+                    aset.tahun                = tahun              
+                    aset.no_register          = AsetKib.get_no_register(tahun,units_id,kats_id)+1;
+                    aset.tgl_perolehan        = tgl_perolehan       
+                    #aset.cara_perolehan       = cara_perolehan      
+                    aset.th_beli              = th_beli             
+                    aset.asal_usul            = asal_usul           
+                    aset.harga                = harga               
+                    aset.jumlah               = 1              
+                    aset.satuan               = satuan              
+                    aset.kondisi              = kondisi             
+                    aset.keterangan           = keterangan          
+                    aset.kib                  = kib                 
+                    aset.masa_manfaat         = masa_manfaat              
+                    aset.a_luas_m2            = a_luas_m2           
+                    aset.a_alamat             = a_alamat            
+                    aset.a_hak_tanah          = a_hak_tanah         
+                    aset.a_sertifikat_tanggal = a_sertifikat_tanggal
+                    aset.a_sertifikat_nomor   = a_sertifikat_nomor  
+                    aset.a_penggunaan         = a_penggunaan        
+ 
+                    DBSession.add(aset)
+                    DBSession.flush()
+
             return self.route_list()
         elif SESS_ADD_FAILED in req.session:
             return self.session_failed(SESS_ADD_FAILED)
@@ -284,15 +410,16 @@ class view_aset_kiba(BaseViews):
     @view_config(route_name='aset-kiba-edit', renderer='templates/kibs/add_kiba.pt',
                  permission='edit')
     def view_kebijakan_edit(self):
+        ses     = self.request.session
         request = self.request
         row     = self.query_id().first()
         
         if not row:
             return id_not_found(request)
-            
+        
         rowd={}
         rowd['id']              = row.id
-        rowd['unit_id']         = row.units.id
+        rowd['unit_id']         = row.unit_id
         rowd['unit_nm']         = row.units.nama
         rowd['unit_kd']         = row.units.kode
         rowd['kategori_id']     = row.kats.id
@@ -301,9 +428,9 @@ class view_aset_kiba(BaseViews):
         rowd['no_register']     = row.no_register
         rowd['pemilik_id']      = row.pemiliks.id
         rowd['pemilik_nm']      = row.pemiliks.uraian
-        rowd['uraian']          = row.uraian
+        #rowd['uraian']          = row.uraian
         rowd['tgl_perolehan']   = row.tgl_perolehan
-        rowd['cara_perolehan']  = row.cara_perolehan
+        #rowd['cara_perolehan']  = row.cara_perolehan
         rowd['th_beli']         = row.th_beli
         rowd['asal_usul']       = row.asal_usul
         rowd['harga']           = row.harga
@@ -311,9 +438,19 @@ class view_aset_kiba(BaseViews):
         rowd['satuan']          = row.satuan
         rowd['kondisi']         = row.kondisi
         rowd['keterangan']      = row.keterangan
+        #rowd['masa_manfaat']    = row.masa_manfaat
+        if row.masa_manfaat == None :
+           rowd['masa_manfaat']  = 0
+        else :
+           rowd['masa_manfaat']  = row.masa_manfaat
 
         rowd['kib']                     = row.kib
-        rowd['a_luas_m2']               = row.a_luas_m2
+        #rowd['a_luas_m2']               = row.a_luas_m2
+        if row.a_luas_m2 == None :
+           rowd['a_luas_m2']  = 0
+        else :
+           rowd['a_luas_m2']  = row.a_luas_m2
+           
         rowd['a_alamat']                = row.a_alamat
         rowd['a_hak_tanah']             = row.a_hak_tanah
         rowd['a_sertifikat_tanggal']    = row.a_sertifikat_tanggal
@@ -324,12 +461,19 @@ class view_aset_kiba(BaseViews):
         form.set_appstruct(rowd)
         if request.POST:
             if 'simpan' in request.POST:
+                print ">>>>>>>>>>>>>>>1"
                 controls = request.POST.items()
+                print ">>>>>>>>>>>>>> unit_id2", rowd['unit_id']
+                print ">>>>>>>>>>>>>>>2"
                 try:
-                    c = form.validate(controls)
+                    print ">>>>>>>>>>>>>>>3"
+                    #c = form.validate(controls)
+                    print ">>>>>>>>>>>>>>>4"
                 except ValidationFailure, e:
                     return dict(form=form)
+                print ">>>>>>>>>>>>>>>5"
                 self.save_request(dict(controls), row)
+                print ">>>>>>>>>>>>>>>6"
             return self.route_list()
         elif SESS_EDIT_FAILED in request.session:
             return self.session_failed(SESS_EDIT_FAILED)
@@ -351,12 +495,12 @@ class view_aset_kiba(BaseViews):
         form = Form(colander.Schema(), buttons=('hapus','batal'))
         if request.POST:
             if 'hapus' in request.POST:
-                msg = 'KIB ID %d %s sudah dihapus.' % (row.id, row.uraian)
+                msg = 'KIB ID %d %s sudah dihapus.' % (row.id, row.kats.uraian)
                 try:
                   q.delete()
                   DBSession.flush()
                 except:
-                  msg = 'KIB ID %d %s tidak dapat dihapus.' % (row.id, row.uraian)
+                  msg = 'KIB ID %d %s tidak dapat dihapus.' % (row.id, row.kats.uraian)
                 request.session.flash(msg)
             return self.route_list()
         return dict(row=row, form=form.render())

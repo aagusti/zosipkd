@@ -85,11 +85,12 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>SKPD</th>
+                <th>Kode SKPD</th>
+                <th>Nama SKPD</th>
                 <th>No. Kategori</th>
                 <th>No. Register</th>
                 <th>Uraian</th>
-                <th>Tahun</th>
+                <th>Tgl Perolehan</th>
                 <th>Tahun Beli</th>
                 <th>Harga</th>
                 <th>Kondisi</th>
@@ -141,19 +142,17 @@
           {
               "bSearchable": false,
               "bVisible"   : false,
-              "aTargets"   : [0]
-          },{
-              "bSortable": false,
-              "aTargets"   : [1]
+              "aTargets"   : [0,7]
           },{
               "sClass"     : "right",
-              "aTargets"   : [7],
+              "aTargets"   : [8],
               "mRender"    : function (data, type, full) {
                              return formatNumber(data);}
           }],
           "aoColumns": [
               null,
               {"width": "70px" },
+              {"width": "200px"},
               {"width": "120px"},
               {"width": "70px", "sClass":"center"},
               null,

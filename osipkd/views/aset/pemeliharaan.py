@@ -67,7 +67,7 @@ class AddSchema(colander.Schema):
     th_pemeliharaan = colander.SchemaNode(
                         colander.Integer(),
                         oid = "th_pemeliharaan",
-                        title = "Thn.Pelihara")
+                        title = "Thn.Pemeliharaan")
     nilai           = colander.SchemaNode(
                         colander.Integer(),
                         oid = "nilai",
@@ -75,7 +75,7 @@ class AddSchema(colander.Schema):
     masa_manfaat    = colander.SchemaNode(
                         colander.Integer(),
                         oid = "masa_manfaat",
-                        title = "Masa guna",
+                        title = "Masa Manfaat",
                         missing=colander.drop)
     no_sp2d         = colander.SchemaNode(
                         colander.String(),
@@ -123,7 +123,7 @@ class AddSchema(colander.Schema):
                         colander.Date(),
                         missing=colander.drop,
                         oid = "tgl_perolehan",
-                        title="Tgl.Perolehan")
+                        title="Tgl.Pembelian")
     cara_perolehan  = colander.SchemaNode(
                         colander.String(),
                         widget=widget.SelectWidget(values=cara),
@@ -161,6 +161,25 @@ class AddSchema(colander.Schema):
                         colander.String(),
                         oid = "kib",
                         title = "KIB",
+                        missing=colander.drop)
+    pemilik_id      = colander.SchemaNode(
+                        colander.Integer(),
+                        widget = widget.HiddenWidget(),
+                        oid = "pemilik_id",)
+    pemilik_nm      = colander.SchemaNode(
+                        colander.String(),
+                        #widget = pemilik_widget,
+                        oid = "pemilik_nm",
+                        title = "Pemilik")                      
+    keterangan_awal = colander.SchemaNode(
+                        colander.String(),
+                        oid = "keterangan_awal",
+                        title = "Keterangan",
+                        missing=colander.drop)
+    masa_manfaat_awal = colander.SchemaNode(
+                        colander.Integer(),
+                        oid = "masa_manfaat_awal",
+                        title = "Masa Manfaat",
                         missing=colander.drop)
 
 class EditSchema(AddSchema):
@@ -362,6 +381,10 @@ class view_aset_pemeliharaan(BaseViews):
         values['satuan']         = row and row.kibs.satuan         or ''
         values['kondisi']        = row and row.kibs.kondisi        or ''
         values['kib']            = row and row.kibs.kib            or ''
+        values['pemilik_id']            = row and row.kibs.pemilik_id  or 0
+        values['pemilik_nm']            = row and row.kibs.pemiliks.uraian            or ''
+        values['masa_manfaat_awal']     = row and row.kibs.masa_manfaat            or 0
+        values['keterangan_awal']       = row and row.kibs.keterangan            or ''
         
         if values['no_sp2d'] == None :
            values['no_sp2d'] = ""

@@ -433,7 +433,7 @@ class ViewTUSKPDLap(BaseViews):
                   APPayment.id.label('appayment_id'), APPayment.nama.label('appayment_nm'), 
                   APPayment.tanggal.label('tgl_payment'),APPayment.kode, APPayment.ap_nama, 
                   APPayment.ap_rekening, APPayment.ap_npwp, KegiatanSub.nama.label('kegiatan_nm'),
-                  APPayment.ap_nilai.label('nilai')
+                  APPayment.amount.label('nilai')
                   ).filter(APPayment.unit_id==Unit.id, APPayment.kegiatan_sub_id==KegiatanSub.id,
                   APPayment.unit_id==self.session['unit_id'],
                   APPayment.tahun_id==self.session['tahun'], APPayment.id==pk_id
@@ -695,7 +695,7 @@ class ViewTUSKPDLap(BaseViews):
                      Spp.id.label('spp_id'),Spp.kode.label('spp_kd'), Spp.nama.label('spp_nm'), 
                      Spp.tanggal.label('spp_tgl'), Spp.ttd_nip, Spp.ttd_nama, Spp.ttd_jab, Spp.jenis, 
                      Spp.pptk_nip, Spp.pptk_nama, Spp.ap_nama, Spp.ap_bank, Spp.ap_rekening, 
-                     func.substr(Rekening.kode,1,5).label('kode'),
+                     #func.substr(Rekening.kode,1,5).label('kode'),
                      func.sum(APInvoiceItem.amount).label('nominal'),
                      func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('anggaran')
                      ).filter(Spp.unit_id==Unit.id, Tahun.id==Spp.tahun_id, Urusan.id==Unit.urusan_id,
@@ -707,7 +707,8 @@ class ViewTUSKPDLap(BaseViews):
                      Tahun.no_perkdh, Tahun.tgl_perkdh, Tahun.tanggal_2, Tahun.tanggal_4, Spp.id,Spp.kode, Spp.nama, 
                      Spp.tanggal, Spp.ttd_nip, Spp.ttd_nama, Spp.ttd_jab, Spp.jenis, 
                      Spp.pptk_nip, Spp.pptk_nama, Spp.ap_nama, Spp.ap_bank, Spp.ap_rekening, 
-                     func.substr(Rekening.kode,1,5))                         
+                     #func.substr(Rekening.kode,1,5)
+                     )                         
             generator = b103r033Generator()#b103r0021_2Generator()
             pdf = generator.generate(query)
             response=req.response
@@ -1497,10 +1498,10 @@ class ViewTUSKPDLap(BaseViews):
               Rekening.nama.label('rek_nm'), KegiatanSub.tahun_id.label('tahun'), 
               func.sum(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('dpa'),                      
               func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('dppa'),
-              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, APInvoice.jenis==4,func.substr(rek.kode,1,5)=='5.1.1'),APInvoiceItem.amount)], else_=0)),0).label('LSG_lalu'),
-              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, APInvoice.jenis==4,func.substr(rek.kode,1,5)=='5.1.1'),APInvoiceItem.amount)], else_=0)),0).label('LSG_kini'),
-              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, APInvoice.jenis==4,not_(func.substr(rek.kode,1,5)=='5.1.1')),APInvoiceItem.amount)], else_=0)),0).label('LS_lalu'),
-              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, APInvoice.jenis==4,not_(func.substr(rek.kode,1,5)=='5.1.1')),APInvoiceItem.amount)], else_=0)),0).label('LS_kini'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, APInvoice.jenis==4,func.substr(rek.kode,1,5)=='5.1.1',func.substr(rek.kode,1,8)!='5.1.1.02'),APInvoiceItem.amount)], else_=0)),0).label('LSG_lalu'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, APInvoice.jenis==4,func.substr(rek.kode,1,5)=='5.1.1',func.substr(rek.kode,1,8)!='5.1.1.02'),APInvoiceItem.amount)], else_=0)),0).label('LSG_kini'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, APInvoice.jenis==4,or_(func.substr(rek.kode,1,5)!='5.1.1',func.substr(rek.kode,1,8)=='5.1.1.02')),APInvoiceItem.amount)], else_=0)),0).label('LS_lalu'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, APInvoice.jenis==4,or_(func.substr(rek.kode,1,5)!='5.1.1',func.substr(rek.kode,1,8)=='5.1.1.02')),APInvoiceItem.amount)], else_=0)),0).label('LS_kini'),
               func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, not_(APInvoice.jenis==4)),APInvoiceItem.amount)], else_=0)),0).label('Lain_lalu'),
               func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, not_(APInvoice.jenis==4)),APInvoiceItem.amount)], else_=0)),0).label('Lain_kini')
               ).join(KegiatanSub, KegiatanItem, Rekening, Kegiatan
@@ -1547,10 +1548,10 @@ class ViewTUSKPDLap(BaseViews):
               Rekening.nama.label('rek_nm'), KegiatanSub.tahun_id.label('tahun'), 
               func.sum(KegiatanItem.vol_2_1*KegiatanItem.vol_2_2*KegiatanItem.hsat_2).label('dpa'),                      
               func.sum(KegiatanItem.vol_4_1*KegiatanItem.vol_4_2*KegiatanItem.hsat_4).label('dppa'),
-              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, APInvoice.jenis==4,func.substr(rek.kode,1,5)=='5.1.1'),APInvoiceItem.amount)], else_=0)),0).label('LSG_lalu'),
-              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, APInvoice.jenis==4,func.substr(rek.kode,1,5)=='5.1.1'),APInvoiceItem.amount)], else_=0)),0).label('LSG_kini'),
-              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, APInvoice.jenis==4,not_(func.substr(rek.kode,1,5)=='5.1.1')),APInvoiceItem.amount)], else_=0)),0).label('LS_lalu'),
-              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, APInvoice.jenis==4,not_(func.substr(rek.kode,1,5)=='5.1.1')),APInvoiceItem.amount)], else_=0)),0).label('LS_kini'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, APInvoice.jenis==4,func.substr(rek.kode,1,5)=='5.1.1',func.substr(rek.kode,1,8)!='5.1.1.02'),APInvoiceItem.amount)], else_=0)),0).label('LSG_lalu'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, APInvoice.jenis==4,func.substr(rek.kode,1,5)=='5.1.1',func.substr(rek.kode,1,8)!='5.1.1.02'),APInvoiceItem.amount)], else_=0)),0).label('LSG_kini'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, APInvoice.jenis==4,or_(func.substr(rek.kode,1,5)!='5.1.1',func.substr(rek.kode,1,8)=='5.1.1.02')),APInvoiceItem.amount)], else_=0)),0).label('LS_lalu'),
+              func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, APInvoice.jenis==4,or_(func.substr(rek.kode,1,5)!='5.1.1',func.substr(rek.kode,1,8)=='5.1.1.02')),APInvoiceItem.amount)], else_=0)),0).label('LS_kini'),
               func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)<bulan, not_(APInvoice.jenis==4)),APInvoiceItem.amount)], else_=0)),0).label('Lain_lalu'),
               func.coalesce(func.sum(case([(and_(extract('month',APInvoice.tanggal)==bulan, not_(APInvoice.jenis==4)),APInvoiceItem.amount)], else_=0)),0).label('Lain_kini')
               ).join(KegiatanSub, KegiatanItem, Rekening, Kegiatan
@@ -2953,7 +2954,7 @@ class b103r033Generator(JasperGeneratorWithSubreport):
             ET.SubElement(xml_greeting, "ap_nama").text = row.ap_nama
             ET.SubElement(xml_greeting, "ap_bank").text = row.ap_bank
             ET.SubElement(xml_greeting, "ap_rekening").text = row.ap_rekening
-            ET.SubElement(xml_greeting, "kode").text = row.kode
+            #ET.SubElement(xml_greeting, "kode").text = row.kode
             ET.SubElement(xml_greeting, "nominal").text = unicode(row.nominal)
             ET.SubElement(xml_greeting, "anggaran").text = unicode(row.anggaran)
             ET.SubElement(xml_greeting, "customer").text = customer
@@ -4067,8 +4068,8 @@ class b104r300Generator(JasperGeneratorWithSubreport):
                ).subquery()
 
             subq2 = DBSession.query(APInvoice.tahun_id, APInvoice.id, APInvoice.tanggal, Unit.id.label('unit_id'), 
-               case([(and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)=='5.1.1'),'LSG'), 
-               (and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)!='5.1.1'),'LS')], else_='LAIN').label('jenis'),
+               case([(and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)=='5.1.1', func.substr(Rekening.kode,1,8)!='5.1.1.02'),'LSG'), 
+               (and_(APInvoice.jenis==4, or_(func.substr(Rekening.kode,1,5)!='5.1.1',func.substr(Rekening.kode,1,8)=='5.1.1.02')),'LS')], else_='LAIN').label('jenis'),
                func.coalesce(func.sum(APInvoiceItem.amount),0).label('amount'), 
                case([(subq.c.sp2d_id>0,subq.c.sp2d_id)], else_=0).label('sp2d_id'), subq.c.ppn_lalu, subq.c.ppn_kini, subq.c.pph21_lalu, subq.c.pph21_kini, subq.c.pph22_lalu, subq.c.pph22_kini, 
                subq.c.pph23_lalu, subq.c.pph23_kini, subq.c.lain_lalu, subq.c.lain_kini
@@ -4076,8 +4077,8 @@ class b104r300Generator(JasperGeneratorWithSubreport):
                ).outerjoin(subq, APInvoice.id==subq.c.id
                ).filter(Unit.id==row.unit_id, APInvoice.tahun_id==row.tahun
                ).group_by(APInvoice.tahun_id, APInvoice.id, APInvoice.tanggal, Unit.id, 
-               case([(and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)=='5.1.1'),'LSG'), 
-               (and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)!='5.1.1'),'LS')], else_='LAIN'),
+               case([(and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)=='5.1.1', func.substr(Rekening.kode,1,8)!='5.1.1.02'),'LSG'), 
+               (and_(APInvoice.jenis==4, or_(func.substr(Rekening.kode,1,5)!='5.1.1',func.substr(Rekening.kode,1,8)=='5.1.1.02')),'LS')], else_='LAIN'),
                case([(subq.c.sp2d_id>0,subq.c.sp2d_id)], else_=0), subq.c.ppn_lalu, subq.c.ppn_kini, subq.c.pph21_lalu, subq.c.pph21_kini, subq.c.pph22_lalu, subq.c.pph22_kini, 
                subq.c.pph23_lalu, subq.c.pph23_kini, subq.c.lain_lalu, subq.c.lain_kini
                ).subquery()
@@ -4210,8 +4211,8 @@ class b104r300Generator(JasperGeneratorWithSubreport):
                 ET.SubElement(xml_a, "lsg_tot_kini").text =unicode(row4.lsg_amount_kini + row4.lsg_ppn_kini + row4.lsg_pph21_kini + row4.lsg_pph22_kini + row4.lsg_pph23_kini + row4.lsg_lain_kini)
                 ET.SubElement(xml_a, "ls_tot_lalu").text =unicode(row4.ls_amount_lalu + row4.ls_ppn_lalu + row4.ls_pph21_lalu + row4.ls_pph22_lalu + row4.ls_pph23_lalu + row4.ls_lain_lalu)
                 ET.SubElement(xml_a, "ls_tot_kini").text =unicode(row4.ls_amount_kini + row4.ls_ppn_kini + row4.ls_pph21_kini + row4.ls_pph22_kini + row4.ls_pph23_kini + row4.ls_lain_kini)
-                ET.SubElement(xml_a, "lain_tot_lalu").text =unicode(row4.ls_amount_lalu + row4.ls_ppn_lalu + row4.ls_pph21_lalu + row4.ls_pph22_lalu + row4.ls_pph23_lalu + row4.ls_lain_lalu)
-                ET.SubElement(xml_a, "lain_tot_kini").text =unicode(row4.ls_amount_kini + row4.ls_ppn_kini + row4.ls_pph21_kini + row4.ls_pph22_kini + row4.ls_pph23_kini + row4.ls_lain_kini)
+                ET.SubElement(xml_a, "lain_tot_lalu").text =unicode(row4.lain_amount_lalu + row4.lain_ppn_lalu + row4.lain_pph21_lalu + row4.lain_pph22_lalu + row4.lain_pph23_lalu + row4.lain_lain_lalu)
+                ET.SubElement(xml_a, "lain_tot_kini").text =unicode(row4.lain_amount_kini + row4.lain_ppn_kini + row4.lain_pph21_kini + row4.lain_pph22_kini + row4.lain_pph23_kini + row4.lain_lain_kini)
                 
                 ET.SubElement(xml_a, "lsg_amount_lalu1").text =unicode(row4.lsg_amount_lalu1)
                 ET.SubElement(xml_a, "lsg_amount_kini1").text =unicode(row4.lsg_amount_kini1)
@@ -4254,8 +4255,8 @@ class b104r300Generator(JasperGeneratorWithSubreport):
                 ET.SubElement(xml_a, "lsg_tot_kini1").text =unicode(row4.lsg_amount_kini1 + row4.lsg_ppn_kini1 + row4.lsg_pph21_kini1 + row4.lsg_pph22_kini1 + row4.lsg_pph23_kini1 + row4.lsg_lain_kini1)
                 ET.SubElement(xml_a, "ls_tot_lalu1").text =unicode(row4.ls_amount_lalu1 + row4.ls_ppn_lalu1 + row4.ls_pph21_lalu1 + row4.ls_pph22_lalu1 + row4.ls_pph23_lalu1 + row4.ls_lain_lalu1)
                 ET.SubElement(xml_a, "ls_tot_kini1").text =unicode(row4.ls_amount_kini1 + row4.ls_ppn_kini1 + row4.ls_pph21_kini1 + row4.ls_pph22_kini1 + row4.ls_pph23_kini1 + row4.ls_lain_kini1)
-                ET.SubElement(xml_a, "lain_tot_lalu1").text =unicode(row4.ls_amount_lalu1 + row4.ls_ppn_lalu1 + row4.ls_pph21_lalu1 + row4.ls_pph22_lalu1 + row4.ls_pph23_lalu1 + row4.ls_lain_lalu1)
-                ET.SubElement(xml_a, "lain_tot_kini1").text =unicode(row4.ls_amount_kini1 + row4.ls_ppn_kini1 + row4.ls_pph21_kini1 + row4.ls_pph22_kini1 + row4.ls_pph23_kini1 + row4.ls_lain_kini1)
+                ET.SubElement(xml_a, "lain_tot_lalu1").text =unicode(row4.lain_amount_lalu1 + row4.lain_ppn_lalu1 + row4.lain_pph21_lalu1 + row4.lain_pph22_lalu1 + row4.lain_pph23_lalu1 + row4.lain_lain_lalu1)
+                ET.SubElement(xml_a, "lain_tot_kini1").text =unicode(row4.lain_amount_kini1 + row4.lain_ppn_kini1 + row4.lain_pph21_kini1 + row4.lain_pph22_kini1 + row4.lain_pph23_kini1 + row4.lain_lain_kini1)
                 
         return self.root 
 
@@ -4336,8 +4337,8 @@ class b104r400Generator(JasperGeneratorWithSubreport):
                ).subquery()
 
             subq2 = DBSession.query(APInvoice.tahun_id, APInvoice.id, APInvoice.tanggal, Unit.id.label('unit_id'), 
-               case([(and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)=='5.1.1'),'LSG'), 
-               (and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)!='5.1.1'),'LS')], else_='LAIN').label('jenis'),
+               case([(and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)=='5.1.1', func.substr(Rekening.kode,1,8)!='5.1.1.02'),'LSG'), 
+               (and_(APInvoice.jenis==4, or_(func.substr(Rekening.kode,1,5)!='5.1.1',func.substr(Rekening.kode,1,8)=='5.1.1.02')),'LS')], else_='LAIN').label('jenis'),
                func.coalesce(func.sum(APInvoiceItem.amount),0).label('amount'), 
                case([(subq.c.sp2d_id>0,subq.c.sp2d_id)], else_=0).label('sp2d_id'), subq.c.ppn_lalu, subq.c.ppn_kini, subq.c.pph21_lalu, subq.c.pph21_kini, subq.c.pph22_lalu, subq.c.pph22_kini, 
                subq.c.pph23_lalu, subq.c.pph23_kini, subq.c.lain_lalu, subq.c.lain_kini
@@ -4345,8 +4346,8 @@ class b104r400Generator(JasperGeneratorWithSubreport):
                ).outerjoin(subq, APInvoice.id==subq.c.id
                ).filter(Unit.id==row.unit_id, APInvoice.tahun_id==row.tahun
                ).group_by(APInvoice.tahun_id, APInvoice.id, APInvoice.tanggal, Unit.id, 
-               case([(and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)=='5.1.1'),'LSG'), 
-               (and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)!='5.1.1'),'LS')], else_='LAIN'),
+               case([(and_(APInvoice.jenis==4, func.substr(Rekening.kode,1,5)=='5.1.1', func.substr(Rekening.kode,1,8)!='5.1.1.02'),'LSG'), 
+               (and_(APInvoice.jenis==4, or_(func.substr(Rekening.kode,1,5)!='5.1.1',func.substr(Rekening.kode,1,8)=='5.1.1.02')),'LS')], else_='LAIN'),
                case([(subq.c.sp2d_id>0,subq.c.sp2d_id)], else_=0), subq.c.ppn_lalu, subq.c.ppn_kini, subq.c.pph21_lalu, subq.c.pph21_kini, subq.c.pph22_lalu, subq.c.pph22_kini, 
                subq.c.pph23_lalu, subq.c.pph23_kini, subq.c.lain_lalu, subq.c.lain_kini
                ).subquery()
@@ -4479,8 +4480,8 @@ class b104r400Generator(JasperGeneratorWithSubreport):
                 ET.SubElement(xml_a, "lsg_tot_kini").text =unicode(row4.lsg_amount_kini + row4.lsg_ppn_kini + row4.lsg_pph21_kini + row4.lsg_pph22_kini + row4.lsg_pph23_kini + row4.lsg_lain_kini)
                 ET.SubElement(xml_a, "ls_tot_lalu").text =unicode(row4.ls_amount_lalu + row4.ls_ppn_lalu + row4.ls_pph21_lalu + row4.ls_pph22_lalu + row4.ls_pph23_lalu + row4.ls_lain_lalu)
                 ET.SubElement(xml_a, "ls_tot_kini").text =unicode(row4.ls_amount_kini + row4.ls_ppn_kini + row4.ls_pph21_kini + row4.ls_pph22_kini + row4.ls_pph23_kini + row4.ls_lain_kini)
-                ET.SubElement(xml_a, "lain_tot_lalu").text =unicode(row4.ls_amount_lalu + row4.ls_ppn_lalu + row4.ls_pph21_lalu + row4.ls_pph22_lalu + row4.ls_pph23_lalu + row4.ls_lain_lalu)
-                ET.SubElement(xml_a, "lain_tot_kini").text =unicode(row4.ls_amount_kini + row4.ls_ppn_kini + row4.ls_pph21_kini + row4.ls_pph22_kini + row4.ls_pph23_kini + row4.ls_lain_kini)
+                ET.SubElement(xml_a, "lain_tot_lalu").text =unicode(row4.lain_amount_lalu + row4.lain_ppn_lalu + row4.lain_pph21_lalu + row4.lain_pph22_lalu + row4.lain_pph23_lalu + row4.lain_lain_lalu)
+                ET.SubElement(xml_a, "lain_tot_kini").text =unicode(row4.lain_amount_kini + row4.lain_ppn_kini + row4.lain_pph21_kini + row4.lain_pph22_kini + row4.lain_pph23_kini + row4.lain_lain_kini)
                 
                 ET.SubElement(xml_a, "lsg_amount_lalu1").text =unicode(row4.lsg_amount_lalu1)
                 ET.SubElement(xml_a, "lsg_amount_kini1").text =unicode(row4.lsg_amount_kini1)
@@ -4523,8 +4524,8 @@ class b104r400Generator(JasperGeneratorWithSubreport):
                 ET.SubElement(xml_a, "lsg_tot_kini1").text =unicode(row4.lsg_amount_kini1 + row4.lsg_ppn_kini1 + row4.lsg_pph21_kini1 + row4.lsg_pph22_kini1 + row4.lsg_pph23_kini1 + row4.lsg_lain_kini1)
                 ET.SubElement(xml_a, "ls_tot_lalu1").text =unicode(row4.ls_amount_lalu1 + row4.ls_ppn_lalu1 + row4.ls_pph21_lalu1 + row4.ls_pph22_lalu1 + row4.ls_pph23_lalu1 + row4.ls_lain_lalu1)
                 ET.SubElement(xml_a, "ls_tot_kini1").text =unicode(row4.ls_amount_kini1 + row4.ls_ppn_kini1 + row4.ls_pph21_kini1 + row4.ls_pph22_kini1 + row4.ls_pph23_kini1 + row4.ls_lain_kini1)
-                ET.SubElement(xml_a, "lain_tot_lalu1").text =unicode(row4.ls_amount_lalu1 + row4.ls_ppn_lalu1 + row4.ls_pph21_lalu1 + row4.ls_pph22_lalu1 + row4.ls_pph23_lalu1 + row4.ls_lain_lalu1)
-                ET.SubElement(xml_a, "lain_tot_kini1").text =unicode(row4.ls_amount_kini1 + row4.ls_ppn_kini1 + row4.ls_pph21_kini1 + row4.ls_pph22_kini1 + row4.ls_pph23_kini1 + row4.ls_lain_kini1)
+                ET.SubElement(xml_a, "lain_tot_lalu1").text =unicode(row4.lain_amount_lalu1 + row4.lain_ppn_lalu1 + row4.lain_pph21_lalu1 + row4.lain_pph22_lalu1 + row4.lain_pph23_lalu1 + row4.lain_lain_lalu1)
+                ET.SubElement(xml_a, "lain_tot_kini1").text =unicode(row4.lain_amount_kini1 + row4.lain_ppn_kini1 + row4.lain_pph21_kini1 + row4.lain_pph22_kini1 + row4.lain_pph23_kini1 + row4.lain_lain_kini1)
                 
         return self.root 
 """

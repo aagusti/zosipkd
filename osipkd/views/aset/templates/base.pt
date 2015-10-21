@@ -20,10 +20,11 @@
                 <ul class="dropdown-menu">
                     <li><a href="/aset/kiba">KIB A (Tanah)</a></li>
                     <li><a href="/aset/kibb">KIB B (Peralatan dan Mesin)</a></li>
-                    <li><a href="/aset/kibc">KIB C (Bangunan)</a></li>
+                    <li><a href="/aset/kibc">KIB C (Gedung dan Bangunan)</a></li>
                     <li><a href="/aset/kibd">KIB D (Jalan Jaringan dan Irigasi)</a></li>
-                    <li><a href="/aset/kibe">KIB E (Aset Lainnya)</a></li>
+                    <li><a href="/aset/kibe">KIB E (Aset Tetap Lainnya)</a></li>
                     <li><a href="/aset/kibf">KIB F (Konstruksi dalam Pengerjaan)</a></li>
+                    <li><a href="/aset/kibg">Aset Lainnya</a></li>
                     <li><a href="/aset/kibdel">Penghapusan</a></li>
                     <li><a href="/aset/pemeliharaan">Pemeliharaan Aset</a></li>
                 </ul>

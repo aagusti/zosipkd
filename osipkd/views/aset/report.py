@@ -162,9 +162,11 @@ class ViewAsetLap(BaseViews):
                         AsetKib.th_beli, AsetKib.a_alamat, AsetKib.a_hak_tanah, AsetKib.a_sertifikat_tanggal, AsetKib.a_sertifikat_nomor, 
                         AsetKib.a_penggunaan, AsetKib.asal_usul, AsetKib.harga, AsetKib.keterangan,
                         AsetKib.tahun, Unit.kode.label("unitkd"), Unit.nama.label("unitnm"))\
-                        .filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.unit_id==Unit.id,\
-                                 AsetKib.kib=="A",AsetKib.unit_id==self.session['unit_id'], AsetKib.tahun<=self.session['tahun'])\
-                        .order_by(AsetKategori.kode).all()
+                        .filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.unit_id==Unit.id,
+                                 AsetKib.kib=="A", #AsetKib.unit_id==self.session['unit_id'], 
+                                 AsetKib.tahun<=self.session['tahun'],
+                                 func.substr(Unit.kode,1,func.length(self.session['unit_kd']))==self.session['unit_kd']
+                         ).order_by(Unit.kode, AsetKategori.kode).all()
                         
             generator = asetr004Generator()
             pdf = generator.generate(query)
@@ -182,8 +184,10 @@ class ViewAsetLap(BaseViews):
                     AsetKib.b_nomor_rangka, AsetKib.b_nomor_mesin, AsetKib.b_nomor_polisi, AsetKib.b_nomor_bpkb, AsetKib.asal_usul, AsetKib.harga, AsetKib.keterangan,
                     AsetKib.tahun, Unit.kode.label("unitkd"), Unit.nama.label("unitnm"))\
                     .filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.unit_id==Unit.id,
-                             AsetKib.kib=="B",AsetKib.unit_id==self.session['unit_id'], AsetKib.tahun<=self.session['tahun'])\
-                    .order_by(AsetKategori.kode).all()
+                            AsetKib.kib=="B", #AsetKib.unit_id==self.session['unit_id'], 
+                            AsetKib.tahun<=self.session['tahun'],
+                            func.substr(Unit.kode,1,func.length(self.session['unit_kd']))==self.session['unit_kd']
+                    ).order_by(Unit.kode, AsetKategori.kode).all()
 
             generator = asetr005Generator()
             pdf = generator.generate(query)
@@ -201,8 +205,10 @@ class ViewAsetLap(BaseViews):
                         AsetKib.c_dokumen_nomor, AsetKib.c_luas_bangunan, AsetKib.c_status_tanah, AsetKib.c_kode_tanah, AsetKib.asal_usul, AsetKib.harga, AsetKib.keterangan,
                         AsetKib.tahun, Unit.kode.label("unitkd"), Unit.nama.label("unitnm"))\
                         .filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.unit_id==Unit.id,
-                                 AsetKib.kib=="C",AsetKib.unit_id==self.session['unit_id'], AsetKib.tahun<=self.session['tahun'])\
-                        .order_by(AsetKategori.kode).all()
+                            AsetKib.kib=="C", #AsetKib.unit_id==self.session['unit_id'], 
+                            AsetKib.tahun<=self.session['tahun'],
+                            func.substr(Unit.kode,1,func.length(self.session['unit_kd']))==self.session['unit_kd']
+                        ).order_by(Unit.kode, AsetKategori.kode).all()
 
             generator = asetr006Generator()
             pdf = generator.generate(query)
@@ -220,8 +226,10 @@ class ViewAsetLap(BaseViews):
                         AsetKib.d_dokumen_nomor, AsetKib.d_status_tanah, AsetKib.d_kode_tanah, AsetKib.asal_usul, AsetKib.harga, AsetKib.kondisi, AsetKib.keterangan,
                         AsetKib.tahun, Unit.kode.label("unitkd"), Unit.nama.label("unitnm"))\
                         .filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.unit_id==Unit.id,
-                                 AsetKib.kib=="D",AsetKib.unit_id==self.session['unit_id'], AsetKib.tahun<=self.session['tahun'])\
-                        .order_by(AsetKategori.kode).all()
+                            AsetKib.kib=="D", #AsetKib.unit_id==self.session['unit_id'], 
+                            AsetKib.tahun<=self.session['tahun'],
+                            func.substr(Unit.kode,1,func.length(self.session['unit_kd']))==self.session['unit_kd']
+                        ).order_by(Unit.kode, AsetKategori.kode).all()
 
             generator = asetr007Generator()
             pdf = generator.generate(query)
@@ -239,8 +247,10 @@ class ViewAsetLap(BaseViews):
                     AsetKib.e_jenis, AsetKib.e_ukuran, AsetKib.jumlah, AsetKib.asal_usul, AsetKib.b_thbuat, AsetKib.harga, AsetKib.keterangan,
                     AsetKib.tahun, Unit.kode.label("unitkd"), Unit.nama.label("unitnm"))\
                     .filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.unit_id==Unit.id,
-                             AsetKib.kib=="E",AsetKib.unit_id==self.session['unit_id'], AsetKib.tahun<=self.session['tahun'])\
-                    .order_by(AsetKategori.kode).all()
+                            AsetKib.kib=="E", #AsetKib.unit_id==self.session['unit_id'], 
+                            AsetKib.tahun<=self.session['tahun'],
+                            func.substr(Unit.kode,1,func.length(self.session['unit_kd']))==self.session['unit_kd']
+                    ).order_by(Unit.kode, AsetKategori.kode).all()
                     
             generator = asetr008Generator()
             pdf = generator.generate(query)
@@ -258,8 +268,10 @@ class ViewAsetLap(BaseViews):
                     AsetKib.f_dokumen_tanggal, AsetKib.f_dokumen_nomor, AsetKib.tgl_perolehan, AsetKib.f_status_tanah, AsetKib.f_kode_tanah, AsetKib.asal_usul, AsetKib.harga, AsetKib.keterangan,
                     AsetKib.tahun, Unit.kode.label("unitkd"), Unit.nama.label("unitnm"))\
                     .filter(AsetKib.kategori_id==AsetKategori.id, AsetKib.unit_id==Unit.id,
-                             AsetKib.kib=="F",AsetKib.unit_id==self.session['unit_id'], AsetKib.tahun<=self.session['tahun'])\
-                    .order_by(AsetKategori.kode).all()
+                             AsetKib.kib=="F", #AsetKib.unit_id==self.session['unit_id'], 
+                             AsetKib.tahun<=self.session['tahun'],
+                            func.substr(Unit.kode,1,func.length(self.session['unit_kd']))==self.session['unit_kd']
+                    ).order_by(Unit.kode, AsetKategori.kode).all()
                     
             generator = asetr009Generator()
             pdf = generator.generate(query)

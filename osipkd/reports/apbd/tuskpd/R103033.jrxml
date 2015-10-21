@@ -56,9 +56,6 @@
 	<field name="spp_tgl" class="java.lang.String">
 		<fieldDescription><![CDATA[spp_tgl]]></fieldDescription>
 	</field>
-	<field name="kode" class="java.lang.String">
-		<fieldDescription><![CDATA[kode]]></fieldDescription>
-	</field>
 	<field name="customer" class="java.lang.String">
 		<fieldDescription><![CDATA[customer]]></fieldDescription>
 	</field>
@@ -106,7 +103,7 @@
 	</field>
 	<variable name="jenis_nm" class="java.lang.String">
 		<variableExpression><![CDATA[]]></variableExpression>
-		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "Uang Persediaan" : $F{jenis}=="2" ? "Tambahan Uang Persediaan" : $F{jenis}=="3" ? "Ganti Uang Persediaan" : ($F{jenis}=="4" && $F{kode}=="5.1.1") ? "Langsung Gaji dan Tunjangan" : ($F{jenis}=="4" && $F{kode}!="5.1.1") ? "Langsung" : ""]]></initialValueExpression>
+		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "Uang Persediaan" : $F{jenis}=="2" ? "Tambahan Uang Persediaan" : $F{jenis}=="3" ? "Ganti Uang Persediaan" : $F{jenis}=="4" ? "Langsung" : ""]]></initialValueExpression>
 	</variable>
 	<variable name="anggaran" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{anggaran})]]></variableExpression>
@@ -121,12 +118,12 @@
 		<initialValueExpression><![CDATA[$F{tanggal_2}=="None" ? "" : $F{tanggal_2}.substring(8,10)+" "+$F{tanggal_2}.substring(6,8)+" "+$F{tanggal_2}.substring(0,4)]]></initialValueExpression>
 	</variable>
 	<variable name="jenis" class="java.lang.String">
-		<variableExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : ($F{jenis}=="4" && $F{kode}=="5.1.1") ? "LS-GJ" : ($F{jenis}=="4" && $F{kode}!="5.1.1") ? "LS" : ""]]></variableExpression>
-		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : ($F{jenis}=="4" && $F{kode}=="5.1.1") ? "LS-GJ" : ($F{jenis}=="4" && $F{kode}!="5.1.1") ? "LS" : ""]]></initialValueExpression>
+		<variableExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : $F{jenis}=="4" ? "LS" : ""]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : $F{jenis}=="4" ? "LS" : ""]]></initialValueExpression>
 	</variable>
 	<variable name="jenis_1" class="java.lang.String">
-		<variableExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : ($F{jenis}=="4" && $F{kode}=="5.1.1") ? "LS Gaji dan Tunjangan" : ($F{jenis}=="4" && $F{kode}!="5.1.1") ? "LS" : ""]]></variableExpression>
-		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : ($F{jenis}=="4" && $F{kode}=="5.1.1") ? "LS Gaji dan Tunjangan" : ($F{jenis}=="4" && $F{kode}!="5.1.1") ? "LS" : ""]]></initialValueExpression>
+		<variableExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : $F{jenis}=="4" ? "LS" : ""]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : $F{jenis}=="4" ? "LS" : ""]]></initialValueExpression>
 	</variable>
 	<group name="spp_kd">
 		<groupExpression><![CDATA[$F{spp_kd}]]></groupExpression>
@@ -521,7 +518,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 						<font isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($F{jenis}=="4" && $F{kode}!="5.1.1") ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{nominal})) : 0]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{jenis}=="4" ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{nominal})) : 0]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="327" y="62" width="160" height="18"/>
@@ -550,7 +547,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 						<font isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($F{jenis}=="4" && $F{kode}=="5.1.1") ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble($F{nominal})) : 0]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{jenis}=="4" ? NumberFormat.getInstance().getNumberInstance(Locale.ITALIAN).format(Double.parseDouble('0')) : 0]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="327" y="159" width="160" height="18"/>

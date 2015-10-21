@@ -62,7 +62,7 @@ class AsetKib(DefaultModel, Base):
     unit_id        = Column(Integer, ForeignKey("admin.units.id"),    nullable=False)
     kategori_id    = Column(Integer, ForeignKey("aset.kategoris.id"), nullable=False)
     pemilik_id     = Column(SmallInteger, ForeignKey("aset.pemiliks.id"), nullable=False)
-    uraian         = Column(String(255),  nullable=False)
+    uraian         = Column(String(255))
     tahun          = Column(SmallInteger, nullable=False)
     no_register    = Column(Integer, nullable=False)
     tgl_perolehan  = Column(Date, nullable=False)
@@ -135,17 +135,30 @@ class AsetKib(DefaultModel, Base):
     e_jenis    = Column(String(50))
 
     f_bertingkat_tidak = Column(String(20))
-    f_beton_tidak = Column(String(20))
-    f_panjang     = Column(BigInteger)
-    f_lebar       = Column(BigInteger)
-    f_luas_lantai = Column(BigInteger)
-    f_lokasi      = Column(String(255))
-    f_dokumen_tanggal  = Column(Date)
+    f_beton_tidak   = Column(String(20))
+    f_panjang       = Column(BigInteger)
+    f_lebar         = Column(BigInteger)
+    f_luas_lantai   = Column(BigInteger)
+    f_lokasi        = Column(String(255))
+    f_dokumen_tanggal = Column(Date)
     f_dokumen_nomor = Column(String(50))
     f_status_tanah  = Column(String(50))
     f_kode_tanah    = Column(BigInteger)
     f_luas_bangunan = Column(BigInteger)
 
+    created         = Column(DateTime, nullable=False, default=datetime.now,
+                     server_default='now()')
+    updated         = Column(DateTime)
+    create_uid      = Column(Integer, nullable=False, default=1,
+                     server_default='1')
+    update_uid      = Column(Integer)
+
+    disabled        = Column(String(1))
+    g_jenis_barang  = Column(String(50))
+    g_keterangan1   = Column(String(255))
+    g_keterangan2   = Column(String(255))
+    g_keterangan3   = Column(String(255))
+    
     UniqueConstraint('unit_id' , 'kategori_id' , 'no_register', name='kibs_unit_id_kategori_id_no_register_key')
     units    = relationship("Unit",         backref="kibunit")
     kats     = relationship("AsetKategori", backref="kibkat")
@@ -242,6 +255,8 @@ class AsetPemeliharaan(DefaultModel, Base):
     
     unit_id      = Column(Integer, ForeignKey("admin.units.id"), nullable=False)
     kib_id       = Column(BigInteger, ForeignKey("aset.kibs.id"), nullable=False)
+
+    pemilik_id     = Column(SmallInteger, ForeignKey("aset.pemiliks.id"))
     
     nilai        = Column(BigInteger, default=0)
     masa_manfaat = Column(SmallInteger, nullable=False, default=0)
@@ -250,6 +265,18 @@ class AsetPemeliharaan(DefaultModel, Base):
     no_kontrak   = Column(String(50))
     tgl_bast     = Column(Date)
     th_pemeliharaan = Column(Integer)
+    keterangan = Column(String(255))
+
+    tgl_perolehan  = Column(Date)
+    cara_perolehan = Column(String(100))
+    th_beli   = Column(Integer)
+    asal_usul = Column(String(50))
+    harga     = Column(BigInteger)
+    jumlah    = Column(BigInteger)
+    kondisi   = Column(String(2))
+    masa_manfaat_awal = Column(SmallInteger)
+    keterangan_awal = Column(String(255))
+
     created      = Column(DateTime, nullable=False, default=datetime.now,
                    server_default='now()')
     updated      = Column(DateTime)

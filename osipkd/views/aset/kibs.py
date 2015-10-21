@@ -37,28 +37,28 @@ class KibSchema(colander.Schema):
         size=60,
         values = '/aset/pemilik/headofnama/act',
         min_length=1)"""
-    unit_nm_widget = widget.AutocompleteInputWidget(
+    """unit_nm_widget = widget.AutocompleteInputWidget(
         values = '/unit/act/headofnama',
         min_length=1)
     unit_kd_widget = widget.AutocompleteInputWidget(
         values = '/unit/act/headofkode',
         min_length=1)
-        
+    """    
     tahun           = colander.SchemaNode(
                         colander.Integer(),
                         default = datetime.now().year)
     unit_id         = colander.SchemaNode(
                         colander.Integer(),
-                        widget = widget.HiddenWidget(),
+                        #widget = widget.HiddenWidget(),
                         oid = "unit_id")
     unit_kd         = colander.SchemaNode(
                         colander.String(),
-                        widget = unit_kd_widget,
+                        #widget = unit_kd_widget,
                         oid = "unit_kd",
                         title = "SKPD")
     unit_nm         = colander.SchemaNode(
                         colander.String(),
-                        widget = unit_nm_widget,
+                        #widget = unit_nm_widget,
                         oid = "unit_nm",
                         title = "SKPD Uraian")
     kategori_id     = colander.SchemaNode(
@@ -78,7 +78,8 @@ class KibSchema(colander.Schema):
     no_register     = colander.SchemaNode(
                         colander.Integer(),
                         missing = colander.drop,
-                        oid = "no_register",)
+                        oid = "no_register",
+                        title = "No.Register")                      
     pemilik_id      = colander.SchemaNode(
                         colander.Integer(),
                         widget = widget.HiddenWidget(),
@@ -90,33 +91,46 @@ class KibSchema(colander.Schema):
                         title = "Pemilik")                      
     uraian          = colander.SchemaNode(
                         colander.String(),
+                        missing = colander.drop,
                         oid = "uraian")
     tgl_perolehan   = colander.SchemaNode(
                         colander.Date(),
-                        title="Tanggal",
+                        title="Tgl.Pembelian",
                         oid = "tgl_perolehan")
-    cara_perolehan  = colander.SchemaNode(
-                        colander.String(),
-                        widget=widget.SelectWidget(values=cara),
-                        title="Perolehan",
-                        oid = "cara_perolehan")
+    #cara_perolehan  = colander.SchemaNode(
+    #                    colander.String(),
+    #                    widget=widget.SelectWidget(values=cara),
+    #                    title="Perolehan",
+    #                    oid = "cara_perolehan")
     th_beli         = colander.SchemaNode(
                         colander.Integer(),
-                        title="Thn. Beli")
+                        title="Tahun Beli")
     asal_usul       = colander.SchemaNode(
                         colander.String(),
-                        title="Asal-usul")
+                        #widget=widget.SelectWidget(values=cara),
+                        title="Asal-usul",
+                        oid = "asal_usul")
     harga           = colander.SchemaNode(
                         colander.Integer())
     jumlah          = colander.SchemaNode(
-                        colander.Integer())
+                        colander.Integer(),
+                        oid="jumlah",
+                        default=1)
     satuan          = colander.SchemaNode(
-                        colander.String())
+                        colander.String(),
+                        missing = colander.drop,
+                        oid="satuan")
     kondisi         = colander.SchemaNode(
                         colander.String(),
                         widget=widget.SelectWidget(values=kondisi),)
     keterangan      = colander.SchemaNode(
-                        colander.String())
+                        colander.String(),
+                        missing = colander.drop)
+    masa_manfaat    = colander.SchemaNode(
+                        colander.Integer(),
+                        missing = colander.drop,
+                        title="Masa Guna",
+                        oid="masa_manfaat")
 
 
 
