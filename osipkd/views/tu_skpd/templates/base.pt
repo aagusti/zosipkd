@@ -18,7 +18,7 @@
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Beban dan Belanja<b class="caret"></b></a>
         <ul class="dropdown-menu">
         
-          <li><a href="/ap-invoice-skpd">Tagihan / SPJ</a></li>
+          <li><a href="/ap-invoice-skpd">Tagihan / SPJ / BAST</a></li>
           <li><a href="/ap-payment">Pembayaran Tagihan GU/TU</a></li>
           <li><a href="/ap-spp">SPP</a></li>
           <li><a href="/ap-spm">SPM</a></li>

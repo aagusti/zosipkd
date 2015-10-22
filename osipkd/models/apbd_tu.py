@@ -303,6 +303,7 @@ class APInvoice(NamaModel, Base):
     ap_rekening     = Column(String(32))
     ap_npwp         = Column(String(25))
     amount          = Column(BigInteger, nullable=False)
+    #BAST
     no_bast         = Column(String(64))
     tgl_bast        = Column(Date)
     no_bku          = Column(String(64))
@@ -322,6 +323,9 @@ class APInvoice(NamaModel, Base):
     ap_kwitansi_nilai = Column(BigInteger, default=0)
     ap_kwitansi_no    = Column(String(64))
     ap_kwitansi_tgl   = Column(Date)
+    #BAKF
+    no_bakf         = Column(String(64))
+    tgl_bakf        = Column(Date)
      
     disabled        = Column(SmallInteger, nullable=False, default=0)
     posted          = Column(SmallInteger, nullable=False, default=0)

@@ -56,8 +56,8 @@ def deferred_beban(node, kw):
     return widget.SelectWidget(values=values)
     
 IS_BEBAN = (
-    ('0', 'Beban'),
-    ('1', 'Non Beban'),
+    ('0', 'Tagihan'),
+    ('1', 'Non Tagihan'),
     )
     
 class view_ap_invoice_skpd(BaseViews):
@@ -424,7 +424,7 @@ class AddSchema(colander.Schema):
                           missing=colander.drop,
                           widget=widget.SelectWidget(values=IS_BEBAN),
                           oid="is_beban",
-                          title="Beban")
+                          title="Jenis Tgh.")
     tanggal         = colander.SchemaNode(
                           colander.Date())
                           
@@ -468,7 +468,7 @@ class AddSchema(colander.Schema):
     no_bast         = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,
-                          title="No.BAST/BAKF")
+                          title="No. BAST")
     tgl_bast        = colander.SchemaNode(
                           colander.Date(),
                           missing=colander.drop,
@@ -566,6 +566,14 @@ class AddSchema(colander.Schema):
                           title="Nilai Kwitansi/Nota",
                           default=0
                           )      
+    no_bakf         = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          title="No. BAKF")
+    tgl_bakf        = colander.SchemaNode(
+                          colander.Date(),
+                          missing=colander.drop,
+                          title="Tgl. BAKF")
       
 class EditSchema(AddSchema):
     id             = colander.SchemaNode(

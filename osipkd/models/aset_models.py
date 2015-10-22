@@ -92,7 +92,7 @@ class AsetKib(DefaultModel, Base):
     a_sertifikat_nomor   = Column(String(50))
     a_penggunaan = Column(String(50))
 
-    b_kd_ruang = Column(SmallInteger, ForeignKey("aset.ruangs.id"))
+    b_kd_ruang = Column(SmallInteger)
     b_merk     = Column(String(50))
     b_type     = Column(String(50))
     b_cc       = Column(String(50))
@@ -163,7 +163,7 @@ class AsetKib(DefaultModel, Base):
     units    = relationship("Unit",         backref="kibunit")
     kats     = relationship("AsetKategori", backref="kibkat")
     pemiliks = relationship("AsetPemilik",  backref="kibpemilik")
-    ruangs   = relationship("AsetRuang",    backref="kibruang")
+    #ruangs   = relationship("AsetRuang",    backref="kibruang")
     
     @classmethod
     def get_no_register(cls, a, b, c):

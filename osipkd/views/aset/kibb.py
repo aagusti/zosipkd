@@ -20,7 +20,7 @@ from osipkd.models import (
     Group
     )
 from kibs import KibSchema    
-from osipkd.models.aset_models import AsetKategori, AsetKib
+from osipkd.models.aset_models import AsetKategori, AsetKib, AsetRuang
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
 from osipkd.models.pemda_model import Unit    
@@ -248,13 +248,13 @@ class view_aset_kibb(BaseViews):
                 b_kd_ruang                  = controls_dicted['b_kd_ruang']                     
                 b_nm_ruang                  = controls_dicted['b_nm_ruang']                     
 
-                if b_kd_ruang==None:
+                """if b_kd_ruang==None:
                     b_kd_ruang1 = 0
                     b_nm_ruang1 = ""
                 else :
                     b_kd_ruang1                  = controls_dicted['b_kd_ruang']
                     b_nm_ruang1                  = controls_dicted['b_nm_ruang']
-                    
+                """    
                 b_nm_ruang                  = controls_dicted['b_nm_ruang']                     
                 b_merk                      = controls_dicted['b_merk']           
                 b_type                      = controls_dicted['b_type']           
@@ -337,7 +337,13 @@ class view_aset_kibb(BaseViews):
     def view_kebijakan_edit(self):
         request = self.request
         row     = self.query_id().first()
-        
+
+        qruang = DBSession.query(AsetRuang.uraian).filter(AsetRuang.id==row.b_kd_ruang).first()
+        nmruang = ''
+        if qruang :
+           nmruang = qruang.uraian
+           
+        print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", nmruang        
         if not row:
             return id_not_found(request)
 
@@ -375,7 +381,7 @@ class view_aset_kibb(BaseViews):
            rowd['b_nm_ruang']  = ""
         else :
            rowd['b_kd_ruang']  = row.b_kd_ruang
-           rowd['b_nm_ruang']  = row.ruangs.uraian 
+           rowd['b_nm_ruang']  = nmruang
            
         rowd['b_merk']          = row.b_merk
         rowd['b_type']          = row.b_type
