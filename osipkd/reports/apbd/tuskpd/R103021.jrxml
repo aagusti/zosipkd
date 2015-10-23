@@ -95,6 +95,9 @@
 	<field name="jml_apinvoice_lalu" class="java.lang.String">
 		<fieldDescription><![CDATA[jml_apinvoice_lalu]]></fieldDescription>
 	</field>
+	<field name="kegiatan_sub_id" class="java.lang.String">
+		<fieldDescription><![CDATA[kegiatan_sub_id]]></fieldDescription>
+	</field>
 	<variable name="nominal" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{nominal})]]></variableExpression>
 	</variable>

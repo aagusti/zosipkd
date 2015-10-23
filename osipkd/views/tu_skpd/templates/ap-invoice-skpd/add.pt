@@ -645,7 +645,7 @@
               <label for="amount" class="control-label col-md-1" id="req-amount">
                        Uraian</label>
               <div class="col-md-5">
-                 <input id="nama" class=" form-control " type="text" value="" name="nama">
+                 <input id="nama" class=" form-control " type="text" value="" name="nama" readonly>
               </div>
               <div class="col-md-2">
                   <label for="ppn" class="control-label col-md-3" id="req-ppn">

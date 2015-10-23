@@ -101,9 +101,15 @@
 	<field name="tanggal_4" class="java.lang.String">
 		<fieldDescription><![CDATA[tanggal_4]]></fieldDescription>
 	</field>
+	<field name="kode" class="java.lang.String">
+		<fieldDescription><![CDATA[kode]]></fieldDescription>
+	</field>
+	<field name="kegiatan_sub_id" class="java.lang.String">
+		<fieldDescription><![CDATA[kegiatan_sub_id]]></fieldDescription>
+	</field>
 	<variable name="jenis_nm" class="java.lang.String">
-		<variableExpression><![CDATA[]]></variableExpression>
-		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "Uang Persediaan" : $F{jenis}=="2" ? "Tambahan Uang Persediaan" : $F{jenis}=="3" ? "Ganti Uang Persediaan" : $F{jenis}=="4" ? "Langsung" : ""]]></initialValueExpression>
+		<variableExpression><![CDATA[$F{jenis}=="1" ? "Uang Persediaan" : $F{jenis}=="2" ? "Tambahan Uang Persediaan" : $F{jenis}=="3" ? "Ganti Uang Persediaan" : ($F{jenis}=="4" && $F{kode}=="-GJ") ? "Langsung Gaji dan Tunjangan" : ($F{jenis}=="4" && $F{kode}!="-GJ") ? "Langsung" : ""]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "Uang Persediaan" : $F{jenis}=="2" ? "Tambahan Uang Persediaan" : $F{jenis}=="3" ? "Ganti Uang Persediaan" : ($F{jenis}=="4" && $F{kode}=="-GJ") ? "Langsung Gaji dan Tunjangan" : ($F{jenis}=="4" && $F{kode}!="-GJ") ? "Langsung" : ""]]></initialValueExpression>
 	</variable>
 	<variable name="anggaran" class="java.lang.Double">
 		<variableExpression><![CDATA[Double.parseDouble($F{anggaran})]]></variableExpression>
@@ -118,12 +124,12 @@
 		<initialValueExpression><![CDATA[$F{tanggal_2}=="None" ? "" : $F{tanggal_2}.substring(8,10)+" "+$F{tanggal_2}.substring(6,8)+" "+$F{tanggal_2}.substring(0,4)]]></initialValueExpression>
 	</variable>
 	<variable name="jenis" class="java.lang.String">
-		<variableExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : $F{jenis}=="4" ? "LS" : ""]]></variableExpression>
-		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : $F{jenis}=="4" ? "LS" : ""]]></initialValueExpression>
+		<variableExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : ($F{jenis}=="4" && $F{kode}=="-GJ") ? "LS Gaji dan Tunjangan" : ($F{jenis}=="4" && $F{kode}!="-GJ") ? "LS" : ""]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : ($F{jenis}=="4" && $F{kode}=="-GJ") ? "LS Gaji dan Tunjangan" : ($F{jenis}=="4" && $F{kode}!="-GJ") ? "LS" : ""]]></initialValueExpression>
 	</variable>
 	<variable name="jenis_1" class="java.lang.String">
-		<variableExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : $F{jenis}=="4" ? "LS" : ""]]></variableExpression>
-		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : $F{jenis}=="4" ? "LS" : ""]]></initialValueExpression>
+		<variableExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : ($F{jenis}=="4" && $F{kode}=="-GJ") ? "LS-GJ" : ($F{jenis}=="4" && $F{kode}!="-GJ") ? "LS" : ""]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : ($F{jenis}=="4" && $F{kode}=="-GJ") ? "LS-GJ" : ($F{jenis}=="4" && $F{kode}!="-GJ") ? "LS" : ""]]></initialValueExpression>
 	</variable>
 	<group name="spp_kd">
 		<groupExpression><![CDATA[$F{spp_kd}]]></groupExpression>
@@ -599,7 +605,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Nomor : "+$F{spp_kd}.substring(13)+"/"+$V{jenis}+"/"+$F{unit_kd}+"/"+$F{tahun}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Nomor : "+$F{spp_kd}.substring(13)+"/"+$V{jenis_1}+"/"+$F{unit_kd}+"/"+$F{tahun}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="43" y="131" width="444" height="16"/>
