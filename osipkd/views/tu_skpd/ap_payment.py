@@ -543,7 +543,7 @@ def view_add(request):
                 cek  = DBSession.query(APPayment).filter(APPayment.kode==c).first()
                 if cek :
                     request.session.flash('Kode pembayaran tagihan sudah ada.', 'error')
-                    return HTTPFound(location=self.request.route_url('ap-payment-add'))
+                    return HTTPFound(location=request.route_url('ap-payment-add'))
 
             try:
                 c = form.validate(controls)
