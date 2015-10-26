@@ -238,6 +238,8 @@ class view_ap_invoice_skpd(BaseViews):
                                 APInvoice.jenis.label('jen'),
                                 APInvoice.no_bast.label('nbast'),
                                 APInvoice.tgl_bast.label('tbast'),
+                                APInvoice.no_bakf.label('nbakf'),
+                                APInvoice.tgl_bakf.label('tbakf'),
                                 APInvoice.is_bayar.label('bay'),
                                 APInvoice.ap_nama.label('n'),
                                 APInvoice.ap_rekening.label('rek'),
@@ -281,25 +283,27 @@ class view_ap_invoice_skpd(BaseViews):
                 d['jenis']             = k[7]
                 d['no_bast']           = k[8]
                 d['tgl_bast']          = "%s" % k[9]
-                d['is_bayar']          = k[10]
-                d['ap_nama']           = k[11]
-                d['ap_rekening']       = k[12]
-                d['ap_npwp']           = k[13]
-                d['ap_waktu']          = k[14]
-                d['ap_uraian']         = k[15]
-                d['ap_pemilik']        = k[16]
-                d['ap_alamat']         = k[17]
-                d['ap_bentuk']         = k[18]
-                d['ap_kontrak']        = k[19]
-                d['ap_tgl_kontrak']    = "%s" % k[20]
-                d['ap_nilai']          = k[21]
-                d['ap_kwitansi_no']    = k[22]
-                d['ap_kwitansi_tgl']   = "%s" % k[23]
-                d['ap_kwitansi_nilai'] = k[24]
-                d['ap_bap_no']         = k[25]
-                d['ap_bap_tgl']        = "%s" % k[26]
-                d['kegiatan_nm']       = k[27]
-                d['kegiatan_kd']       = k[28]
+                d['no_bakf']           = k[10]
+                d['tgl_bakf']          = "%s" % k[11]
+                d['is_bayar']          = k[12]
+                d['ap_nama']           = k[13]
+                d['ap_rekening']       = k[14]
+                d['ap_npwp']           = k[15]
+                d['ap_waktu']          = k[16]
+                d['ap_uraian']         = k[17]
+                d['ap_pemilik']        = k[18]
+                d['ap_alamat']         = k[19]
+                d['ap_bentuk']         = k[20]
+                d['ap_kontrak']        = k[21]
+                d['ap_tgl_kontrak']    = "%s" % k[22]
+                d['ap_nilai']          = k[23]
+                d['ap_kwitansi_no']    = k[24]
+                d['ap_kwitansi_tgl']   = "%s" % k[25]
+                d['ap_kwitansi_nilai'] = k[26]
+                d['ap_bap_no']         = k[27]
+                d['ap_bap_tgl']        = "%s" % k[28]
+                d['kegiatan_nm']       = k[29]
+                d['kegiatan_kd']       = k[30]
                 r.append(d)
             print '---****----',r              
             return r
@@ -316,6 +320,8 @@ class view_ap_invoice_skpd(BaseViews):
                                 APInvoice.jenis.label('jen'),
                                 APInvoice.no_bast.label('nbast'),
                                 APInvoice.tgl_bast.label('tbast'),
+                                APInvoice.no_bakf.label('nbakf'),
+                                APInvoice.tgl_bakf.label('tbakf'),
                                 APInvoice.is_bayar.label('bay'),
                                 APInvoice.ap_nama.label('n'),
                                 APInvoice.ap_rekening.label('rek'),
@@ -359,25 +365,27 @@ class view_ap_invoice_skpd(BaseViews):
                 d['jenis']             = k[7]
                 d['no_bast']           = k[8]
                 d['tgl_bast']          = "%s" % k[9]
-                d['is_bayar']          = k[10]
-                d['ap_nama']           = k[11]
-                d['ap_rekening']       = k[12]
-                d['ap_npwp']           = k[13]
-                d['ap_waktu']          = k[14]
-                d['ap_uraian']         = k[15]
-                d['ap_pemilik']        = k[16]
-                d['ap_alamat']         = k[17]
-                d['ap_bentuk']         = k[18]
-                d['ap_kontrak']        = k[19]
-                d['ap_tgl_kontrak']    = "%s" % k[20]
-                d['ap_nilai']          = k[21]
-                d['ap_kwitansi_no']    = k[22]
-                d['ap_kwitansi_tgl']   = "%s" % k[23]
-                d['ap_kwitansi_nilai'] = k[24]
-                d['ap_bap_no']         = k[25]
-                d['ap_bap_tgl']        = "%s" % k[26]
-                d['kegiatan_nm']       = k[27]
-                d['kegiatan_kd']       = k[28]
+                d['no_bakf']           = k[10]
+                d['tgl_bakf']          = "%s" % k[11]
+                d['is_bayar']          = k[12]
+                d['ap_nama']           = k[13]
+                d['ap_rekening']       = k[14]
+                d['ap_npwp']           = k[15]
+                d['ap_waktu']          = k[16]
+                d['ap_uraian']         = k[17]
+                d['ap_pemilik']        = k[18]
+                d['ap_alamat']         = k[19]
+                d['ap_bentuk']         = k[20]
+                d['ap_kontrak']        = k[21]
+                d['ap_tgl_kontrak']    = "%s" % k[22]
+                d['ap_nilai']          = k[23]
+                d['ap_kwitansi_no']    = k[24]
+                d['ap_kwitansi_tgl']   = "%s" % k[25]
+                d['ap_kwitansi_nilai'] = k[26]
+                d['ap_bap_no']         = k[27]
+                d['ap_bap_tgl']        = "%s" % k[28]
+                d['kegiatan_nm']       = k[29]
+                d['kegiatan_kd']       = k[30]
                 r.append(d)
             print '---****----',r              
             return r

@@ -91,8 +91,12 @@
 		<initialValueExpression><![CDATA[$F{tanggal}.substring(5,7)=="01" ? "Januari" : $F{tanggal}.substring(5,7)=="02" ? "Februari" : $F{tanggal}.substring(5,7)=="03" ? "Maret" : $F{tanggal}.substring(5,7)=="04" ? "April" : $F{tanggal}.substring(5,7)=="05" ? "Mei" : $F{tanggal}.substring(5,7)=="06" ? "Juni" : $F{tanggal}.substring(5,7)=="07" ? "Juli" : $F{tanggal}.substring(5,7)=="08" ? "Agustus" : $F{tanggal}.substring(5,7)=="09" ? "September" : $F{tanggal}.substring(5,7)=="10" ? "Oktober" : $F{tanggal}.substring(5,7)=="11" ? "November" : $F{tanggal}.substring(5,7)=="12" ? "Desember" : ""]]></initialValueExpression>
 	</variable>
 	<variable name="jenis_1" class="java.lang.String">
-		<variableExpression><![CDATA[$F{jenis1}==null ? $F{jenis} : $F{jenis}+$F{jenis1}]]></variableExpression>
-		<initialValueExpression><![CDATA[$F{jenis1}==null ? $F{jenis} : $F{jenis}+$F{jenis1}]]></initialValueExpression>
+		<variableExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : ($F{jenis}=="4" && $F{jenis1}=="-GJ") ? "LS-GJ" : ($F{jenis}=="4" && $F{jenis1}!="-GJ") ? "LS" : ""]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : ($F{jenis}=="4" && $F{jenis1}=="-GJ") ? "LS-GJ" : ($F{jenis}=="4" && $F{jenis1}!="-GJ") ? "LS" : ""]]></initialValueExpression>
+	</variable>
+	<variable name="jenis" class="java.lang.String">
+		<variableExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : ($F{jenis}=="4" && $F{jenis1}=="-GJ") ? "LS Gaji dan Tunjangan" : ($F{jenis}=="4" && $F{jenis1}!="-GJ") ? "LS" : ""]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{jenis}=="1" ? "UP" : $F{jenis}=="2" ? "TU" : $F{jenis}=="3" ? "GU" : ($F{jenis}=="4" && $F{jenis1}=="-GJ") ? "LS Gaji dan Tunjangan" : ($F{jenis}=="4" && $F{jenis1}!="-GJ") ? "LS" : ""]]></initialValueExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -143,7 +147,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["SPP-"+$V{jenis_1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["SPP-"+$V{jenis}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

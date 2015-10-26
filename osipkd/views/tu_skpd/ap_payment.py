@@ -232,7 +232,7 @@ class AddSchema(colander.Schema):
                           colander.String(),
                           missing=colander.drop,
                           oid = "kode",
-                          title="No.Payment")
+                          title="No.Pembyran")
     jenis           = colander.SchemaNode(
                           colander.String(),
                           widget=widget.SelectWidget(values=AP_TYPE),
@@ -257,7 +257,7 @@ class AddSchema(colander.Schema):
                           oid="invoice_id")
     inv_kd          = colander.SchemaNode(
                           colander.String(),
-                          title = "Invoice",
+                          title = "No.Tagihan",
                           oid="inv_kd")
                           
     inv_nm          = colander.SchemaNode(
@@ -322,6 +322,16 @@ class AddSchema(colander.Schema):
                           missing=colander.drop,
                           title="Tgl. BAST",
                           oid="tgl_bast")
+    no_bakf         = colander.SchemaNode(
+                          colander.String(),
+                          missing=colander.drop,
+                          title="No. BAKF",
+                          oid="no_bakf")
+    tgl_bakf        = colander.SchemaNode(
+                          colander.Date(),
+                          missing=colander.drop,
+                          title="Tgl. BAKF",
+                          oid="tgl_bakf")
     no_bku          = colander.SchemaNode(
                           colander.String(),
                           missing=colander.drop,

@@ -816,33 +816,31 @@ class ViewTUSKPDLap(BaseViews):
         ### SPP Rincian // UP
         elif url_dict['act']=='spp13' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
-            subq  = DBSession.query(case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_=" ").label('jenis1')
+            """subq  = DBSession.query(case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_=" ").label('jenis1')
                      ).filter(Rekening.id==KegiatanItem.rekening_id, KegiatanItem.id==APInvoiceItem.kegiatan_item_id,
                      APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id, SppItem.ap_spp_id==Spp.id,
                      Spp.id==Spm.ap_spp_id, Spp.unit_id==self.session['unit_id'], Spp.tahun_id==self.session['tahun'], Spp.id==pk_id
                      ).group_by(case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_=" ")
                      ).subquery()
+            """         
             query = DBSession.query(Spp.tahun_id.label('tahun'), 
-                  Urusan.kode.label('urusan_kd'),
                   Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), 
                   Kegiatan.kode.label('keg_kd'), Kegiatan.nama.label('keg_nm'), 
                   Program.kode.label('prg_kd'),Program.nama.label('prg_nm'),
-                  Spp.kode.label('spp_kd'), Spp.nama, Spp.tanggal, case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),
-                  (Spp.jenis==4,"LS")], else_="").label('jenis'), Spp.unit_id.label('unit_id'),
+                  Spp.kode.label('spp_kd'), Spp.nama, Spp.tanggal, Spp.jenis, Spp.unit_id.label('unit_id'),
                   Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'), Spp.ttd_nip, Spp.ttd_nama,
-                  func.sum(APInvoiceItem.amount).label('amount'), subq.c.jenis1
-                  ).filter(Spp.unit_id==Unit.id, Unit.urusan_id==Urusan.id, Spp.id==SppItem.ap_spp_id,
+                  func.sum(APInvoiceItem.amount).label('amount'), case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_=" ").label('jenis1')
+                  ).filter(Spp.unit_id==Unit.id, Spp.id==SppItem.ap_spp_id,
                   SppItem.ap_invoice_id==APInvoiceItem.ap_invoice_id, 
                   APInvoiceItem.kegiatan_item_id==KegiatanItem.id, KegiatanItem.rekening_id==Rekening.id,
                   KegiatanItem.kegiatan_sub_id==KegiatanSub.id, KegiatanSub.kegiatan_id==Kegiatan.id, 
                   Kegiatan.program_id== Program.id,
                   Spp.unit_id==self.session['unit_id'], 
                   Spp.tahun_id==self.session['tahun'], Spp.id==pk_id
-                  ).group_by(Spp.tahun_id, Unit.kode, Urusan.kode,
+                  ).group_by(Spp.tahun_id, Unit.kode, 
                   Unit.nama, Kegiatan.kode, Kegiatan.nama, Program.nama, Program.kode, Spp.ttd_nip, Spp.ttd_nama,
-                  Spp.kode, Spp.nama, Spp.tanggal, case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),
-                  (Spp.jenis==4,"LS")], else_=""), Spp.unit_id, 
-                  Rekening.kode, Rekening.nama, subq.c.jenis1
+                  Spp.kode, Spp.nama, Spp.tanggal, Spp.jenis, Spp.unit_id, 
+                  Rekening.kode, Rekening.nama, case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_=" ")
                   ).order_by(Rekening.kode)
                   
             generator = b103r041Generator()#b103r0022Generator()
@@ -856,34 +854,26 @@ class ViewTUSKPDLap(BaseViews):
         ### SPP Rincian // TU
         elif url_dict['act']=='spp23' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
-            subq  = DBSession.query(case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_=" ").label('jenis1')
-                     ).filter(Rekening.id==KegiatanItem.rekening_id, KegiatanItem.id==APInvoiceItem.kegiatan_item_id,
-                     APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id, SppItem.ap_spp_id==Spp.id,
-                     Spp.id==Spm.ap_spp_id, Spp.unit_id==self.session['unit_id'], Spp.tahun_id==self.session['tahun'], Spp.id==pk_id
-                     ).group_by(case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_=" ")
-                     ).subquery()
             query = DBSession.query(Spp.tahun_id.label('tahun'), 
-                  Urusan.kode.label('urusan_kd'),
                   Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), 
                   Kegiatan.kode.label('keg_kd'), Kegiatan.nama.label('keg_nm'), 
                   Program.kode.label('prg_kd'),Program.nama.label('prg_nm'),
-                  Spp.kode.label('spp_kd'), Spp.nama, Spp.tanggal, case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),
-                  (Spp.jenis==4,"LS")], else_="").label('jenis'), Spp.unit_id.label('unit_id'),
+                  Spp.kode.label('spp_kd'), Spp.nama, Spp.tanggal, Spp.jenis,
+                  Spp.unit_id.label('unit_id'),
                   Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'), Spp.ttd_nip, Spp.ttd_nama, 
-                  Spp.pptk_nip, Spp.pptk_nama, subq.c.jenis1,
+                  Spp.pptk_nip, Spp.pptk_nama, case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_=" ").label('jenis1'),
                   func.sum(APInvoiceItem.amount).label('amount')
-                  ).filter(Spp.unit_id==Unit.id, Unit.urusan_id==Urusan.id, Spp.id==SppItem.ap_spp_id,
+                  ).filter(Spp.unit_id==Unit.id, Spp.id==SppItem.ap_spp_id,
                   SppItem.ap_invoice_id==APInvoiceItem.ap_invoice_id, 
                   APInvoiceItem.kegiatan_item_id==KegiatanItem.id, KegiatanItem.rekening_id==Rekening.id,
                   KegiatanItem.kegiatan_sub_id==KegiatanSub.id, KegiatanSub.kegiatan_id==Kegiatan.id, 
                   Kegiatan.program_id== Program.id,
                   Spp.unit_id==self.session['unit_id'], 
                   Spp.tahun_id==self.session['tahun'], Spp.id==pk_id
-                  ).group_by(Spp.tahun_id, Unit.kode, Urusan.kode,
+                  ).group_by(Spp.tahun_id, Unit.kode, 
                   Unit.nama, Kegiatan.kode, Kegiatan.nama, Program.nama, Program.kode, Spp.ttd_nip, Spp.ttd_nama, Spp.pptk_nip, Spp.pptk_nama,
-                  Spp.kode, Spp.nama, Spp.tanggal, case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),
-                  (Spp.jenis==4,"LS")], else_=""), Spp.unit_id, 
-                  Rekening.kode, Rekening.nama, subq.c.jenis1
+                  Spp.kode, Spp.nama, Spp.tanggal, Spp.jenis, Spp.unit_id, 
+                  Rekening.kode, Rekening.nama, case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_=" ")
                   ).order_by(Rekening.kode)
                   
             generator = b103r042Generator()
@@ -897,34 +887,25 @@ class ViewTUSKPDLap(BaseViews):
         ### SPP Rincian // LS.G
         elif url_dict['act']=='spp33' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
-            subq  = DBSession.query(case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="").label('jenis1')
-                     ).filter(Rekening.id==KegiatanItem.rekening_id, KegiatanItem.id==APInvoiceItem.kegiatan_item_id,
-                     APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id, SppItem.ap_spp_id==Spp.id,
-                     Spp.id==Spm.ap_spp_id, Spp.unit_id==self.session['unit_id'], Spp.tahun_id==self.session['tahun'], Spp.id==pk_id
-                     ).group_by(case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="")
-                     ).subquery()
             query = DBSession.query(Spp.tahun_id.label('tahun'), 
-                  Urusan.kode.label('urusan_kd'),
                   Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), 
                   Kegiatan.kode.label('keg_kd'), Kegiatan.nama.label('keg_nm'), 
                   Program.kode.label('prg_kd'),Program.nama.label('prg_nm'),
-                  Spp.kode.label('spp_kd'), Spp.nama, Spp.tanggal, case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),
-                  (Spp.jenis==4,"LS")], else_="").label('jenis'), Spp.unit_id.label('unit_id'),
+                  Spp.kode.label('spp_kd'), Spp.nama, Spp.tanggal, Spp.jenis, Spp.unit_id.label('unit_id'),
                   Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'), Spp.ttd_nip, Spp.ttd_nama, 
-                  Spp.pptk_nip, Spp.pptk_nama, subq.c.jenis1,
+                  Spp.pptk_nip, Spp.pptk_nama, case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="").label('jenis1'),
                   func.sum(APInvoiceItem.amount).label('amount')
-                  ).filter(Spp.unit_id==Unit.id, Unit.urusan_id==Urusan.id, Spp.id==SppItem.ap_spp_id,
+                  ).filter(Spp.unit_id==Unit.id, Spp.id==SppItem.ap_spp_id,
                   SppItem.ap_invoice_id==APInvoiceItem.ap_invoice_id, 
                   APInvoiceItem.kegiatan_item_id==KegiatanItem.id, KegiatanItem.rekening_id==Rekening.id,
                   KegiatanItem.kegiatan_sub_id==KegiatanSub.id, KegiatanSub.kegiatan_id==Kegiatan.id, 
                   Kegiatan.program_id== Program.id,
                   Spp.unit_id==self.session['unit_id'], 
                   Spp.tahun_id==self.session['tahun'], Spp.id==pk_id
-                  ).group_by(Spp.tahun_id, Unit.kode, Urusan.kode,
+                  ).group_by(Spp.tahun_id, Unit.kode, 
                   Unit.nama, Kegiatan.kode, Kegiatan.nama, Program.nama, Program.kode, Spp.ttd_nip, Spp.ttd_nama, Spp.pptk_nip, Spp.pptk_nama,
-                  Spp.kode, Spp.nama, Spp.tanggal, case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),
-                  (Spp.jenis==4,"LS")], else_=""), Spp.unit_id, 
-                  Rekening.kode, Rekening.nama, subq.c.jenis1
+                  Spp.kode, Spp.nama, Spp.tanggal, Spp.jenis, Spp.unit_id, 
+                  Rekening.kode, Rekening.nama, case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="")
                   ).order_by(Rekening.kode)
                   
             generator = b103r043Generator()
@@ -938,34 +919,25 @@ class ViewTUSKPDLap(BaseViews):
         ### SPP Rincian // GU/LSB
         elif url_dict['act']=='spp43' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
-            subq  = DBSession.query(case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="").label('jenis1')
-                     ).filter(Rekening.id==KegiatanItem.rekening_id, KegiatanItem.id==APInvoiceItem.kegiatan_item_id,
-                     APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id, SppItem.ap_spp_id==Spp.id,
-                     Spp.id==Spm.ap_spp_id, Spp.unit_id==self.session['unit_id'], Spp.tahun_id==self.session['tahun'], Spp.id==pk_id
-                     ).group_by(case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="")
-                     ).subquery()
             query = DBSession.query(Spp.tahun_id.label('tahun'), 
-                  Urusan.kode.label('urusan_kd'),
                   Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), 
                   Kegiatan.kode.label('keg_kd'), Kegiatan.nama.label('keg_nm'), 
                   Program.kode.label('prg_kd'),Program.nama.label('prg_nm'),
-                  Spp.kode.label('spp_kd'), Spp.nama, Spp.tanggal, case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),
-                  (Spp.jenis==4,"LS")], else_="").label('jenis'), Spp.unit_id.label('unit_id'),
+                  Spp.kode.label('spp_kd'), Spp.nama, Spp.tanggal, Spp.jenis, Spp.unit_id.label('unit_id'),
                   Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'), Spp.ttd_nip, Spp.ttd_nama, 
-                  Spp.pptk_nip, Spp.pptk_nama, subq.c.jenis1,
+                  Spp.pptk_nip, Spp.pptk_nama, case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="").label('jenis1'),
                   func.sum(APInvoiceItem.amount).label('amount')
-                  ).filter(Spp.unit_id==Unit.id, Unit.urusan_id==Urusan.id, Spp.id==SppItem.ap_spp_id,
+                  ).filter(Spp.unit_id==Unit.id, Spp.id==SppItem.ap_spp_id,
                   SppItem.ap_invoice_id==APInvoiceItem.ap_invoice_id, 
                   APInvoiceItem.kegiatan_item_id==KegiatanItem.id, KegiatanItem.rekening_id==Rekening.id,
                   KegiatanItem.kegiatan_sub_id==KegiatanSub.id, KegiatanSub.kegiatan_id==Kegiatan.id, 
                   Kegiatan.program_id== Program.id,
                   Spp.unit_id==self.session['unit_id'], 
                   Spp.tahun_id==self.session['tahun'], Spp.id==pk_id
-                  ).group_by(Spp.tahun_id, Unit.kode, Urusan.kode,
+                  ).group_by(Spp.tahun_id, Unit.kode, 
                   Unit.nama, Kegiatan.kode, Kegiatan.nama, Program.nama, Program.kode, Spp.ttd_nip, Spp.ttd_nama, Spp.pptk_nip, Spp.pptk_nama,
-                  Spp.kode, Spp.nama, Spp.tanggal, case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),
-                  (Spp.jenis==4,"LS")], else_=""), Spp.unit_id, 
-                  Rekening.kode, Rekening.nama, subq.c.jenis1
+                  Spp.kode, Spp.nama, Spp.tanggal, Spp.jenis, Spp.unit_id, 
+                  Rekening.kode, Rekening.nama, case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="")
                   ).order_by(Rekening.kode)
                   
             generator = b103r044Generator()
@@ -979,34 +951,25 @@ class ViewTUSKPDLap(BaseViews):
         ### SPP Rincian // LS.G
         elif url_dict['act']=='spp53' :
             pk_id = 'id' in params and params['id'] and int(params['id']) or 0
-            subq1  = DBSession.query(case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="").label('jenis1')
-                     ).filter(Rekening.id==KegiatanItem.rekening_id, KegiatanItem.id==APInvoiceItem.kegiatan_item_id,
-                     APInvoiceItem.ap_invoice_id==SppItem.ap_invoice_id, SppItem.ap_spp_id==Spp.id,
-                     Spp.id==Spm.ap_spp_id, Spp.unit_id==self.session['unit_id'], Spp.tahun_id==self.session['tahun'], Spp.id==pk_id
-                     ).group_by(case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_="")
-                     ).subquery()
             query = DBSession.query(Spp.tahun_id.label('tahun'), 
-                  Urusan.kode.label('urusan_kd'),
                   Unit.kode.label('unit_kd'), Unit.nama.label('unit_nm'), 
                   Kegiatan.kode.label('keg_kd'), Kegiatan.nama.label('keg_nm'), 
                   Program.kode.label('prg_kd'),Program.nama.label('prg_nm'),
-                  Spp.kode.label('spp_kd'), Spp.nama, Spp.tanggal, case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),
-                  (Spp.jenis==4,"LS")], else_="").label('jenis'), Spp.unit_id.label('unit_id'),
+                  Spp.kode.label('spp_kd'), Spp.nama, Spp.tanggal, Spp.jenis, Spp.unit_id.label('unit_id'),
                   Rekening.kode.label('rek_kd'), Rekening.nama.label('rek_nm'), Spp.ttd_nip, Spp.ttd_nama, 
-                  Spp.pptk_nip, Spp.pptk_nama, subq1.c.jenis1,
+                  Spp.pptk_nip, Spp.pptk_nama, case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_=" ").label('jenis1'),
                   func.sum(APInvoiceItem.amount).label('amount')
-                  ).filter(Spp.unit_id==Unit.id, Unit.urusan_id==Urusan.id, Spp.id==SppItem.ap_spp_id,
+                  ).filter(Spp.unit_id==Unit.id, Spp.id==SppItem.ap_spp_id,
                   SppItem.ap_invoice_id==APInvoiceItem.ap_invoice_id, 
                   APInvoiceItem.kegiatan_item_id==KegiatanItem.id, KegiatanItem.rekening_id==Rekening.id,
                   KegiatanItem.kegiatan_sub_id==KegiatanSub.id, KegiatanSub.kegiatan_id==Kegiatan.id, 
                   Kegiatan.program_id== Program.id,
                   Spp.unit_id==self.session['unit_id'], 
                   Spp.tahun_id==self.session['tahun'], Spp.id==pk_id
-                  ).group_by(Spp.tahun_id, Unit.kode, Urusan.kode,
+                  ).group_by(Spp.tahun_id, Unit.kode, 
                   Unit.nama, Kegiatan.kode, Kegiatan.nama, Program.nama, Program.kode, Spp.ttd_nip, Spp.ttd_nama, Spp.pptk_nip, Spp.pptk_nama,
-                  Spp.kode, Spp.nama, Spp.tanggal, case([(Spp.jenis==1,"UP"),(Spp.jenis==2,"TU"),(Spp.jenis==3,"GU"),
-                  (Spp.jenis==4,"LS")], else_=""), Spp.unit_id, 
-                  Rekening.kode, Rekening.nama, subq1.c.jenis1
+                  Spp.kode, Spp.nama, Spp.tanggal, Spp.jenis, Spp.unit_id, 
+                  Rekening.kode, Rekening.nama, case([(func.substr(Rekening.kode,1,5)=='5.1.1','-GJ')], else_=" ")
                   ).order_by(Rekening.kode)
                   
             generator = b103r045Generator()
@@ -3092,7 +3055,7 @@ class b103r041Generator(JasperGenerator):
         for row in tobegreeted:
             xml_greeting  =  ET.SubElement(self.root, 'spp')
             ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
-            ET.SubElement(xml_greeting, "urusan_kd").text = row.urusan_kd
+            #ET.SubElement(xml_greeting, "urusan_kd").text = row.urusan_kd
             ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
             ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
             ET.SubElement(xml_greeting, "keg_kd").text = row.keg_kd
@@ -3102,7 +3065,7 @@ class b103r041Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "spp_kd").text = row.spp_kd
             ET.SubElement(xml_greeting, "nama").text = row.nama
             ET.SubElement(xml_greeting, "tanggal").text = unicode(row.tanggal)
-            ET.SubElement(xml_greeting, "jenis").text = row.jenis
+            ET.SubElement(xml_greeting, "jenis").text = unicode(row.jenis)
             ET.SubElement(xml_greeting, "rek_kd").text = row.rek_kd
             ET.SubElement(xml_greeting, "rek_nm").text = row.rek_nm
             ET.SubElement(xml_greeting, "amount").text = unicode(row.amount)
@@ -3126,7 +3089,7 @@ class b103r042Generator(JasperGenerator):
         for row in tobegreeted:
             xml_greeting  =  ET.SubElement(self.root, 'spp')
             ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
-            ET.SubElement(xml_greeting, "urusan_kd").text = row.urusan_kd
+            #ET.SubElement(xml_greeting, "urusan_kd").text = row.urusan_kd
             ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
             ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
             ET.SubElement(xml_greeting, "keg_kd").text = row.keg_kd
@@ -3136,7 +3099,7 @@ class b103r042Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "spp_kd").text = row.spp_kd
             ET.SubElement(xml_greeting, "nama").text = row.nama
             ET.SubElement(xml_greeting, "tanggal").text = unicode(row.tanggal)
-            ET.SubElement(xml_greeting, "jenis").text = row.jenis
+            ET.SubElement(xml_greeting, "jenis").text = unicode(row.jenis)
             ET.SubElement(xml_greeting, "rek_kd").text = row.rek_kd
             ET.SubElement(xml_greeting, "rek_nm").text = row.rek_nm
             ET.SubElement(xml_greeting, "amount").text = unicode(row.amount)
@@ -3162,7 +3125,7 @@ class b103r045Generator(JasperGenerator):
         for row in tobegreeted:
             xml_greeting  =  ET.SubElement(self.root, 'spp')
             ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
-            ET.SubElement(xml_greeting, "urusan_kd").text = row.urusan_kd
+            #ET.SubElement(xml_greeting, "urusan_kd").text = row.urusan_kd
             ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
             ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
             ET.SubElement(xml_greeting, "keg_kd").text = row.keg_kd
@@ -3172,7 +3135,7 @@ class b103r045Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "spp_kd").text = row.spp_kd
             ET.SubElement(xml_greeting, "nama").text = row.nama
             ET.SubElement(xml_greeting, "tanggal").text = unicode(row.tanggal)
-            ET.SubElement(xml_greeting, "jenis").text = row.jenis
+            ET.SubElement(xml_greeting, "jenis").text = unicode(row.jenis)
             ET.SubElement(xml_greeting, "rek_kd").text = row.rek_kd
             ET.SubElement(xml_greeting, "rek_nm").text = row.rek_nm
             ET.SubElement(xml_greeting, "amount").text = unicode(row.amount)
@@ -3198,7 +3161,7 @@ class b103r043Generator(JasperGenerator):
         for row in tobegreeted:
             xml_greeting  =  ET.SubElement(self.root, 'spp')
             ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
-            ET.SubElement(xml_greeting, "urusan_kd").text = row.urusan_kd
+            #ET.SubElement(xml_greeting, "urusan_kd").text = row.urusan_kd
             ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
             ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
             ET.SubElement(xml_greeting, "keg_kd").text = row.keg_kd
@@ -3208,7 +3171,7 @@ class b103r043Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "spp_kd").text = row.spp_kd
             ET.SubElement(xml_greeting, "nama").text = row.nama
             ET.SubElement(xml_greeting, "tanggal").text = unicode(row.tanggal)
-            ET.SubElement(xml_greeting, "jenis").text = row.jenis
+            ET.SubElement(xml_greeting, "jenis").text = unicode(row.jenis)
             ET.SubElement(xml_greeting, "rek_kd").text = row.rek_kd
             ET.SubElement(xml_greeting, "rek_nm").text = row.rek_nm
             ET.SubElement(xml_greeting, "amount").text = unicode(row.amount)
@@ -3234,7 +3197,7 @@ class b103r044Generator(JasperGenerator):
         for row in tobegreeted:
             xml_greeting  =  ET.SubElement(self.root, 'spp')
             ET.SubElement(xml_greeting, "tahun").text = unicode(row.tahun)
-            ET.SubElement(xml_greeting, "urusan_kd").text = row.urusan_kd
+            #ET.SubElement(xml_greeting, "urusan_kd").text = row.urusan_kd
             ET.SubElement(xml_greeting, "unit_kd").text = row.unit_kd
             ET.SubElement(xml_greeting, "unit_nm").text = row.unit_nm
             ET.SubElement(xml_greeting, "keg_kd").text = row.keg_kd
@@ -3244,7 +3207,7 @@ class b103r044Generator(JasperGenerator):
             ET.SubElement(xml_greeting, "spp_kd").text = row.spp_kd
             ET.SubElement(xml_greeting, "nama").text = row.nama
             ET.SubElement(xml_greeting, "tanggal").text = unicode(row.tanggal)
-            ET.SubElement(xml_greeting, "jenis").text = row.jenis
+            ET.SubElement(xml_greeting, "jenis").text = unicode(row.jenis)
             ET.SubElement(xml_greeting, "rek_kd").text = row.rek_kd
             ET.SubElement(xml_greeting, "rek_nm").text = row.rek_nm
             ET.SubElement(xml_greeting, "amount").text = unicode(row.amount)
