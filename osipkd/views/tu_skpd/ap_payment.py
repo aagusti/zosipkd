@@ -250,7 +250,9 @@ class AddSchema(colander.Schema):
                           title="U.M/Panjar")
     """
     tanggal         = colander.SchemaNode(
-                          colander.Date())
+                          colander.Date(),
+                          title="Tgl.Pembyran",
+                          oid="tanggal")
            
     invoice_id      = colander.SchemaNode(
                           colander.Integer(),
