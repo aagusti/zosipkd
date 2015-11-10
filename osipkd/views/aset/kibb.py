@@ -2,7 +2,7 @@ import os
 import uuid
 from osipkd.tools import row2dict, xls_reader
 from datetime import datetime
-from sqlalchemy import not_, func, or_
+from sqlalchemy import not_, func, or_, and_
 from pyramid.view import (
     view_config,
     )
@@ -20,7 +20,7 @@ from osipkd.models import (
     Group
     )
 from kibs import KibSchema    
-from osipkd.models.aset_models import AsetKategori, AsetKib, AsetRuang
+from osipkd.models.aset_models import AsetKategori, AsetKib, AsetRuang, AsetPemilik
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
 from osipkd.models.pemda_model import Unit    
@@ -437,3 +437,53 @@ class view_aset_kibb(BaseViews):
             return self.route_list()
         return dict(row=row, form=form.render())
         
+    ##########                    
+    # CSV #
+    ##########    
+    @view_config(route_name='aset-kibb-csv', renderer='csv',
+                 permission='read')
+    def export_csv(self):
+        request = self.request
+        ses     = self.request.session
+        
+        query = DBSession.query(Unit.kode.label('Kode_Unit'), Unit.nama.label('Nama_Unit'),
+                AsetKategori.kode.label('Kode_Kategori'), AsetKib.no_register.label('No_Register'), AsetKategori.uraian.label('Nama_Kategori'),
+                AsetPemilik.uraian.label('Pemilik'), AsetKib.keterangan.label('Keterangan'),
+                AsetKib.tgl_perolehan.label('Tgl_Perolehan'), AsetKib.asal_usul.label('Asal_Usul'), AsetKib.harga.label('Harga'),
+                AsetKib.jumlah.label('Jumlah'), AsetKib.kondisi.label('Kondisi'), AsetKib.kib.label('Kib'), AsetKib.masa_manfaat.label('Masa_Manfaat'),
+                #AsetRuang.uraian.label('Ruang'), 
+                AsetKib.b_merk.label('Merk'), AsetKib.b_type.label('Tipe'),
+                AsetKib.b_cc.label('CC'), AsetKib.b_bahan.label('Bahan'), AsetKib.b_nomor_pabrik.label('No_Pabrik'),
+                AsetKib.b_nomor_rangka.label('No_Rangka'), AsetKib.b_nomor_mesin.label('No_Mesin'), AsetKib.b_nomor_polisi.label('No_Polisi'),
+                AsetKib.b_nomor_bpkb.label('No_BPKB'), AsetKib.b_ukuran.label('Ukuran'), AsetKib.b_warna.label('Warna'),
+                AsetKib.b_thbuat.label('Thn_Pembuatan')
+                #).outerjoin(AsetRuang, and_(AsetRuang.id==AsetKib.b_kd_ruang, AsetRuang.unit_id==AsetKib.unit_id)
+                ).filter(AsetKib.unit_id == Unit.id,
+                       AsetKib.pemilik_id == AsetPemilik.id, 
+                       AsetKib.kategori_id==AsetKategori.id, 
+                       AsetKib.kib=='B', 
+                       func.substr(Unit.kode,1,func.length(ses['unit_kd']))==ses['unit_kd'],
+                       or_(AsetKib.disabled=='0',AsetKib.disabled==None)
+                ).order_by(Unit.kode, AsetKategori.kode, AsetKib.no_register
+                )
+                                          
+        r = query.first()
+        if not r:
+            request.session.flash('Data tidak ada')
+            return self.route_list()
+            
+        header = r.keys()
+        query = query.all()
+        rows = []
+        for item in query:
+            rows.append(list(item))
+
+        # override attributes of response
+        filename = 'KIB_B%s.csv' % datetime.now().strftime('%Y%m%d%H%M%S')
+
+        self.request.response.content_disposition = 'attachment;filename=' + filename
+
+        return {
+          'header': header,
+          'rows': rows,
+        }

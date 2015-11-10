@@ -20,7 +20,7 @@ from osipkd.models import (
     Group
     )
 from kibs import KibSchema    
-from osipkd.models.aset_models import AsetKategori, AsetKib
+from osipkd.models.aset_models import AsetKategori, AsetKib, AsetPemilik
 from datatables import ColumnDT, DataTables
 from osipkd.views.base_view import BaseViews
 from osipkd.models.pemda_model import Unit    
@@ -412,4 +412,51 @@ class view_aset_kibc(BaseViews):
             return self.route_list()
         return dict(row=row, form=form.render())
         
+    ##########                    
+    # CSV #
+    ##########    
+    @view_config(route_name='aset-kibc-csv', renderer='csv',
+                 permission='read')
+    def export_csv(self):
+        request = self.request
+        ses     = self.request.session
         
+        query = DBSession.query(Unit.kode.label('Kode_Unit'), Unit.nama.label('Nama_Unit'),
+                AsetKategori.kode.label('Kode_Kategori'), AsetKib.no_register.label('No_Register'), AsetKategori.uraian.label('Nama_Kategori'),
+                AsetPemilik.uraian.label('Pemilik'), AsetKib.keterangan.label('Keterangan'),
+                AsetKib.tgl_perolehan.label('Tgl_Perolehan'), AsetKib.asal_usul.label('Asal_Usul'), AsetKib.harga.label('Harga'),
+                AsetKib.jumlah.label('Jumlah'), AsetKib.kondisi.label('Kondisi'), AsetKib.kib.label('Kib'), AsetKib.masa_manfaat.label('Masa_Manfaat'),
+                AsetKib.c_bertingkat_tidak.label('Bertingkat/Tidak'), AsetKib.c_beton_tidak.label('Beton/Tidak'),
+                AsetKib.c_luas_lantai.label('Luas_Lantai'), AsetKib.c_luas_bangunan.label('Luas_Bangunan'), AsetKib.c_lokasi.label('Lokasi'),
+                AsetKib.c_dokumen_tanggal.label('Tgl_Dokumen'), AsetKib.c_dokumen_nomor.label('No_Dokumen'), AsetKib.c_kode_tanah.label('Kode_Tanah'),
+                AsetKib.c_status_tanah.label('Status_Tanah')
+                #).outerjoin(AsetRuang, and_(AsetRuang.id==AsetKib.b_kd_ruang, AsetRuang.unit_id==AsetKib.unit_id)
+                ).filter(AsetKib.unit_id == Unit.id,
+                       AsetKib.pemilik_id == AsetPemilik.id, 
+                       AsetKib.kategori_id==AsetKategori.id, 
+                       AsetKib.kib=='C', 
+                       func.substr(Unit.kode,1,func.length(ses['unit_kd']))==ses['unit_kd'],
+                       or_(AsetKib.disabled=='0',AsetKib.disabled==None)
+                ).order_by(Unit.kode, AsetKategori.kode, AsetKib.no_register
+                )
+                                          
+        r = query.first()
+        if not r:
+            request.session.flash('Data tidak ada')
+            return self.route_list()
+            
+        header = r.keys()
+        query = query.all()
+        rows = []
+        for item in query:
+            rows.append(list(item))
+
+        # override attributes of response
+        filename = 'KIB_C%s.csv' % datetime.now().strftime('%Y%m%d%H%M%S')
+
+        self.request.response.content_disposition = 'attachment;filename=' + filename
+
+        return {
+          'header': header,
+          'rows': rows,
+        }
